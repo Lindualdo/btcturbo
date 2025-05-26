@@ -136,6 +136,42 @@ app/
         └── indicadores_helper.py
 ```
 
+### Padrão de Indicador (REAL - Baseado no MVRV existente)
+```python
+# app/services/ciclo/mvrv_z_score.py
+
+from app.services.utils.indicadores_helper import is_indicator_outdated, force_update_indicator
+
+INDICADOR = "MVRV_Z"
+
+def get_dado_mvrv():
+    """
+    Retorna dados do indicador com verificação de atualização.
+    Se desatualizado (>8h), força update automático.
+    """
+    if is_indicator_outdated(INDICADOR):
+        return force_update_indicator(INDICADOR)
+    
+    # Retorno do banco/cache atual
+    return {
+        "nome": INDICADOR,
+        "valor": 2.1,
+        "score": 6.0,
+        "last_update": "2025-05-26T12:00:00Z"
+    }
+
+def calcular_score_mvrv():
+    """
+    Wrapper para uso nos blocos.
+    Retorna formato padronizado {"valor": x, "score": y}
+    """
+    dado = get_dado_mvrv()
+    return {
+        "valor": dado["valor"],
+        "score": dado["score"]
+    }
+```
+
 ### Padrão de Response
 ```python
 class IndicadorResponse(BaseModel):
@@ -179,3 +215,72 @@ GLASSNODE_API_KEY=sua_chave_glassnode
 COINGLASS_API_KEY=sua_chave_coinglass
 AAVE_RPC_URL=https://ethereum-rpc.com
 ```
+
+### Banco de Dados
+```sql
+-- Tabela base para indicadores
+CREATE TABLE indicadores (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(50) NOT NULL,
+    valor_bruto DECIMAL,
+    score DECIMAL(3,1),
+    classificacao VARCHAR(20),
+    timestamp TIMESTAMP DEFAULT NOW(),
+    fonte VARCHAR(50),
+    metadados JSONB
+);
+
+-- Tabela para scores consolidados
+CREATE TABLE analises (
+    id SERIAL PRIMARY KEY,
+    score_final DECIMAL(3,1),
+    classificacao VARCHAR(20),
+    kelly_allocation VARCHAR(10),
+    alertas JSONB,
+    timestamp TIMESTAMP DEFAULT NOW()
+);
+```
+
+## 📋 CHECKLIST DE VALIDAÇÃO
+
+### Por Etapa
+- [ ] **Etapa 1:** Notion estruturado com dados de teste
+- [ ] **Etapa 2:** Leitura automatizada do Notion funcionando
+- [ ] **Etapa 3:** Pelo menos 1 API externa integrada
+- [ ] **Etapa 4:** Dados sendo persistidos corretamente
+- [ ] **Etapa 5:** Cálculo de 1 indicador completo
+- [ ] **Etapa 6:** Endpoint de dados brutos funcionando
+- [ ] **Etapa 7:** Endpoint de atualização operacional
+- [ ] **Etapa 8:** API final retornando score válido
+
+### Critérios de Qualidade
+- [ ] Código seguindo padrões do projeto
+- [ ] Tratamento de erros implementado
+- [ ] Logs estruturados para debugging
+- [ ] Testes unitários básicos
+- [ ] Documentação inline atualizada
+
+## 🚀 CRONOGRAMA SUGERIDO
+
+| Etapa | Duração | Dependência | Entregável |
+|-------|---------|-------------|------------|
+| 1 | 1 dia | - | Notion estruturado |
+| 2 | 2 dias | Etapa 1 | Integração Notion |
+| 3 | 3 dias | Etapa 2 | APIs externas |
+| 4 | 1 dia | Etapa 3 | Persistência BD |
+| 5 | 4 dias | Etapa 4 | Cálculos core |
+| 6 | 2 dias | Etapa 5 | APIs dados brutos |
+| 7 | 1 dia | Etapa 6 | API atualização |
+| 8 | 2 dias | Etapa 7 | APIs finais |
+
+**Total:** ~16 dias de desenvolvimento
+
+## 🎯 PRÓXIMOS PASSOS
+
+1. **Validar** esta documentação padrão
+2. **Definir** quais indicadores começar na Etapa 1
+3. **Gerar** documentação específica da primeira etapa
+4. **Implementar** seguindo os padrões estabelecidos
+
+---
+*Versão: 1.0 | Data: 26/05/2025 | Projeto: BTC Turbo*
