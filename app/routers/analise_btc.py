@@ -7,7 +7,7 @@ from app.schemas.response_model import AnaliseBTCResponse
 
 router = APIRouter()
 
-@router.get("/", response_model=AnaliseBTCResponse, summary="Analise Geral", tags=["Analise BTC"])
+@router.get("/analise-btc", response_model=AnaliseBTCResponse, summary="Analise Geral", tags=["Analise BTC"])
 def analise_geral():
     ...
 

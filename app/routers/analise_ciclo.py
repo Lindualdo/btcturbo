@@ -6,6 +6,6 @@ from app.services.blocos import ciclo
 
 router = APIRouter()
 
-@router.get("/")
+@router.get("/analise-ciclo")
 def analisar_ciclo():
     return ciclo.calcular_bloco_ciclo()
