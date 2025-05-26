@@ -1,3 +1,5 @@
+# /app/services/blocos/ciclo.py
+
 from app.services.ciclo import mvrv_z_score, realized_ratio, puell_multiple
 
 def calcular_bloco_ciclo():

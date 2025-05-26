@@ -1,8 +1,33 @@
+#app/routers/analise_btc.py
+
 from fastapi import APIRouter
 from datetime import datetime
 from app.services.blocos import ciclo
+from app.schemas.response_model import AnaliseBTCResponse
 
 router = APIRouter()
+
+@router.get("/", response_model=AnaliseBTCResponse, summary="Analise Geral", tags=["Analise BTC"])
+def analise_geral():
+    ...
+
+    score_ciclo = ciclo.calcular_bloco_ciclo()
+
+    return {
+        "timestamp": datetime.utcnow().isoformat() + "Z",
+        "score_final": calcular_score_final(),
+        "score_ajustado": calcular_score_ajustado(),
+        "modificador_volatilidade": calcular_modificador_volatilidade(),
+        "classificacao_geral": calcular_classificacao_geral(),
+        "kelly_allocation": calcular_kelly_allocation(),
+        "acao_recomendada": calcular_acao_recomendada(),
+        "alertas_ativos": calcular_alertas_ativos(),
+        "pesos_dinamicos": calcular_pesos_dinamicos(),
+        "blocos": {
+            "ciclo": score_ciclo
+        }
+    }
+
 
 # Funções mockadas por chave de retorno (exceto bloco ciclo)
 def calcular_score_final() -> float:
@@ -37,21 +62,3 @@ def calcular_pesos_dinamicos() -> dict:
         "tecnico": 0.20
     }
 
-@router.get("/", summary="Analise Geral", tags=["Analise BTC"])
-def analise_geral():
-    score_ciclo = ciclo.calcular_bloco_ciclo()
-
-    return {
-        "timestamp": datetime.utcnow().isoformat() + "Z",
-        "score_final": calcular_score_final(),
-        "score_ajustado": calcular_score_ajustado(),
-        "modificador_volatilidade": calcular_modificador_volatilidade(),
-        "classificacao_geral": calcular_classificacao_geral(),
-        "kelly_allocation": calcular_kelly_allocation(),
-        "acao_recomendada": calcular_acao_recomendada(),
-        "alertas_ativos": calcular_alertas_ativos(),
-        "pesos_dinamicos": calcular_pesos_dinamicos(),
-        "blocos": {
-            "ciclo": score_ciclo
-        }
-    }
