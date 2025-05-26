@@ -1,7 +1,7 @@
 # app/main.py
 
 from fastapi import FastAPI
-from app.routers import analise_btc, analise_ciclo, test_notion
+from app.routers import analise_btc, analise_ciclo,  test_endpoint_notion
 
 app = FastAPI(
     title="BTC Turbo API",
