@@ -172,30 +172,94 @@ def calcular_score_mvrv():
     }
 ```
 
-### Padrão de Response
+## 📋 PADRÕES DE SAÍDA JSON (REAL)
+
+### 1. API `/analise-ciclo` - Formato Bloco
+```json
+{
+    "score": 5.5,
+    "indicadores": {
+        "MVRV_Z": {
+            "valor": 2.1,
+            "score": 6.0
+        },
+        "Realized_Ratio": {
+            "valor": 1.3,
+            "score": 5.5
+        },
+        "Puell_Multiple": {
+            "valor": 1.2,
+            "score": 5.0
+        }
+    }
+}
+```
+
+### 2. API `/analise-btc` - Formato Principal
+```json
+{
+    "timestamp": "2025-05-26T13:23:55.242171Z",
+    "score_final": 5.85,
+    "score_ajustado": 5.27,
+    "modificador_volatilidade": 0.9,
+    "classificacao_geral": "Neutro",
+    "kelly_allocation": "25%",
+    "acao_recomendada": "Manter posição conservadora",
+    "alertas_ativos": [
+        "Volatilidade elevada",
+        "EMA200 como resistência"
+    ],
+    "pesos_dinamicos": {
+        "ciclo": 0.40,
+        "momentum": 0.25,
+        "risco": 0.15,
+        "tecnico": 0.20
+    },
+    "blocos": {
+        "ciclo": {
+            "score": 5.5,
+            "indicadores": {
+                "MVRV_Z": {
+                    "valor": 2.1,
+                    "score": 6.0
+                },
+                "Realized_Ratio": {
+                    "valor": 1.3,
+                    "score": 5.5
+                },
+                "Puell_Multiple": {
+                    "valor": 1.2,
+                    "score": 5.0
+                }
+            }
+        }
+    }
+}
+```
+
+### 3. Schemas Pydantic (Para Implementar)
 ```python
+# app/schemas/response_model.py
+
 class IndicadorResponse(BaseModel):
-    nome: str
-    valor_bruto: Union[float, str]
+    valor: Union[float, str]
     score: float
-    classificacao: str
-    timestamp: datetime
-    fonte: str
-    
+
 class BlocoResponse(BaseModel):
-    nome: str
-    peso_percentual: float
-    score_consolidado: float
-    indicadores: List[IndicadorResponse]
-    
-class AnaliseResponse(BaseModel):
+    score: float
+    indicadores: Dict[str, IndicadorResponse]
+
+class AnaliseBTCResponse(BaseModel):
     timestamp: datetime
     score_final: float
+    score_ajustado: float
+    modificador_volatilidade: float
     classificacao_geral: str
     kelly_allocation: str
     acao_recomendada: str
     alertas_ativos: List[str]
-    blocos: List[BlocoResponse]
+    pesos_dinamicos: Dict[str, float]
+    blocos: Dict[str, BlocoResponse]
 ```
 
 ## 🔧 CONFIGURAÇÕES TÉCNICAS
