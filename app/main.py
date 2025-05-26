@@ -14,4 +14,4 @@ app.include_router(analise_ciclo.router, prefix="/analise-ciclo")
 app.include_router(analise_btc.router, prefix="/analise-btc")
 
 # Rota de teste (temporária)
-app.include_router(test_notion.router, prefix="/debug")
+app.include_router(test_endpoint_notion.router, prefix="/debug")
