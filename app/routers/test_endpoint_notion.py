@@ -8,6 +8,28 @@ from app.services.utils.postgres_helper import get_status_todos_blocos
 router = APIRouter()
 
 
+@router.get("/test-force-update", summary="Força Atualização", tags=["Debug"])
+def test_force_update():
+    try:
+        from app.services.integracao.notion_ciclo_reader import get_ciclo_data_from_notion
+        from app.services.utils.postgres_helper import save_dados_ciclo
+        
+        # FORÇA busca no Notion (ignora cache)
+        dados_notion = get_ciclo_data_from_notion()
+        
+        # FORÇA save no PostgreSQL
+        sucesso = save_dados_ciclo(dados_notion)
+        
+        return {
+            "status": "forcado",
+            "dados_salvos": dados_notion,
+            "sucesso": sucesso
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @router.get("/test-postgres", summary="Teste PostgreSQL", tags=["Debug"])
 def test_postgres():
     try:
