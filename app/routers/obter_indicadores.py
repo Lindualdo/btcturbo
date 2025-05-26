@@ -7,6 +7,9 @@ import json
 import logging
 import traceback
 
+# Configurar logger ANTES de qualquer uso
+logger = logging.getLogger(__name__)
+
 # Imports específicos do projeto
 try:
     from app.config import get_settings
@@ -30,9 +33,6 @@ except ImportError:
     logger.warning("Notion client não disponível")
 
 router = APIRouter()
-
-# Configurar logger
-logger = logging.getLogger(__name__)
 
 # Configuração do cache (8 horas)
 CACHE_EXPIRATION_HOURS = 8
@@ -447,4 +447,4 @@ def coletar_dados_momentum() -> Dict[str, Any]:
     Coleta dados específicos do bloco Momentum
     IMPLEMENTAR: APIs de funding rates, OI, etc.
     """
-    raise NotImplementedError("Função coletar_dados_momentum ainda não implementada")   
+    raise NotImplementedError("Função coletar_dados_momentum ainda não implementada")
