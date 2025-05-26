@@ -9,12 +9,10 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Rotas principais
-app.include_router(analise_ciclo.router, prefix="/analise-ciclo")
-app.include_router(analise_btc.router, prefix="/analise-btc")
+# APIs principais - Versão 1
+app.include_router(analise_ciclo.router, prefix="/api/v1", tags=["API v1"])
+app.include_router(analise_btc.router, prefix="/api/v1", tags=["API v1"])
+app.include_router(obter_indicadores.router, prefix="/api/v1", tags=["API v1"])
 
-# API centralizadora de dados
-app.include_router(obter_indicadores.router, prefix="/api")
-
-# Rota de teste (temporária)
-app.include_router(test_endpoint_notion.router, prefix="/debug")
+# Debug endpoints (sem versão)
+app.include_router(test_endpoint_notion.router, prefix="/debug", tags=["Debug"])
