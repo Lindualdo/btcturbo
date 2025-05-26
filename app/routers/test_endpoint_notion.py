@@ -21,30 +21,27 @@ def test_postgres():
 @router.get("/test-notion-ciclo", summary="Teste Notion Ciclo", tags=["Debug"])
 def test_notion_ciclo():
     """
-    Endpoint para testar a integração com Notion - Bloco Ciclo
-    Útil para debug em produção
+    Endpoint para testar a integração completa Notion → PostgreSQL
     """
     try:
-        from app.services.integracao.notion_ciclo_reader import get_ciclo_data_from_notion
+        from app.services.integracao.notion_ciclo_reader import update_ciclo_from_notion
         
-        # Tentar coletar dados
-        dados = get_ciclo_data_from_notion()
+        # Chama a função que lê Notion E salva no PostgreSQL
+        sucesso = update_ciclo_from_notion()
         
-        return {
-            "status": "sucesso",
-            "timestamp": datetime.utcnow().isoformat() + "Z",
-            "dados_coletados": dados,
-            "total_indicadores": sum(1 for k, v in dados.items() 
-                                   if k not in ["fonte", "timestamp"] and v is not None),
-            "indicadores_encontrados": [
-                k for k, v in dados.items() 
-                if k not in ["fonte", "timestamp"] and v is not None
-            ],
-            "indicadores_faltando": [
-                k for k, v in dados.items() 
-                if k not in ["fonte", "timestamp"] and v is None
-            ]
-        }
+        if sucesso:
+            return {
+                "status": "sucesso",
+                "message": "Dados lidos do Notion e salvos no PostgreSQL",
+                "timestamp": datetime.utcnow().isoformat() + "Z"
+            }
+        else:
+            raise Exception("Falha ao processar dados")
+            
+    except Exception as e:
+        logging.error(f"Erro no teste Notion→PostgreSQL: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+    
         
     except Exception as e:
         logging.error(f"Erro no teste Notion: {str(e)}")
