@@ -12,3 +12,6 @@ google-auth>=2.17.3
 sqlalchemy
 psycopg2-binary
 python-dotenv
+# POSTGRESQL - ADICIONAR ESTAS LINHAS
+psycopg2-binary
+psycopg2

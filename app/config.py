@@ -1,8 +1,8 @@
-# app/config.py - VERSÃO CORRIGIDA
+# app/config.py - ADICIONAR ESTAS CONFIGURAÇÕES
 
 from pydantic_settings import BaseSettings
 from pydantic import Field
-from typing import List
+from typing import List, Optional
 from functools import lru_cache
 
 class Settings(BaseSettings):
@@ -18,13 +18,30 @@ class Settings(BaseSettings):
 
     # Notion integration
     NOTION_TOKEN: str = Field(..., env="NOTION_TOKEN")
-    #um mesmo database para todos indicadores estaticos
     NOTION_DATABASE_ID: str = Field(..., env="NOTION_DATABASE_ID")
-  
 
-    # Google Cloud BigQuery (NOVOS CAMPOS)
+    # ==========================================
+    # POSTGRESQL - ADICIONAR ESTAS LINHAS
+    # ==========================================
+    
+    # PostgreSQL connection - Opção 1: Separado
+    DB_HOST: str = Field(..., env="DB_HOST")
+    DB_NAME: str = Field(..., env="DB_NAME") 
+    DB_USER: str = Field(..., env="DB_USER")
+    DB_PASSWORD: str = Field(..., env="DB_PASSWORD")
+    DB_PORT: int = Field(5432, env="DB_PORT")
+    
+    # PostgreSQL connection - Opção 2: URL única (alternativa)
+    DATABASE_URL: Optional[str] = Field(None, env="DATABASE_URL")
+
+    # Google Cloud BigQuery
     GOOGLE_APPLICATION_CREDENTIALS_JSON: str = Field(..., env="GOOGLE_APPLICATION_CREDENTIALS_JSON")
     GOOGLE_CLOUD_PROJECT: str = Field(..., env="GOOGLE_CLOUD_PROJECT")
+
+    # APIs Externas (quando necessário)
+    GLASSNODE_API_KEY: Optional[str] = Field(None, env="GLASSNODE_API_KEY")
+    COINGLASS_API_KEY: Optional[str] = Field(None, env="COINGLASS_API_KEY")
+    AAVE_RPC_URL: Optional[str] = Field(None, env="AAVE_RPC_URL")
 
     # Indicator weights and thresholds
     WEIGHT_EMA_200: float = Field(0.25, description="Peso para BTC vs 200D EMA")
@@ -44,7 +61,6 @@ class Settings(BaseSettings):
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
-
 
 @lru_cache()
 def get_settings() -> Settings:
