@@ -30,7 +30,7 @@ def obter_todos_indicadores(forcar: bool = Query(False, description="Forçar atu
         "timestamp": datetime.utcnow().isoformat() + "Z",
         "parametro_forcar": forcar,
         "blocos_processados": {},
-        "dados_brutos": {},  # ← DADOS SEMPRE RETORNADOS
+        "dados_brutos": {},
         "resumo": {
             "total_blocos": 0,
             "blocos_atualizados": 0,
@@ -39,73 +39,151 @@ def obter_todos_indicadores(forcar: bool = Query(False, description="Forçar atu
         }
     }
     
-    # Lista de blocos disponíveis no sistema
-    blocos = [
-        ("ciclo", "app.services.blocos.ciclos.update_ciclo", "update_ciclo"),
-        # ("momentum", "app.services.blocos.momentum.update_momentum", "update_momentum"),  # Futuro
-        # ("risco", "app.services.blocos.risco.update_risco", "update_risco"),              # Futuro
-        # ("tecnico", "app.services.blocos.tecnico.update_tecnico", "update_tecnico")       # Futuro
-    ]
-    
-    for nome_bloco, modulo_path, funcao_nome in blocos:
-        try:
-            # Import dinâmico do módulo do bloco
-            modulo = __import__(modulo_path, fromlist=[funcao_nome])
-            funcao_update = getattr(modulo, funcao_nome)
+    # Processamento do bloco ciclo com import direto
+    try:
+        logging.info("Processando bloco ciclo...")
+        
+        # Import direto para evitar problemas de path
+        from app.services.utils.postgres_helper import is_ciclo_outdated, get_dados_ciclo
+        from app.services.integracao.notion_ciclo_reader import update_ciclo_from_notion
+        
+        # Verifica se precisa atualizar
+        precisa_atualizar = forcar or is_ciclo_outdated(hours=8)
+        
+        if not precisa_atualizar:
+            # Dados ainda válidos, usa cache
+            dados_cache = get_dados_ciclo()
             
-            # Executa obtenção/atualização do bloco
-            resultado_bloco = funcao_update(forcar=forcar)
+            logging.info("Bloco ciclo: Usando dados do cache PostgreSQL")
             
-            # Registra status do processamento
-            resultado["blocos_processados"][nome_bloco] = {
-                "atualizado": resultado_bloco["atualizado"],
-                "motivo": resultado_bloco["motivo"],
-                "fonte": resultado_bloco.get("fonte"),
-                "timestamp_dados": resultado_bloco.get("timestamp_dados"),
-                "timestamp_processamento": resultado_bloco.get("timestamp_atualizacao", resultado_bloco.get("timestamp_verificacao"))
-            }
-            
-            # SEMPRE inclui dados brutos atuais do PostgreSQL
-            if resultado_bloco["dados"]:
-                resultado["dados_brutos"][nome_bloco] = resultado_bloco["dados"]
-            else:
-                resultado["dados_brutos"][nome_bloco] = None
-            
-            # Atualiza contadores
-            resultado["resumo"]["total_blocos"] += 1
-            
-            if resultado_bloco["atualizado"]:
-                resultado["resumo"]["blocos_atualizados"] += 1
-            elif resultado_bloco["motivo"] == "erro":
-                resultado["resumo"]["blocos_erro"] += 1
-            else:
-                resultado["resumo"]["blocos_cache"] += 1
-                
-            logging.info(f"Bloco {nome_bloco} obtido com sucesso")
-            
-        except Exception as e:
-            erro_detalhes = {
+            resultado["blocos_processados"]["ciclo"] = {
                 "atualizado": False,
-                "motivo": "erro_sistema",
-                "erro": str(e),
-                "tipo_erro": type(e).__name__,
-                "timestamp_erro": datetime.utcnow().isoformat() + "Z"
+                "motivo": "cache_valido",
+                "fonte": dados_cache.get("fonte") if dados_cache else "PostgreSQL",
+                "timestamp_dados": dados_cache.get("timestamp").isoformat() if dados_cache and dados_cache.get("timestamp") else None,
+                "timestamp_processamento": datetime.utcnow().isoformat() + "Z"
             }
             
-            resultado["blocos_processados"][nome_bloco] = erro_detalhes
-            resultado["dados_brutos"][nome_bloco] = None  # Indica erro
-            resultado["resumo"]["blocos_erro"] += 1
+            resultado["dados_brutos"]["ciclo"] = {
+                "mvrv_z_score": dados_cache.get("mvrv_z_score") if dados_cache else None,
+                "realized_ratio": dados_cache.get("realized_ratio") if dados_cache else None,
+                "puell_multiple": dados_cache.get("puell_multiple") if dados_cache else None
+            }
             
-            logging.error(f"Erro ao obter bloco {nome_bloco}: {str(e)}")
+            resultado["resumo"]["blocos_cache"] += 1
+            
+        else:
+            # Precisa atualizar - busca do Notion
+            logging.info("Bloco ciclo: Buscando dados atualizados do Notion")
+            
+            try:
+                sucesso = update_ciclo_from_notion()
+                
+                if not sucesso:
+                    raise Exception("Falha ao atualizar dados do Notion")
+                
+                # Busca dados recém-salvos
+                dados_atualizados = get_dados_ciclo()
+                
+                if not dados_atualizados:
+                    raise Exception("Dados não foram salvos corretamente no PostgreSQL")
+                
+                resultado["blocos_processados"]["ciclo"] = {
+                    "atualizado": True,
+                    "motivo": "forcado" if forcar else "cache_expirado",
+                    "fonte": "Notion",
+                    "timestamp_dados": dados_atualizados.get("timestamp").isoformat() if dados_atualizados.get("timestamp") else None,
+                    "timestamp_processamento": datetime.utcnow().isoformat() + "Z"
+                }
+                
+                resultado["dados_brutos"]["ciclo"] = {
+                    "mvrv_z_score": dados_atualizados.get("mvrv_z_score"),
+                    "realized_ratio": dados_atualizados.get("realized_ratio"),
+                    "puell_multiple": dados_atualizados.get("puell_multiple")
+                }
+                
+                resultado["resumo"]["blocos_atualizados"] += 1
+                
+            except Exception as update_error:
+                # Erro na atualização, tenta usar dados existentes
+                logging.error(f"Erro ao atualizar bloco ciclo: {str(update_error)}")
+                
+                dados_fallback = get_dados_ciclo()
+                
+                if dados_fallback:
+                    logging.warning("Usando dados existentes devido ao erro na atualização")
+                    
+                    resultado["blocos_processados"]["ciclo"] = {
+                        "atualizado": False,
+                        "motivo": "erro_com_fallback",
+                        "fonte": dados_fallback.get("fonte"),
+                        "timestamp_dados": dados_fallback.get("timestamp").isoformat() if dados_fallback.get("timestamp") else None,
+                        "erro": str(update_error),
+                        "timestamp_erro": datetime.utcnow().isoformat() + "Z"
+                    }
+                    
+                    resultado["dados_brutos"]["ciclo"] = {
+                        "mvrv_z_score": dados_fallback.get("mvrv_z_score"),
+                        "realized_ratio": dados_fallback.get("realized_ratio"),
+                        "puell_multiple": dados_fallback.get("puell_multiple")
+                    }
+                    
+                    resultado["resumo"]["blocos_erro"] += 1
+                else:
+                    # Sem dados para fallback
+                    raise update_error
+        
+        resultado["resumo"]["total_blocos"] += 1
+        logging.info("Bloco ciclo processado com sucesso")
+        
+    except Exception as e:
+        # Erro crítico no bloco ciclo
+        logging.error(f"Erro crítico ao processar bloco ciclo: {str(e)}")
+        
+        resultado["blocos_processados"]["ciclo"] = {
+            "atualizado": False,
+            "motivo": "erro_critico",
+            "erro": str(e),
+            "tipo_erro": type(e).__name__,
+            "timestamp_erro": datetime.utcnow().isoformat() + "Z"
+        }
+        
+        resultado["dados_brutos"]["ciclo"] = None
+        resultado["resumo"]["total_blocos"] += 1
+        resultado["resumo"]["blocos_erro"] += 1
     
-    # Se todos os blocos falharam, retorna erro HTTP
-    if resultado["resumo"]["blocos_erro"] == resultado["resumo"]["total_blocos"]:
+    # Se o único bloco falhou completamente, retorna erro HTTP
+    if resultado["resumo"]["blocos_erro"] == resultado["resumo"]["total_blocos"] and resultado["dados_brutos"]["ciclo"] is None:
         raise HTTPException(
             status_code=500,
             detail={
-                "message": "Falha ao obter dados de todos os blocos",
+                "message": "Falha ao obter dados do bloco ciclo",
                 "detalhes": resultado
             }
         )
     
     return resultado
+
+@router.get("/debug-import", 
+            summary="Debug Import Ciclo", 
+            tags=["Debug"])
+def debug_import():
+    """Endpoint para debugar imports"""
+    try:
+        from app.services.utils.postgres_helper import get_dados_ciclo
+        from app.services.integracao.notion_ciclo_reader import update_ciclo_from_notion
+        
+        return {
+            "status": "sucesso",
+            "imports": {
+                "postgres_helper": "OK",
+                "notion_ciclo_reader": "OK"
+            },
+            "dados_teste": get_dados_ciclo() is not None
+        }
+    except Exception as e:
+        return {
+            "status": "erro",
+            "erro": str(e),
+            "tipo": type(e).__name__
+        }
