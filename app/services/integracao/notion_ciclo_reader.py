@@ -7,6 +7,31 @@ from notion_client import Client
 from app.config import get_settings
 from app.services.utils.postgres_helper import save_dados_ciclo
 
+
+def update_ciclo_from_notion():
+    """
+    Atualiza dados do bloco ciclo no PostgreSQL com dados do Notion.
+    """
+    try:
+        from app.services.utils.postgres_helper import save_dados_ciclo
+        
+        # Coleta dados do Notion
+        dados_notion = get_ciclo_data_from_notion()
+        
+        # Salva no PostgreSQL usando as funções reais
+        sucesso = save_dados_ciclo(dados_notion)
+        
+        if sucesso:
+            logging.info("Dados do bloco ciclo atualizados com sucesso no PostgreSQL")
+            return True
+        else:
+            raise Exception("Falha ao salvar no PostgreSQL")
+            
+    except Exception as e:
+        logging.error(f"Erro ao atualizar bloco ciclo: {str(e)}")
+        raise e
+
+
 def get_ciclo_data_from_notion() -> Dict:
     """
     Lê dados do bloco ciclo da tabela tbl_ciclos no Notion.
@@ -103,25 +128,6 @@ def get_ciclo_data_from_notion() -> Dict:
         logging.error(f"Erro ao coletar dados do bloco ciclo no Notion: {str(e)}")
         raise e
 
-def update_ciclo_from_notion():
-    """
-    Atualiza dados do bloco ciclo no PostgreSQL com dados do Notion.
-    Função para ser chamada pelas funções de update individuais.
-    """
-    try:
-        # Coleta dados do Notion
-        dados_notion = get_ciclo_data_from_notion()
-        
-        # Salva no PostgreSQL (tabela indicadores_ciclo)
-        save_dados_ciclo(dados_notion)
-        
-        logging.info("Dados do bloco ciclo atualizados com sucesso no PostgreSQL")
-        return True
-        
-    except Exception as e:
-        logging.error(f"Erro ao atualizar bloco ciclo: {str(e)}")
-        return False
-
 def get_individual_indicator_from_notion(indicador_nome: str) -> Optional[float]:
     """
     Busca um indicador específico do Notion.
@@ -153,3 +159,5 @@ def get_individual_indicator_from_notion(indicador_nome: str) -> Optional[float]
     except Exception as e:
         logging.error(f"Erro ao buscar indicador {indicador_nome}: {str(e)}")
         return None
+    
+    
