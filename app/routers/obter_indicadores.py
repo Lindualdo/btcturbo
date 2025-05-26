@@ -325,23 +325,26 @@ def coletar_dados_ciclo() -> Dict[str, Any]:
     try:
         logger.info("Obtendo configurações do sistema...")
         
-        # Verificar se get_settings está disponível
+        # ✅ CORREÇÃO: Chamar get_settings() diretamente
         try:
             settings = get_settings()
             database_id = settings.NOTION_DATABASE_ID
+            notion_token = settings.NOTION_TOKEN
             logger.info(f"Database ID do Notion: {database_id}")
+            logger.info(f"Notion token existe: {bool(notion_token)}")
         except Exception as e:
             logger.error(f"Erro ao obter settings: {e}")
             raise ValueError("Configurações não disponíveis")
         
-        logger.info("Obtendo cliente do Notion...")
+        logger.info("Criando cliente do Notion diretamente...")
         
-        # Verificar se get_notion_client está disponível
+        # ✅ CORREÇÃO: Criar cliente Notion diretamente ao invés de usar dependency
         try:
-            notion = get_notion_client()
-            logger.info("Cliente do Notion obtido com sucesso")
+            from notion_client import Client as NotionClient
+            notion = NotionClient(auth=notion_token)
+            logger.info("Cliente do Notion criado com sucesso")
         except Exception as e:
-            logger.error(f"Erro ao obter cliente Notion: {e}")
+            logger.error(f"Erro ao criar cliente Notion: {e}")
             raise ValueError("Cliente Notion não disponível")
         
         # Query no Notion para dados do ciclo
