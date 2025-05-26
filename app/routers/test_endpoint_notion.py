@@ -3,8 +3,20 @@
 from fastapi import APIRouter, HTTPException
 from datetime import datetime
 import logging
+from app.services.utils.postgres_helper import get_status_todos_blocos
 
 router = APIRouter()
+
+
+@router.get("/test-postgres", summary="Teste PostgreSQL", tags=["Debug"])
+def test_postgres():
+    try:
+       
+        status = get_status_todos_blocos()
+        return {"status": "sucesso", "postgres": status}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail={"erro": str(e)})
+
 
 @router.get("/test-notion-ciclo", summary="Teste Notion Ciclo", tags=["Debug"])
 def test_notion_ciclo():
