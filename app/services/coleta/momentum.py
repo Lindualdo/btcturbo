@@ -12,7 +12,7 @@ def coletar(forcar_coleta):
         status = "Dados coletados respeitando o cache"
 
     return {
-        "bloco": "ciclo",
+        "bloco": "momentum",
         "status": "sucesso",
         "timestamp": datetime.utcnow().isoformat(),
         "detalhes": status
