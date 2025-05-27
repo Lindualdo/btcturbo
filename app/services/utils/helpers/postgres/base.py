@@ -103,7 +103,14 @@ def test_connection() -> bool:
             with conn.cursor() as cursor:
                 cursor.execute("SELECT version()")
                 version = cursor.fetchone()
-                logger.info(f"✅ PostgreSQL conectado: {version[0]}")
+                
+                # Fix: version é um dict devido ao RealDictCursor
+                if version:
+                    version_str = str(version.get('version', 'Unknown')) if isinstance(version, dict) else str(version)
+                    logger.info(f"✅ PostgreSQL conectado: {version_str}")
+                else:
+                    logger.info("✅ PostgreSQL conectado: Version query returned empty")
+                    
                 return True
                 
     except Exception as e:
