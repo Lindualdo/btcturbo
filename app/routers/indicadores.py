@@ -2,19 +2,20 @@
 
 from fastapi import APIRouter
 from datetime import datetime
+from app.services.indicadores import ciclo, riscos, momentum, tecnico
 
 router = APIRouter()
 
-@router.get("/indicadores/{bloco}")
+@router.get("/api/v1/indicadores/{bloco}")
 async def obter_indicadores(bloco: str):
     if bloco == "ciclo":
-        return {
-            "bloco": "ciclo",
-            "timestamp": datetime.utcnow().isoformat(),
-            "indicadores": {
-                "MVRV_Z": {"valor": 2.1, "fonte": "Glassnode"},
-                "Realized_Ratio": {"valor": 1.3, "fonte": "Glassnode"},
-                "Puell_Multiple": {"valor": 1.2, "fonte": "Glassnode"}
-            }
-        }
-    return {"status": "erro", "detalhes": "Bloco inválido"}
+        return ciclo.obter_indicadores()
+    elif bloco == "riscos":
+        return riscos.obter_indicadores()
+    elif bloco == "momentum":
+        return momentum.obter_indicadores()
+    elif bloco == "tecnico":
+        return tecnico.obter_indicadores()
+    else:
+        return {"status": "erro", "detalhes": "Bloco inválido"}
+
