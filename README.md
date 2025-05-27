@@ -1,4 +1,4 @@
-# BTC TURBO - v1.0.5
+# BTC TURBO - v1.0.6
 
 ## 🎯 Objetivo da Documentação
 
