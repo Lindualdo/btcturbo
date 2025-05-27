@@ -1,4 +1,4 @@
-# BTC TURBO - v1.0.6
+# BTC TURBO - v1.0.7
 
 ## 🎯 Objetivo da Documentação
 
@@ -330,15 +330,15 @@ app/services/utils/helpers/postgres/
 
 ## 🎯 **Roadmap das Próximas Fases**
 
-### **Fase 2: APIs Reais** 
-- [ ] Substituir APIs mockadas por versões PostgreSQL
-- [ ] Testar integração completa de todos os blocos
-- [ ] Validar formatação e tipos de dados
+### **Fase 2: APIs Reais** - V 1.0.6
+- [X] Substituir APIs mockadas por versões PostgreSQL
+- [X] Testar integração completa de todos os blocos
+- [X] Validar formatação e tipos de dados
 
-### **Fase 3: Sistema de Scores**
-- [ ] Implementar cálculo de scores reais por bloco
-- [ ] Sistema de pesos dinâmicos
-- [ ] API consolidada final
+### **Fase 3: Sistema de Scores** - V 1.0.7
+- [X] Implementar cálculo de scores reais por bloco
+- [X] Sistema de pesos dinâmicos
+- [X] API consolidada final
 
 ### **Fase 4: Integração Externa** 
 - [ ] TradingView (tvDatafeed)
