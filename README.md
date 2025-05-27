@@ -1,8 +1,25 @@
-# BTC TURBO - v1.0.1
+# BTC TURBO - v1.0.3
 
 ## 🎯 Objetivo da Documentação
 
 Esta documentação técnica define claramente o padrão arquitetural, responsabilidades das APIs, estrutura de pastas e fluxo de trabalho, facilitando o desenvolvimento organizado e evitando quebras na implementação.
+
+---
+
+##  Release - features e fix
+
+- Esqueleto completo com dados mockados e nova arquitetura
+- estrutura de helpers criada para (notion, trandview e postgres)
+- todas apis funcionando 
+- Dados mockados mas usando todas as camadas do processo, seguindo padrão
+
+# Nova Arquitetura
+- Refactore completo na arquitetura
+- maior organização
+- facilidade para manutenção e evolução
+- facilidade para desenv. por agente de IA
+- reutilização de funções
+- esqueleto pronto para novos projetos
 
 ---
 
@@ -43,12 +60,12 @@ app/
 
 ## 🔄 Fluxo Completo e Responsabilidades
 
-| Etapa           | API                                  | Responsabilidade                         |
-| --------------- | ------------------------------------ | ---------------------------------------- |
-| 1. Coleta       | `POST /api/v1/coletar-indicadores`   | Buscar dados externos e gravar no banco  |
-| 2. Recuperação  | `GET /api/v1/obter-indicadores/{bloco}| Ler indicadores brutos do banco                |
-| 3. Score        | `GET /api/v1/calcular-score/{bloco}` | Calcular score a partir dos dados brutos |
-| 4. Consolidação | `GET /api/v1/analise-btc`            | Consolidar e gerar score final e alertas |
+| Etapa           | API                                    | Responsabilidade                         |
+| --------------- | -------------------------------------- | ---------------------------------------- |
+| 1. Coleta       | `POST /api/v1/coletar-indicadores`     | Buscar dados externos e gravar no banco  |
+| 2. Recuperação  | `GET /api/v1/obter-indicadores/{bloco}`| Ler indicadores brutos do banco          |
+| 3. Score        | `GET /api/v1/calcular-score/{bloco}`   | Calcular score a partir dos dados brutos |
+| 4. Consolidação | `GET /api/v1/analise-btc`              | Consolidar e gerar score final e alertas |
 
 ---
 

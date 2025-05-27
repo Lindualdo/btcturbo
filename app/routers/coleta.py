@@ -7,8 +7,8 @@ router = APIRouter()
 
 @router.post("/coletar-indicadores")
 async def coletar_indicadores(bloco: str, forcar_coleta: bool = False):
-    if bloco == "ciclo":
-        return ciclo.coletar(forcar_coleta)
+    if bloco == "ciclos":
+        return ciclos.coletar(forcar_coleta)
     elif bloco == "riscos":
         return riscos.coletar(forcar_coleta)
     elif bloco == "momentum":

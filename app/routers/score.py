@@ -7,7 +7,7 @@ router = APIRouter()
 
 @router.get("/calcular-score/{bloco}")
 async def calcular_score(bloco: str):
-    if bloco == "ciclo":
+    if bloco == "ciclos":
         resultado = ciclo_service.calcular_score()
         return resultado
     return {"status": "erro", "detalhes": "Bloco inválido"}
