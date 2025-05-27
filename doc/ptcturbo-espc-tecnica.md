@@ -1,4 +1,4 @@
-# BTC TURBO - v1.0.1
+# Documentação Técnica - BTC Turbo API v3.0
 
 ## 🎯 Objetivo da Documentação
 
@@ -76,13 +76,9 @@ GET /api/v1/calcular-score/{bloco}
     }
 }
 
-```
-
-**A Saida da APi analise-btc**:
+**ASaida da APi analise-riscos**:
 
 2. API /api/v1/analise-btc - Formato Principal
-
-```json
 json{
     "timestamp": "2025-05-26T13:23:55.242171Z",
     "score_final": 5.85,
@@ -121,6 +117,7 @@ json{
         }
     }
 }
+
 ```
 
 ---
@@ -163,6 +160,7 @@ AAVE_RPC_URL=https://ethereum-rpc.com
 ```
 
 ---
+
 
 ### Padrão de Response
 ```python
