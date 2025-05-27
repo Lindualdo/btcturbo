@@ -7,7 +7,7 @@ from app.services import alertas as alertas_service  # Corrigido
 
 router = APIRouter()
 
-@router.get("/api/v1/analise-btc")
+@router.get("/analise-btc")
 async def analise_btc():
     alertas = alertas_service.get_alertas()  # AQUI estava o erro: você não estava chamando a função
 
