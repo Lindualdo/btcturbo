@@ -2,14 +2,14 @@
 
 from fastapi import APIRouter
 from datetime import datetime
-from app.services.indicadores import ciclo, riscos, momentum, tecnico
+from app.services.indicadores import ciclos, riscos, momentum, tecnico
 
 router = APIRouter()
 
-@router.get("/api/v1/indicadores/{bloco}")
+@router.get("/api/v1/obter-indicadores/{bloco}")
 async def obter_indicadores(bloco: str):
     if bloco == "ciclo":
-        return ciclo.obter_indicadores()
+        return ciclos.obter_indicadores()
     elif bloco == "riscos":
         return riscos.obter_indicadores()
     elif bloco == "momentum":

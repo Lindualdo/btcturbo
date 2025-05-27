@@ -46,7 +46,7 @@ app/
 | Etapa           | API                                  | Responsabilidade                         |
 | --------------- | ------------------------------------ | ---------------------------------------- |
 | 1. Coleta       | `POST /api/v1/coletar-indicadores`   | Buscar dados externos e gravar no banco  |
-| 2. Recuperação  | `GET /api/v1/indicadores/{bloco}`    | Ler dados brutos do banco                |
+| 2. Recuperação  | `GET /api/v1/obter-indicadores/{bloco}| Ler indicadores brutos do banco                |
 | 3. Score        | `GET /api/v1/calcular-score/{bloco}` | Calcular score a partir dos dados brutos |
 | 4. Consolidação | `GET /api/v1/analise-btc`            | Consolidar e gerar score final e alertas |
 
