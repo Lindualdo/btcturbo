@@ -14,8 +14,8 @@ logger = logging.getLogger(__name__)
 
 def get_db_connection():
     """
-    Conecta com PostgreSQL usando configurações do .env
-    Otimizado para Railway com retry e timeout
+    Conecta com PostgreSQL usando configurações do Railway
+    Prioriza configurações separadas (DB_HOST, DB_NAME, etc.)
     """
     settings = get_settings()
     max_retries = 3
@@ -23,16 +23,9 @@ def get_db_connection():
     
     while retry_count < max_retries:
         try:
-            # Priorizar DATABASE_URL se disponível (padrão Railway)
-            if settings.DATABASE_URL:
-                logger.info("Conectando via DATABASE_URL (Railway)")
-                conn = psycopg2.connect(
-                    settings.DATABASE_URL,
-                    cursor_factory=RealDictCursor,
-                    connect_timeout=10
-                )
-            else:
-                logger.info("Conectando via configurações individuais")
+            # FORÇAR USO DAS CONFIGURAÇÕES SEPARADAS (Railway)
+            if settings.DB_HOST and settings.DB_NAME and settings.DB_USER and settings.DB_PASSWORD:
+                logger.info("🔗 Conectando via configurações separadas (Railway)")
                 conn = psycopg2.connect(
                     host=settings.DB_HOST,
                     database=settings.DB_NAME,
@@ -42,6 +35,15 @@ def get_db_connection():
                     cursor_factory=RealDictCursor,
                     connect_timeout=10
                 )
+            elif settings.DATABASE_URL:
+                logger.info("🔗 Conectando via DATABASE_URL")
+                conn = psycopg2.connect(
+                    settings.DATABASE_URL,
+                    cursor_factory=RealDictCursor,
+                    connect_timeout=10
+                )
+            else:
+                raise Exception("❌ Nenhuma configuração PostgreSQL encontrada")
             
             # Testar conexão
             with conn.cursor() as cursor:
@@ -56,6 +58,7 @@ def get_db_connection():
             
             if retry_count >= max_retries:
                 logger.error("🚨 ERRO CRÍTICO: Não foi possível conectar ao PostgreSQL após 3 tentativas")
+                logger.error(f"🔍 Configurações: HOST={settings.DB_HOST}, DB={settings.DB_NAME}, USER={settings.DB_USER}")
                 raise Exception(f"Falha na conexão PostgreSQL: {str(e)}")
                 
         except Exception as e:
