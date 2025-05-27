@@ -1,4 +1,4 @@
-#/app/services/alertas/alertas.py
+#/app/services/alertas.py
 
 from datetime import datetime
 

@@ -15,7 +15,7 @@ async def analise_btc():
         "classificacao_geral": "Neutro",
         "kelly_allocation": "25%",
         "acao_recomendada": "Manter posição conservadora",
-        "alertas_ativos": alertas["alertas_ativos"],
+        "alertas_ativos": alertas.get_alertas["alertas_ativos"],
         "blocos": {
             "ciclo": {"score": 5.5, "peso": "40%"},
             "momentum": {"score": 6.2, "peso": "25%"},
