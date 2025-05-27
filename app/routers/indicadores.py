@@ -8,7 +8,7 @@ router = APIRouter()
 
 @router.get("/obter-indicadores/{bloco}")
 async def obter_indicadores(bloco: str):
-    if bloco == "ciclo":
+    if bloco == "ciclos":
         return ciclos.obter_indicadores()
     elif bloco == "riscos":
         return riscos.obter_indicadores()
