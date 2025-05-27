@@ -1,7 +1,7 @@
 #/app/routers/score.py
 
 from fastapi import APIRouter
-from services.scores import ciclo as ciclo_service
+from app.services.scores import ciclos as ciclo_service
 
 router = APIRouter()
 
