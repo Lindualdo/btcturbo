@@ -26,9 +26,17 @@ app/
     │   ├── momentum.py
     │   ├── risco.py
     │   └── tecnico.py
-    └── utils/                  # Funções auxiliares e comuns
+    └── utils/                      # Funções auxiliares e comuns   
+        ├── ciclo.py
+        ├── momentum.py
         ├── cache.py
-        └── helpers.py
+        ├── tecnico-emas.py
+        ├── tecnico-padroes.py
+        ├── helpers         # Coleta dos dados externos
+            postgrees.py
+            notion.py
+            api-clasnode.py
+            trandview.py     
 ```
 
 ---
@@ -43,6 +51,46 @@ app/
 | 4. Consolidação | `GET /api/v1/analise-btc`            | Consolidar e gerar score final e alertas |
 
 ---
+
+## Fluxo padrão de cada Processos - APIs
+
+### 1. 📥 Processo de Coleta
+router (coleta.py)
+   └─▶ services/coleta/{bloco}.py
+         └─▶ utils/cache.py
+               └─▶ utils/helpers_{indicador}.py
+                     └─▶ [Grava Dados Brutos no PostgreSQL]
+
+
+### 2. 📤 Processo Obter Dados Brutos
+router (indicadores.py)
+   └─▶ [Consulta Dados Brutos no PostgreSQL]
+
+### 3. 📊 Processo de Cálculo de Score
+router (score.py)                               
+   └─▶ services/scores/{bloco}.py
+         └─▶ [Consulta Dados Brutos no PostgreSQL]
+               └─▶ utils/helpers_{indicador}.py
+                     └─▶ [Retorna Score calculado]
+
+
+### 4. router (alertas.py)
+   └─▶ services/alertas.py
+         └─▶ utils/helpers_alertas.py
+               └─▶ [Retorna lista de alertas ativos]
+
+
+### 5. 📌 Processo Consolidado Final
+
+router (analise.py)
+   ├─▶ services/scores/{bloco}.py (todos blocos)
+   │     └─▶ utils/helpers_{indicador}.py
+   └─▶ services/alertas.py
+         └─▶ utils/helpers_alertas.py
+               └─▶ [Gera resposta consolidada final com scores e alertas relacionado a todos os blocos]
+
+---
+
 
 ## 🚩 Padrões das APIs
 
