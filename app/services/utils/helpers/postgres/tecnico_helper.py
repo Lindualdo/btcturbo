@@ -57,9 +57,10 @@ def get_historico_tecnico(limit: int = 10) -> list:
     try:
         logger.info(f"📊 Buscando histórico do bloco TÉCNICO (últimos {limit} registros)")
         
+
         query = """
             SELECT sistema_emas, padroes_graficos,
-                   timestamp, fonte
+                   timestamp, fonte 
             FROM indicadores_tecnico 
             ORDER BY timestamp DESC 
             LIMIT %s
