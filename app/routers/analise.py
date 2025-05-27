@@ -2,7 +2,7 @@
 
 from fastapi import APIRouter
 from datetime import datetime
-from app.services import alertas   
+from app.services import alertas 
 
 router = APIRouter()
 
