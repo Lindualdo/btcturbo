@@ -1,7 +1,7 @@
 #/app/routers/coleta.py
 
 from fastapi import APIRouter
-from services.coleta import ciclos  , riscos, momentum, tecnico
+from services.coleta import ciclos, riscos, momentum, tecnico
 
 router = APIRouter()
 
