@@ -134,29 +134,8 @@ def create_tables_if_not_exist():
 def insert_dados_exemplo():
     """Insere dados de exemplo para teste (desenvolvimento)"""
     try:
-        logger.info("🧪 Inserindo dados de exemplo...")
-        
-        # Dados exemplo para todos os blocos
-        dados_exemplo = [
-            """INSERT INTO indicadores_ciclo (mvrv_z_score, realized_ratio, puell_multiple, fonte) VALUES 
-               (2.75, 1.85, 1.44, 'Exemplo'), (2.68, 1.82, 1.41, 'Exemplo')""",
-            
-            """INSERT INTO indicadores_momentum (rsi_semanal, funding_rates, oi_change, long_short_ratio, fonte) VALUES 
-               (52.3, 0.015, 12.5, 0.98, 'Exemplo'), (48.7, 0.012, 8.2, 1.02, 'Exemplo')""",
-            
-            """INSERT INTO indicadores_risco (dist_liquidacao, health_factor, exchange_netflow, stablecoin_ratio, fonte) VALUES 
-               (35.0, 1.7, -5000, 8.0, 'Exemplo'), (40.0, 1.9, -3000, 9.5, 'Exemplo')""",
-            
-            """INSERT INTO indicadores_tecnico (sistema_emas, padroes_graficos, fonte) VALUES 
-               (7.5, 6.0, 'Exemplo'), (8.2, 7.5, 'Exemplo')"""
-        ]
-        
-        for sql in dados_exemplo:
-            execute_query(sql)
-            
-        logger.info("✅ Dados de exemplo inseridos com sucesso")
-        return True
-        
+        from .dados_exemplo import insert_dados_exemplo_realistas
+        return insert_dados_exemplo_realistas()
     except Exception as e:
         logger.error(f"❌ Erro ao inserir dados exemplo: {str(e)}")
         return False
