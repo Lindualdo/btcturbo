@@ -3,9 +3,12 @@
 from fastapi import APIRouter
 from app.services.coleta import ciclos, riscos, momentum, tecnico
 
+from fastapi import APIRouter
+from app.services.coleta import ciclos, riscos, momentum, tecnico
+
 router = APIRouter()
 
-@router.post("/coletar-indicadores")
+@router.post("/coletar-indicadores/{bloco}")
 async def coletar_indicadores(bloco: str, forcar_coleta: bool = False):
     if bloco == "ciclos":
         return ciclos.coletar(forcar_coleta)
