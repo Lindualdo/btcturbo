@@ -6,7 +6,7 @@ from app.services.indicadores import ciclos, riscos, momentum, tecnico
 
 router = APIRouter()
 
-@router.get("obter-indicadores/{bloco}")
+@router.get("/obter-indicadores/{bloco}")
 async def obter_indicadores(bloco: str):
     if bloco == "ciclo":
         return ciclos.obter_indicadores()
