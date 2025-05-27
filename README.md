@@ -1,4 +1,4 @@
-# BTC TURBO - v1.0.3
+# BTC TURBO - v1.0.4
 
 ## 🎯 Objetivo da Documentação
 
@@ -57,6 +57,17 @@ app/
 ```
 
 ---
+## 🗂 Estrutura dos Helpers - atualizado na versão 1.0.5
+
+app/services/utils/helpers/postgres/
+├── __init__.py              # Facilita importações
+├── base.py                  # Conexão + execute_query genérica
+├── ciclo_helper.py         # 3 funções específicas do ciclo
+├── momentum_helper.py      # 3 funções específicas do momentum  
+├── risco_helper.py         # 3 funções específicas do risco
+├── tecnico_helper.py       # 3 funções específicas do técnico
+└── utils.py                # Health check + diagnósticos
+
 
 ## 🔄 Fluxo Completo e Responsabilidades
 
