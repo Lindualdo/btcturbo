@@ -5,15 +5,15 @@ from app.services.indicadores import momentum as indicadores_momentum
 def calcular_rsi_score(valor):
     """Calcula score RSI Semanal"""
     if valor < 30:
-        return 9.5  # Ótimo
+        return 9.5, "ótimo"
     elif valor < 45:
-        return 7.5  # Bom
+        return 7.5, "bom"
     elif valor < 55:
-        return 5.5  # Neutro
+        return 5.5, "neutro"
     elif valor < 70:
-        return 3.5  # Ruim
+        return 3.5, "ruim"
     else:
-        return 1.5  # Crítico
+        return 1.5, "crítico"
 
 def calcular_funding_score(valor_percentual):
     """Calcula score Funding Rates - valor já vem formatado como string"""
@@ -21,15 +21,15 @@ def calcular_funding_score(valor_percentual):
     valor = float(valor_percentual.replace('%', '')) / 100
     
     if valor < -0.05:
-        return 9.5  # Ótimo
+        return 9.5, "ótimo"
     elif valor < 0:
-        return 7.5  # Bom
+        return 7.5, "bom"
     elif valor < 0.02:
-        return 5.5  # Neutro
+        return 5.5, "neutro"
     elif valor < 0.1:
-        return 3.5  # Ruim
+        return 3.5, "ruim"
     else:
-        return 1.5  # Crítico
+        return 1.5, "crítico"
 
 def calcular_oi_score(valor_percentual):
     """Calcula score OI Change - valor já vem formatado como string"""
@@ -37,28 +37,41 @@ def calcular_oi_score(valor_percentual):
     valor = float(valor_percentual.replace('%', '').replace('+', ''))
     
     if valor < -30:
-        return 9.5  # Ótimo
+        return 9.5, "ótimo"
     elif valor < -10:
-        return 7.5  # Bom
+        return 7.5, "bom"
     elif valor < 20:
-        return 5.5  # Neutro
+        return 5.5, "neutro"
     elif valor < 50:
-        return 3.5  # Ruim
+        return 3.5, "ruim"
     else:
-        return 1.5  # Crítico
+        return 1.5, "crítico"
 
 def calcular_ls_ratio_score(valor):
     """Calcula score Long/Short Ratio"""
     if valor < 0.8:
-        return 9.5  # Ótimo
+        return 9.5, "ótimo"
     elif valor < 0.95:
-        return 7.5  # Bom
+        return 7.5, "bom"
     elif valor < 1.05:
-        return 5.5  # Neutro
+        return 5.5, "neutro"
     elif valor < 1.3:
-        return 3.5  # Ruim
+        return 3.5, "ruim"
     else:
-        return 1.5  # Crítico
+        return 1.5, "crítico"
+
+def interpretar_classificacao_consolidada(score):
+    """Converte score consolidado em classificação"""
+    if score >= 8.0:
+        return "ótimo"
+    elif score >= 6.0:
+        return "bom"
+    elif score >= 4.0:
+        return "neutro"
+    elif score >= 2.0:
+        return "ruim"
+    else:
+        return "crítico"
 
 def calcular_score():
     """Calcula score consolidado do bloco MOMENTUM"""
@@ -80,10 +93,10 @@ def calcular_score():
     oi_valor = indicadores["OI_Change"]["valor"]
     ls_valor = indicadores["Long_Short_Ratio"]["valor"]
     
-    rsi_score = calcular_rsi_score(rsi_valor)
-    funding_score = calcular_funding_score(funding_valor)
-    oi_score = calcular_oi_score(oi_valor)
-    ls_score = calcular_ls_ratio_score(ls_valor)
+    rsi_score, rsi_classificacao = calcular_rsi_score(rsi_valor)
+    funding_score, funding_classificacao = calcular_funding_score(funding_valor)
+    oi_score, oi_classificacao = calcular_oi_score(oi_valor)
+    ls_score, ls_classificacao = calcular_ls_ratio_score(ls_valor)
     
     # 3. Aplicar pesos (RSI: 10%, Funding: 8%, OI: 4%, L/S: 3% do total 25%)
     # Normalizando para o bloco: RSI: 40%, Funding: 32%, OI: 16%, L/S: 12%
@@ -99,29 +112,34 @@ def calcular_score():
         "bloco": "momentum",
         "peso_bloco": "25%",
         "score_consolidado": round(score_consolidado, 2),
+        "classificacao_consolidada": interpretar_classificacao_consolidada(score_consolidado),
         "timestamp": dados_indicadores["timestamp"],
         "indicadores": {
             "RSI_Semanal": {
                 "valor": rsi_valor,
                 "score": round(rsi_score, 1),
+                "classificacao": rsi_classificacao,
                 "peso": "10%",
                 "fonte": indicadores["RSI_Semanal"]["fonte"]
             },
             "Funding_Rates": {
                 "valor": funding_valor,
                 "score": round(funding_score, 1),
+                "classificacao": funding_classificacao,
                 "peso": "8%",
                 "fonte": indicadores["Funding_Rates"]["fonte"]
             },
             "OI_Change": {
                 "valor": oi_valor,
                 "score": round(oi_score, 1),
+                "classificacao": oi_classificacao,
                 "peso": "4%",
                 "fonte": indicadores["OI_Change"]["fonte"]
             },
             "Long_Short_Ratio": {
                 "valor": ls_valor,
                 "score": round(ls_score, 1),
+                "classificacao": ls_classificacao,
                 "peso": "3%",
                 "fonte": indicadores["Long_Short_Ratio"]["fonte"]
             }

@@ -41,6 +41,19 @@ def calcular_puell_score(valor):
     else:
         return 1.5, "crítico"
 
+def interpretar_classificacao_consolidada(score):
+    """Converte score consolidado em classificação"""
+    if score >= 8.0:
+        return "ótimo"
+    elif score >= 6.0:
+        return "bom"
+    elif score >= 4.0:
+        return "neutro"
+    elif score >= 2.0:
+        return "ruim"
+    else:
+        return "crítico"
+
 def calcular_score():
     """Calcula score consolidado do bloco CICLO"""
     # 1. Obter dados brutos da API
@@ -77,6 +90,7 @@ def calcular_score():
         "bloco": "ciclo",
         "peso_bloco": "40%",
         "score_consolidado": round(score_consolidado, 2),
+        "classificacao_consolidada": interpretar_classificacao_consolidada(score_consolidado),
         "timestamp": dados_indicadores["timestamp"],
         "indicadores": {
             "MVRV_Z": {
