@@ -1,79 +1,3 @@
-# app/services/scores/riscos.py
-
-from app.services.indicadores import riscos as indicadores_riscos
-
-def calcular_dist_liquidacao_score(valor_percentual):
-    """Calcula score Distância Liquidação - valor já vem formatado como string"""
-    valor = float(valor_percentual.replace('%', ''))
-    
-    if valor > 50:
-        return 9.5, "ótimo"
-    elif valor > 30:
-        return 7.5, "bom"
-    elif valor > 20:
-        return 5.5, "neutro"
-    elif valor > 10:
-        return 3.5, "ruim"
-    else:
-        return 1.5, "crítico"
-
-def calcular_health_factor_score(valor):
-    """Calcula score Health Factor AAVE"""
-    if valor > 2.0:
-        return 9.5, "ótimo"
-    elif valor > 1.5:
-        return 7.5, "bom"
-    elif valor > 1.3:
-        return 5.5, "neutro"
-    elif valor > 1.1:
-        return 3.5, "ruim"
-    else:
-        return 1.5, "crítico"
-
-def calcular_netflow_score(valor_formatado):
-    """Calcula score Exchange Netflow - valor já vem formatado como "Xk"""
-    # Converter "15k" ou "-5k" para valor numérico
-    valor = float(valor_formatado.replace('k', '')) * 1000
-    
-    if valor < -50000:  # < -50k BTC
-        return 9.5, "ótimo"
-    elif valor < -10000:  # -50k a -10k
-        return 7.5, "bom"
-    elif valor < 10000:  # -10k a +10k
-        return 5.5, "neutro"
-    elif valor < 50000:  # +10k a +50k
-        return 3.5, "ruim"
-    else:  # > +50k BTC
-        return 1.5, "crítico"
-
-def calcular_stablecoin_score(valor_percentual):
-    """Calcula score Stablecoin Supply Ratio"""
-    valor = float(valor_percentual.replace('%', ''))
-    
-    if valor > 15:
-        return 9.5, "ótimo"
-    elif valor > 10:
-        return 7.5, "bom"
-    elif valor > 5:
-        return 5.5, "neutro"
-    elif valor > 2:
-        return 3.5, "ruim"
-    else:
-        return 1.5, "crítico"
-
-def interpretar_classificacao_consolidada(score):
-    """Converte score consolidado em classificação"""
-    if score >= 8.0:
-        return "ótimo"
-    elif score >= 6.0:
-        return "bom"
-    elif score >= 4.0:
-        return "neutro"
-    elif score >= 2.0:
-        return "ruim"
-    else:
-        return "crítico"
-
 def calcular_score():
     """Calcula score consolidado do bloco RISCO"""
     # 1. Obter dados brutos da API
@@ -146,4 +70,93 @@ def calcular_score():
             }
         },
         "status": "success"
-    }
+    }# app/services/scores/riscos.py
+
+from app.services.indicadores import riscos as indicadores_riscos
+
+def calcular_dist_liquidacao_score(valor_percentual):
+    """Calcula score Distância Liquidação - valor já vem formatado como string"""
+    try:
+        valor = float(valor_percentual.replace('%', ''))
+    except (ValueError, AttributeError):
+        return 5.5  # Neutro se erro na conversão
+    
+    if valor > 50:
+        return 9.5  # Ótimo
+    elif valor > 30:
+        return 7.5  # Bom
+    elif valor > 20:
+        return 5.5  # Neutro
+    elif valor > 10:
+        return 3.5  # Ruim
+    else:
+        return 1.5  # Crítico
+
+def calcular_health_factor_score(valor):
+    """Calcula score Health Factor AAVE"""
+    try:
+        valor = float(valor) if valor is not None else 0.0
+    except (ValueError, TypeError):
+        return 5.5, "neutro"  # Fallback em caso de erro
+    
+    if valor > 2.0:
+        return 9.5, "ótimo"
+    elif valor > 1.5:
+        return 7.5, "bom"
+    elif valor > 1.3:
+        return 5.5, "neutro"
+    elif valor > 1.1:
+        return 3.5, "ruim"
+    else:
+        return 1.5, "crítico"
+
+def calcular_netflow_score(valor_formatado):
+    """Calcula score Exchange Netflow - valor já vem formatado como "Xk"""
+    try:
+        # Converter "15k", "-5k", ou "-0k" para valor numérico
+        valor_str = str(valor_formatado).replace('k', '')
+        valor = float(valor_str) * 1000
+    except (ValueError, AttributeError):
+        return 5.5, "neutro"  # Fallback em caso de erro
+    
+    if valor < -50000:  # < -50k BTC
+        return 9.5, "ótimo"
+    elif valor < -10000:  # -50k a -10k
+        return 7.5, "bom"
+    elif valor < 10000:  # -10k a +10k
+        return 5.5, "neutro"
+    elif valor < 50000:  # +10k a +50k
+        return 3.5, "ruim"
+    else:  # > +50k BTC
+        return 1.5, "crítico"
+
+def calcular_stablecoin_score(valor_percentual):
+    """Calcula score Stablecoin Supply Ratio"""
+    try:
+        valor = float(valor_percentual.replace('%', ''))
+    except (ValueError, AttributeError):
+        return 0, "erro"  # Fallback em caso de erro
+    
+    if valor > 15:
+        return 9.5, "ótimo"
+    elif valor > 10:
+        return 7.5, "bom"
+    elif valor > 5:
+        return 5.5, "neutro"
+    elif valor > 2:
+        return 3.5, "ruim"
+    else:
+        return 1.5, "crítico"
+
+def interpretar_classificacao_consolidada(score):
+    """Converte score consolidado em classificação"""
+    if score >= 8.0:
+        return "ótimo"
+    elif score >= 6.0:
+        return "bom"
+    elif score >= 4.0:
+        return "neutro"
+    elif score >= 2.0:
+        return "ruim"
+    else:
+        return "crítico"
