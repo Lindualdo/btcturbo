@@ -1,4 +1,4 @@
-# BTC TURBO - v1.0.8
+# BTC TURBO - v1.0.7
 
 ## 🎯 Objetivo da Documentação
 
@@ -450,5 +450,3 @@ GET /api/v1/diagnostico/test-indicadores
 ---
 
 **Sistema base PostgreSQL implementado com sucesso - Pronto para desenvolvimento das funcionalidades principais do BTC Turbo v3.0** 🚀
-
-# 1.0.8 - tudo funcionando - antes de incluir nova coluna
