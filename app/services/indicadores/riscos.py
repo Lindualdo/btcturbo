@@ -8,29 +8,30 @@ def obter_indicadores():
     
     if dados_db:
         return {
-            "bloco": "riscos",
-            "timestamp": dados_db["timestamp"].isoformat() if dados_db["timestamp"] else datetime.utcnow().isoformat(),
-            "indicadores": {
-                "Dist_Liquidacao": {
-                    "valor": f"{float(dados_db['dist_liquidacao']):.1f}%" if dados_db["dist_liquidacao"] else "0.0%",
-                    "fonte": dados_db["fonte"] or "PostgreSQL"
-                },
-                "Health_Factor": {
-                    "valor": float(dados_db["health_factor"]) if dados_db["health_factor"] else 0.0,
-                    "fonte": dados_db["fonte"] or "PostgreSQL"
-                },
-                "Exchange_Netflow": {
-                    "valor": f"{float(dados_db['exchange_netflow'])/1000:.0f}k" if dados_db["exchange_netflow"] else "0k",
-                    "fonte": dados_db["fonte"] or "PostgreSQL"
-                },
-                "Stablecoin_Ratio": {
-                    "valor": f"{float(dados_db['stablecoin_ratio']):.1f}%" if dados_db["stablecoin_ratio"] else "0.0%",
-                    "fonte": dados_db["fonte"] or "PostgreSQL"
-                }
+        "bloco": "riscos",
+        "timestamp": dados_db["timestamp"].isoformat() if dados_db["timestamp"] else datetime.utcnow().isoformat(),
+        "indicadores": {
+            "Dist_Liquidacao": {
+                "valor": float(dados_db["dist_liquidacao"]) if dados_db["dist_liquidacao"] else 0.0,
+                "fonte": dados_db["fonte"] or "PostgreSQL"
             },
-            "status": "success",
-            "fonte_dados": "PostgreSQL"
-        }
+            "Health_Factor": {
+                "valor": float(dados_db["health_factor"]) if dados_db["health_factor"] else 0.0,
+                "fonte": dados_db["fonte"] or "PostgreSQL"
+            },
+            "Exchange_Netflow": {
+                "valor": float(dados_db["exchange_netflow"]) if dados_db["exchange_netflow"] else 0.0,
+                "fonte": dados_db["fonte"] or "PostgreSQL"
+            },
+            "Stablecoin_Ratio": {
+                "valor": float(dados_db["stablecoin_ratio"]) if dados_db["stablecoin_ratio"] else 0.0,
+                "fonte": dados_db["fonte"] or "PostgreSQL"
+            }
+    },
+    "status": "success",
+    "fonte_dados": "PostgreSQL"
+    }
+
     else:
         return {
             "bloco": "riscos",

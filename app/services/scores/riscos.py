@@ -30,20 +30,19 @@ def calcular_health_factor_score(valor):
     else:
         return 1.5, "crítico"
 
-def calcular_netflow_score(valor_formatado):
-    """Calcula score Exchange Netflow - valor já vem formatado como "Xk"""
-    # Converter "15k" ou "-5k" para valor numérico
-    valor = float(valor_formatado.replace('k', '')) * 1000
+def calcular_netflow_score(valor):
+
+    valor = float(valor)
     
-    if valor < -50000:  # < -50k BTC
+    if valor < -50000: 
         return 9.5, "ótimo"
-    elif valor < -10000:  # -50k a -10k
+    elif valor < -10000:  
         return 7.5, "bom"
-    elif valor < 10000:  # -10k a +10k
+    elif valor < 10000: 
         return 5.5, "neutro"
-    elif valor < 50000:  # +10k a +50k
+    elif valor < 50000:  
         return 3.5, "ruim"
-    else:  # > +50k BTC
+    else: 
         return 1.5, "crítico"
 
 def calcular_stablecoin_score(valor_percentual):
