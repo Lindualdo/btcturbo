@@ -2,9 +2,12 @@
 
 from app.services.indicadores import riscos as indicadores_riscos
 
-def calcular_dist_liquidacao_score(valor):
- 
-    valor = float(valor)
+def calcular_dist_liquidacao_score(valor_percentual):
+    """Calcula score Distância Liquidação - valor já vem formatado como string"""
+    try:
+        valor = float(valor_percentual.replace('%', ''))
+    except (ValueError, AttributeError):
+        return 5.5, "neutro"  # Fallback em caso de erro
     
     if valor > 50:
         return 9.5, "ótimo"
@@ -19,6 +22,11 @@ def calcular_dist_liquidacao_score(valor):
 
 def calcular_health_factor_score(valor):
     """Calcula score Health Factor AAVE"""
+    try:
+        valor = float(valor) if valor is not None else 0.0
+    except (ValueError, TypeError):
+        return 5.5, "neutro"  # Fallback em caso de erro
+    
     if valor > 2.0:
         return 9.5, "ótimo"
     elif valor > 1.5:
@@ -26,36 +34,6 @@ def calcular_health_factor_score(valor):
     elif valor > 1.3:
         return 5.5, "neutro"
     elif valor > 1.1:
-        return 3.5, "ruim"
-    else:
-        return 1.5, "crítico"
-
-def calcular_netflow_score(valor):
-
-    valor = float(valor)
-    
-    if valor < -50000: 
-        return 9.5, "ótimo"
-    elif valor < -10000:  
-        return 7.5, "bom"
-    elif valor < 10000: 
-        return 5.5, "neutro"
-    elif valor < 50000:  
-        return 3.5, "ruim"
-    else: 
-        return 1.5, "crítico"
-
-def calcular_stablecoin_score(valor):
-    """Calcula score Stablecoin Supply Ratio"""
-    valor = float(valor)
-    
-    if valor > 15:
-        return 9.5, "ótimo"
-    elif valor > 10:
-        return 7.5, "bom"
-    elif valor > 5:
-        return 5.5, "neutro"
-    elif valor > 2:
         return 3.5, "ruim"
     else:
         return 1.5, "crítico"
@@ -90,58 +68,38 @@ def calcular_score():
     # 2. Calcular scores individuais
     dist_valor = indicadores["Dist_Liquidacao"]["valor"]
     hf_valor = indicadores["Health_Factor"]["valor"]
-    netflow_valor = indicadores["Exchange_Netflow"]["valor"]
-    stable_valor = indicadores["Stablecoin_Ratio"]["valor"]
     
     dist_score, dist_classificacao = calcular_dist_liquidacao_score(dist_valor)
     hf_score, hf_classificacao = calcular_health_factor_score(hf_valor)
-    netflow_score, netflow_classificacao = calcular_netflow_score(netflow_valor)
-    stable_score, stable_classificacao = calcular_stablecoin_score(stable_valor)
     
-    # 3. Aplicar pesos (Dist: 6%, HF: 4%, Netflow: 3%, Stable: 2% do total 15%)
-    # Normalizando para o bloco: Dist: 40%, HF: 26.7%, Netflow: 20%, Stable: 13.3%
+    # 3. Aplicar pesos (Dist: 5%, HF: 5% do total 10%)
+    # Normalizando para o bloco: Dist: 50%, HF: 50%
     score_consolidado = (
-        (dist_score * 0.40) +
-        (hf_score * 0.267) +
-        (netflow_score * 0.20) +
-        (stable_score * 0.133)
+        (dist_score * 0.50) +
+        (hf_score * 0.50)
     )
     
     # 4. Retornar JSON formatado
     return {
         "bloco": "riscos",
-        "peso_bloco": "15%",
+        "peso_bloco": "10%",
         "score_consolidado": round(score_consolidado, 2),
         "classificacao_consolidada": interpretar_classificacao_consolidada(score_consolidado),
         "timestamp": dados_indicadores["timestamp"],
         "indicadores": {
             "Dist_Liquidacao": {
-                "valor": indicadores["Dist_Liquidacao"]["valor_formatado"],  # Usar valor já formatado
+                "valor": dist_valor,
                 "score": round(dist_score, 1),
                 "classificacao": dist_classificacao,
-                "peso": "6%",
+                "peso": "5%",
                 "fonte": indicadores["Dist_Liquidacao"]["fonte"]
             },
             "Health_Factor": {
                 "valor": hf_valor,
                 "score": round(hf_score, 1),
                 "classificacao": hf_classificacao,
-                "peso": "4%",
+                "peso": "5%",
                 "fonte": indicadores["Health_Factor"]["fonte"]
-            },
-            "Exchange_Netflow": {
-                "valor": netflow_valor,
-                "score": round(netflow_score, 1),
-                "classificacao": netflow_classificacao,
-                "peso": "3%",
-                "fonte": indicadores["Exchange_Netflow"]["fonte"]
-            },
-            "Stablecoin_Ratio": {
-                "valor": stable_valor,
-                "score": round(stable_score, 1),
-                "classificacao": stable_classificacao,
-                "peso": "2%",
-                "fonte": indicadores["Stablecoin_Ratio"]["fonte"]
             }
         },
         "status": "success"

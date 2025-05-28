@@ -1,7 +1,7 @@
 # BTC Hold Alavancado - Sistema de Score v3.0
 -Objetivo: Sistema modular de análise de indicadores do BTC com score e alertas automatizados.
 
-## 📊 Estrutura do Sistema Atualizado
+## 📊 Estrutura do Sistema v 3.0
 
 ```
 SISTEMA v3.0
@@ -27,6 +27,37 @@ SISTEMA v3.0
 ```
 
 ---
+
+SISTEMA v4.0 FINAL
+├── CICLO (40%)
+│   ├── MVRV Z-Score (20%)
+│   ├── Realized Price Ratio (15%)
+│   └── Puell Multiple (5%)
+│
+├── MOMENTUM (30%)
+│   ├── RSI Semanal (10%)
+│   ├── Funding Rates (8%)
+│   ├── OI Change (4%)
+│   ├── Long/Short Ratio (3%)
+│   ├── Exchange Netflow (3%)
+│   └── SSR (2%)
+│
+├── RISCO (10%)
+│   ├── Distância Liquidação (5%)
+│   └── Health Factor (5%)
+│
+└── TÉCNICO (20%)
+    ├── Sistema EMAs (15%)
+    └── Padrões Gráficos (5%)
+
++ ALERTAS SISTÊMICOS (sem score)
+  ├── WBTC Depeg
+  ├── Arbitrum Status
+  └── AAVE Protocol
+
+
+---
+
 
 ## 🎯 Escala de Classificação (0-10)
 
