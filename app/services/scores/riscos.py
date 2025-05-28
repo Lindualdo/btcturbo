@@ -2,9 +2,9 @@
 
 from app.services.indicadores import riscos as indicadores_riscos
 
-def calcular_dist_liquidacao_score(valor_percentual):
-    """Calcula score Distância Liquidação - valor já vem formatado como string"""
-    valor = float(valor_percentual.replace('%', ''))
+def calcular_dist_liquidacao_score(valor):
+ 
+    valor = float(valor)
     
     if valor > 50:
         return 9.5, "ótimo"
@@ -45,9 +45,9 @@ def calcular_netflow_score(valor):
     else: 
         return 1.5, "crítico"
 
-def calcular_stablecoin_score(valor_percentual):
+def calcular_stablecoin_score(valor):
     """Calcula score Stablecoin Supply Ratio"""
-    valor = float(valor_percentual.replace('%', ''))
+    valor = float(valor)
     
     if valor > 15:
         return 9.5, "ótimo"
@@ -116,7 +116,7 @@ def calcular_score():
         "timestamp": dados_indicadores["timestamp"],
         "indicadores": {
             "Dist_Liquidacao": {
-                "valor": dist_valor,
+                "valor": dist_valor + "%",
                 "score": round(dist_score, 1),
                 "classificacao": dist_classificacao,
                 "peso": "6%",
