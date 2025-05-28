@@ -137,7 +137,7 @@ def calcular_score():
                 "fonte": indicadores["Exchange_Netflow"]["fonte"]
             },
             "Stablecoin_Ratio": {
-                "valor": stable_valor,
+                "valor": f"{stable_valor}%",
                 "score": round(stable_score, 1),
                 "classificacao": stable_classificacao,
                 "peso": "2%",
