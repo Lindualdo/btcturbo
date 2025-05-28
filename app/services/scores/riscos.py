@@ -33,7 +33,7 @@ def calcular_health_factor_score(valor):
 def calcular_netflow_score(valor_formatado):
     """Calcula score Exchange Netflow - valor já vem formatado como "Xk"""
     # Converter "15k" ou "-5k" para valor numérico
-    valor = float(valor_formatado.replace('k', '')) * 1000
+    valor: f"{int(float(dados_db['exchange_netflow'])/1000)}k"
     
     if valor < -50000:  # < -50k BTC
         return 9.5, "ótimo"
