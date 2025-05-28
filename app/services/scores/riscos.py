@@ -116,7 +116,7 @@ def calcular_score():
         "timestamp": dados_indicadores["timestamp"],
         "indicadores": {
             "Dist_Liquidacao": {
-                "valor": dist_valor + "%",
+                "valor": f"{dist_valor}%",  # CORREÇÃO: f-string em vez de concatenação
                 "score": round(dist_score, 1),
                 "classificacao": dist_classificacao,
                 "peso": "6%",
