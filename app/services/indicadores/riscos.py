@@ -12,7 +12,8 @@ def obter_indicadores():
         "timestamp": dados_db["timestamp"].isoformat() if dados_db["timestamp"] else datetime.utcnow().isoformat(),
         "indicadores": {
             "Dist_Liquidacao": {
-                "valor": float(dados_db["dist_liquidacao"]) if dados_db["dist_liquidacao"] else 0.0,
+                
+                "valor": f"{float(dados_db["dist_liquidacao"]) if dados_db["dist_liquidacao"] else 0.0}%",
                 "fonte": dados_db["fonte"] or "PostgreSQL"
             },
             "Health_Factor": {
