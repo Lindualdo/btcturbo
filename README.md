@@ -16,12 +16,12 @@ app/
 │   ├── score.py                # APIs para cálculo do score individual
 │   └── analise.py              # API consolidada final
 └── services/
-    ├── coleta/                 # Coleta dos dados externos
+    ├── coleta/                 # Coleta dos dados externos - fallback - gravar valor zero
     │   ├── ciclo.py
     │   ├── momentum.py
     │   ├── risco.py
     │   └── tecnico.py
-    ├── scores/                 # Cálculos de scores individuais
+    ├── scores/                 # Cálculos de scores blocos - valor zero no indicador - desconsiderar percentual
     │   ├── ciclo.py
     │   ├── momentum.py
     │   ├── risco.py
@@ -188,6 +188,7 @@ json{
 ---
 
 ## 📚 Orientações Gerais
+
 
 * Cada arquivo `.py` deve ser pequeno e focado em UMA única responsabilidade.
 * Não misture lógica de coleta com cálculos ou lógica de exposição.

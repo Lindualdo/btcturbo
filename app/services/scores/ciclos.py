@@ -5,41 +5,41 @@ from app.services.indicadores import ciclos as indicadores_ciclos
 def calcular_mvrv_score(valor):
     """Calcula score MVRV Z-Score baseado na tabela da documentação"""
     if valor < 0:
-        return 9.5  # Ótimo
+        return 9.5, "ótimo"
     elif valor < 2:
-        return 7.5  # Bom
+        return 7.5, "bom"
     elif valor < 4:
-        return 5.5  # Neutro
+        return 5.5, "neutro"
     elif valor < 6:
-        return 3.5  # Ruim
+        return 3.5, "ruim"
     else:
-        return 1.5  # Crítico
+        return 1.5, "crítico"
 
 def calcular_realized_score(valor):
     """Calcula score Realized Price Ratio"""
     if valor < 0.7:
-        return 9.5  # Ótimo
+        return 9.5, "ótimo"
     elif valor < 1.0:
-        return 7.5  # Bom
+        return 7.5, "bom"
     elif valor < 1.5:
-        return 5.5  # Neutro
+        return 5.5, "neutro"
     elif valor < 2.5:
-        return 3.5  # Ruim
+        return 3.5, "ruim"
     else:
-        return 1.5  # Crítico
+        return 1.5, "crítico"
 
 def calcular_puell_score(valor):
     """Calcula score Puell Multiple"""
     if valor < 0.5:
-        return 9.5  # Ótimo
+        return 9.5, "ótimo"
     elif valor < 1.0:
-        return 7.5  # Bom
+        return 7.5, "bom"
     elif valor < 2.0:
-        return 5.5  # Neutro
+        return 5.5, "neutro"
     elif valor < 4.0:
-        return 3.5  # Ruim
+        return 3.5, "ruim"
     else:
-        return 1.5  # Crítico
+        return 1.5, "crítico"
 
 def calcular_score():
     """Calcula score consolidado do bloco CICLO"""
@@ -60,9 +60,9 @@ def calcular_score():
     realized_valor = indicadores["Realized_Ratio"]["valor"]
     puell_valor = indicadores["Puell_Multiple"]["valor"]
     
-    mvrv_score = calcular_mvrv_score(mvrv_valor)
-    realized_score = calcular_realized_score(realized_valor)
-    puell_score = calcular_puell_score(puell_valor)
+    mvrv_score, mvrv_classificacao = calcular_mvrv_score(mvrv_valor)
+    realized_score, realized_classificacao = calcular_realized_score(realized_valor)
+    puell_score, puell_classificacao = calcular_puell_score(puell_valor)
     
     # 3. Aplicar pesos (MVRV: 20%, Realized: 15%, Puell: 5% do total 40%)
     # Normalizando para o bloco: MVRV: 50%, Realized: 37.5%, Puell: 12.5%
@@ -82,18 +82,21 @@ def calcular_score():
             "MVRV_Z": {
                 "valor": mvrv_valor,
                 "score": round(mvrv_score, 1),
+                "classificacao": mvrv_classificacao,
                 "peso": "20%",
                 "fonte": indicadores["MVRV_Z"]["fonte"]
             },
             "Realized_Ratio": {
                 "valor": realized_valor,
                 "score": round(realized_score, 1),
+                "classificacao": realized_classificacao,
                 "peso": "15%",
                 "fonte": indicadores["Realized_Ratio"]["fonte"]
             },
             "Puell_Multiple": {
                 "valor": puell_valor,
                 "score": round(puell_score, 1),
+                "classificacao": puell_classificacao,
                 "peso": "5%",
                 "fonte": indicadores["Puell_Multiple"]["fonte"]
             }
