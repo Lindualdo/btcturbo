@@ -1,10 +1,15 @@
-# BTC TURBO - v1.0.7
+# BTC TURBO - v1.0.9
 
 ## 🎯 Objetivo da Documentação
 
 Esta documentação técnica define claramente o padrão arquitetural, responsabilidades das APIs, estrutura de pastas e fluxo de trabalho, facilitando o desenvolvimento organizado e evitando quebras na implementação.
 
 ---
+
+## Notas da versão - 1.0.9
+
+- removido dois indicadores do bloco riscos (Exchange_Netflow, Stablecoin_Ratio)
+- rebalancemanto nos pesos bloco reduzido de 15 para 10% agora focado 100% na saude da alavancagem
 
 ## 🗂 Estrutura do Projeto
 

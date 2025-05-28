@@ -88,7 +88,7 @@ def calcular_score():
         "timestamp": dados_indicadores["timestamp"],
         "indicadores": {
             "Dist_Liquidacao": {
-                "valor": dist_valor,
+                "valor": f"{dist_valor}%",
                 "score": round(dist_score, 1),
                 "classificacao": dist_classificacao,
                 "peso": "5%",
