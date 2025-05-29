@@ -27,6 +27,37 @@ Esta documentação técnica define claramente o padrão arquitetural, responsab
 * Stablecoin Supply Ratio - SSR (2%)
 * Exchange Netflow 7D (3%)
 
+## Novos pesos a serem aplicados - espec.funcional - v4.0
+
+SISTEMA v4.0 FINAL
+├── CICLO (40%)
+│   ├── MVRV Z-Score (20%)
+│   ├── Realized Price Ratio (15%)
+│   └── Puell Multiple (5%)
+│
+├── MOMENTUM (30%) # aumentar de 25% para 30% (inclusão dos 2 novos indicadores)
+│   ├── RSI Semanal (10%)
+│   ├── Funding Rates (8%)
+│   ├── OI Change (4%)
+│   ├── Long/Short Ratio (3%)
+│   ├── Exchange Netflow (3%)
+│   └── SSR (2%)
+│
+├── RISCO (10%) #já ajustado (sairam 2 indicaores que foram movidos para momentum)
+│   ├── Distância Liquidação (5%)
+│   └── Health Factor (5%)
+│
+└── TÉCNICO (20%)
+    ├── Sistema EMAs (15%)
+    └── Padrões Gráficos (5%)
+
++ ALERTAS SISTÊMICOS (sem score)
+  ├── WBTC Depeg
+  ├── Arbitrum Status
+  └── AAVE Protocol
+---
+
+
 ## 🗂 Estrutura do Projeto
 
 ```
