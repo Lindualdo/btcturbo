@@ -20,7 +20,9 @@ Esta documentação técnica define claramente o padrão arquitetural, responsab
 
 
 ## Próximos passos 1.0.12 - coleta de dados
-- Doc: 
+- Docs: 
+https://github.com/Lindualdo/btcturbo/blob/main/doc/regra-limites-indicadores.md
+
 
 - validação dos valores coletados
 - coleta dos indicadores e gravação no Postgres
@@ -35,6 +37,12 @@ Esta documentação técnica define claramente o padrão arquitetural, responsab
 - Inclusão de dois novos indicadores no bloco momentum
 * Stablecoin Supply Ratio - SSR (2%)
 * Exchange Netflow 7D (3%)
+
+
+## Próximos passos 1.0.14 - alertas
+- implementar sistemas de alertas
+https://github.com/Lindualdo/btcturbo/blob/main/doc/btcturbo-alertas.espc.md
+
 
 ## Novos pesos a serem aplicados - espec.funcional - v4.0
 

@@ -1,5 +1,6 @@
 # 🚨 SISTEMA DE ALERTAS CRÍTICOS (Sem Score)
 
+´´´
 ALERTAS SISTÊMICOS - AÇÃO IMEDIATA
 ├── WBTC DEPEG
 │   ├── Trigger: Desconto > 0.5%
@@ -16,9 +17,11 @@ ALERTAS SISTÊMICOS - AÇÃO IMEDIATA
     ├── Check: DefiLlama alerts
     └── Ação: RETIRAR TUDO
 
+´´´
 
 💻 IMPLEMENTAÇÃO DOS ALERTAS
 
+´´´
 # Checagem horária simples
 def check_riscos_sistemicos():
     # WBTC Depeg Check
@@ -42,8 +45,11 @@ def check_riscos_sistemicos():
     
     return "TUDO_OK"
 
+´´´
 
 ## 📱 FONTES PARA MONITORAMENTO
+
+´´´
 
 WBTC PEG
 ├── CoinGecko: WBTC/BTC pair
@@ -60,25 +66,19 @@ AAVE HEALTH
 ├── Twitter: @AaveAave
 └── DefiLlama TVL alerts
 
-## 🎯 ESTRUTURA FINAL LIMPA
-
-SISTEMA v4.0 FINAL
-├── CICLO (40%)
-├── MOMENTUM (25%)
-├── RISCO POSIÇÃO (15%)
-│   ├── Distância Liquidação
-│   └── Health Factor
-├── TÉCNICO (20%)
-└── [ALERTAS SISTÊMICOS - Fora do Score]
-
+´´´
 
 ## 🔔 CONFIGURAÇÃO RECOMENDADA
+
+´´´
 
 ALERTAS PRIORITÁRIOS
 ├── Telegram Bot para notificações
 ├── Check automático a cada hora
 ├── Som diferente para sistêmicos
 └── Plano de ação pré-definido
+
+´´´
 
 EXEMPLO MENSAGEM:
 "🚨 ALERTA SISTÊMICO 🚨
