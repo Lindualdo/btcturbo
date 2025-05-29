@@ -1,4 +1,4 @@
-# BTC TURBO - v1.0.11
+# BTC TURBO - v1.0.12
 
 ## 🎯 Objetivo da Documentação
 
@@ -22,8 +22,9 @@ Esta documentação técnica define claramente o padrão arquitetural, responsab
 
 ---
 
-## 1.0.12 - redistribuir pesos - bloco momentum  
-- alterar api obter-indicadore, calcular-score - analise-btc
+## 1.0.12 - redistribuir pesos - bloco momentum  - feito
+- alterar api obter-indicadores, calcular-score - analise-btc
+- helpers momentum
 - alterar dash momentum
 - revisar dash consolidados para avaliar impacto
 
