@@ -6,7 +6,7 @@ Esta documentação técnica define claramente o padrão arquitetural, responsab
 
 ---
 
-## Notas da versão - 1.0.10
+## Notas da versão - 1.0.10 - feito
 
 - Conlcuido dashboads de analises (riscos, ciclos, momentum e técnica)
 - organização melhor do main
@@ -14,12 +14,31 @@ Esta documentação técnica define claramente o padrão arquitetural, responsab
 - dash de anlise tecnica ainda usando api externa - precisamos implementar (mais complexa)
 - https://btcturbo-production.up.railway.app/dashboard/
 
-## Próximos passos 1.0.11 - Dashboard consolidao  - Home
+---
+
+## 1.0.11  - Dashboard consolidao  - Home - feito
 - Concluir a api de analise consolidada - api/v1/analise-btc
 - atualizar a home do dash para incluir a analise consolidada de cada bloco com o score geral
 
+---
 
-## Próximos passos 1.0.12 - coleta de dados
+## 1.0.12 - redistribuir pesos - bloco momentum  
+- alterar api obter-indicadore, calcular-score - analise-btc
+- alterar dash momentum
+- revisar dash consolidados para avaliar impacto
+
+´´´
+
+├── RSI Semanal (12%) ← +2%
+├── Funding Rates (10%) ← +2%
+├── Exchange Netflow 7D (5%) ← NOVO
+└── Long/Short Ratio (3%) ← Mantém
+
+´´´
+---
+
+## 1.0.13 -  coleta de dados
+
 - Docs: 
 https://github.com/Lindualdo/btcturbo/blob/main/doc/validation-limites-indicadores.md
 
@@ -37,47 +56,11 @@ https://github.com/Lindualdo/btcturbo/blob/main/doc/validation-limites-indicador
 * Exchange Netflow 7D (3%)
 
 
-## Próximos passos 1.0.13 - alertas
+## 1.0.14 - alertas
 - implementar sistemas de alertas
 https://github.com/Lindualdo/btcturbo/blob/main/doc/btcturbo-alertas.espc.md
 
-
-## Novos pesos a serem aplicados - espec.funcional - v4.0
-
-https://github.com/Lindualdo/btcturbo/blob/main/doc/btcturbo-espec-funcional.md
-
-```
-
-SISTEMA v4.0 FINAL
-├── CICLO (40%)
-│   ├── MVRV Z-Score (20%)
-│   ├── Realized Price Ratio (15%)
-│   └── Puell Multiple (5%)
-│
-├── MOMENTUM (30%) # aumentar de 25% para 30% (inclusão dos 2 novos indicadores)
-│   ├── RSI Semanal (10%)
-│   ├── Funding Rates (8%)
-│   ├── OI Change (4%)
-│   ├── Long/Short Ratio (3%)
-│   ├── Exchange Netflow (3%)
-│   └── SSR (2%)
-│
-├── RISCO (10%) #já ajustado (sairam 2 indicaores que foram movidos para momentum)
-│   ├── Distância Liquidação (5%)
-│   └── Health Factor (5%)
-│
-└── TÉCNICO (20%)
-    ├── Sistema EMAs (15%)
-    └── Padrões Gráficos (5%)
-
-+ ALERTAS SISTÊMICOS (sem score)
-  ├── WBTC Depeg
-  ├── Arbitrum Status
-  └── AAVE Protocol
-
-```
 ---
-
 
 ## 🗂 Estrutura do Projeto
 
