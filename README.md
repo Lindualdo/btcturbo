@@ -29,6 +29,9 @@ Esta documentação técnica define claramente o padrão arquitetural, responsab
 
 ## Novos pesos a serem aplicados - espec.funcional - v4.0
 
+https://github.com/Lindualdo/btcturbo/blob/main/doc/btcturbo-espec-funcional.md
+
+
 SISTEMA v4.0 FINAL
 ├── CICLO (40%)
 │   ├── MVRV Z-Score (20%)

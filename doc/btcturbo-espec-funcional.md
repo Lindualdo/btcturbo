@@ -24,10 +24,13 @@ SISTEMA v3.0
     │   ├── Estrutura/Alinhamento EMAs (7%)
     │   └── Posição do Preço vs EMAs (8%)
     └── Padrões Gráficos (5%)
+    
 ```
-
 ---
 
+## 📊 Estrutura do Sistema v 3.0
+
+```
 SISTEMA v4.0 FINAL
 ├── CICLO (40%)
 │   ├── MVRV Z-Score (20%)
@@ -54,6 +57,8 @@ SISTEMA v4.0 FINAL
   ├── WBTC Depeg
   ├── Arbitrum Status
   └── AAVE Protocol
+
+```
 ---
 
 
