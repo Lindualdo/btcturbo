@@ -17,7 +17,7 @@ def get_dados_momentum() -> Optional[Dict]:
             SELECT id, rsi_semanal, funding_rates, exchange_netflow, long_short_ratio,
                    timestamp, fonte, metadados
             FROM indicadores_momentum 
-            ORDER BY timestamp DESC 
+            ORDER BY id DESC 
             LIMIT 1
         """
         
