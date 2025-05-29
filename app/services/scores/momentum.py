@@ -31,18 +31,15 @@ def calcular_funding_score(valor_percentual):
     else:
         return 1.5, "crítico"
 
-def calcular_oi_score(valor_percentual):
-    """Calcula score OI Change - valor já vem formatado como string"""
-    # Converter string "+X.X%" ou "-X.X%" para float
-    valor = float(valor_percentual.replace('%', '').replace('+', ''))
-    
-    if valor < -30:
+def calcular_netflow_score(valor):
+    """Calcula score Exchange Netflow - valor numérico (BTC)"""
+    if valor < -50000:
         return 9.5, "ótimo"
-    elif valor < -10:
+    elif valor < -10000:
         return 7.5, "bom"
-    elif valor < 20:
+    elif valor < 10000:
         return 5.5, "neutro"
-    elif valor < 50:
+    elif valor < 50000:
         return 3.5, "ruim"
     else:
         return 1.5, "crítico"
@@ -74,7 +71,7 @@ def interpretar_classificacao_consolidada(score):
         return "crítico"
 
 def calcular_score():
-    """Calcula score consolidado do bloco MOMENTUM"""
+    """Calcula score consolidado do bloco MOMENTUM v1.0.12"""
     # 1. Obter dados brutos da API
     dados_indicadores = indicadores_momentum.obter_indicadores()
     
@@ -90,27 +87,28 @@ def calcular_score():
     # 2. Calcular scores individuais
     rsi_valor = indicadores["RSI_Semanal"]["valor"]
     funding_valor = indicadores["Funding_Rates"]["valor"]
-    oi_valor = indicadores["OI_Change"]["valor"]
+    netflow_valor = indicadores["Exchange_Netflow"]["valor"]
     ls_valor = indicadores["Long_Short_Ratio"]["valor"]
     
     rsi_score, rsi_classificacao = calcular_rsi_score(rsi_valor)
     funding_score, funding_classificacao = calcular_funding_score(funding_valor)
-    oi_score, oi_classificacao = calcular_oi_score(oi_valor)
+    netflow_score, netflow_classificacao = calcular_netflow_score(netflow_valor)
     ls_score, ls_classificacao = calcular_ls_ratio_score(ls_valor)
     
-    # 3. Aplicar pesos (RSI: 10%, Funding: 8%, OI: 4%, L/S: 3% do total 25%)
-    # Normalizando para o bloco: RSI: 40%, Funding: 32%, OI: 16%, L/S: 12%
+    # 3. Aplicar pesos NOVOS v1.0.12:
+    # RSI: 12%, Funding: 10%, Netflow: 5%, L/S: 3% do total 30%
+    # Normalizando para o bloco: RSI: 40%, Funding: 33.33%, Netflow: 16.67%, L/S: 10%
     score_consolidado = (
-        (rsi_score * 0.40) +
-        (funding_score * 0.32) +
-        (oi_score * 0.16) +
-        (ls_score * 0.12)
+        (rsi_score * 0.40) +        # 12% / 30% = 40%
+        (funding_score * 0.3333) +  # 10% / 30% = 33.33%
+        (netflow_score * 0.1667) +  # 5% / 30% = 16.67%
+        (ls_score * 0.10)           # 3% / 30% = 10%
     )
     
     # 4. Retornar JSON formatado
     return {
         "bloco": "momentum",
-        "peso_bloco": "25%",
+        "peso_bloco": "30%",
         "score_consolidado": round(score_consolidado, 2),
         "classificacao_consolidada": interpretar_classificacao_consolidada(score_consolidado),
         "timestamp": dados_indicadores["timestamp"],
@@ -119,22 +117,22 @@ def calcular_score():
                 "valor": rsi_valor,
                 "score": round(rsi_score, 1),
                 "classificacao": rsi_classificacao,
-                "peso": "10%",
+                "peso": "12%",
                 "fonte": indicadores["RSI_Semanal"]["fonte"]
             },
             "Funding_Rates": {
                 "valor": funding_valor,
                 "score": round(funding_score, 1),
                 "classificacao": funding_classificacao,
-                "peso": "8%",
+                "peso": "10%",
                 "fonte": indicadores["Funding_Rates"]["fonte"]
             },
-            "OI_Change": {
-                "valor": oi_valor,
-                "score": round(oi_score, 1),
-                "classificacao": oi_classificacao,
-                "peso": "4%",
-                "fonte": indicadores["OI_Change"]["fonte"]
+            "Exchange_Netflow": {
+                "valor": netflow_valor,
+                "score": round(netflow_score, 1),
+                "classificacao": netflow_classificacao,
+                "peso": "5%",
+                "fonte": indicadores["Exchange_Netflow"]["fonte"]
             },
             "Long_Short_Ratio": {
                 "valor": ls_valor,

@@ -9,7 +9,7 @@ router = APIRouter()
 
 @router.get("/momentum", response_class=HTMLResponse)
 async def dashboard_momentum():
-    """Dashboard de análise de momentum"""
+    """Dashboard de análise de momentum v1.0.12"""
     try:
         # Buscar dados da API interna
         dados = momentum.calcular_score()
@@ -21,7 +21,7 @@ async def dashboard_momentum():
         indicadores = dados.get("indicadores", {})
         rsi_data = indicadores.get("RSI_Semanal", {})
         funding_data = indicadores.get("Funding_Rates", {})
-        oi_data = indicadores.get("OI_Change", {})
+        netflow_data = indicadores.get("Exchange_Netflow", {})
         ls_data = indicadores.get("Long_Short_Ratio", {})
         
         # Valores seguros para cada indicador - TODOS SCORES INTEIROS
@@ -35,10 +35,10 @@ async def dashboard_momentum():
         valor_funding = str(funding_data.get("valor", "N/A"))
         peso_funding = str(funding_data.get("peso", "N/A"))
         
-        score_oi = round(oi_data.get("score", 0) * 10)
-        classificacao_oi = oi_data.get("classificacao", "N/A")
-        valor_oi = str(oi_data.get("valor", "N/A"))
-        peso_oi = str(oi_data.get("peso", "N/A"))
+        score_netflow = round(netflow_data.get("score", 0) * 10)
+        classificacao_netflow = netflow_data.get("classificacao", "N/A")
+        valor_netflow = f"{netflow_data.get('valor', 0):.0f} BTC" if netflow_data.get('valor') else "N/A"
+        peso_netflow = str(netflow_data.get("peso", "N/A"))
         
         score_ls = round(ls_data.get("score", 0) * 10)
         classificacao_ls = ls_data.get("classificacao", "N/A")
@@ -52,7 +52,7 @@ async def dashboard_momentum():
         <head>
           <meta charset="UTF-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-          <title>BTC Turbo - Análise de Momentum</title>
+          <title>BTC Turbo - Análise de Momentum v1.0.12</title>
           <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
           <style>
             *, *::before, *::after {{ box-sizing: border-box; }}
@@ -100,7 +100,7 @@ async def dashboard_momentum():
           </style>
         </head>
         <body>
-          <h1>⚡ BTC Turbo - Análise de Momentum</h1>
+          <h1>⚡ BTC Turbo - Análise de Momentum v1.0.12</h1>
           <div class="menu-scroll">
             <a href="/dashboard/">Home</a>
             <a href="/dashboard/riscos">Riscos</a>
@@ -139,14 +139,14 @@ async def dashboard_momentum():
               <div class="info-text">Valor: {valor_funding} | Peso: {peso_funding}</div>
             </div>
 
-            <!-- OI Change -->
+            <!-- Exchange Netflow -->
             <div class="grafico">
-              <h3>OI Change</h3>
-              <canvas id="gaugeChart_oi" width="200" height="180"></canvas>
-              <div id="classificacao_oi" class="classificacao">
-                Score: {score_oi} - {classificacao_oi}
+              <h3>Exchange Netflow 7D</h3>
+              <canvas id="gaugeChart_netflow" width="200" height="180"></canvas>
+              <div id="classificacao_netflow" class="classificacao">
+                Score: {score_netflow} - {classificacao_netflow}
               </div>
-              <div class="info-text">Valor: {valor_oi} | Peso: {peso_oi}</div>
+              <div class="info-text">Valor: {valor_netflow} | Peso: {peso_netflow}</div>
             </div>
 
             <!-- Long/Short Ratio -->
@@ -220,7 +220,7 @@ async def dashboard_momentum():
               renderGauge("gaugeChart_consolidado", {score_consolidado});
               renderGauge("gaugeChart_rsi", {score_rsi});
               renderGauge("gaugeChart_funding", {score_funding});
-              renderGauge("gaugeChart_oi", {score_oi});
+              renderGauge("gaugeChart_netflow", {score_netflow});
               renderGauge("gaugeChart_ls", {score_ls});
             }}
 
@@ -238,7 +238,7 @@ async def dashboard_momentum():
         return f"""
         <html>
         <body style="background: #0f111a; color: white; font-family: monospace; padding: 20px;">
-            <h1 style="color: #f7931a;">🔧 Debug - Dashboard Momentum</h1>
+            <h1 style="color: #f7931a;">🔧 Debug - Dashboard Momentum v1.0.12</h1>
             <h2>Erro:</h2>
             <pre style="color: #e53935;">{str(e)}</pre>
             <a href="/dashboard/" style="color: #f7931a;">← Voltar</a>

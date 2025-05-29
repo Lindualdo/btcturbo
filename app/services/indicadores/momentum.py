@@ -19,8 +19,8 @@ def obter_indicadores():
                     "valor": f"{float(dados_db['funding_rates']) * 100:.3f}%" if dados_db["funding_rates"] else "0.000%",
                     "fonte": dados_db["fonte"] or "PostgreSQL"
                 },
-                "OI_Change": {
-                    "valor": f"+{float(dados_db['oi_change']):.1f}%" if dados_db["oi_change"] and dados_db["oi_change"] > 0 else f"{float(dados_db['oi_change']):.1f}%" if dados_db["oi_change"] else "0.0%",
+                "Exchange_Netflow": {
+                    "valor": float(dados_db["exchange_netflow"]) if dados_db["exchange_netflow"] else 0.0,
                     "fonte": dados_db["fonte"] or "PostgreSQL"
                 },
                 "Long_Short_Ratio": {
@@ -38,7 +38,7 @@ def obter_indicadores():
             "indicadores": {
                 "RSI_Semanal": {"valor": None, "fonte": None},
                 "Funding_Rates": {"valor": None, "fonte": None},
-                "OI_Change": {"valor": None, "fonte": None},
+                "Exchange_Netflow": {"valor": None, "fonte": None},
                 "Long_Short_Ratio": {"valor": None, "fonte": None}
             },
             "status": "no_data",
