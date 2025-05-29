@@ -31,6 +31,7 @@ Esta documentação técnica define claramente o padrão arquitetural, responsab
 
 https://github.com/Lindualdo/btcturbo/blob/main/doc/btcturbo-espec-funcional.md
 
+```
 
 SISTEMA v4.0 FINAL
 ├── CICLO (40%)
@@ -58,6 +59,8 @@ SISTEMA v4.0 FINAL
   ├── WBTC Depeg
   ├── Arbitrum Status
   └── AAVE Protocol
+
+```
 ---
 
 
