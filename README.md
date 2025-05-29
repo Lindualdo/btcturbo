@@ -14,14 +14,23 @@ Esta documentação técnica define claramente o padrão arquitetural, responsab
 - dash de anlise tecnica ainda usando api externa - precisamos implementar (mais complexa)
 - https://btcturbo-production.up.railway.app/dashboard/
 
-## Próximos passos 
+## Próximos passos 1.0.11 - Dashboard consolidao  - Home
 - Concluir a api de analise consolidada - api/v1/analise-btc
 - atualizar a home do dash para incluir a analise consolidada de cada bloco com o score geral
+
+
+## Próximos passos 1.0.12 - coleta de dados
+- Doc: 
+
+- validação dos valores coletados
 - coleta dos indicadores e gravação no Postgres
+- registrar a fonte de cada indicador (hoje está uma fonte para todo o bloco) 
 * notion
 * Trandview
 * web3
 * APIs
+
+## Próximos passos 1.0.13 - coleta de dados
 
 - Inclusão de dois novos indicadores no bloco momentum
 * Stablecoin Supply Ratio - SSR (2%)
