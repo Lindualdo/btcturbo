@@ -1,39 +1,54 @@
-# app/main.py
-
 from fastapi import FastAPI
-from app.routers import coleta, indicadores, score, analise, diagnostico
+from datetime import datetime
+from app.routers import coleta, indicadores, score, analise, diagnostico, dashboards
 
 app = FastAPI(
     title="BTC Turbo API",
-    description="Sistema de análise de indicadores BTC com PostgreSQL",
-    version="1.0.4"
+    description="Sistema de análise de indicadores BTC com PostgreSQL + HTML Templates",
+    version="1.0.5"
 )
 
-# 0 - DIAGNÓSTICO E SETUP (NOVO)
+# ==========================================
+# ROUTERS ORGANIZADOS
+# ==========================================
+
+# APIs de dados
 app.include_router(diagnostico.router, prefix="/api/v1/diagnostico", tags=["🔧 Diagnóstico"]) 
-
-# 1 - Coleta indicadores (origens diversas) e grava no postgres
 app.include_router(coleta.router, prefix="/api/v1", tags=["📥 Coleta"]) 
-
-# 2 - Obter os indicadores (dados brutos) do postgres
 app.include_router(indicadores.router, prefix="/api/v1", tags=["📊 Indicadores"]) 
-
-# 3 - Calcular score dos indicadores de cada bloco (usa sempre os dados brutos do postgres)
 app.include_router(score.router, prefix="/api/v1", tags=["🎯 Scores"])
-
-# 4 - Score consolidado (usa os scores consolidados de cada bloco) 
 app.include_router(analise.router, prefix="/api/v1", tags=["📈 Análise"])
+
+# Dashboards HTML
+app.include_router(dashboards.router, prefix="/dashboard", tags=["📱 Dashboards"])
+
+# ==========================================
+# ENDPOINTS BÁSICOS
+# ==========================================
+
+@app.get("/ping")
+async def ping():
+    """Keep-alive endpoint"""
+    return {"status": "alive", "timestamp": datetime.utcnow().isoformat()}
+
+@app.get("/health")
+async def health():
+    """Health check simples"""
+    return {"healthy": True, "time": datetime.utcnow().isoformat()}
 
 @app.get("/")
 async def root():
     return {
-        "message": "🚀 BTC Turbo API v1.0.4",
+        "message": "🚀 BTC Turbo API v1.0.5",
         "status": "✅ Online",
         "endpoints": {
-            "diagnostico": "/api/v1/diagnostico/health-check",
-            "setup": "/api/v1/diagnostico/setup-database",
-            "teste": "/api/v1/diagnostico/test-indicadores",
-            "indicadores": "/api/v1/obter-indicadores/{bloco}",
-            "docs": "/docs"
+            "apis": "/docs",
+            "dashboards": {
+                "tecnico": "/dashboard/tecnico",
+                "ciclos": "/dashboard/ciclos", 
+                "momentum": "/dashboard/momentum",
+                "riscos": "/dashboard/riscos",
+                "consolidado": "/dashboard/consolidado"
+            }
         }
     }
