@@ -14,8 +14,28 @@ async def dashboard_riscos():
         # Buscar dados da API interna
         dados = riscos.calcular_score()
         
-        # Template HTML embutido (temporário)
-        html_template = """
+        # Extrair dados com valores padrão seguros
+        score_consolidado = round(dados.get("score_consolidado", 0) * 10, 1)
+        classificacao_consolidada = dados.get("classificacao_consolidada", "N/A")
+        
+        indicadores = dados.get("indicadores", {})
+        dist_data = indicadores.get("Dist_Liquidacao", {})
+        health_data = indicadores.get("Health_Factor", {})
+        
+        # Valores seguros para Distância Liquidação
+        score_dist = round(dist_data.get("score", 0) * 10, 1)
+        classificacao_dist = dist_data.get("classificacao", "N/A")
+        valor_dist = str(dist_data.get("valor", "N/A"))
+        peso_dist = str(dist_data.get("peso", "N/A"))
+        
+        # Valores seguros para Health Factor
+        score_health = round(health_data.get("score", 0) * 10, 1)
+        classificacao_health = health_data.get("classificacao", "N/A")
+        valor_health = str(health_data.get("valor", "N/A"))
+        peso_health = str(health_data.get("peso", "N/A"))
+        
+        # Template HTML seguro
+        html = f"""
         <!DOCTYPE html>
         <html lang="pt-BR">
         <head>
@@ -24,7 +44,7 @@ async def dashboard_riscos():
           <title>BTC Turbo - Análise de Riscos</title>
           <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
           <style>
-            body {
+            body {{
               background: #0f111a;
               color: #fff;
               text-align: center;
@@ -32,21 +52,21 @@ async def dashboard_riscos():
               padding: 2%;
               margin: 0;
               min-height: 100vh;
-            }
-            h1 {
+            }}
+            h1 {{
               font-size: clamp(20px, 4vw, 28px);
               color: #f7931a;
               margin-bottom: 3%;
               font-weight: 700;
-            }
-            .dashboard-grid {
+            }}
+            .dashboard-grid {{
               display: flex;
               flex-wrap: wrap;
               justify-content: center;
               gap: 2%;
               margin-bottom: 4%;
-            }
-            .grafico {
+            }}
+            .grafico {{
               width: clamp(200px, 30%, 280px);
               background: #161b22;
               border-radius: 4%;
@@ -56,21 +76,21 @@ async def dashboard_riscos():
               flex-direction: column;
               align-items: center;
               margin-bottom: 2%;
-            }
-            .classificacao {
+            }}
+            .classificacao {{
               font-size: clamp(12px, 2.2vw, 16px);
               margin-top: 2%;
               font-weight: 600;
-            }
-            .menu-scroll {
+            }}
+            .menu-scroll {{
               display: flex;
               justify-content: center;
               gap: clamp(8px, 1.5vw, 24px);
               margin-bottom: 4%;
               padding: 1.5%;
               border-bottom: 1px solid #333;
-            }
-            .menu-scroll a {
+            }}
+            .menu-scroll a {{
               color: #888;
               font-weight: 600;
               text-decoration: none;
@@ -78,27 +98,30 @@ async def dashboard_riscos():
               border-bottom: 3px solid transparent;
               transition: 0.3s;
               font-size: clamp(14px, 1.6vw, 16px);
-            }
-            .menu-scroll a:hover {
+            }}
+            .menu-scroll a:hover {{
               color: #f7931a;
               border-bottom: 3px solid #f7931a;
-            }
-            .menu-scroll a.ativo {
+            }}
+            .menu-scroll a.ativo {{
               color: #f7931a;
               border-bottom: 3px solid #f7931a;
-            }
-            canvas {
+            }}
+            canvas {{
               max-width: 100%;
               height: auto;
-            }
+            }}
+            .info-text {{
+              font-size: 12px;
+              color: #888;
+              margin-top: 10px;
+            }}
           </style>
         </head>
         <body>
           <h1>🚀 BTC Turbo - Análise de Riscos</h1>
           <div class="menu-scroll">
-            <a href="/dashboard/tecnico">Técnico</a>
-            <a href="/dashboard/ciclos">Ciclos</a>
-            <a href="/dashboard/momentum">Momentum</a>
+            <a href="/dashboard/">Home</a>
             <a href="/dashboard/riscos" class="ativo">Riscos</a>
           </div>
           
@@ -119,7 +142,7 @@ async def dashboard_riscos():
               <div id="classificacao_dist" class="classificacao">
                 Score: {score_dist} - {classificacao_dist}
               </div>
-              <p>Valor: {valor_dist} | Peso: {peso_dist}</p>
+              <div class="info-text">Valor: {valor_dist} | Peso: {peso_dist}</div>
             </div>
                     
             <!-- Health Factor -->
@@ -129,13 +152,25 @@ async def dashboard_riscos():
               <div id="classificacao_health" class="classificacao">
                 Score: {score_health} - {classificacao_health}
               </div>
-              <p>Valor: {valor_health} | Peso: {peso_health}</p>
+              <div class="info-text">Valor: {valor_health} | Peso: {peso_health}</div>
             </div>
+          </div>
+
+          <div style="margin-top: 40px;">
+            <h3>Debug Info</h3>
+            <pre style="color: #888; font-size: 12px; text-align: left; max-width: 600px; margin: 0 auto;">
+{json.dumps(dados, indent=2, ensure_ascii=False)}
+            </pre>
           </div>
 
           <script>
             function renderGauge(canvasId, score) {{
               const canvas = document.getElementById(canvasId);
+              if (!canvas) {{
+                console.error('Canvas não encontrado:', canvasId);
+                return;
+              }}
+              
               const ctx = canvas.getContext('2d');
               
               // Limpar gráfico existente
@@ -145,95 +180,112 @@ async def dashboard_riscos():
               // Cor baseada no score
               let cor = score < 20 ? "#e53935" : score < 40 ? "#f57c00" : score < 60 ? "#fbc02d" : score < 80 ? "#9acb82" : "#4caf50";
 
-              new Chart(ctx, {{
-                type: 'doughnut',
-                data: {{
-                  datasets: [{{ data: [100], backgroundColor: ['#0000'], borderWidth: 0, cutout: '80%' }}]
-                }},
-                options: {{
-                  responsive: false,
-                  rotation: -Math.PI,
-                  circumference: Math.PI,
-                  plugins: {{ tooltip: {{ enabled: false }}, legend: {{ display: false }} }}
-                }},
-                plugins: [{{
-                  afterDraw: (chart) => {{
-                    const ctx = chart.ctx;
-                    const angle = (score / 100) * Math.PI;
-                    const cx = chart.width / 2;
-                    const cy = chart.height - 42;
-                    const r = chart.width / 2.4;
+              try {{
+                new Chart(ctx, {{
+                  type: 'doughnut',
+                  data: {{
+                    datasets: [{{ data: [100], backgroundColor: ['#0000'], borderWidth: 0, cutout: '80%' }}]
+                  }},
+                  options: {{
+                    responsive: false,
+                    rotation: -Math.PI,
+                    circumference: Math.PI,
+                    plugins: {{ tooltip: {{ enabled: false }}, legend: {{ display: false }} }}
+                  }},
+                  plugins: [{{
+                    afterDraw: (chart) => {{
+                      const ctx = chart.ctx;
+                      const angle = (score / 100) * Math.PI;
+                      const cx = chart.width / 2;
+                      const cy = chart.height - 42;
+                      const r = chart.width / 2.4;
 
-                    // Desenhar arcos coloridos
-                    const drawArc = (start, end, color) => {{
+                      ctx.save();
+
+                      // Desenhar arcos coloridos
+                      const drawArc = (start, end, color) => {{
+                        ctx.beginPath();
+                        ctx.arc(cx, cy, r, start, end);
+                        ctx.strokeStyle = color;
+                        ctx.lineWidth = 16;
+                        ctx.stroke();
+                      }};
+
+                      drawArc(Math.PI, Math.PI + Math.PI * 0.2, "#e53935");
+                      drawArc(Math.PI + Math.PI * 0.2, Math.PI + Math.PI * 0.4, "#f57c00");
+                      drawArc(Math.PI + Math.PI * 0.4, Math.PI + Math.PI * 0.6, "#fbc02d");
+                      drawArc(Math.PI + Math.PI * 0.6, Math.PI + Math.PI * 0.8, "#9acb82");
+                      drawArc(Math.PI + Math.PI * 0.8, 2 * Math.PI, "#4caf50");
+
+                      // Ponteiro
+                      const angleRadians = Math.PI + angle;
+                      const pointerLength = r * 0.9;
+                      const x1 = cx + pointerLength * Math.cos(angleRadians);
+                      const y1 = cy + pointerLength * Math.sin(angleRadians);
+                      
                       ctx.beginPath();
-                      ctx.arc(cx, cy, r, start, end);
-                      ctx.strokeStyle = color;
-                      ctx.lineWidth = 16;
-                      ctx.stroke();
-                    }};
+                      ctx.moveTo(x1, y1);
+                      ctx.lineTo(cx + 6 * Math.cos(angleRadians + Math.PI / 2), cy + 6 * Math.sin(angleRadians + Math.PI / 2));
+                      ctx.lineTo(cx + 6 * Math.cos(angleRadians - Math.PI / 2), cy + 6 * Math.sin(angleRadians - Math.PI / 2));
+                      ctx.fillStyle = "#444";
+                      ctx.fill();
+                      
+                      // Centro
+                      ctx.beginPath();
+                      ctx.arc(cx, cy, 6, 0, 2 * Math.PI);
+                      ctx.fillStyle = "#888";
+                      ctx.fill();
 
-                    drawArc(Math.PI, Math.PI + Math.PI * 0.2, "#e53935");
-                    drawArc(Math.PI + Math.PI * 0.2, Math.PI + Math.PI * 0.4, "#f57c00");
-                    drawArc(Math.PI + Math.PI * 0.4, Math.PI + Math.PI * 0.6, "#fbc02d");
-                    drawArc(Math.PI + Math.PI * 0.6, Math.PI + Math.PI * 0.8, "#9acb82");
-                    drawArc(Math.PI + Math.PI * 0.8, 2 * Math.PI, "#4caf50");
-
-                    // Ponteiro
-                    const angleRadians = Math.PI + angle;
-                    ctx.beginPath();
-                    ctx.moveTo(cx + (r * 0.9) * Math.cos(angleRadians), cy + (r * 0.9) * Math.sin(angleRadians));
-                    ctx.lineTo(cx + 6 * Math.cos(angleRadians + Math.PI / 2), cy + 6 * Math.sin(angleRadians + Math.PI / 2));
-                    ctx.lineTo(cx + 6 * Math.cos(angleRadians - Math.PI / 2), cy + 6 * Math.sin(angleRadians - Math.PI / 2));
-                    ctx.fillStyle = "#444";
-                    ctx.fill();
-                  }}
-                }}]
-              }});
+                      ctx.restore();
+                    }}
+                  }}]
+                }});
+              }} catch (error) {{
+                console.error('Erro ao criar gráfico:', error);
+              }}
             }}
 
-            // Inicializar gráficos
-            setTimeout(() => {{
-              renderGauge("gaugeChart_consolidado", {js_score_consolidado});
-              renderGauge("gaugeChart_dist", {js_score_dist});
-              renderGauge("gaugeChart_health", {js_score_health});
-            }}, 500);
+            // Inicializar gráficos quando Chart.js estiver pronto
+            function initCharts() {{
+              if (typeof Chart === 'undefined') {{
+                setTimeout(initCharts, 100);
+                return;
+              }}
+              
+              console.log('Inicializando gráficos...');
+              renderGauge("gaugeChart_consolidado", {score_consolidado});
+              renderGauge("gaugeChart_dist", {score_dist});
+              renderGauge("gaugeChart_health", {score_health});
+            }}
+
+            // Inicializar quando página carregar
+            if (document.readyState === 'loading') {{
+              document.addEventListener('DOMContentLoaded', initCharts);
+            }} else {{
+              initCharts();
+            }}
           </script>
         </body>
         </html>
         """
         
-        # Extrair dados para substituição
-        score_consolidado = int(dados.get("score_consolidado", 0) * 10)
-        classificacao_consolidada = dados.get("classificacao_consolidada", "N/A")
-        
-        indicadores = dados.get("indicadores", {})
-        dist_data = indicadores.get("Dist_Liquidacao", {})
-        health_data = indicadores.get("Health_Factor", {})
-        
-        # Substituir valores no template
-        html = html_template.format(
-            score_consolidado=score_consolidado,
-            classificacao_consolidada=classificacao_consolidada,
-            js_score_consolidado=score_consolidado,
-            
-            score_dist=int(dist_data.get("score", 0) * 10),
-            classificacao_dist=dist_data.get("classificacao", "N/A"),
-            js_score_dist=int(dist_data.get("score", 0) * 10),
-            valor_dist=dist_data.get("valor", "N/A"),
-            peso_dist=dist_data.get("peso", "N/A"),
-            
-            score_health=int(health_data.get("score", 0) * 10),
-            classificacao_health=health_data.get("classificacao", "N/A"),
-            js_score_health=int(health_data.get("score", 0) * 10),
-            valor_health=health_data.get("valor", "N/A"),
-            peso_health=health_data.get("peso", "N/A")
-        )
-        
         return html
         
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Erro ao gerar dashboard riscos: {str(e)}")
+        # Em caso de erro, retornar página de debug
+        return f"""
+        <html>
+        <head><title>BTC Turbo - Erro Debug</title></head>
+        <body style="background: #0f111a; color: white; font-family: monospace; padding: 20px;">
+            <h1 style="color: #f7931a;">🔧 Debug - Dashboard Riscos</h1>
+            <h2>Erro:</h2>
+            <pre style="color: #e53935;">{str(e)}</pre>
+            <h2>Tentando buscar dados...</h2>
+            <pre>{json.dumps(riscos.calcular_score(), indent=2, ensure_ascii=False, default=str)}</pre>
+            <a href="/dashboard/" style="color: #f7931a;">← Voltar</a>
+        </body>
+        </html>
+        """
 
 @router.get("/", response_class=HTMLResponse)
 async def dashboard_index():
