@@ -35,7 +35,7 @@ async def dashboard_index():
             .dashboard-link h3 { margin: 0 0 10px 0; font-size: 1.3rem; }
             .status { font-weight: 600; }
             .status.funcionando { color: #4caf50; }
-            .status.desenvolvimento { color: #888; }
+            .status.externo { color: #ff9800; }
             .footer { 
                 margin-top: 50px; padding-top: 30px; 
                 border-top: 1px solid #333; text-align: center; 
@@ -50,7 +50,7 @@ async def dashboard_index():
     </head>
     <body>
         <h1>🚀 BTC Turbo - Dashboards</h1>
-        <div class="subtitle">Sistema funcionando sem N8N!</div>
+        <div class="subtitle">Sistema v1.0.10 - Todos os dashboards funcionando!</div>
         
         <div class="dashboard-links">
             <a href="/dashboard/riscos" class="dashboard-link">
@@ -67,14 +67,14 @@ async def dashboard_index():
             
             <a href="/dashboard/ciclos" class="dashboard-link">
                 <h3>🔄 Ciclos</h3>
-                <p class="status desenvolvimento">🚧 Em desenvolvimento</p>
+                <p class="status funcionando">✅ Funcionando</p>
                 <small>MVRV, Realized Price & Puell Multiple</small>
             </a>
             
             <a href="/dashboard/tecnico" class="dashboard-link">
                 <h3>📈 Técnico</h3>
-                <p class="status desenvolvimento">🚧 Em desenvolvimento</p>
-                <small>EMAs Multi-TF & Padrões Gráficos</small>
+                <p class="status externo">🔗 API Externa</p>
+                <small>EMAs Multi-TF & Sistema Técnico</small>
             </a>
         </div>
         

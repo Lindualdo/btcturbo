@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from datetime import datetime
 from app.routers import (
     coleta, indicadores, score, analise, diagnostico, 
-    dashboards, dashboard_riscos, dashboard_momentum, dashboard_ciclos
+    dashboards, dashboard_riscos, dashboard_momentum, dashboard_ciclos, dashboard_tecnico
 )
 
 app = FastAPI(
@@ -34,9 +34,10 @@ app.include_router(dashboards.router, prefix="/dashboard", tags=["📱 Dashboard
 app.include_router(dashboard_riscos.router, prefix="/dashboard", tags=["📱 Dashboards"])
 app.include_router(dashboard_momentum.router, prefix="/dashboard", tags=["📱 Dashboards"])
 app.include_router(dashboard_ciclos.router, prefix="/dashboard", tags=["📱 Dashboards"])
+app.include_router(dashboard_tecnico.router, prefix="/dashboard", tags=["📱 Dashboards"])
 
-# TODO: Adicionar quando pronto
-# app.include_router(dashboard_tecnico.router, prefix="/dashboard", tags=["📱 Dashboards"])
+# TODO: Futuro - Implementar bloco técnico interno (substituir API externa)
+# Quando implementado, remover chamada externa e usar app.services.scores.tecnico
 
 # ==========================================
 # ENDPOINTS BÁSICOS
@@ -63,11 +64,12 @@ async def root():
             "funcionando": [
                 "/dashboard/riscos",
                 "/dashboard/momentum",
-                "/dashboard/ciclos"
-            ],
-            "desenvolvimento": [
+                "/dashboard/ciclos",
                 "/dashboard/tecnico"
-            ]
+            ],
+            "notas": {
+                "tecnico": "Consumindo API externa temporariamente"
+            }
         },
         "apis": "/docs"
     }
