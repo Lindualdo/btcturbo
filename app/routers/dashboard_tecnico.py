@@ -37,28 +37,28 @@ async def dashboard_tecnico():
         consolidado = dados_api.get("consolidado", {})
         emas = dados_api.get("emas", {})
         
-        score_consolidado = round(consolidado.get("score", 0) * 10, 1)
+        score_consolidado = round(consolidado.get("score", 0) * 10)
         classificacao_consolidada = consolidado.get("classificacao", "N/A")
         racional_consolidado = consolidado.get("racional", "Análise técnica multi-timeframe")
         
         # Timeframes
-        score_1w = round(emas.get("1w", {}).get("analise", {}).get("score", 0) * 10, 1)
+        score_1w = round(emas.get("1w", {}).get("analise", {}).get("score", 0) * 10)
         classificacao_1w = emas.get("1w", {}).get("analise", {}).get("classificacao", "N/A")
         observacao_1w = emas.get("1w", {}).get("analise", {}).get("observacao", "Semanal")
         
-        score_1d = round(emas.get("1d", {}).get("analise", {}).get("score", 0) * 10, 1)
+        score_1d = round(emas.get("1d", {}).get("analise", {}).get("score", 0) * 10)
         classificacao_1d = emas.get("1d", {}).get("analise", {}).get("classificacao", "N/A")
         observacao_1d = emas.get("1d", {}).get("analise", {}).get("observacao", "Diário")
         
-        score_4h = round(emas.get("4h", {}).get("analise", {}).get("score", 0) * 10, 1)
+        score_4h = round(emas.get("4h", {}).get("analise", {}).get("score", 0) * 10)
         classificacao_4h = emas.get("4h", {}).get("analise", {}).get("classificacao", "N/A")
         observacao_4h = emas.get("4h", {}).get("analise", {}).get("observacao", "4 Horas")
         
-        score_1h = round(emas.get("1h", {}).get("analise", {}).get("score", 0) * 10, 1)
+        score_1h = round(emas.get("1h", {}).get("analise", {}).get("score", 0) * 10)
         classificacao_1h = emas.get("1h", {}).get("analise", {}).get("classificacao", "N/A")
         observacao_1h = emas.get("1h", {}).get("analise", {}).get("observacao", "1 Hora")
         
-        score_15m = round(emas.get("15m", {}).get("analise", {}).get("score", 0) * 10, 1)
+        score_15m = round(emas.get("15m", {}).get("analise", {}).get("score", 0) * 10)
         classificacao_15m = emas.get("15m", {}).get("analise", {}).get("classificacao", "N/A")
         observacao_15m = emas.get("15m", {}).get("analise", {}).get("observacao", "15 Minutos")
         
@@ -139,7 +139,7 @@ async def dashboard_tecnico():
             <a href="/dashboard/riscos">Riscos</a>
             <a href="/dashboard/momentum">Momentum</a>
             <a href="/dashboard/ciclos">Ciclos</a>
-            <a href="/dashboard/tecnico" class="ativo">Técnico</a>
+            <a href="/dashboard/tecnico" class="ativo">Técnica</a>
           </div>
           
           <div class="dashboard-grid">

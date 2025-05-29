@@ -14,21 +14,21 @@ async def dashboard_riscos():
         # Buscar dados da API interna
         dados = riscos.calcular_score()
         
-        # Extrair dados com valores padrão seguros
-        score_consolidado = round(dados.get("score_consolidado", 0) * 10, 1)
+        # Extrair dados com valores padrão seguros - SCORE INTEIRO
+        score_consolidado = round(dados.get("score_consolidado", 0) * 10)
         classificacao_consolidada = dados.get("classificacao_consolidada", "N/A")
         
         indicadores = dados.get("indicadores", {})
         dist_data = indicadores.get("Dist_Liquidacao", {})
         health_data = indicadores.get("Health_Factor", {})
         
-        # Valores seguros para cada indicador
-        score_dist = round(dist_data.get("score", 0) * 10, 1)
+        # Valores seguros para cada indicador - SCORES INTEIROS
+        score_dist = round(dist_data.get("score", 0) * 10)
         classificacao_dist = dist_data.get("classificacao", "N/A")
         valor_dist = str(dist_data.get("valor", "N/A"))
         peso_dist = str(dist_data.get("peso", "N/A"))
         
-        score_health = round(health_data.get("score", 0) * 10, 1)
+        score_health = round(health_data.get("score", 0) * 10)
         classificacao_health = health_data.get("classificacao", "N/A")
         valor_health = str(health_data.get("valor", "N/A"))
         peso_health = str(health_data.get("peso", "N/A"))
@@ -94,7 +94,7 @@ async def dashboard_riscos():
             <a href="/dashboard/riscos" class="ativo">Riscos</a>
             <a href="/dashboard/momentum">Momentum</a>
             <a href="/dashboard/ciclos">Ciclos</a>
-            <a href="/dashboard/tecnico">Técnico</a>
+            <a href="/dashboard/tecnico">Técnica</a>
           </div>
           
           <div class="dashboard-grid">

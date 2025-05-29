@@ -14,8 +14,8 @@ async def dashboard_momentum():
         # Buscar dados da API interna
         dados = momentum.calcular_score()
         
-        # Extrair dados com valores padrão seguros
-        score_consolidado = round(dados.get("score_consolidado", 0) * 10, 1)
+        # Extrair dados com valores padrão seguros - TODOS SCORES INTEIROS
+        score_consolidado = round(dados.get("score_consolidado", 0) * 10)
         classificacao_consolidada = dados.get("classificacao_consolidada", "N/A")
         
         indicadores = dados.get("indicadores", {})
@@ -24,23 +24,23 @@ async def dashboard_momentum():
         oi_data = indicadores.get("OI_Change", {})
         ls_data = indicadores.get("Long_Short_Ratio", {})
         
-        # Valores seguros para cada indicador
-        score_rsi = round(rsi_data.get("score", 0) * 10, 1)
+        # Valores seguros para cada indicador - TODOS SCORES INTEIROS
+        score_rsi = round(rsi_data.get("score", 0) * 10)
         classificacao_rsi = rsi_data.get("classificacao", "N/A")
         valor_rsi = str(rsi_data.get("valor", "N/A"))
         peso_rsi = str(rsi_data.get("peso", "N/A"))
         
-        score_funding = round(funding_data.get("score", 0) * 10, 1)
+        score_funding = round(funding_data.get("score", 0) * 10)
         classificacao_funding = funding_data.get("classificacao", "N/A")
         valor_funding = str(funding_data.get("valor", "N/A"))
         peso_funding = str(funding_data.get("peso", "N/A"))
         
-        score_oi = round(oi_data.get("score", 0) * 10, 1)
+        score_oi = round(oi_data.get("score", 0) * 10)
         classificacao_oi = oi_data.get("classificacao", "N/A")
         valor_oi = str(oi_data.get("valor", "N/A"))
         peso_oi = str(oi_data.get("peso", "N/A"))
         
-        score_ls = round(ls_data.get("score", 0) * 10, 1)
+        score_ls = round(ls_data.get("score", 0) * 10)
         classificacao_ls = ls_data.get("classificacao", "N/A")
         valor_ls = str(ls_data.get("valor", "N/A"))
         peso_ls = str(ls_data.get("peso", "N/A"))
@@ -106,7 +106,7 @@ async def dashboard_momentum():
             <a href="/dashboard/riscos">Riscos</a>
             <a href="/dashboard/momentum" class="ativo">Momentum</a>
             <a href="/dashboard/ciclos">Ciclos</a>
-            <a href="/dashboard/tecnico">Técnico</a>
+            <a href="/dashboard/tecnico">Técnica</a>
           </div>
           
           <div class="dashboard-grid">

@@ -14,8 +14,8 @@ async def dashboard_ciclos():
         # Buscar dados da API interna
         dados = ciclos.calcular_score()
         
-        # Extrair dados com valores padrão seguros
-        score_consolidado = round(dados.get("score_consolidado", 0) * 10, 1)
+        # Extrair dados com valores padrão seguros - TODOS SCORES INTEIROS
+        score_consolidado = round(dados.get("score_consolidado", 0) * 10)
         classificacao_consolidada = dados.get("classificacao_consolidada", "N/A")
         
         indicadores = dados.get("indicadores", {})
@@ -23,18 +23,18 @@ async def dashboard_ciclos():
         realized_data = indicadores.get("Realized_Ratio", {})
         puell_data = indicadores.get("Puell_Multiple", {})
         
-        # Valores seguros para cada indicador
-        score_mvrv = round(mvrv_data.get("score", 0) * 10, 1)
+        # Valores seguros para cada indicador - TODOS SCORES INTEIROS
+        score_mvrv = round(mvrv_data.get("score", 0) * 10)
         classificacao_mvrv = mvrv_data.get("classificacao", "N/A")
         valor_mvrv = str(mvrv_data.get("valor", "N/A"))
         peso_mvrv = str(mvrv_data.get("peso", "N/A"))
         
-        score_realized = round(realized_data.get("score", 0) * 10, 1)
+        score_realized = round(realized_data.get("score", 0) * 10)
         classificacao_realized = realized_data.get("classificacao", "N/A")
         valor_realized = str(realized_data.get("valor", "N/A"))
         peso_realized = str(realized_data.get("peso", "N/A"))
         
-        score_puell = round(puell_data.get("score", 0) * 10, 1)
+        score_puell = round(puell_data.get("score", 0) * 10)
         classificacao_puell = puell_data.get("classificacao", "N/A")
         valor_puell = str(puell_data.get("valor", "N/A"))
         peso_puell = str(puell_data.get("peso", "N/A"))
@@ -100,7 +100,7 @@ async def dashboard_ciclos():
             <a href="/dashboard/riscos">Riscos</a>
             <a href="/dashboard/momentum">Momentum</a>
             <a href="/dashboard/ciclos" class="ativo">Ciclos</a>
-            <a href="/dashboard/tecnico">Técnico</a>
+            <a href="/dashboard/tecnico">Técnica</a>
           </div>
           
           <div class="dashboard-grid">
