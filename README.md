@@ -6,10 +6,25 @@ Esta documentação técnica define claramente o padrão arquitetural, responsab
 
 ---
 
-## Notas da versão - 1.0.9
+## Notas da versão - 1.0.10
 
-- removido dois indicadores do bloco riscos (Exchange_Netflow, Stablecoin_Ratio)
-- rebalancemanto nos pesos bloco reduzido de 15 para 10% agora focado 100% na saude da alavancagem
+- Conlcuido dashboads de analises (riscos, ciclos, momentum e técnica)
+- organização melhor do main
+- status de funcionamento na home e links para diagnosticos e Health check
+- dash de anlise tecnica ainda usando api externa - precisamos implementar (mais complexa)
+- https://btcturbo-production.up.railway.app/dashboard/
+
+## Próximos passos 
+- coleta dos indicadores e gravação no Postgres
+
+* notion
+* Trandview
+* web3
+* APIs
+
+- Inclusão de dois novos indicadores no bloco momentum
+* 
+* 
 
 ## 🗂 Estrutura do Projeto
 
