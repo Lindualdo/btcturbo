@@ -21,7 +21,7 @@ Esta documentação técnica define claramente o padrão arquitetural, responsab
 
 ## Próximos passos 1.0.12 - coleta de dados
 - Docs: 
-https://github.com/Lindualdo/btcturbo/blob/main/doc/regra-limites-indicadores.md
+https://github.com/Lindualdo/btcturbo/blob/main/doc/validation-limites-indicadores.md
 
 
 - validação dos valores coletados
@@ -32,14 +32,12 @@ https://github.com/Lindualdo/btcturbo/blob/main/doc/regra-limites-indicadores.md
 * web3
 * APIs
 
-## Próximos passos 1.0.13 - coleta de dados
-
 - Inclusão de dois novos indicadores no bloco momentum
 * Stablecoin Supply Ratio - SSR (2%)
 * Exchange Netflow 7D (3%)
 
 
-## Próximos passos 1.0.14 - alertas
+## Próximos passos 1.0.13 - alertas
 - implementar sistemas de alertas
 https://github.com/Lindualdo/btcturbo/blob/main/doc/btcturbo-alertas.espc.md
 
@@ -335,54 +333,6 @@ class AnaliseResponse(BaseModel):
 * **Logs** são obrigatórios em erros críticos para facilitar depuração.
 
 
-# BTC TURBO - v1.0.5
-
-## 📋 Release Notes - PostgreSQL Integration & Diagnostic System
-
-### 🎯 **Principais Implementações:**
-
-#### 🔄 **Nova Arquitetura PostgreSQL**
-- ✅ **Helpers separados por bloco** - Estrutura modular com responsabilidades únicas
-- ✅ **Conexão robusta Railway** - Retry automático, timeout configurado, logs detalhados
-- ✅ **Tratamento de erros** robusto em todas as camadas
-- ✅ **Padrão arquitetural** memorizado para futuras implementações
-
-#### 🔧 **Sistema de Diagnóstico Completo**
-- ✅ **4 novos endpoints** de diagnóstico e validação
-- ✅ **Health check automatizado** do sistema PostgreSQL
-- ✅ **Setup automático** de tabelas e dados exemplo
-- ✅ **Validação completa** de todas as APIs
-
-#### 📊 **Preparação para APIs Reais**
-- ✅ **APIs refatoradas** prontas para substituir dados mockados
-- ✅ **Dados exemplo realistas** baseados na documentação técnica v3.0
-- ✅ **Formatação inteligente** por tipo de indicador (percentuais, scores, etc.)
-
----
-
-## 🆕 **Novos Endpoints de Diagnóstico**
-
-| Endpoint | Método | Função | Status |
-|----------|--------|---------|--------|
-| `/api/v1/diagnostico/health-check` | `GET` | Verifica conexão PostgreSQL e status das tabelas | ✅ Funcionando |
-| `/api/v1/diagnostico/setup-database` | `POST` | Cria tabelas e insere dados exemplo | ✅ Funcionando |
-| `/api/v1/diagnostico/test-indicadores` | `GET` | Testa todas as APIs de indicadores | ✅ Funcionando |
-| `/api/v1/diagnostico/dados-consolidados` | `GET` | Retorna dados mais recentes de todos os blocos | ✅ Funcionando |
-
-### 📝 **Exemplo de Uso:**
-```bash
-# Health Check do Sistema
-GET /api/v1/diagnostico/health-check
-
-# Setup Inicial (Desenvolvimento)
-POST /api/v1/diagnostico/setup-database
-
-# Teste de Todas as APIs
-GET /api/v1/diagnostico/test-indicadores
-```
-
----
-
 ## 📁 **Nova Estrutura PostgreSQL**
 
 ```
@@ -401,49 +351,6 @@ app/services/utils/helpers/postgres/
 - `get_dados_{bloco}()` - Busca dados mais recentes
 - `insert_dados_{bloco}()` - Insere novos dados  
 - `get_historico_{bloco}()` - Busca histórico com limite
-
----
-
-## 🎯 **Roadmap das Próximas Fases**
-
-### **Fase 2: APIs Reais** - V 1.0.6
-- [X] Substituir APIs mockadas por versões PostgreSQL
-- [X] Testar integração completa de todos os blocos
-- [X] Validar formatação e tipos de dados
-
-### **Fase 3: Sistema de Scores** - V 1.0.7
-- [X] Implementar cálculo de scores reais por bloco
-- [X] Sistema de pesos dinâmicos
-- [X] API consolidada final
-
-### **Fase 4: Integração Externa** 
-- [ ] TradingView (tvDatafeed)
-- [ ] Glassnode API
-- [ ] Coinglass API
-- [ ] AAVE Health Factor
-
----
-
-## 🛠️ **Melhorias Técnicas Implementadas**
-
-### **Logs Estruturados:**
-```python
-logger.info("🔍 Buscando dados do bloco CICLO...")
-logger.info("✅ Dados ciclo encontrados: timestamp=2025-05-27...")
-logger.error("❌ Erro ao buscar dados do bloco ciclo: Connection failed")
-```
-
-### **Conexão Railway Otimizada:**
-- Prioriza `DATABASE_URL` (padrão Railway)
-- Fallback para configurações separadas
-- Retry automático com 3 tentativas
-- Timeout configurado (10s)
-
-### **Dados Exemplo Realistas:**
-- Baseados nas tabelas da documentação v3.0
-- Múltiplos cenários: Atual, Bull, Bear, Histórico
-- Valores dentro dos ranges especificados
-- Timestamps escalonados para simular histórico
 
 ---
 
@@ -511,17 +418,3 @@ GET /api/v1/diagnostico/test-indicadores
 - Fallbacks estruturados
 - Never fail silently
 - 3 cenários: Sucesso, Sem dados, Erro
-
----
-
-## 📈 **Métricas de Desenvolvimento**
-
-- **6 novos arquivos** helpers PostgreSQL
-- **4 endpoints** de diagnóstico implementados  
-- **4 APIs** refatoradas (prontas para deploy)
-- **100% cobertura** de tratamento de erros
-- **Base sólida** para desenvolvimento futuro
-
----
-
-**Sistema base PostgreSQL implementado com sucesso - Pronto para desenvolvimento das funcionalidades principais do BTC Turbo v3.0** 🚀
