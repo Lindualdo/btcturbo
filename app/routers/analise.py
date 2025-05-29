@@ -30,12 +30,12 @@ async def analise_btc():
             peso_total_disponivel += 0.40
             
         if score_momentum.get("status") == "success":
-            blocos_validos.append(("momentum", score_momentum, 0.25))
-            peso_total_disponivel += 0.25
+            blocos_validos.append(("momentum", score_momentum, 0.30))
+            peso_total_disponivel += 0.30
             
         if score_riscos.get("status") == "success":
-            blocos_validos.append(("riscos", score_riscos, 0.15))
-            peso_total_disponivel += 0.15
+            blocos_validos.append(("riscos", score_riscos, 0.10))
+            peso_total_disponivel += 0.10
             
         if score_tecnico.get("status") == "success":
             blocos_validos.append(("tecnico", score_tecnico, 0.20))
@@ -113,8 +113,8 @@ async def analise_btc():
         # 8. Preparar pesos dinâmicos (atual: fixos, futuro: baseado em condições de mercado)
         pesos_dinamicos = {
             "ciclo": 0.40,
-            "momentum": 0.25,
-            "risco": 0.15,
+            "momentum": 0.30,
+            "risco": 0.10,
             "tecnico": 0.20
         }
         
@@ -145,13 +145,13 @@ async def analise_btc():
                 "momentum": {
                     "score_consolidado": score_momentum.get("score_consolidado", 0),
                     "classificacao": score_momentum.get("classificacao_consolidada", "N/A"),
-                    "peso": "25%",
+                    "peso": "30%",
                     "status": score_momentum.get("status", "error")
                 },
                 "riscos": {
                     "score_consolidado": score_riscos.get("score_consolidado", 0),
                     "classificacao": score_riscos.get("classificacao_consolidada", "N/A"),
-                    "peso": "15%",
+                    "peso": "10%",
                     "status": score_riscos.get("status", "error")
                 },
                 "tecnico": {

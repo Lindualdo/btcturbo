@@ -29,8 +29,8 @@ async def dashboard_index():
                 "acao_recomendada": "Dados mockados - API indisponível",
                 "resumo_blocos": {
                     "ciclos": {"score_consolidado": 6.2, "classificacao": "bom", "peso": "40%"},
-                    "momentum": {"score_consolidado": 4.8, "classificacao": "neutro", "peso": "25%"},
-                    "riscos": {"score_consolidado": 7.1, "classificacao": "bom", "peso": "15%"},
+                    "momentum": {"score_consolidado": 4.8, "classificacao": "neutro", "peso": "30%"},
+                    "riscos": {"score_consolidado": 7.1, "classificacao": "bom", "peso": "10%"},
                     "tecnico": {"score_consolidado": 5.9, "classificacao": "neutro", "peso": "20%"}
                 }
             }
@@ -50,11 +50,11 @@ async def dashboard_index():
         
         score_momentum = round(resumo.get("momentum", {}).get("score_consolidado", 0) * 10)
         classificacao_momentum = resumo.get("momentum", {}).get("classificacao", "N/A")
-        peso_momentum = resumo.get("momentum", {}).get("peso", "25%")
+        peso_momentum = resumo.get("momentum", {}).get("peso", "30%")
         
         score_riscos = round(resumo.get("riscos", {}).get("score_consolidado", 0) * 10)
         classificacao_riscos = resumo.get("riscos", {}).get("classificacao", "N/A")
-        peso_riscos = resumo.get("riscos", {}).get("peso", "15%")
+        peso_riscos = resumo.get("riscos", {}).get("peso", "10%")
         
         score_tecnico = round(resumo.get("tecnico", {}).get("score_consolidado", 0) * 10)
         classificacao_tecnico = resumo.get("tecnico", {}).get("classificacao", "N/A")

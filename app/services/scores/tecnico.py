@@ -44,11 +44,12 @@ def calcular_score():
     emas_score = calcular_emas_score(emas_score_num)
     padroes_score = calcular_padroes_score(padroes_score_num)
     
-    # 3. Aplicar pesos (EMAs: 15%, Padrões: 5% do total 20%)
-    # Normalizando para o bloco: EMAs: 75%, Padrões: 25%
+    # 3. Aplicar pesos ATUALIZADOS:
+    # - EMAs: 20% do total (era 15%) = 100% do bloco
+    # - Padrões: 0% do total (era 5%) = 0% do bloco
     score_consolidado = (
-        (emas_score * 0.75) +
-        (padroes_score * 0.25)
+        (emas_score * 1.0) +     # 100% do peso do bloco
+        (padroes_score * 0.0)    # 0% do peso do bloco
     )
     
     # 4. Retornar JSON formatado
@@ -56,21 +57,27 @@ def calcular_score():
         "bloco": "tecnico",
         "peso_bloco": "20%",
         "score_consolidado": round(score_consolidado, 2),
-        "classificacao": interpretar_classificacao(score_consolidado),
+        "classificacao_consolidada": interpretar_classificacao(score_consolidado),
         "timestamp": dados_indicadores["timestamp"],
         "indicadores": {
             "Sistema_EMAs": {
                 "valor": indicadores["Sistema_EMAs"]["valor"],
                 "score": round(emas_score, 1),
-                "peso": "15%",
+                "peso": "20%",  # Agora representa todo o bloco
                 "fonte": indicadores["Sistema_EMAs"]["fonte"]
             },
             "Padroes_Graficos": {
                 "valor": indicadores["Padroes_Graficos"]["valor"],
                 "score": round(padroes_score, 1),
-                "peso": "5%",
-                "fonte": indicadores["Padroes_Graficos"]["fonte"]
+                "peso": "0%",   # Zerado conforme solicitado
+                "fonte": indicadores["Padroes_Graficos"]["fonte"],
+                "observacao": "Peso zerado - será reimplementado futuramente"
             }
+        },
+        "observacoes": {
+            "emas_peso_atual": "100% do bloco (20% do total)",
+            "padroes_status": "Temporariamente zerado - aguardando reimplementação",
+            "composicao": "Score = 100% EMAs + 0% Padrões"
         },
         "status": "success"
     }
