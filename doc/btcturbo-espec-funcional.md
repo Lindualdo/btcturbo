@@ -24,11 +24,11 @@ SISTEMA v3.0
     │   ├── Estrutura/Alinhamento EMAs (7%)
     │   └── Posição do Preço vs EMAs (8%)
     └── Padrões Gráficos (5%)
-    
+
 ```
 ---
 
-## 📊 Estrutura do Sistema v 3.0
+## 📊 Estrutura do Sistema v 4.0
 
 ```
 SISTEMA v4.0 FINAL
