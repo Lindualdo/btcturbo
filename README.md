@@ -15,16 +15,17 @@ Esta documentação técnica define claramente o padrão arquitetural, responsab
 - https://btcturbo-production.up.railway.app/dashboard/
 
 ## Próximos passos 
+- Concluir a api de analise consolidada - api/v1/analise-btc
+- atualizar a home do dash para incluir a analise consolidada de cada bloco com o score geral
 - coleta dos indicadores e gravação no Postgres
-
 * notion
 * Trandview
 * web3
 * APIs
 
 - Inclusão de dois novos indicadores no bloco momentum
-* 
-* 
+* Stablecoin Supply Ratio - SSR (2%)
+* Exchange Netflow 7D (3%)
 
 ## 🗂 Estrutura do Projeto
 
