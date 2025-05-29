@@ -1,4 +1,4 @@
-# BTC TURBO - v1.0.10
+# BTC TURBO - v1.0.11
 
 ## 🎯 Objetivo da Documentação
 
@@ -61,6 +61,8 @@ https://github.com/Lindualdo/btcturbo/blob/main/doc/validation-limites-indicador
 https://github.com/Lindualdo/btcturbo/blob/main/doc/btcturbo-alertas.espc.md
 
 ---
+
+## 1.0.15 - excluir indicadores descontinuados da tabela de riscos (exchange_netflow, stablecoin_ratio)
 
 ## 🗂 Estrutura do Projeto
 
