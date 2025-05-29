@@ -4,13 +4,13 @@ from fastapi import FastAPI
 from datetime import datetime
 from app.routers import (
     coleta, indicadores, score, analise, diagnostico, 
-    dashboards, dashboard_riscos, dashboard_momentum
+    dashboards, dashboard_riscos, dashboard_momentum, dashboard_ciclos
 )
 
 app = FastAPI(
     title="BTC Turbo API",
     description="Sistema de análise de indicadores BTC com PostgreSQL + Dashboards HTML",
-    version="1.0.9"
+    version="1.0.10"
 )
 
 # ==========================================
@@ -33,9 +33,9 @@ app.include_router(dashboards.router, prefix="/dashboard", tags=["📱 Dashboard
 # Dashboards específicos
 app.include_router(dashboard_riscos.router, prefix="/dashboard", tags=["📱 Dashboards"])
 app.include_router(dashboard_momentum.router, prefix="/dashboard", tags=["📱 Dashboards"])
+app.include_router(dashboard_ciclos.router, prefix="/dashboard", tags=["📱 Dashboards"])
 
-# TODO: Adicionar quando prontos
-# app.include_router(dashboard_ciclos.router, prefix="/dashboard", tags=["📱 Dashboards"])
+# TODO: Adicionar quando pronto
 # app.include_router(dashboard_tecnico.router, prefix="/dashboard", tags=["📱 Dashboards"])
 
 # ==========================================
@@ -55,17 +55,17 @@ async def health():
 @app.get("/")
 async def root():
     return {
-        "message": "🚀 BTC Turbo API v1.0.6",
+        "message": "🚀 BTC Turbo API v1.0.10",
         "status": "✅ Online",
         "architecture": "Router por Bloco",
         "dashboards": {
             "index": "/dashboard/",
             "funcionando": [
                 "/dashboard/riscos",
-                "/dashboard/momentum"
+                "/dashboard/momentum",
+                "/dashboard/ciclos"
             ],
             "desenvolvimento": [
-                "/dashboard/ciclos", 
                 "/dashboard/tecnico"
             ]
         },
