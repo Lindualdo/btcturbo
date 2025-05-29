@@ -1,4 +1,4 @@
-# app/services/utils/helpers/postgres/momentum_helper.py
+# app/services/utils/helpers/postgres/momentum_helper.py - DEBUG VERSION
 
 import logging
 from datetime import datetime
@@ -8,12 +8,13 @@ from .base import execute_query
 logger = logging.getLogger(__name__)
 
 def get_dados_momentum() -> Optional[Dict]:
-    """Busca dados mais recentes do bloco momentum"""
+    """Busca dados mais recentes do bloco momentum - DEBUG"""
     try:
         logger.info("🔍 Buscando dados do bloco MOMENTUM...")
         
+        # QUERY COM DEBUG - adicionar ID para verificar qual registro está vindo
         query = """
-            SELECT rsi_semanal, funding_rates, exchange_netflow, long_short_ratio,
+            SELECT id, rsi_semanal, funding_rates, exchange_netflow, long_short_ratio,
                    timestamp, fonte, metadados
             FROM indicadores_momentum 
             ORDER BY timestamp DESC 
@@ -23,7 +24,16 @@ def get_dados_momentum() -> Optional[Dict]:
         result = execute_query(query, fetch_one=True)
         
         if result:
-            logger.info(f"✅ Dados momentum encontrados: timestamp={result['timestamp']}")
+            # LOG DETALHADO para debug
+            logger.info(f"✅ Dados momentum encontrados:")
+            logger.info(f"    ID: {result.get('id')}")
+            logger.info(f"    RSI: {result.get('rsi_semanal')}")
+            logger.info(f"    Funding: {result.get('funding_rates')}")
+            logger.info(f"    Netflow: {result.get('exchange_netflow')}")
+            logger.info(f"    L/S: {result.get('long_short_ratio')}")
+            logger.info(f"    Timestamp: {result.get('timestamp')}")
+            logger.info(f"    Fonte: {result.get('fonte')}")
+            
             return result
         else:
             logger.warning("⚠️ Nenhum dado encontrado na tabela indicadores_momentum")
@@ -58,7 +68,7 @@ def get_historico_momentum(limit: int = 10) -> list:
         logger.info(f"📊 Buscando histórico do bloco MOMENTUM (últimos {limit} registros)")
         
         query = """
-            SELECT rsi_semanal, funding_rates, exchange_netflow, long_short_ratio,
+            SELECT id, rsi_semanal, funding_rates, exchange_netflow, long_short_ratio,
                    timestamp, fonte
             FROM indicadores_momentum 
             ORDER BY timestamp DESC 
