@@ -225,7 +225,7 @@ async def dashboard_momentum():
             }}
 
             if (document.readyState === 'loading') {{
-              document.addEventListener('DOMContentLoado', initCharts);
+              document.addEventListener('DOMContentLoaded', initCharts);
             }} else {{ initCharts(); }}
           </script>
         </body>
