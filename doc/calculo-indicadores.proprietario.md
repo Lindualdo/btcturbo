@@ -1,146 +1,284 @@
-# 📊 Documentação de Indicadores On-Chain e Técnicos BTC (Versão Pública)
-Objetibo: gerar os indicadores de forma confiável nível padrão ouro (Glasnode)
-Coletar dados reais - Sem dados fixo (Hardcoded) - sem suposições -  fallback para fontes de coleta -  não encontrou gera erro
+# 📊 Documentação de Indicadores On-Chain e Técnicos BTC - v2.0
+**Objetivo:** Coletar dados reais de fontes públicas e calcular indicadores com padrão Glassnode.  
+**Princípios:** Sem hardcode, com fallback entre fontes, erro se não encontrar dados.
 
 ---
 
 ## 1. MVRV Z-Score
 
 **Descrição:**  
-Mede o quão valorizado/desvalorizado o Bitcoin está em relação ao seu valor realizado (quanto foi pago em média por cada BTC em circulação), ajustado pela volatilidade histórica.
+Mede o quão valorizado/desvalorizado o Bitcoin está em relação ao seu valor realizado, ajustado pela volatilidade histórica.
 
 **Fórmula:**  
-`MVRV Z-Score = (Market Cap - Realized Cap) / StdDev(Market Cap)`
+```
+MVRV Z-Score = (Market Cap - Realized Cap) / StdDev(Market Cap - Realized Cap)
+```
 
-**Onde buscar os dados:**
-- **Market Cap:** CoinGecko, CoinMarketCap, Blockchair
-- **Realized Cap:** Glassnode (grátis limitado), IntoTheBlock (grátis limitado), ou cálculo manual via blocos/UTXO (blockchain explorer)
-- **Desvio padrão (StdDev):** Calcule a série histórica do Market Cap, usando dados diários (CoinGecko/CMC/Blockchair)
+**Fontes de dados (ordem de prioridade):**
+1. **Market Cap:** CoinGecko API → CoinMarketCap API → Blockchain.com
+2. **Realized Cap:** CryptoQuant API (free tier) → Glassnode API (free tier) → Blockchain.com (cálculo UTXO)
+3. **StdDev:** Calcular localmente com série histórica de (MC - RC)
 
-**Como calcular (passo a passo):**
-1. Pegue o valor atual do Market Cap do BTC (preço x supply circulante).
-2. Pegue o Realized Cap (se disponível, ou some o preço pago por cada BTC em circulação – geralmente só nas plataformas especializadas).
-3. Calcule o desvio padrão (StdDev) do Market Cap em toda a série histórica disponível.
-4. Subtraia o Realized Cap do Market Cap.
-5. Divida o resultado pelo desvio padrão calculado.
+**Implementação:**
+```python
+# 1. Obter Market Cap atual
+market_cap = preço_btc * supply_circulante
+
+# 2. Obter Realized Cap
+realized_cap = soma(utxo_value * preço_quando_movido) / total_btc
+
+# 3. Calcular série histórica (MC - RC) últimos 2 anos
+historical_diff = market_cap_series - realized_cap_series
+
+# 4. Calcular desvio padrão da série
+std_dev = historical_diff.std()
+
+# 5. Calcular Z-Score
+mvrv_z = (market_cap - realized_cap) / std_dev
+```
 
 ---
 
 ## 2. Realized Price Ratio
 
 **Descrição:**  
-Mostra o quanto o preço atual do Bitcoin está acima ou abaixo do preço médio "realizado" (o preço médio de compra das moedas em circulação).
+Razão entre preço atual e preço médio de aquisição on-chain.
 
 **Fórmula:**  
-`Realized Price Ratio = Preço BTC / Realized Price`
+```
+Realized Price Ratio = Preço BTC / (Realized Cap / Supply Circulante)
+```
 
-**Onde buscar os dados:**
-- **Preço BTC:** CoinGecko, CoinMarketCap, TradingView
-- **Realized Price:** Glassnode (free limitado), LookIntoBitcoin
+**Fontes de dados:**
+1. **Preço BTC:** CoinGecko → Binance API → CoinMarketCap
+2. **Realized Cap:** Mesmas fontes do MVRV
+3. **Supply:** Blockchain.com API → CoinGecko
 
-**Como calcular (passo a passo):**
-1. Obtenha o preço atual do Bitcoin.
-2. Obtenha o Realized Price (pode usar Glassnode free ou LookIntoBitcoin).
-3. Divida o preço atual pelo Realized Price.
+**Implementação:**
+```python
+# 1. Obter preço atual
+current_price = get_btc_price()
+
+# 2. Calcular Realized Price
+realized_price = realized_cap / circulating_supply
+
+# 3. Calcular ratio
+ratio = current_price / realized_price
+```
 
 ---
 
 ## 3. Puell Multiple
 
 **Descrição:**  
-Avalia o quanto os mineradores estão recebendo em relação à média histórica. Valores muito altos/baixos sugerem extremos de mercado.
+Avalia receita dos mineradores vs média histórica.
 
 **Fórmula:**  
-`Puell Multiple = Emissão diária em USD / Média móvel de 365 dias da emissão diária em USD`
+```
+Puell Multiple = Receita Diária Mineradores (USD) / MA365(Receita Diária)
+```
+*Receita = (Recompensa Bloco + Fees) × Preço BTC*
 
-**Onde buscar os dados:**
-- **Emissão diária em USD:** Blockchain.com (Receita de mineradores), Blockchair
-- **Média móvel 365 dias:** Calcule manualmente a média móvel usando dados históricos de emissão
+**Fontes de dados:**
+1. **Recompensa diária:** Blockchain.com/charts/total-bitcoins → Blockchair API
+2. **Fees diários:** Blockchain.com/charts/transaction-fees → Mempool.space API
+3. **Preço histórico:** CoinGecko (365 dias)
 
-**Como calcular (passo a passo):**
-1. Pegue quanto foi minerado em BTC nas últimas 24h e multiplique pelo preço do BTC (valor em USD).
-2. Calcule a média da emissão diária em USD dos últimos 365 dias.
-3. Divida a emissão diária atual pela média móvel anual.
+**Implementação:**
+```python
+# 1. Obter emissão diária (últimas 24h)
+blocks_24h = 144  # aproximado
+block_reward = 6.25  # atualizar após halving
+daily_btc = blocks_24h * block_reward + daily_fees_btc
+
+# 2. Converter para USD
+daily_usd = daily_btc * current_btc_price
+
+# 3. Calcular MA365
+ma365 = daily_revenue_series.rolling(365).mean().iloc[-1]
+
+# 4. Calcular Puell
+puell = daily_usd / ma365
+```
 
 ---
 
 ## 4. Funding Rates
 
 **Descrição:**  
-Taxa periódica paga entre traders em contratos perpétuos de futuros (paga/recebe conforme posição). Sinaliza sentimento de euforia/pânico.
+Taxa média ponderada paga entre posições long/short em perpétuos.
 
 **Fórmula:**  
-*Não tem fórmula fixa (é a taxa publicada pelas exchanges, normalmente a cada 8h).*
+```
+Funding Rate Avg = Σ(FR_exchange × Volume_exchange) / Σ(Volume_exchange)
+```
 
-**Onde buscar os dados:**
-- [Coinglass](https://coinglass.com)
-- [Coinalyze](https://coinalyze.net)
-- Binance/Bybit/OKX (direto via API/website)
+**Fontes de dados:**
+1. **Agregado:** Coinglass API → Coinalyze API
+2. **Individual:** Binance API + Bybit API + OKX API (calcular média ponderada)
 
-**Como calcular (passo a passo):**
-1. Consulte o painel da Coinglass ou Coinalyze, filtro para BTC.
-2. Pegue o valor atual ou média das últimas 24h/7d (como preferir).
-3. Use diretamente o valor mostrado.
+**Implementação:**
+```python
+# 1. Coletar de múltiplas exchanges
+exchanges = ['binance', 'bybit', 'okx']
+weighted_sum = 0
+total_volume = 0
+
+for exchange in exchanges:
+    fr = get_funding_rate(exchange)
+    vol = get_perp_volume(exchange)
+    weighted_sum += fr * vol
+    total_volume += vol
+
+# 2. Calcular média ponderada
+avg_funding = weighted_sum / total_volume
+```
 
 ---
 
 ## 5. Exchange Netflow 7D
 
 **Descrição:**  
-Saldo líquido de entradas e saídas de BTC nas exchanges em 7 dias. Sinaliza pressão de compra/venda.
+Fluxo líquido de BTC entrando/saindo das exchanges em 7 dias.
 
 **Fórmula:**  
-`Netflow 7D = Entradas BTC nas exchanges (7d) - Saídas BTC das exchanges (7d)`
+```
+Netflow 7D = Σ(Inflows_7d) - Σ(Outflows_7d)
+```
 
-**Onde buscar os dados:**
-- [CryptoQuant](https://cryptoquant.com/asset/btc/chart/exchange-flows/exchange-netflow-total)
-- Glassnode (free limitado)
-- IntoTheBlock (só parte do dado)
+**Fontes de dados:**
+1. **CryptoQuant API:** `/v1/btc/exchange_flows/netflow` (endpoint específico)
+2. **Glassnode:** `/v1/metrics/exchanges/netflow_volume` (limitado)
+3. **Blockchain análise:** Somar transações para/de endereços conhecidos de exchanges
 
-**Como calcular (passo a passo):**
-1. Pegue o total de BTC enviados para exchanges nos últimos 7 dias.
-2. Pegue o total de BTC retirados das exchanges nos últimos 7 dias.
-3. Subtraia: (Entradas - Saídas).
-   - Valor negativo = pressão de compra
-   - Valor positivo = pressão de venda
+**Implementação:**
+```python
+# 1. Via CryptoQuant (recomendado)
+response = cryptoquant_api.get('/v1/btc/exchange_flows/netflow', 
+                               params={'window': '7d'})
+netflow_7d = response['data']['netflow_total']
+
+# 2. Fallback manual
+inflows = get_exchange_inflows(days=7)
+outflows = get_exchange_outflows(days=7)
+netflow_7d = inflows - outflows
+```
 
 ---
 
 ## 6. Long/Short Ratio
 
 **Descrição:**  
-Mostra a razão entre posições compradas (long) e vendidas (short) nos futuros. Sentimento de mercado (otimismo/pessimismo).
+Razão entre contratos long e short abertos.
 
 **Fórmula:**  
-`Long/Short Ratio = Posições Longas Abertas / Posições Curtas Abertas`
+```
+L/S Ratio = Open Interest Longs / Open Interest Shorts
+```
 
-**Onde buscar os dados:**
-- Coinglass
-- Coinalyze
-- Direto das exchanges (Binance Futures, Bybit, OKX)
+**Fontes de dados:**
+1. **Coinglass API:** `/api/futures/longShortRatio` (todos exchanges)
+2. **Binance:** `/futures/data/globalLongShortAccountRatio`
+3. **Agregação manual:** Somar OI de cada exchange
 
-**Como calcular (passo a passo):**
-1. Consulte Coinglass/Coinalyze para BTC.
-2. Pegue o número total de contratos longos e contratos curtos abertos.
-3. Divida o número de longs pelo número de shorts.
+**Implementação:**
+```python
+# 1. Via Coinglass (agregado)
+data = coinglass_api.get('/api/futures/longShortRatio', 
+                        params={'symbol': 'BTC', 'interval': '7d'})
+ls_ratio = data['ratio']
+
+# 2. Via exchanges individuais
+binance_ls = get_binance_ls_ratio()
+bybit_ls = get_bybit_ls_ratio()
+# Ponderar por volume OI de cada exchange
+```
 
 ---
 
 ## 7. RSI Semanal
 
 **Descrição:**  
-Índice de Força Relativa calculado no gráfico semanal. Mede sobrecompra/sobrevenda.
+Índice de Força Relativa no timeframe semanal.
 
 **Fórmula:**  
-`RSI = 100 - (100 / (1 + RS))`  
-Onde: `RS = Média dos ganhos / Média das perdas (últimos 14 candles)`
+```
+RSI = 100 - (100 / (1 + RS))
+RS = Média Ganhos(14) / Média Perdas(14)
+```
 
-**Onde buscar os dados:**
-- TradingView (gráfico semanal, RSI padrão)
-- CoinMarketCap (painéis de análise técnica)
+**Fontes de dados:**
+1. **OHLC Semanal:** CoinGecko `/coins/{id}/ohlc` → Binance API
+2. **Cálculo:** pandas-ta library
 
-**Como calcular (passo a passo):**
-1. Abra o gráfico BTCUSD no TradingView.
-2. Altere para período semanal (“1W”).
-3. Adicione o indicador RSI (default = 14).
-4. Leia o valor exibido na plataforma.
+**Implementação:**
+```python
+import pandas as pd
+import pandas_ta as ta
+
+# 1. Obter dados OHLC semanais (15+ semanas)
+ohlc = get_weekly_ohlc(symbol='BTCUSDT', limit=20)
+
+# 2. Calcular RSI
+df = pd.DataFrame(ohlc)
+df['rsi'] = ta.rsi(df['close'], length=14)
+
+# 3. Valor atual
+current_rsi = df['rsi'].iloc[-1]
+```
+
+---
+
+## 📦 Configuração de Fallback
+
+```python
+INDICATORS_CONFIG = {
+    'mvrv_z': {
+        'sources': ['cryptoquant', 'glassnode', 'manual'],
+        'cache_ttl': 3600,  # 1 hora
+        'critical': True
+    },
+    'funding_rate': {
+        'sources': ['coinglass', 'binance', 'weighted_avg'],
+        'cache_ttl': 300,   # 5 min
+        'critical': True
+    }
+}
+
+def get_indicator_with_fallback(indicator_name):
+    config = INDICATORS_CONFIG[indicator_name]
+    
+    for source in config['sources']:
+        try:
+            data = fetch_from_source(source, indicator_name)
+            if validate_data(data):
+                return data
+        except Exception as e:
+            log.warning(f"{source} failed: {e}")
+            continue
+    
+    if config['critical']:
+        raise DataUnavailableError(f"All sources failed for {indicator_name}")
+    return None
+```
+
+---
+
+## 🔧 Requisitos Técnicos
+
+**Bibliotecas Python:**
+```bash
+pip install requests pandas pandas-ta numpy python-dotenv
+```
+
+**Rate Limits por Fonte:**
+- CoinGecko Free: 50 calls/min
+- Blockchain.com: 30 req/min
+- CryptoQuant Free: 100/day
+- Binance: 1200/min
+
+**Cache Recomendado:**
+- On-chain (MVRV, Realized): 1 hora
+- Exchange flows: 15 minutos
+- Funding/L-S: 5 minutos
+- Preços: 1 minuto
