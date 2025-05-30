@@ -1,33 +1,6 @@
 # BTC Hold Alavancado - Sistema de Score v4.0
 -Objetivo: Sistema modular de análise de indicadores do BTC com score e alertas automatizados.
 
-## 📊 Estrutura do Sistema v 3.0
-
-```
-SISTEMA v3.0
-├── Ciclo (40%)
-│   ├── MVRV Z-Score (20%)
-│   ├── Realized Price Ratio (15%)
-│   └── Puell Multiple (5%)
-├── Momentum (25%)
-│   ├── RSI Semanal (10%)
-│   ├── Funding Rates 7D (8%)
-│   ├── Open Interest Change 30D (4%)
-│   └── Long/Short Ratio (3%)
-├── Risco (15%)
-│   ├── Distância do Liquidation (6%)
-│   ├── Health Factor AAVE (4%)
-│   ├── Exchange Netflow 7D (3%)
-│   └── Stablecoin Supply Ratio (2%)
-└── Técnico (20%)
-    ├── Sistema EMAs Multi-TF (15%)
-    │   ├── Estrutura/Alinhamento EMAs (7%)
-    │   └── Posição do Preço vs EMAs (8%)
-    └── Padrões Gráficos (5%)
-
-```
----
-
 ## 📊 Estrutura do Sistema v 4.0
 
 ```
@@ -38,20 +11,19 @@ SISTEMA v4.0 FINAL
 │   └── Puell Multiple (5%)
 │
 ├── MOMENTUM (30%)
-│   ├── RSI Semanal (10%)
-│   ├── Funding Rates (8%)
-│   ├── OI Change (4%)
-│   ├── Long/Short Ratio (3%)
-│   ├── Exchange Netflow (3%)
-│   └── SSR (2%)
+│   ├── RSI Semanal (12%) ← +2%
+│   ├── Funding Rates (10%) ← +2%
+│   ├── Exchange Netflow 7D (5%) ← NOVO
+│   ├── Long/Short Ratio (3%) ← Mantém
 │
 ├── RISCO (10%) # Já ajustado
 │   ├── Distância Liquidação (5%)
 │   └── Health Factor (5%)
+│   └── Alavancagem - Kelly - Futuro
 │
 └── TÉCNICO (20%)
-    ├── Sistema EMAs (15%)
-    └── Padrões Gráficos (5%)
+    ├── Sistema EMAs (20%) - futuro 15 %
+    └── Padrões Gráficos (0%) - futuro 5%
 
 + ALERTAS SISTÊMICOS (sem score)
   ├── WBTC Depeg
@@ -116,7 +88,7 @@ SISTEMA v4.0 FINAL
 
 ## 📊 2. MOMENTUM (25% do peso total)
 
-### RSI Semanal (10%)
+### RSI Semanal (12%)
 **Fonte**: TradingView, Glassnode
 
 | RSI | Score | Classificação |
@@ -127,7 +99,7 @@ SISTEMA v4.0 FINAL
 | 55-70 | 3-4 | Ruim |
 | > 70 | 0-2 | Crítico |
 
-### Funding Rates - Média 7D (8%)
+### Funding Rates - Média 7D (10%)
 **Fonte**: Coinglass, Glassnode
 
 | Funding Rate | Score | Classificação |
@@ -138,18 +110,20 @@ SISTEMA v4.0 FINAL
 | 0.02% a 0.1% | 3-4 | Ruim |
 | > 0.1% | 0-2 | Crítico |
 
-### Open Interest Change 30D (4%)
-**Fórmula**: `(OI Atual - OI 30D atrás) / OI 30D atrás × 100`
+### Exchange Netflow 7D (5%)
+**Fórmula**: `Netflow 7D = (BTC Inflow 7D) - (BTC Outflow 7D)`
+**Fonte**: CryptoQuant, Glassnode
 
-| OI Change % | Score | Classificação |
-|-------------|-------|--------------|
-| < -30% | 9-10 | Ótimo |
-| -30% a -10% | 7-8 | Bom |
-| -10% a +20% | 5-6 | Neutro |
-| +20% a +50% | 3-4 | Ruim |
-| > +50% | 0-2 | Crítico |
+| Netflow | Score | Classificação |
+|---------|-------|--------------|
+| < -50k BTC | 9-10 | Ótimo |
+| -50k a -10k | 7-8 | Bom |
+| -10k a +10k | 5-6 | Neutro |
+| +10k a +50k | 3-4 | Ruim |
+| > +50k BTC | 0-2 | Crítico |
 
-### Long/Short Ratio (3%) [NOVO]
+
+### Long/Short Ratio (3%)
 **Fonte**: Coinglass, Binance
 
 | L/S Ratio | Score | Classificação |
@@ -162,7 +136,7 @@ SISTEMA v4.0 FINAL
 
 ---
 
-## ⚠️ 3. RISCO (15% do peso total)
+## ⚠️ 3. RISCO (10% do peso total)
 
 ### Distância do Liquidation (6%)
 **Fórmula**: `((Preço Atual - Preço Liquidação) / Preço Atual) × 100`
@@ -185,18 +159,7 @@ SISTEMA v4.0 FINAL
 | 1.1-1.3 | 3-4 | Ruim |
 | < 1.1 | 0-2 | Crítico |
 
-### Exchange Netflow 7D (3%)
-**Fonte**: CryptoQuant, Glassnode
-
-| Netflow | Score | Classificação |
-|---------|-------|--------------|
-| < -50k BTC | 9-10 | Ótimo |
-| -50k a -10k | 7-8 | Bom |
-| -10k a +10k | 5-6 | Neutro |
-| +10k a +50k | 3-4 | Ruim |
-| > +50k BTC | 0-2 | Crítico |
-
-### Stablecoin Supply Ratio (2%) [NOVO]
+### Stablecoin Supply Ratio (0%) [DESCONTINUADO]
 **Fórmula**: `Market Cap Stablecoins / Market Cap BTC`
 
 | SSR | Score | Classificação |
@@ -211,7 +174,7 @@ SISTEMA v4.0 FINAL
 
 ## 📉 4. TÉCNICO (20% do peso total)
 
-### Sistema EMAs Multi-Timeframe (15%)
+### Sistema EMAs Multi-Timeframe (20%) - (FUTURO 15%)
 
 #### Metodologia de Cálculo por Timeframe
 
@@ -226,7 +189,7 @@ SISTEMA v4.0 FINAL
 
 **Pontuação máxima**: 10 pontos
 
-**B. Bloco Posição do Preço vs EMAs (8%)**
+**B. Bloco Posição do Preço vs EMAs (0%) (FUTURO 5%)** 
 
 | EMA | Função Técnica | Pontuação |
 |-----|----------------|-----------|

@@ -29,7 +29,7 @@ Esta documentação técnica define claramente o padrão arquitetural, responsab
 - revisar dash consolidados para avaliar impacto
 
 ´´´
-
+├── MOMENTUM (30%)
 ├── RSI Semanal (12%) ← +2%
 ├── Funding Rates (10%) ← +2%
 ├── Exchange Netflow 7D (5%) ← NOVO

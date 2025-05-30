@@ -228,7 +228,7 @@ async def dashboard_tecnico():
               </div>
             </div>
 
-            <!-- Tempo Gráfico 15M -->
+            <!-- Tempo Gráfico 15M 
             <div class="grafico">
               <h3>Tempo Gráfico - 15M</h3>
               <canvas id="gaugeChart_15m" width="200" height="180"></canvas>
@@ -244,7 +244,7 @@ async def dashboard_tecnico():
                 <span class="tooltip-text">{observacao_15m}</span>
               </div>
             </div>
-          </div>
+          </div>-->
 
           <script>
             function waitForChartJS() {{
