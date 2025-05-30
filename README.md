@@ -63,7 +63,15 @@ https://github.com/Lindualdo/btcturbo/blob/main/doc/btcturbo-alertas.espc.md
 
 ---
 
-## 1.0.15 - excluir indicadores descontinuados da tabela de riscos (exchange_netflow, stablecoin_ratio)
+## 1.0.15 - excluir indicadores descontinuados da tabela de riscos 
+- exchange_netflow
+- stablecoin_ratio
+- ajustar no Helper e demais funções
+
+
+## 1.0.16 - Implementar coletala dos dados EMAs e calclulo separado emas e posição do preço
+- atualmente estamos usando API externa para calcular o score e classificação
+- rotina diferente dos demais blocos porque precisa calcular internamente o indicador, não existe no mercado
 
 ## 🗂 Estrutura do Projeto
 
