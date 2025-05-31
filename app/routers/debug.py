@@ -6,7 +6,7 @@ from app.services.utils.helpers.market_cap_helper import (
     get_current_market_cap, compare_with_reference, get_btc_price, get_btc_supply
 )
 from app.services.utils.helpers.realized_cap_helper import (
-    get_current_realized_cap, compare_realized_cap_sources, BigQueryHelper, calculate_mvrv_z_score
+    get_current_realized_cap, BigQueryHelper, calculate_mvrv_z_score
 )
 
 router = APIRouter()
@@ -103,11 +103,11 @@ async def debug_realized_cap():
 async def debug_realized_cap_comparison():
     """Compara BigQuery vs APIs para Realized Cap"""
     try:
-        comparison = compare_realized_cap_sources()
+        # Função temporariamente removida - implementar se necessário
         return {
             "status": "success",
-            "timestamp": datetime.utcnow().isoformat(),
-            "sources": comparison
+            "message": "Comparação temporariamente desabilitada",
+            "timestamp": datetime.utcnow().isoformat()
         }
     except Exception as e:
         return {
