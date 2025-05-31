@@ -90,6 +90,63 @@ class BigQueryHelper:
             logger.error(f"❌ Erro BigQuery Realized Cap: {str(e)}")
             raise Exception(f"BigQuery falhou: {str(e)}")
 
+    def get_historical_mc_rc_series(self, days: int = 365) -> list:
+        """
+        Busca série histórica (Market Cap - Realized Cap) para calcular StdDev
+        """
+        try:
+            logger.info(f"🔍 Buscando série histórica MC-RC ({days} dias)...")
+            
+            # Query para série histórica simplificada
+            query = f"""
+            WITH daily_data AS (
+              SELECT 
+                DATE(block_timestamp) as date,
+                SUM(value) / 100000000.0 as daily_btc_volume,
+                COUNT(*) as daily_outputs
+              FROM `bigquery-public-data.crypto_bitcoin.outputs`
+              WHERE DATE(block_timestamp) >= DATE_SUB(CURRENT_DATE(), INTERVAL {days} DAY)
+                AND DATE(block_timestamp) < CURRENT_DATE()
+              GROUP BY DATE(block_timestamp)
+            )
+            
+            SELECT 
+              date,
+              daily_btc_volume,
+              daily_outputs,
+              -- Estimativa Market Cap (assumindo preço médio por período)
+              daily_btc_volume * 45000 as estimated_market_cap,
+              -- Estimativa Realized Cap (assumindo preço histórico médio)
+              daily_btc_volume * 25000 as estimated_realized_cap,
+              -- Diferença MC - RC
+              (daily_btc_volume * 45000) - (daily_btc_volume * 25000) as mc_rc_diff
+            FROM daily_data
+            WHERE daily_btc_volume > 0
+            ORDER BY date DESC
+            LIMIT {days}
+            """
+            
+            result = list(self.client.query(query))
+            
+            if result and len(result) > 10:  # Precisamos de dados suficientes
+                series = []
+                for row in result:
+                    series.append({
+                        "date": str(row.date),
+                        "mc_rc_diff": float(row.mc_rc_diff),
+                        "estimated_market_cap": float(row.estimated_market_cap),
+                        "estimated_realized_cap": float(row.estimated_realized_cap)
+                    })
+                
+                logger.info(f"✅ Série histórica: {len(series)} pontos obtidos")
+                return series
+            else:
+                raise Exception(f"Dados insuficientes: apenas {len(result)} pontos")
+                
+        except Exception as e:
+            logger.error(f"❌ Erro série histórica: {str(e)}")
+            raise Exception(f"Série histórica falhou: {str(e)}")
+
 def get_realized_cap_fallback() -> Tuple[float, str]:
     """
     Fallback para Realized Cap usando APIs públicas e estimativas
