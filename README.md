@@ -51,7 +51,7 @@ Esta documentação técnica define claramente o padrão arquitetural, responsab
 
 ---
 
-## 1.0.14 -  coleta de dados
+## 1.0.15 -  coleta de dados
 
 - Docs: 
 https://github.com/Lindualdo/btcturbo/blob/main/doc/validation-limites-indicadores.md
@@ -422,3 +422,34 @@ GET /api/v1/diagnostico/test-indicadores
 - Fallbacks estruturados
 - Never fail silently
 - 3 cenários: Sucesso, Sem dados, Erro
+
+´´´
+json
+
+{
+    "bloco": "Financeiro Direto",
+    "score_consolidado": 6.6,
+    "peso": 0.35,
+    "principais_alertas": [
+        "HF crítico: 1.25"
+    ],
+    "financial_overview": {
+        "collateral": 397163.25743252,
+        "debt": 247299.03437482,
+        "nav": 149864.2230577
+    },
+    "detalhes": {
+        "health_factor": {
+            "valor": 1.25,
+            "classificacao": "Elevado",
+            "score": 7.0,
+            "peso": 0.8
+        },
+        "alavancagem": {
+            "valor": 2.65,
+            "classificacao": "Moderada",
+            "score": 5.0,
+            "peso": 0.2
+        }
+    }
+}

@@ -14,6 +14,7 @@ def get_dados_risco() -> Optional[Dict]:
         
         query = """
             SELECT dist_liquidacao, health_factor, exchange_netflow, stablecoin_ratio,
+                   btc_price, total_borrowed, supplied_asset_value, net_asset_value, alavancagem,
                    timestamp, fonte, metadados
             FROM indicadores_risco 
             ORDER BY timestamp DESC 
@@ -23,7 +24,7 @@ def get_dados_risco() -> Optional[Dict]:
         result = execute_query(query, fetch_one=True)
         
         if result:
-            logger.info(f"✅ Dados risco encontrados: timestamp={result['timestamp']}")
+            logger.info(f"✅ Dados risco encontrados: HF={result.get('health_factor')}, timestamp={result['timestamp']}")
             return result
         else:
             logger.warning("⚠️ Nenhum dado encontrado na tabela indicadores_risco")
@@ -33,19 +34,33 @@ def get_dados_risco() -> Optional[Dict]:
         logger.error(f"❌ Erro ao buscar dados do bloco risco: {str(e)}")
         return None
 
-def insert_dados_risco(dist_liq: float, health_factor: float, netflow: float, stable_ratio: float, fonte: str = "Sistema") -> bool:
-    """Insere novos dados no bloco risco"""
+def insert_dados_risco_completo(
+    dist_liquidacao: float,
+    health_factor: float, 
+    btc_price: float,
+    total_borrowed: float,
+    supplied_asset_value: float,
+    net_asset_value: float,
+    alavancagem: float,
+    fonte: str = "aave/web3"
+) -> bool:
+    """Insere dados completos do bloco risco"""
     try:
-        logger.info(f"💾 Inserindo dados risco: Dist={dist_liq}, HF={health_factor}, Netflow={netflow}, Stable={stable_ratio}")
+        logger.info(f"💾 Inserindo dados risco completos: HF={health_factor:.2f}, Dist={dist_liquidacao:.1f}%")
         
         query = """
-            INSERT INTO indicadores_risco (dist_liquidacao, health_factor, exchange_netflow, stablecoin_ratio, fonte, timestamp)
-            VALUES (%s, %s, %s, %s, %s, %s)
+            INSERT INTO indicadores_risco 
+            (dist_liquidacao, health_factor, btc_price, total_borrowed, supplied_asset_value, 
+             net_asset_value, alavancagem, fonte, timestamp)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
-        params = (dist_liq, health_factor, netflow, stable_ratio, fonte, datetime.utcnow())
+        params = (
+            dist_liquidacao, health_factor, btc_price, total_borrowed, 
+            supplied_asset_value, net_asset_value, alavancagem, fonte, datetime.utcnow()
+        )
         
         execute_query(query, params)
-        logger.info("✅ Dados risco inseridos com sucesso")
+        logger.info("✅ Dados risco completos inseridos com sucesso")
         return True
         
     except Exception as e:
@@ -58,7 +73,8 @@ def get_historico_risco(limit: int = 10) -> list:
         logger.info(f"📊 Buscando histórico do bloco RISCO (últimos {limit} registros)")
         
         query = """
-            SELECT dist_liquidacao, health_factor, exchange_netflow, stablecoin_ratio,
+            SELECT dist_liquidacao, health_factor, btc_price, total_borrowed, 
+                   supplied_asset_value, net_asset_value, alavancagem,
                    timestamp, fonte
             FROM indicadores_risco 
             ORDER BY timestamp DESC 

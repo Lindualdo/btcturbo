@@ -58,6 +58,9 @@ class Settings(BaseSettings):
     TV_SYMBOL: str = Field("BTCUSDT", description="Símbolo usado nas chamadas ao TradingView")
     TV_EXCHANGE: str = Field("BINANCE", description="Exchange para consulta de dados")
 
+
+    WALLET_ADDRESS: str = Field(..., env="WALLET_ADDRESS", description="Wallet AAVE para monitorar")
+
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
