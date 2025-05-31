@@ -22,6 +22,18 @@ async def debug_market_cap():
             "data": result
         }
     except Exception as e:
+@router.get("/mvrv-z-score")
+async def debug_mvrv_z_score():
+    """Testa cálculo completo do MVRV Z-Score"""
+    try:
+        from app.services.utils.helpers.realized_cap_helper import calculate_mvrv_z_score
+        
+        result = calculate_mvrv_z_score()
+        return {
+            "status": "success",
+            "data": result
+        }
+    except Exception as e:
         return {
             "status": "error",
             "error": str(e),
