@@ -60,6 +60,7 @@ class Settings(BaseSettings):
 
 
     WALLET_ADDRESS: str = Field(..., env="WALLET_ADDRESS")
+    AAVE_RPC_URL: str = Field(..., env="AAVE_RPC_URL")
 
     class Config:
         env_file = ".env"

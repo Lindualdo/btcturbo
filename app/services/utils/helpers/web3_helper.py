@@ -9,7 +9,8 @@ logger = logging.getLogger(__name__)
 class AAVEHelper:
     def __init__(self):
         settings = get_settings()
-        self.w3 = Web3(Web3.HTTPProvider(settings.AAVE_RPC_URL))
+        self.alchemy_api_key = getattr(settings, 'ALCHEMY_API_KEY', None)
+        self.initialize_web3()
         self.pool_address = "0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2"  # AAVE V3 Pool
         
         # AAVE Pool ABI (getUserAccountData function)
@@ -34,6 +35,23 @@ class AAVEHelper:
             address=self.pool_address,
             abi=self.pool_abi
         )
+
+    def initialize_web3(self):
+        """Inicializa a conexão Web3 com Alchemy"""
+        try:
+            if self.alchemy_api_key:
+                alchemy_url = f"https://eth-mainnet.g.alchemy.com/v2/{self.alchemy_api_key}"
+                self.w3 = Web3(Web3.HTTPProvider(alchemy_url))
+                logger.info(f"Web3 conectado: {self.w3.is_connected()}")
+            else:
+                logger.warning("Alchemy API Key não configurada")
+                # Tentar RPC público como fallback
+                public_rpc = "https://ethereum.publicnode.com"
+                self.w3 = Web3(Web3.HTTPProvider(public_rpc))
+                logger.info(f"Web3 conectado a RPC público: {self.w3.is_connected()}")
+        except Exception as e:
+            logger.error(f"Erro ao inicializar Web3: {str(e)}")
+            raise
 
     def get_user_account_data(self, wallet_address: str) -> dict:
         """Busca dados da conta no AAVE"""
