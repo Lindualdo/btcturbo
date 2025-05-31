@@ -159,7 +159,7 @@ async def dashboard_index():
         <body>
           <h1>🚀 BTC Turbo - Dashboard Principal</h1>
           <div class="subtitle" id="subtitle">
-            Sistema v1.0.12 - Carregando dados...
+            Sistema v1.0.14 - Carregando dados...
           </div>
           
           <!-- Toggle para incluir/excluir risco -->

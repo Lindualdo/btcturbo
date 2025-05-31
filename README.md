@@ -1,4 +1,4 @@
-# BTC TURBO - v1.0.13
+# BTC TURBO - v1.0.14
 
 ## 🎯 Objetivo da Documentação
 
@@ -44,7 +44,7 @@ Esta documentação técnica define claramente o padrão arquitetural, responsab
 
 ---
 
-## 1.0.14 -  Gravar score consolidado na base - Um registro por dia
+## 1.0.14 -  Gravar score consolidado na base - Um registro por dia -feito
 - gravar score na base se ainda não foi gravado para o dia
 - buscar dados no cache do banco primeiro, se não existir busca nas APIs
 - opção de forçar atualização (neste caso busca das APIs)
