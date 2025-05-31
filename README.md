@@ -1,4 +1,4 @@
-# BTC TURBO - v1.0.12
+# BTC TURBO - v1.0.13
 
 ## 🎯 Objetivo da Documentação
 
@@ -39,6 +39,12 @@ Esta documentação técnica define claramente o padrão arquitetural, responsab
 ---
 
 ## 1.0.13 -  coleta de dados
+- incluido flag para considerar ou não o risco no score final
+- alterado o dash incluido paramentro para setar ou não o score com risco
+
+---
+
+## 1.0.14 -  coleta de dados
 
 - Docs: 
 https://github.com/Lindualdo/btcturbo/blob/main/doc/validation-limites-indicadores.md
@@ -54,19 +60,19 @@ https://github.com/Lindualdo/btcturbo/blob/main/doc/validation-limites-indicador
 
 ---
 
-## 1.0.14 - alertas
+## 1.0.15 - alertas
 - implementar sistemas de alertas
 https://github.com/Lindualdo/btcturbo/blob/main/doc/btcturbo-alertas.espc.md
 
 ---
 
-## 1.0.15 - excluir indicadores descontinuados da tabela de riscos 
+## 1.0.16 - excluir indicadores descontinuados da tabela de riscos 
 - exchange_netflow
 - stablecoin_ratio
 - ajustar no Helper e demais funções
 
 
-## 1.0.16 - Implementar coletala dos dados EMAs e calclulo separado emas e posição do preço
+## 1.0.17 - Implementar coletala dos dados EMAs e calclulo separado emas e posição do preço
 - atualmente estamos usando API externa para calcular o score e classificação
 - rotina diferente dos demais blocos porque precisa calcular internamente o indicador, não existe no mercado
 
