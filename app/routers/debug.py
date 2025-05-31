@@ -116,7 +116,55 @@ async def debug_realized_cap_comparison():
             "timestamp": datetime.utcnow().isoformat()
         }
 
-@router.get("/bigquery-detailed-test")
+@router.get("/bigquery-schema")
+async def debug_bigquery_schema():
+    """Descobre a estrutura real das tabelas BigQuery"""
+    try:
+        from app.services.utils.helpers.realized_cap_helper import BigQueryHelper
+        
+        bigquery_helper = BigQueryHelper()
+        
+        # Query para descobrir os campos disponíveis
+        queries = {
+            "outputs_schema": """
+                SELECT column_name, data_type 
+                FROM `bigquery-public-data.crypto_bitcoin.INFORMATION_SCHEMA.COLUMNS` 
+                WHERE table_name = 'outputs'
+                LIMIT 20
+            """,
+            "outputs_sample": """
+                SELECT * 
+                FROM `bigquery-public-data.crypto_bitcoin.outputs` 
+                LIMIT 3
+            """,
+            "transactions_sample": """
+                SELECT * 
+                FROM `bigquery-public-data.crypto_bitcoin.transactions` 
+                LIMIT 2
+            """
+        }
+        
+        results = {}
+        
+        for query_name, query in queries.items():
+            try:
+                result = list(bigquery_helper.client.query(query))
+                results[query_name] = [dict(row) for row in result]
+            except Exception as e:
+                results[query_name] = f"Error: {str(e)}"
+        
+        return {
+            "status": "success",
+            "schemas": results,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        return {
+            "status": "error",
+            "error": str(e),
+            "timestamp": datetime.utcnow().isoformat()
+        }
 async def debug_bigquery_detailed():
     """Teste BigQuery com máximo detalhe possível"""
     try:
