@@ -71,7 +71,7 @@ class AAVEHelper:
                 "available_borrows_base": result[2] / 1e8, # USD
                 "current_liquidation_threshold": result[3] / 1e4,  # % (ex: 8250 = 82.5%)
                 "ltv": result[4] / 1e4,                   # % (ex: 7800 = 78%)
-                "health_factor": result[5] / 1e18 if result[5] > 0 else float('inf')  # Sem decimais especiais
+                "health_factor": min(result[5] / 1e18, 999999) if result[5] > 0 else 999999
             }
             
             logger.info(f"✅ Dados AAVE obtidos: HF={data['health_factor']:.2f}")
