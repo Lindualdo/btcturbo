@@ -11,7 +11,7 @@ class AAVEHelper:
         settings = get_settings()
         self.alchemy_api_key = getattr(settings, 'ALCHEMY_API_KEY', None)
         self.initialize_web3()
-        self.pool_address = "0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2"  # AAVE V3 Pool
+        self.pool_address = "0x794a61358D6845594F94dc1DB02A252b5b4814aD"  # AAVE V3 Arbitrum
         
         # AAVE Pool ABI (getUserAccountData function)
         self.pool_abi = [
@@ -46,7 +46,7 @@ class AAVEHelper:
             else:
                 logger.warning("Alchemy API Key não configurada")
                 # Tentar RPC público como fallback
-                public_rpc = "https://ethereum.publicnode.com"
+                public_rpc = "https://arb1.arbitrum.io/rpc"
                 self.w3 = Web3(Web3.HTTPProvider(public_rpc))
                 logger.info(f"Web3 conectado a RPC público: {self.w3.is_connected()}")
         except Exception as e:
