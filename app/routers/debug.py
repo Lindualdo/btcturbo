@@ -118,14 +118,26 @@ async def debug_realized_cap_comparison():
 
 @router.get("/bigquery-test")
 async def debug_bigquery_connection():
-    """Testa apenas a conexão BigQuery"""
+    """Testa apenas a conexão BigQuery com diagnóstico detalhado"""
     try:
+        from app.config import get_settings
+        settings = get_settings()
+        
+        # 1. Verificar configurações
+        config_check = {
+            "has_credentials_json": bool(getattr(settings, 'GOOGLE_APPLICATION_CREDENTIALS_JSON', None)),
+            "has_project_id": bool(getattr(settings, 'GOOGLE_CLOUD_PROJECT', None)),
+            "credentials_length": len(getattr(settings, 'GOOGLE_APPLICATION_CREDENTIALS_JSON', '')) if hasattr(settings, 'GOOGLE_APPLICATION_CREDENTIALS_JSON') else 0
+        }
+        
+        # 2. Tentar inicializar BigQuery
         bigquery_helper = BigQueryHelper()
         connection_ok = bigquery_helper.test_connection()
         
         return {
             "status": "success" if connection_ok else "error",
             "bigquery_connection": connection_ok,
+            "config_check": config_check,
             "message": "BigQuery conectado com sucesso" if connection_ok else "Falha na conexão BigQuery",
             "timestamp": datetime.utcnow().isoformat()
         }
@@ -133,5 +145,6 @@ async def debug_bigquery_connection():
         return {
             "status": "error",
             "error": str(e),
+            "config_check": config_check if 'config_check' in locals() else "config_check_failed",
             "timestamp": datetime.utcnow().isoformat()
         }
