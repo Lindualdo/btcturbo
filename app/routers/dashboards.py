@@ -431,4 +431,8 @@ async def dashboard_index():
         <body style="background: #0f111a; color: white; font-family: monospace; padding: 20px;">
             <h1 style="color: #f7931a;">🔧 Debug - Dashboard Principal</h1>
             <h2>Erro:</h2>
-            <pre style="color: #e
+            <pre style="color: #e53935;">{str(e)}</pre>
+            <a href="/docs" style="color: #f7931a;">← APIs</a>
+        </body>
+        </html>
+        """
