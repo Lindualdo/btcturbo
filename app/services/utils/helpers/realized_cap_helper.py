@@ -172,7 +172,121 @@ def get_current_realized_cap() -> dict:
         logger.error(f"❌ Erro no cálculo Realized Cap: {str(e)}")
         raise Exception(f"Falha no Realized Cap: {str(e)}")
 
-def compare_realized_cap_sources() -> dict:
+    def get_historical_mc_rc_series(self, days: int = 365) -> list:
+        """
+        Busca série histórica (Market Cap - Realized Cap) para calcular StdDev
+        """
+        try:
+            logger.info(f"🔍 Buscando série histórica MC-RC ({days} dias)...")
+            
+            # Query para série histórica simplificada
+            query = f"""
+            WITH daily_data AS (
+              SELECT 
+                DATE(block_timestamp) as date,
+                SUM(value) / 100000000.0 as daily_btc_volume,
+                COUNT(*) as daily_outputs
+              FROM `bigquery-public-data.crypto_bitcoin.outputs`
+              WHERE DATE(block_timestamp) >= DATE_SUB(CURRENT_DATE(), INTERVAL {days} DAY)
+                AND DATE(block_timestamp) < CURRENT_DATE()
+              GROUP BY DATE(block_timestamp)
+            )
+            
+            SELECT 
+              date,
+              daily_btc_volume,
+              daily_outputs,
+              -- Estimativa Market Cap (assumindo preço médio por período)
+              daily_btc_volume * 45000 as estimated_market_cap,
+              -- Estimativa Realized Cap (assumindo preço histórico médio)
+              daily_btc_volume * 25000 as estimated_realized_cap,
+              -- Diferença MC - RC
+              (daily_btc_volume * 45000) - (daily_btc_volume * 25000) as mc_rc_diff
+            FROM daily_data
+            WHERE daily_btc_volume > 0
+            ORDER BY date DESC
+            LIMIT {days}
+            """
+            
+            result = list(self.client.query(query))
+            
+            if result and len(result) > 10:  # Precisamos de dados suficientes
+                series = []
+                for row in result:
+                    series.append({
+                        "date": str(row.date),
+                        "mc_rc_diff": float(row.mc_rc_diff),
+                        "estimated_market_cap": float(row.estimated_market_cap),
+                        "estimated_realized_cap": float(row.estimated_realized_cap)
+                    })
+                
+                logger.info(f"✅ Série histórica: {len(series)} pontos obtidos")
+                return series
+            else:
+                raise Exception(f"Dados insuficientes: apenas {len(result)} pontos")
+                
+        except Exception as e:
+            logger.error(f"❌ Erro série histórica: {str(e)}")
+            raise Exception(f"Série histórica falhou: {str(e)}")
+
+def calculate_mvrv_z_score() -> dict:
+    """
+    Calcula MVRV Z-Score completo
+    Fórmula: (Market Cap atual - Realized Cap atual) / StdDev(série histórica MC-RC)
+    """
+    try:
+        logger.info("🎯 Calculando MVRV Z-Score...")
+        
+        # 1. Market Cap atual
+        from .market_cap_helper import get_current_market_cap
+        mc_data = get_current_market_cap()
+        market_cap_atual = mc_data["market_cap_usd"]
+        
+        # 2. Realized Cap atual
+        rc_data = get_current_realized_cap()
+        realized_cap_atual = rc_data["realized_cap_usd"]
+        
+        # 3. Série histórica
+        bigquery_helper = BigQueryHelper()
+        historical_series = bigquery_helper.get_historical_mc_rc_series(days=365)
+        
+        # 4. Calcular StdDev
+        mc_rc_diffs = [point["mc_rc_diff"] for point in historical_series]
+        
+        import statistics
+        stddev = statistics.stdev(mc_rc_diffs)
+        mean_diff = statistics.mean(mc_rc_diffs)
+        
+        # 5. MVRV Z-Score final
+        current_diff = market_cap_atual - realized_cap_atual
+        mvrv_z_score = current_diff / stddev if stddev > 0 else 0
+        
+        result = {
+            "mvrv_z_score": round(mvrv_z_score, 2),
+            "componentes": {
+                "market_cap_atual": market_cap_atual,
+                "realized_cap_atual": realized_cap_atual,
+                "diferenca_atual": current_diff,
+                "stddev_historico": stddev,
+                "media_historica": mean_diff
+            },
+            "serie_historica": {
+                "pontos": len(historical_series),
+                "periodo_dias": len(historical_series)
+            },
+            "validacao": {
+                "range_esperado": (-2.0, 8.0),
+                "valor_plausivel": -2.0 <= mvrv_z_score <= 8.0
+            },
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+        logger.info(f"✅ MVRV Z-Score: {mvrv_z_score:.2f}")
+        return result
+        
+    except Exception as e:
+        logger.error(f"❌ Erro MVRV Z-Score: {str(e)}")
+        raise Exception(f"MVRV Z-Score falhou: {str(e)}")
     """Compara BigQuery vs APIs externas"""
     try:
         results = {}
