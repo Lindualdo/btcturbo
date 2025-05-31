@@ -38,9 +38,16 @@ Esta documentação técnica define claramente o padrão arquitetural, responsab
 ´´´
 ---
 
-## 1.0.13 -  coleta de dados
+## 1.0.13 -  Com ou sem risco no score final - Feito
 - incluido flag para considerar ou não o risco no score final
 - alterado o dash incluido paramentro para setar ou não o score com risco
+
+---
+
+## 1.0.14 -  Gravar score consolidado na base - Um registro por dia
+- gravar score na base se ainda não foi gravado para o dia
+- buscar dados no cache do banco primeiro, se não existir busca nas APIs
+- opção de forçar atualização (neste caso busca das APIs)
 
 ---
 
