@@ -2,6 +2,7 @@
 
 from fastapi import FastAPI
 from datetime import datetime
+from app.routers import debug
 from app.routers import (
     coleta, indicadores, score, analise, diagnostico, 
     dashboards, dashboard_riscos, dashboard_momentum, dashboard_ciclos, dashboard_tecnico
@@ -42,6 +43,8 @@ app.include_router(dashboard_tecnico.router, prefix="/dashboard", tags=["📱 Da
 # ==========================================
 # ENDPOINTS BÁSICOS
 # ==========================================
+
+app.include_router(debug.router, prefix="/api/v1/debug", tags=["🔧 Debug"])
 
 @app.get("/ping")
 async def ping():
