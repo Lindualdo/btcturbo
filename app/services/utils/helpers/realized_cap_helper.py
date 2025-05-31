@@ -314,9 +314,18 @@ def calculate_mvrv_z_score() -> dict:
         stddev = statistics.stdev(mc_rc_diffs)
         mean_diff = statistics.mean(mc_rc_diffs)
         
-        # 5. MVRV Z-Score final
+        # 5. MVRV Z-Score final (normalizado)
         current_diff = market_cap_atual - realized_cap_atual
-        mvrv_z_score = current_diff / stddev if stddev > 0 else 0
+        
+        # Normalizar para bilhões para evitar números gigantes
+        current_diff_b = current_diff / 1e9
+        mc_rc_diffs_b = [diff / 1e9 for diff in mc_rc_diffs]
+        
+        import statistics
+        stddev_b = statistics.stdev(mc_rc_diffs_b)
+        mean_diff_b = statistics.mean(mc_rc_diffs_b)
+        
+        mvrv_z_score = current_diff_b / stddev_b if stddev_b > 0 else 0
         
         result = {
             "mvrv_z_score": round(mvrv_z_score, 2),
@@ -324,8 +333,9 @@ def calculate_mvrv_z_score() -> dict:
                 "market_cap_atual": market_cap_atual,
                 "realized_cap_atual": realized_cap_atual,
                 "diferenca_atual": current_diff,
-                "stddev_historico": stddev,
-                "media_historica": mean_diff
+                "diferenca_atual_bilhoes": current_diff_b,
+                "stddev_historico_bilhoes": stddev_b,
+                "media_historica_bilhoes": mean_diff_b
             },
             "serie_historica": {
                 "pontos": len(historical_series),
