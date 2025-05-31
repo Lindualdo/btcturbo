@@ -42,6 +42,7 @@ def insert_dados_risco_completo(
     supplied_asset_value: float,
     net_asset_value: float,
     alavancagem: float,
+    liquidation_price: float,
     fonte: str = "aave/web3"
 ) -> bool:
     """Insere dados completos do bloco risco"""
@@ -51,12 +52,12 @@ def insert_dados_risco_completo(
         query = """
             INSERT INTO indicadores_risco 
             (dist_liquidacao, health_factor, btc_price, total_borrowed, supplied_asset_value, 
-             net_asset_value, alavancagem, fonte, timestamp)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+             net_asset_value, alavancagem, liquidation_price, fonte, timestamp)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
         params = (
             dist_liquidacao, health_factor, btc_price, total_borrowed, 
-            supplied_asset_value, net_asset_value, alavancagem, fonte, datetime.utcnow()
+            supplied_asset_value, net_asset_value, alavancagem, liquidation_price, fonte, datetime.utcnow()
         )
         
         execute_query(query, params)

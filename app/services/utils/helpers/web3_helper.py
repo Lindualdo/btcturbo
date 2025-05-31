@@ -108,7 +108,8 @@ class AAVEHelper:
                 "alavancagem": alavancagem,
                 "dist_liquidacao": max(0, dist_liquidacao),
                 "health_factor": health_factor,
-                "btc_price": btc_price
+                "btc_price": btc_price,
+                "liquidation_price": liquidation_price,
             }
             
         except Exception as e:

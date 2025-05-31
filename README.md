@@ -51,7 +51,13 @@ Esta documentação técnica define claramente o padrão arquitetural, responsab
 
 ---
 
-## 1.0.15 -  coleta de dados
+## 1.0.15 -  coleta de dados - bloco risco
+
+- alterar tabela indicsores_risco incluir novos campos campos
+- calcular HF e Dist. pra liquidação
+
+
+## 1.0.16 -  coleta de dados - ciclos
 
 - Docs: 
 https://github.com/Lindualdo/btcturbo/blob/main/doc/validation-limites-indicadores.md
@@ -67,19 +73,19 @@ https://github.com/Lindualdo/btcturbo/blob/main/doc/validation-limites-indicador
 
 ---
 
-## 1.0.15 - alertas
+## alertas
 - implementar sistemas de alertas
 https://github.com/Lindualdo/btcturbo/blob/main/doc/btcturbo-alertas.espc.md
 
 ---
 
-## 1.0.16 - excluir indicadores descontinuados da tabela de riscos 
+## excluir indicadores descontinuados da tabela de riscos 
 - exchange_netflow
 - stablecoin_ratio
 - ajustar no Helper e demais funções
 
 
-## 1.0.17 - Implementar coletala dos dados EMAs e calclulo separado emas e posição do preço
+## Implementar coletala dos dados EMAs e calclulo separado emas e posição do preço
 - atualmente estamos usando API externa para calcular o score e classificação
 - rotina diferente dos demais blocos porque precisa calcular internamente o indicador, não existe no mercado
 

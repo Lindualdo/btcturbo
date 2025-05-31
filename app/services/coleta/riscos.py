@@ -35,7 +35,8 @@ def coletar(forcar_coleta: bool):
             supplied_asset_value=aave_data["supplied_asset_value"],
             net_asset_value=aave_data["net_asset_value"],
             alavancagem=aave_data["alavancagem"],
-            fonte="aave/web3"
+            fonte="aave/web3",
+            liquidation_price=aave_data["liquidation_price"]
         )
         
         if success:
