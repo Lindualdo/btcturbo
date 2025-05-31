@@ -6,7 +6,7 @@ from app.services.utils.helpers.market_cap_helper import (
     get_current_market_cap, compare_with_reference, get_btc_price, get_btc_supply
 )
 from app.services.utils.helpers.realized_cap_helper import (
-    get_current_realized_cap, compare_realized_cap_sources, BigQueryHelper
+    get_current_realized_cap, compare_realized_cap_sources, BigQueryHelper, calculate_mvrv_z_score
 )
 
 router = APIRouter()
@@ -17,18 +17,6 @@ async def debug_market_cap():
     try:
         result = get_current_market_cap()
         result["timestamp"] = datetime.utcnow().isoformat()
-        return {
-            "status": "success",
-            "data": result
-        }
-    except Exception as e:
-@router.get("/mvrv-z-score")
-async def debug_mvrv_z_score():
-    """Testa cálculo completo do MVRV Z-Score"""
-    try:
-        from app.services.utils.helpers.realized_cap_helper import calculate_mvrv_z_score
-        
-        result = calculate_mvrv_z_score()
         return {
             "status": "success",
             "data": result
@@ -128,55 +116,27 @@ async def debug_realized_cap_comparison():
             "timestamp": datetime.utcnow().isoformat()
         }
 
-@router.get("/bigquery-schema")
-async def debug_bigquery_schema():
-    """Descobre a estrutura real das tabelas BigQuery"""
+@router.get("/bigquery-test")
+async def debug_bigquery_connection():
+    """Testa apenas a conexão BigQuery"""
     try:
-        from app.services.utils.helpers.realized_cap_helper import BigQueryHelper
-        
         bigquery_helper = BigQueryHelper()
-        
-        # Query para descobrir os campos disponíveis
-        queries = {
-            "outputs_schema": """
-                SELECT column_name, data_type 
-                FROM `bigquery-public-data.crypto_bitcoin.INFORMATION_SCHEMA.COLUMNS` 
-                WHERE table_name = 'outputs'
-                LIMIT 20
-            """,
-            "outputs_sample": """
-                SELECT * 
-                FROM `bigquery-public-data.crypto_bitcoin.outputs` 
-                LIMIT 3
-            """,
-            "transactions_sample": """
-                SELECT * 
-                FROM `bigquery-public-data.crypto_bitcoin.transactions` 
-                LIMIT 2
-            """
-        }
-        
-        results = {}
-        
-        for query_name, query in queries.items():
-            try:
-                result = list(bigquery_helper.client.query(query))
-                results[query_name] = [dict(row) for row in result]
-            except Exception as e:
-                results[query_name] = f"Error: {str(e)}"
+        connection_ok = bigquery_helper.test_connection()
         
         return {
-            "status": "success",
-            "schemas": results,
+            "status": "success" if connection_ok else "error",
+            "bigquery_connection": connection_ok,
+            "message": "BigQuery conectado com sucesso" if connection_ok else "Falha na conexão BigQuery",
             "timestamp": datetime.utcnow().isoformat()
         }
-        
     except Exception as e:
         return {
             "status": "error",
             "error": str(e),
             "timestamp": datetime.utcnow().isoformat()
         }
+
+@router.get("/bigquery-detailed-test")
 async def debug_bigquery_detailed():
     """Teste BigQuery com máximo detalhe possível"""
     try:
@@ -231,7 +191,6 @@ async def debug_bigquery_detailed():
         
         # 5. Tentar query mais simples possível
         try:
-            # Query que não acessa dados externos - só sistema
             simple_query = "SELECT 1 as test_number"
             job = client.query(simple_query)
             results = list(job)
@@ -272,5 +231,71 @@ async def debug_bigquery_detailed():
         return {
             "status": "error",
             "error": f"Unexpected error: {str(e)}",
+            "timestamp": datetime.utcnow().isoformat()
+        }
+
+@router.get("/bigquery-schema")
+async def debug_bigquery_schema():
+    """Descobre a estrutura real das tabelas BigQuery"""
+    try:
+        from app.services.utils.helpers.realized_cap_helper import BigQueryHelper
+        
+        bigquery_helper = BigQueryHelper()
+        
+        # Query para descobrir os campos disponíveis
+        queries = {
+            "outputs_schema": """
+                SELECT column_name, data_type 
+                FROM `bigquery-public-data.crypto_bitcoin.INFORMATION_SCHEMA.COLUMNS` 
+                WHERE table_name = 'outputs'
+                LIMIT 20
+            """,
+            "outputs_sample": """
+                SELECT * 
+                FROM `bigquery-public-data.crypto_bitcoin.outputs` 
+                LIMIT 3
+            """,
+            "transactions_sample": """
+                SELECT * 
+                FROM `bigquery-public-data.crypto_bitcoin.transactions` 
+                LIMIT 2
+            """
+        }
+        
+        results = {}
+        
+        for query_name, query in queries.items():
+            try:
+                result = list(bigquery_helper.client.query(query))
+                results[query_name] = [dict(row) for row in result]
+            except Exception as e:
+                results[query_name] = f"Error: {str(e)}"
+        
+        return {
+            "status": "success",
+            "schemas": results,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        return {
+            "status": "error",
+            "error": str(e),
+            "timestamp": datetime.utcnow().isoformat()
+        }
+
+@router.get("/mvrv-z-score")
+async def debug_mvrv_z_score():
+    """Testa cálculo completo do MVRV Z-Score"""
+    try:
+        result = calculate_mvrv_z_score()
+        return {
+            "status": "success",
+            "data": result
+        }
+    except Exception as e:
+        return {
+            "status": "error",
+            "error": str(e),
             "timestamp": datetime.utcnow().isoformat()
         }
