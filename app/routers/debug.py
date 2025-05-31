@@ -5,6 +5,9 @@ from datetime import datetime
 from app.services.utils.helpers.market_cap_helper import (
     get_current_market_cap, compare_with_reference, get_btc_price, get_btc_supply
 )
+from app.services.utils.helpers.realized_cap_helper import (
+    get_current_realized_cap, compare_realized_cap_sources, BigQueryHelper
+)
 
 router = APIRouter()
 
@@ -71,6 +74,59 @@ async def debug_btc_supply():
             "supply": supply,
             "source": source,
             "formatted": f"{supply:,.0f} BTC",
+            "timestamp": datetime.utcnow().isoformat()
+        }
+    except Exception as e:
+        return {
+            "status": "error",
+            "error": str(e),
+            "timestamp": datetime.utcnow().isoformat()
+        }
+
+@router.get("/realized-cap")
+async def debug_realized_cap():
+    """Testa cálculo de Realized Cap"""
+    try:
+        result = get_current_realized_cap()
+        return {
+            "status": "success",
+            "data": result
+        }
+    except Exception as e:
+        return {
+            "status": "error",
+            "error": str(e),
+            "timestamp": datetime.utcnow().isoformat()
+        }
+
+@router.get("/realized-cap-comparison")
+async def debug_realized_cap_comparison():
+    """Compara BigQuery vs APIs para Realized Cap"""
+    try:
+        comparison = compare_realized_cap_sources()
+        return {
+            "status": "success",
+            "timestamp": datetime.utcnow().isoformat(),
+            "sources": comparison
+        }
+    except Exception as e:
+        return {
+            "status": "error",
+            "error": str(e),
+            "timestamp": datetime.utcnow().isoformat()
+        }
+
+@router.get("/bigquery-test")
+async def debug_bigquery_connection():
+    """Testa apenas a conexão BigQuery"""
+    try:
+        bigquery_helper = BigQueryHelper()
+        connection_ok = bigquery_helper.test_connection()
+        
+        return {
+            "status": "success" if connection_ok else "error",
+            "bigquery_connection": connection_ok,
+            "message": "BigQuery conectado com sucesso" if connection_ok else "Falha na conexão BigQuery",
             "timestamp": datetime.utcnow().isoformat()
         }
     except Exception as e:
