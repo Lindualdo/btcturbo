@@ -52,10 +52,7 @@ https://github.com/Lindualdo/btcturbo/blob/main/doc/validation-limites-indicador
 * web3
 * APIs
 
-- Inclusão de dois novos indicadores no bloco momentum
-* Stablecoin Supply Ratio - SSR (2%)
-* Exchange Netflow 7D (3%)
-
+---
 
 ## 1.0.14 - alertas
 - implementar sistemas de alertas
