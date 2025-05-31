@@ -1,7 +1,7 @@
-# app/services/utils/helpers/postgres/__init__.py
+# app/services/utils/helpers/__init__.py
 
-# Imports da base
-from .base import get_db_connection, execute_query, test_connection
+# Imports da base (postgres/)
+from .postgres.base import get_db_connection, execute_query, test_connection
 
 # Imports específicos por bloco
 from .ciclo_helper import get_dados_ciclo, insert_dados_ciclo, get_historico_ciclo

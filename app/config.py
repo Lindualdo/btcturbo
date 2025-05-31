@@ -59,7 +59,7 @@ class Settings(BaseSettings):
     TV_EXCHANGE: str = Field("BINANCE", description="Exchange para consulta de dados")
 
 
-    WALLET_ADDRESS: str = Field(..., env="WALLET_ADDRESS", description="Wallet AAVE para monitorar")
+    WALLET_ADDRESS: str = Field(..., env="WALLET_ADDRESS")
 
     class Config:
         env_file = ".env"
