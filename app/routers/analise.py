@@ -1,26 +1,64 @@
 # app/routers/analise.py
 
 from fastapi import APIRouter, Query
-from datetime import datetime
+from datetime import datetime, date
 from app.services.scores import ciclos, momentum, riscos, tecnico
 from app.services import alertas as alertas_service
+from app.services.utils.helpers.postgres.scores_consolidados_helper import (
+    get_score_cache_diario, save_score_cache_diario
+)
 import logging
 
 router = APIRouter()
 
 @router.get("/analise-btc")
-async def analise_btc(incluir_risco: bool = Query(True, description="Incluir bloco RISCO no cálculo do score final")):
-    """API consolidada que retorna análise completa do BTC com scores de todos os blocos"""
+async def analise_btc(
+    incluir_risco: bool = Query(True, description="Incluir bloco RISCO no cálculo do score final"),
+    force_update: bool = Query(False, description="Forçar recálculo ignorando cache")
+):
+    """API consolidada que retorna análise completa do BTC com cache diário"""
     try:
-        logging.info(f"🔄 Iniciando análise consolidada BTC - incluir_risco={incluir_risco}...")
+        logging.info(f"🔄 Análise BTC - incluir_risco={incluir_risco}, force_update={force_update}")
         
-        # 1. Buscar scores de todos os blocos
+        # 1. VERIFICAR CACHE PRIMEIRO (se não forçar update)
+        if not force_update:
+            cache_data = get_score_cache_diario(incluir_risco=incluir_risco)
+            if cache_data:
+                logging.info(f"✅ Usando cache - Score: {cache_data['score_final']}")
+                
+                # Montar resposta do cache
+                resposta_cache = {
+                    "timestamp": cache_data['timestamp'].isoformat(),
+                    "configuracao": {
+                        "incluir_risco": cache_data['incluir_risco'],
+                        "fonte": "cache",
+                        "data_cache": cache_data['data'].isoformat(),
+                        "nota": f"Dados em cache para {cache_data['data']} - Use force_update=true para recalcular"
+                    },
+                    "score_final": float(cache_data['score_final']),
+                    "score_ajustado": float(cache_data['score_final']),
+                    "modificador_volatilidade": 1.0,
+                    "classificacao_geral": cache_data['classificacao_geral'],
+                    "kelly_allocation": cache_data['kelly_allocation'],
+                    "acao_recomendada": cache_data['acao_recomendada'],
+                    "alertas_ativos": ["Cache ativo - Use force_update para dados atuais"],
+                    "pesos_dinamicos": cache_data['pesos_dinamicos'] or {},
+                    "blocos": cache_data['dados_completos'].get('blocos', {}) if cache_data['dados_completos'] else {},
+                    "resumo_blocos": cache_data['dados_completos'].get('resumo_blocos', {}) if cache_data['dados_completos'] else {}
+                }
+                
+                return resposta_cache
+        
+        # 2. CALCULAR FRESH DATA (quando não há cache ou force_update=True)
+        logging.info("🔄 Calculando dados frescos via APIs...")
+        
+        # Buscar scores de todos os blocos
         score_ciclos = ciclos.calcular_score()
         score_momentum = momentum.calcular_score() 
         score_riscos = riscos.calcular_score()
         score_tecnico = tecnico.calcular_score()
         
-        # 2. Verificar blocos válidos e definir pesos
+        # Verificar blocos válidos e definir pesos
         blocos_validos = []
         peso_total_disponivel = 0
         
@@ -51,13 +89,12 @@ async def analise_btc(incluir_risco: bool = Query(True, description="Incluir blo
         
         logging.info(f"✅ Blocos no cálculo: {len(blocos_validos)} - Peso total: {peso_total_disponivel}")
         
-        # 3. Calcular score consolidado
+        # Calcular score consolidado
         if peso_total_disponivel > 0:
             score_ponderado = 0
             pesos_finais = {}
             
             for nome_bloco, dados_bloco, peso_original in blocos_validos:
-                # Normalizar peso baseado no total disponível
                 peso_normalizado = peso_original / peso_total_disponivel
                 score_bloco = dados_bloco.get("score_consolidado", 0)
                 score_ponderado += (score_bloco * peso_normalizado)
@@ -69,7 +106,7 @@ async def analise_btc(incluir_risco: bool = Query(True, description="Incluir blo
             pesos_finais = {}
             logging.warning("⚠️ Nenhum bloco válido encontrado para calcular score")
         
-        # 4. Determinar classificação e ações
+        # Determinar classificação e ações
         def classificar_score(score):
             if score >= 8.0: return "ótimo"
             elif score >= 6.0: return "bom"
@@ -95,7 +132,7 @@ async def analise_btc(incluir_risco: bool = Query(True, description="Incluir blo
         kelly_allocation = calcular_kelly(score_final)
         acao_recomendada = determinar_acao(score_final)
         
-        # 5. Buscar alertas
+        # Buscar alertas
         try:
             alertas_data = alertas_service.get_alertas()
             alertas_ativos = [alerta["mensagem"] for alerta in alertas_data.get("alertas_ativos", [])]
@@ -103,7 +140,7 @@ async def analise_btc(incluir_risco: bool = Query(True, description="Incluir blo
             logging.error(f"Erro ao buscar alertas: {str(e)}")
             alertas_ativos = ["Sistema de alertas temporariamente indisponível"]
         
-        # 6. Preparar pesos dinâmicos (normalizados)
+        # Preparar pesos dinâmicos
         pesos_dinamicos = {
             "ciclo": pesos_finais.get("ciclos", 0),
             "momentum": pesos_finais.get("momentum", 0),
@@ -111,17 +148,19 @@ async def analise_btc(incluir_risco: bool = Query(True, description="Incluir blo
             "tecnico": pesos_finais.get("tecnico", 0)
         }
         
-        # 7. Estruturar resposta final
+        # Estruturar resposta final
         resposta_consolidada = {
             "timestamp": datetime.utcnow().isoformat(),
             "configuracao": {
                 "incluir_risco": incluir_risco,
                 "risco_disponivel": risco_disponivel,
                 "blocos_no_calculo": len(blocos_validos),
+                "fonte": "fresh_calculation",
+                "force_update": force_update,
                 "nota": "Score calculado SEM risco" if not incluir_risco else "Score calculado COM risco"
             },
             "score_final": score_final,
-            "score_ajustado": score_final,  # Futuro: aplicar modificador de volatilidade
+            "score_ajustado": score_final,
             "modificador_volatilidade": 1.0,
             "classificacao_geral": classificacao_geral,
             "kelly_allocation": kelly_allocation,
@@ -131,7 +170,7 @@ async def analise_btc(incluir_risco: bool = Query(True, description="Incluir blo
             "blocos": {
                 "ciclos": score_ciclos,
                 "momentum": score_momentum,
-                "riscos": score_riscos,  # SEMPRE retorna, independente do incluir_risco
+                "riscos": score_riscos,
                 "tecnico": score_tecnico
             },
             "resumo_blocos": {
@@ -166,7 +205,22 @@ async def analise_btc(incluir_risco: bool = Query(True, description="Incluir blo
             }
         }
         
-        logging.info(f"✅ Análise consolidada concluída - Score: {score_final} ({classificacao_geral}) - Risco: {'incluído' if incluir_risco else 'excluído'}")
+        # 3. SALVAR NO CACHE para próximas consultas
+        try:
+            save_score_cache_diario(
+                score_final=score_final,
+                classificacao_geral=classificacao_geral,
+                kelly_allocation=kelly_allocation,
+                acao_recomendada=acao_recomendada,
+                pesos_dinamicos=pesos_dinamicos,
+                dados_completos=resposta_consolidada,
+                incluir_risco=incluir_risco
+            )
+            logging.info(f"✅ Cache salvo para hoje - Score: {score_final}")
+        except Exception as e:
+            logging.error(f"⚠️ Falha ao salvar cache: {str(e)}")
+        
+        logging.info(f"✅ Análise concluída - Score: {score_final} ({classificacao_geral})")
         return resposta_consolidada
         
     except Exception as e:

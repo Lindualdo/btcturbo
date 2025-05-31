@@ -159,7 +159,7 @@ async def dashboard_index():
         <body>
           <h1>🚀 BTC Turbo - Dashboard Principal</h1>
           <div class="subtitle" id="subtitle">
-            Sistema v1.0.13 - Carregando dados...
+            Sistema v1.0.12 - Carregando dados...
           </div>
           
           <!-- Toggle para incluir/excluir risco -->
@@ -170,6 +170,15 @@ async def dashboard_index():
               <span class="slider"></span>
             </label>
             <span class="toggle-label" id="toggleStatus">Incluído</span>
+            
+            <!-- Botão Forçar Atualização -->
+            <button id="btnForceUpdate" onclick="forcarAtualizacao()" style="
+              background: #f7931a; color: #000; border: none; border-radius: 6px;
+              padding: 8px 16px; margin-left: 16px; cursor: pointer; font-weight: 600;
+              font-size: 14px; transition: all 0.3s ease;
+            " onmouseover="this.style.background='#e8851a'" onmouseout="this.style.background='#f7931a'">
+              🔄 Forçar Atualização
+            </button>
           </div>
 
           <!-- Status da configuração atual -->
