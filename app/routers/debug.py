@@ -127,24 +127,36 @@ async def debug_bigquery_connection():
         config_check = {
             "has_credentials_json": bool(getattr(settings, 'GOOGLE_APPLICATION_CREDENTIALS_JSON', None)),
             "has_project_id": bool(getattr(settings, 'GOOGLE_CLOUD_PROJECT', None)),
-            "credentials_length": len(getattr(settings, 'GOOGLE_APPLICATION_CREDENTIALS_JSON', '')) if hasattr(settings, 'GOOGLE_APPLICATION_CREDENTIALS_JSON') else 0
+            "credentials_length": len(getattr(settings, 'GOOGLE_APPLICATION_CREDENTIALS_JSON', '')) if hasattr(settings, 'GOOGLE_APPLICATION_CREDENTIALS_JSON') else 0,
+            "project_id": getattr(settings, 'GOOGLE_CLOUD_PROJECT', 'NOT_SET')
         }
         
         # 2. Tentar inicializar BigQuery
-        bigquery_helper = BigQueryHelper()
-        connection_ok = bigquery_helper.test_connection()
-        
-        return {
-            "status": "success" if connection_ok else "error",
-            "bigquery_connection": connection_ok,
-            "config_check": config_check,
-            "message": "BigQuery conectado com sucesso" if connection_ok else "Falha na conexão BigQuery",
-            "timestamp": datetime.utcnow().isoformat()
-        }
+        try:
+            bigquery_helper = BigQueryHelper()
+            connection_ok = bigquery_helper.test_connection()
+            
+            return {
+                "status": "success",
+                "bigquery_connection": connection_ok,
+                "config_check": config_check,
+                "message": "BigQuery conectado com sucesso",
+                "timestamp": datetime.utcnow().isoformat()
+            }
+        except Exception as bq_error:
+            return {
+                "status": "error",
+                "bigquery_connection": False,
+                "config_check": config_check,
+                "bigquery_error": str(bq_error),
+                "error_type": type(bq_error).__name__,
+                "message": f"Erro específico BigQuery: {str(bq_error)}",
+                "timestamp": datetime.utcnow().isoformat()
+            }
+            
     except Exception as e:
         return {
             "status": "error",
-            "error": str(e),
-            "config_check": config_check if 'config_check' in locals() else "config_check_failed",
+            "error": f"Erro geral: {str(e)}",
             "timestamp": datetime.utcnow().isoformat()
         }

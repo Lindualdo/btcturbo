@@ -26,20 +26,25 @@ class BigQueryHelper:
             )
             logger.info("✅ BigQuery client inicializado")
             
+        except json.JSONDecodeError as e:
+            logger.error(f"❌ Erro JSON credentials: {str(e)}")
+            raise Exception(f"JSON inválido: {str(e)}")
         except Exception as e:
             logger.error(f"❌ Erro ao inicializar BigQuery: {str(e)}")
-            raise Exception(f"Falha BigQuery: {str(e)}")
+            raise Exception(f"Falha BigQuery init: {str(e)}")
 
     def test_connection(self) -> bool:
-        """Testa conexão BigQuery"""
+        """Testa conexão BigQuery com erro detalhado"""
         try:
             query = "SELECT 1 as test"
             result = list(self.client.query(query))
             logger.info("✅ Conexão BigQuery OK")
             return True
         except Exception as e:
-            logger.error(f"❌ Teste BigQuery falhou: {str(e)}")
-            return False
+            logger.error(f"❌ Teste BigQuery específico: {str(e)}")
+            logger.error(f"❌ Tipo do erro: {type(e).__name__}")
+            # Re-raise para capturar no debug
+            raise e
 
     def get_realized_cap_simplified(self) -> float:
         """
@@ -108,18 +113,18 @@ class BigQueryHelper:
 
 def get_realized_cap_fallback() -> Tuple[float, str]:
     """
-    Fallback para Realized Cap usando APIs públicas
+    Fallback para Realized Cap usando APIs públicas e estimativas
     """
     sources = [
         {
-            "name": "CryptoQuant_Free",
-            "url": "https://api.cryptoquant.com/v1/btc/network-indicator/realized-cap",
-            "parser": lambda r: r.json()["result"]["data"][-1]["value"]
+            "name": "Blockchain.info_Estimated",
+            "url": "https://blockchain.info/q/totalbc",
+            "parser": lambda r: estimate_realized_cap_from_supply(float(r.text) / 100000000)
         },
         {
-            "name": "Glassnode_Free", 
-            "url": "https://api.glassnode.com/v1/metrics/market/marketcap_realized",
-            "parser": lambda r: r.json()[-1]["v"]
+            "name": "CoinGecko_Estimated", 
+            "url": "https://api.coingecko.com/api/v3/coins/bitcoin",
+            "parser": lambda r: estimate_realized_cap_from_market_data(r.json()["market_data"])
         }
     ]
     
