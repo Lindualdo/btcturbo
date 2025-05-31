@@ -116,47 +116,101 @@ async def debug_realized_cap_comparison():
             "timestamp": datetime.utcnow().isoformat()
         }
 
-@router.get("/bigquery-test")
-async def debug_bigquery_connection():
-    """Testa apenas a conexão BigQuery com diagnóstico detalhado"""
+@router.get("/bigquery-detailed-test")
+async def debug_bigquery_detailed():
+    """Teste BigQuery com máximo detalhe possível"""
     try:
         from app.config import get_settings
+        import json
+        from google.oauth2 import service_account
+        from google.cloud import bigquery
+        
         settings = get_settings()
         
-        # 1. Verificar configurações
-        config_check = {
-            "has_credentials_json": bool(getattr(settings, 'GOOGLE_APPLICATION_CREDENTIALS_JSON', None)),
-            "has_project_id": bool(getattr(settings, 'GOOGLE_CLOUD_PROJECT', None)),
-            "credentials_length": len(getattr(settings, 'GOOGLE_APPLICATION_CREDENTIALS_JSON', '')) if hasattr(settings, 'GOOGLE_APPLICATION_CREDENTIALS_JSON') else 0,
-            "project_id": getattr(settings, 'GOOGLE_CLOUD_PROJECT', 'NOT_SET')
+        # 1. Parse credenciais
+        try:
+            cred_info = json.loads(settings.GOOGLE_APPLICATION_CREDENTIALS_JSON)
+            service_email = cred_info.get('client_email', 'NOT_FOUND')
+            project_from_json = cred_info.get('project_id', 'NOT_FOUND')
+        except Exception as e:
+            return {"error": f"JSON parse failed: {str(e)}"}
+        
+        # 2. Verificar dados básicos
+        config_details = {
+            "project_from_settings": settings.GOOGLE_CLOUD_PROJECT,
+            "project_from_json": project_from_json,
+            "service_account_email": service_email,
+            "projects_match": settings.GOOGLE_CLOUD_PROJECT == project_from_json
         }
         
-        # 2. Tentar inicializar BigQuery
+        # 3. Tentar criar credentials
         try:
-            bigquery_helper = BigQueryHelper()
-            connection_ok = bigquery_helper.test_connection()
-            
-            return {
-                "status": "success",
-                "bigquery_connection": connection_ok,
-                "config_check": config_check,
-                "message": "BigQuery conectado com sucesso",
-                "timestamp": datetime.utcnow().isoformat()
-            }
-        except Exception as bq_error:
+            credentials = service_account.Credentials.from_service_account_info(cred_info)
+            cred_status = "✅ Credentials criadas"
+        except Exception as e:
             return {
                 "status": "error",
-                "bigquery_connection": False,
-                "config_check": config_check,
-                "bigquery_error": str(bq_error),
-                "error_type": type(bq_error).__name__,
-                "message": f"Erro específico BigQuery: {str(bq_error)}",
-                "timestamp": datetime.utcnow().isoformat()
+                "error": f"Credentials creation failed: {str(e)}",
+                "config": config_details
             }
-            
+        
+        # 4. Tentar criar client
+        try:
+            client = bigquery.Client(
+                credentials=credentials,
+                project=settings.GOOGLE_CLOUD_PROJECT
+            )
+            client_status = "✅ Client criado"
+        except Exception as e:
+            return {
+                "status": "error", 
+                "error": f"Client creation failed: {str(e)}",
+                "config": config_details,
+                "credentials_status": cred_status
+            }
+        
+        # 5. Tentar query mais simples possível
+        try:
+            # Query que não acessa dados externos - só sistema
+            simple_query = "SELECT 1 as test_number"
+            job = client.query(simple_query)
+            results = list(job)
+            query_status = f"✅ Query OK - resultado: {results[0]['test_number']}"
+        except Exception as e:
+            return {
+                "status": "error",
+                "error": f"Simple query failed: {str(e)}",
+                "error_details": {
+                    "type": type(e).__name__,
+                    "message": str(e)
+                },
+                "config": config_details,
+                "credentials_status": cred_status,
+                "client_status": client_status
+            }
+        
+        # 6. Tentar acessar dataset público
+        try:
+            public_query = "SELECT COUNT(*) as total FROM `bigquery-public-data.crypto_bitcoin.transactions` LIMIT 1"
+            job2 = client.query(public_query)
+            results2 = list(job2)
+            public_access = f"✅ Acesso público OK - total: {results2[0]['total']}"
+        except Exception as e:
+            public_access = f"❌ Acesso público falhou: {str(e)}"
+        
+        return {
+            "status": "success",
+            "config": config_details,
+            "credentials_status": cred_status,
+            "client_status": client_status,
+            "simple_query_status": query_status,
+            "public_data_access": public_access,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
     except Exception as e:
         return {
             "status": "error",
-            "error": f"Erro geral: {str(e)}",
+            "error": f"Unexpected error: {str(e)}",
             "timestamp": datetime.utcnow().isoformat()
         }
