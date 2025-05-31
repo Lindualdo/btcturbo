@@ -1,4 +1,4 @@
-# BTC TURBO - v1.0.14
+# BTC TURBO - v1.0.15
 
 ## 🎯 Objetivo da Documentação
 
@@ -51,7 +51,7 @@ Esta documentação técnica define claramente o padrão arquitetural, responsab
 
 ---
 
-## 1.0.15 -  coleta de dados - bloco risco
+## 1.0.15 -  coleta de dados - bloco risco - feito
 
 - alterar tabela indicsores_risco incluir novos campos campos
 - calcular HF e Dist. pra liquidação
