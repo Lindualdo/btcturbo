@@ -117,42 +117,52 @@ def calculate_dynamic_extrapolation_factor(age_distribution, total_sample_btc):
 
 def get_price_weighted_historical_estimate():
     """
-    Estima RC histórico usando TradingView helper existente
+    Estima RC histórico usando TradingView ou fallback CoinGecko
     """
     try:
-        from app.services.utils.helpers.trandview_helper import get_tv_datafeed
+        # Tentar TradingView primeiro (corrigido)
+        from tvDatafeed import TvDatafeed
         
-        # Usar TradingView para dados históricos
-        tv = get_tv_datafeed()
+        tv = TvDatafeed()  # Sem auto_login
         
-        # Buscar dados semanais dos últimos 2 anos (mais estável)
         hist_data = tv.get_hist(
             symbol='BTCUSD',
             exchange='BINANCE',
-            interval='1W',  # Semanal
-            n_bars=104      # ~2 anos
+            interval='1W',
+            n_bars=52  # 1 ano para ser mais rápido
         )
         
-        if hist_data is None or hist_data.empty:
-            raise Exception("TradingView retornou dados vazios")
-        
-        # Calcular preço médio ponderado (OHLC4)
-        hist_data['price_avg'] = (hist_data['open'] + hist_data['high'] + 
-                                 hist_data['low'] + hist_data['close']) / 4
-        
-        # Peso decrescente para dados mais antigos
-        weights = [(i + 1) / len(hist_data) for i in range(len(hist_data))]
-        
-        weighted_avg_price = (hist_data['price_avg'] * weights).sum() / sum(weights)
-        
-        logger.info(f"✅ Preço médio TradingView: ${weighted_avg_price:,.0f}")
-        return float(weighted_avg_price)
+        if hist_data is not None and not hist_data.empty:
+            # Calcular preço médio ponderado
+            hist_data['price_avg'] = (hist_data['open'] + hist_data['high'] + 
+                                     hist_data['low'] + hist_data['close']) / 4
+            
+            weighted_avg_price = hist_data['price_avg'].mean()
+            logger.info(f"✅ Preço médio TradingView: ${weighted_avg_price:,.0f}")
+            return float(weighted_avg_price)
         
     except Exception as e:
-        logger.error(f"❌ Erro TradingView: {str(e)}")
-        # Fallback: usar preço atual * fator conservador
-        current_price, _ = get_btc_price()
-        return current_price * 0.7
+        logger.warning(f"⚠️ TradingView falhou: {str(e)}")
+    
+    # Fallback CoinGecko
+    try:
+        url = "https://api.coingecko.com/api/v3/coins/bitcoin/market_chart"
+        params = {"vs_currency": "usd", "days": 365, "interval": "weekly"}
+        
+        response = requests.get(url, params=params, timeout=15)
+        if response.status_code == 200:
+            data = response.json()
+            prices = [price for timestamp, price in data["prices"]]
+            avg_price = sum(prices) / len(prices)
+            logger.info(f"✅ Preço médio CoinGecko: ${avg_price:,.0f}")
+            return avg_price
+            
+    except Exception as e:
+        logger.warning(f"⚠️ CoinGecko fallback falhou: {str(e)}")
+    
+    # Último fallback
+    current_price, _ = get_btc_price()
+    return current_price * 0.65
 
 def calculate_realized_cap_improved():
     """
@@ -220,42 +230,52 @@ def calculate_mvrv_z_score_improved():
         # 2. Realized Cap melhorado
         realized_cap_atual, rc_metadata = calculate_realized_cap_improved()
         
-        # 3. Série histórica usando proporções dinâmicas
+        # 3. Série histórica usando CoinGecko (garantido)
         historical_diffs = []
         
-        # Usar CoinGecko para MC histórico + RC proporcional
         try:
             url = "https://api.coingecko.com/api/v3/coins/bitcoin/market_chart"
-            params = {"vs_currency": "usd", "days": 365, "interval": "daily"}
+            params = {"vs_currency": "usd", "days": 365, "interval": "weekly"}
             response = requests.get(url, params=params, timeout=20)
             
             if response.status_code == 200:
                 data = response.json()
                 market_caps = data["market_caps"]
                 
+                if len(market_caps) == 0:
+                    raise Exception("CoinGecko retornou market_caps vazio")
+                
                 # RC/MC ratio atual como base
                 current_ratio = realized_cap_atual / market_cap_atual
                 
                 for timestamp, mc in market_caps:
-                    # Variar ratio dinamicamente baseado no preço/ciclo
+                    # Ratio dinâmico baseado no ciclo
                     date_obj = datetime.fromtimestamp(timestamp/1000)
                     days_ago = (datetime.now() - date_obj).days
                     
-                    # Ciclo: ratio maior no bear, menor no bull
-                    cycle_modifier = 1 + 0.2 * (days_ago / 365)  # Aumenta com tempo
+                    # Ratio maior no passado (bear), menor no presente (bull)
+                    cycle_modifier = 1 + 0.3 * (days_ago / 365)
                     estimated_rc = mc * current_ratio * cycle_modifier
                     
                     diff_b = (mc - estimated_rc) / 1e9
                     historical_diffs.append(diff_b)
-            
+                
+                logger.info(f"✅ Série histórica CoinGecko: {len(historical_diffs)} pontos")
+            else:
+                raise Exception(f"CoinGecko status {response.status_code}")
+                
         except Exception as e:
-            logger.warning(f"⚠️ Série histórica fallback: {str(e)}")
-            # Fallback sintético
-            for i in range(365):
-                mc_past = market_cap_atual * (0.9995 ** i)
-                rc_past = realized_cap_atual * (0.9992 ** i)
+            logger.warning(f"⚠️ CoinGecko falhou: {str(e)} - usando fallback sintético")
+            
+            # Fallback sintético garantido
+            for i in range(52):  # 52 semanas = 1 ano
+                days_ago = i * 7
+                mc_past = market_cap_atual * (0.998 ** days_ago)
+                rc_past = realized_cap_atual * (0.999 ** days_ago) 
                 diff_b = (mc_past - rc_past) / 1e9
                 historical_diffs.append(diff_b)
+            
+            logger.info(f"✅ Série histórica sintética: {len(historical_diffs)} pontos")
         
         # 4. StdDev
         if len(historical_diffs) < 30:
