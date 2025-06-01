@@ -1,4 +1,4 @@
-# BTC TURBO - v1.0.15
+# BTC TURBO - v1.0.16
 
 ## 🎯 Objetivo da Documentação
 
@@ -57,7 +57,15 @@ Esta documentação técnica define claramente o padrão arquitetural, responsab
 - calcular HF e Dist. pra liquidação
 
 
-## 1.0.16 -  coleta de dados - ciclos
+## 1.0.16 -  coleta de dados - ciclos - MVRV - feito (com ajustes aserem feito)
+
+- coleta e calclulo prioritário do MVRV
+
+## 1.0.17 -  MVRV - Ajustes e aprimoramento
+
+- Aproximar o resultado coletado com o resultado da CoinGlass
+
+## 1.0.18 -  coleta de dados - ciclos - demais indicadores
 
 - Docs: 
 https://github.com/Lindualdo/btcturbo/blob/main/doc/validation-limites-indicadores.md
