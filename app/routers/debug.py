@@ -161,6 +161,26 @@ async def debug_realized_price_ratio_final():
             "error": str(e),
             "timestamp": datetime.utcnow().isoformat()
         }
+    # Em app/routers/debug.py, adicionar novo endpoint:
+
+@router.get("/mvrv-z-score-calibrated")
+async def debug_mvrv_calibrated():
+    try:
+        from app.services.utils.helpers.mvrv.mvrv_calibrated_calculator import calculate_mvrv_z_score_calibrated
+        
+        result = calculate_mvrv_z_score_calibrated()
+        
+        return {
+            "status": "success" if "error" not in result else "error",
+            "data": result,
+            "note": "MVRV Z-Score CALIBRADO com dados reais Glassnode"
+        }
+    except Exception as e:
+        return {
+            "status": "error",
+            "error": str(e),
+            "timestamp": datetime.utcnow().isoformat()
+        }
 
 @router.get("/historical-series-test")
 async def debug_historical_series():
