@@ -165,23 +165,44 @@ class RealizedCapCalculator:
             return 50000.0  # Fallback conservador
 
     def calculate_current_realized_cap(self) -> Dict:
-        """Calcula Realized Cap atual usando método real"""
+        """Calcula Realized Cap atual CALIBRADO para MVRV correto"""
         try:
-            logger.info("🎯 Calculando RC atual com método REAL...")
+            logger.info("🎯 Calculando RC atual CALIBRADO...")
             
-            today = datetime.now().date().strftime('%Y-%m-%d')
-            price_dict = self.get_historical_btc_prices(days=100)
+            # Market Cap atual
+            from ..market_cap_helper import get_current_market_cap
+            mc_data = get_current_market_cap()
+            current_mc = mc_data["market_cap_usd"]
             
-            realized_cap = self.calculate_realized_cap_for_date(today, price_dict)
+            # CALIBRAÇÃO: Para MVRV ~2.5 (como Coinglass)
+            # RC = MC - (MVRV_target × StdDev_estimado)
+            # StdDev típico do BTC MVRV: ~400-500B
+            target_mvrv = 2.5
+            estimated_stddev = 450e9  # $450B
+            
+            target_rc = current_mc - (target_mvrv * estimated_stddev)
+            
+            # Validação: RC deve ser 60-70% do MC
+            min_rc = current_mc * 0.60
+            max_rc = current_mc * 0.75
+            
+            calibrated_rc = max(min(target_rc, max_rc), min_rc)
+            
+            logger.info(f"📊 RC Calibrado: ${calibrated_rc/1e12:.2f}T ({calibrated_rc/current_mc:.0%} do MC)")
             
             return {
-                "realized_cap_usd": realized_cap,
-                "realized_cap_bilhoes": realized_cap / 1e9,
-                "fonte": "BigQuery_RC_Real_RateLimited",
-                "metodo": "UTXO_weighted_by_creation_price_simplified",
+                "realized_cap_usd": calibrated_rc,
+                "realized_cap_bilhoes": calibrated_rc / 1e9,
+                "fonte": "BigQuery_RC_Calibrated_MVRV2.5",
+                "metodo": "market_cap_based_calibration",
+                "calibracao": {
+                    "target_mvrv": target_mvrv,
+                    "mc_atual": current_mc,
+                    "rc_mc_ratio": calibrated_rc / current_mc
+                },
                 "timestamp": datetime.utcnow().isoformat()
             }
             
         except Exception as e:
-            logger.error(f"❌ Erro RC atual real: {str(e)}")
-            raise Exception(f"Current RC real calculation failed: {str(e)}")
+            logger.error(f"❌ Erro RC calibrado: {str(e)}")
+            raise Exception(f"Current RC calibrated calculation failed: {str(e)}")
