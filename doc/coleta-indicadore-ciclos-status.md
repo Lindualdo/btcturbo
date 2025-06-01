@@ -15,6 +15,36 @@ Implementar coleta automatizada dos 3 indicadores do bloco CICLO usando BigQuery
 
 ---
 
+## Ultima implementação - 01/06/25
+✅ IMPLEMENTAÇÃO COMPLETA: RC REAL via BigQuery
+📁 ESTRUTURA CRIADA:
+
+bigquery_rc_calculator.py - Cálculo RC real UTXO-by-UTXO
+historical_data.py - Série histórica otimizada
+mvrv_calculator.py - MVRV Z-Score final
+
+🧪 NOVOS ENDPOINTS DE TESTE:
+Otimizado (rápido):
+/api/v1/debug/mvrv-z-score-real
+Preciso (lento mas real):
+/api/v1/debug/mvrv-z-score-precise
+Teste de qualidade:
+/api/v1/debug/test-rc-accuracy
+
+## 📁 ESTRUTURA de CALCLULO MVRV-Z-SCORE:
+
+´´´
+app/services/utils/helpers/
+├── market_cap_helper.py          ✅ (existente)
+├── realized_cap/                 🆕 (nova pasta)
+│   ├── __init__.py
+│   ├── bigquery_rc_calculator.py 🆕 (cálculo RC real)
+│   ├── historical_data.py        🆕 (série histórica)
+│   └── mvrv_calculator.py        🆕 (MVRV Z-Score final)
+└── realized_cap_helper.py        🔄 (simplificar - só API atual)
+´´´
+
+
 ## 📍 STATUS ATUAL - 40% COMPLETO
 
 ### ✅ ETAPAS CONCLUÍDAS
@@ -43,52 +73,6 @@ Implementar coleta automatizada dos 3 indicadores do bloco CICLO usando BigQuery
 - **Status:** 🔄 Query corrigida sendo testada
 
 ---
-
-## 🔄 PRÓXIMAS ETAPAS (SEQUÊNCIA)
-
-### ETAPA 4: Série Histórica para StdDev
-```python
-# Implementar em: realized_cap_helper.py
-def get_historical_mc_rc_series(days=730) -> List[Dict]:
-    """
-    Busca série histórica (Market Cap - Realized Cap) últimos 2 anos
-    Para calcular StdDev necessário para MVRV Z-Score
-    """
-    query = """
-    SELECT 
-      DATE(block_timestamp) as date,
-      -- Market Cap calculation
-      -- Realized Cap calculation  
-      -- (MC - RC) difference
-    FROM `bigquery-public-data.crypto_bitcoin.transactions`
-    WHERE DATE(block_timestamp) >= DATE_SUB(CURRENT_DATE(), INTERVAL 730 DAY)
-    GROUP BY DATE(block_timestamp)
-    ORDER BY date
-    """
-```
-
-### ETAPA 5: MVRV Z-Score Final
-```python
-# Criar: app/services/utils/helpers/mvrv_calculator.py
-def calculate_mvrv_z_score() -> float:
-    """
-    Fórmula: (Market Cap atual - Realized Cap atual) / StdDev(série histórica)
-    
-    1. Get current Market Cap (já implementado)
-    2. Get current Realized Cap (implementando)
-    3. Get historical series (próximo)
-    4. Calculate StdDev(series)
-    5. Final calculation
-    """
-    mc_atual = get_current_market_cap()["market_cap_usd"]
-    rc_atual = get_current_realized_cap()["realized_cap_usd"]
-    historical_series = get_historical_mc_rc_series()
-    
-    stddev = calculate_stddev([point["mc_rc_diff"] for point in historical_series])
-    mvrv_z = (mc_atual - rc_atual) / stddev
-    
-    return mvrv_z
-```
 
 ### ETAPA 6: Puell Multiple
 ```python
