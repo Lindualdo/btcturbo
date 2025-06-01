@@ -161,10 +161,6 @@ async def debug_realized_price_ratio_final():
             "error": str(e),
             "timestamp": datetime.utcnow().isoformat()
         }
-    # Em app/routers/debug.py, adicionar novo endpoint:
-
-
-# Em app/routers/debug.py, adicionar:
 
 @router.get("/mvrv-improved")
 async def debug_mvrv_improved():
@@ -187,8 +183,8 @@ async def debug_mvrv_improved():
         }
 
 @router.get("/mvrv-improved_v2")
-async def debug_mvrv_improved():
-    """MVRV BigQuery melhorado com TradingView"""
+async def debug_mvrv_improved_v2():
+    """MVRV BigQuery melhorado V2"""
     try:
         from app.services.utils.helpers.mvrv.mvrv_bigquery_improved_v2 import calculate_mvrv_z_score_improved
         
@@ -197,7 +193,7 @@ async def debug_mvrv_improved():
         return {
             "status": "success" if "error" not in result else "error",
             "data": result,
-            "note": "MVRV BigQuery melhorado com TradingView + distribuição de idade"
+            "note": "MVRV BigQuery melhorado V2 com TradingView + distribuição de idade"
         }
     except Exception as e:
         return {
@@ -205,7 +201,6 @@ async def debug_mvrv_improved():
             "error": str(e),
             "timestamp": datetime.utcnow().isoformat()
         }
-
 
 @router.get("/mvrv-z-score-calibrated")
 async def debug_mvrv_calibrated():
@@ -218,6 +213,26 @@ async def debug_mvrv_calibrated():
             "status": "success" if "error" not in result else "error",
             "data": result,
             "note": "MVRV Z-Score CALIBRADO com dados reais Glassnode"
+        }
+    except Exception as e:
+        return {
+            "status": "error",
+            "error": str(e),
+            "timestamp": datetime.utcnow().isoformat()
+        }
+
+@router.get("/mvrv-calibrated-v2")
+async def debug_mvrv_calibrated_v2():
+    """MVRV Calibrado V2 com detecção de regime de mercado"""
+    try:
+        from app.services.utils.helpers.mvrv.mvrv_calibrated_v2 import calculate_mvrv_z_score_calibrated
+        
+        result = calculate_mvrv_z_score_calibrated()
+        
+        return {
+            "status": "success" if "error" not in result else "error",
+            "data": result,
+            "note": "MVRV Z-Score CALIBRADO V2 - Melhorado com regimes de mercado"
         }
     except Exception as e:
         return {
@@ -261,7 +276,8 @@ async def debug_historical_series():
             "timestamp": datetime.utcnow().isoformat()
         }
 
-
+@router.get("/mvrv-comparison-all")
+async def debug_mvrv_comparison_all():
     """Compara todos os métodos MVRV implementados"""
     try:
         results = {}
@@ -278,7 +294,7 @@ async def debug_historical_series():
         except Exception as e:
             results["simple_method"] = {"status": f"error: {str(e)}"}
         
-        # Método 2: Real calculator (novo)
+        # Método 2: Real calculator
         try:
             from app.services.utils.helpers.mvrv.mvrv_real_calculator import calculate_mvrv_z_score_real
             real_result = calculate_mvrv_z_score_real()
@@ -291,6 +307,32 @@ async def debug_historical_series():
             }
         except Exception as e:
             results["real_method"] = {"status": f"error: {str(e)}"}
+        
+        # Método 3: Improved
+        try:
+            from app.services.utils.helpers.mvrv.mvrv_bigquery_improved import calculate_mvrv_z_score_improved
+            improved_result = calculate_mvrv_z_score_improved()
+            results["improved_method"] = {
+                "mvrv": improved_result.get("mvrv_z_score"),
+                "metodo": improved_result.get("metodo"),
+                "status": "success" if "error" not in improved_result else f"error: {improved_result.get('error')}"
+            }
+        except Exception as e:
+            results["improved_method"] = {"status": f"error: {str(e)}"}
+        
+        # Método 4: Calibrated V2
+        try:
+            from app.services.utils.helpers.mvrv.mvrv_calibrated_v2 import calculate_mvrv_z_score_calibrated
+            calibrated_result = calculate_mvrv_z_score_calibrated()
+            results["calibrated_v2_method"] = {
+                "mvrv": calibrated_result.get("mvrv_z_score"),
+                "mvrv_raw": calibrated_result.get("mvrv_z_score_raw"),
+                "metodo": calibrated_result.get("metodo"),
+                "regime": calibrated_result.get("componentes", {}).get("regime_atual"),
+                "status": "success" if "error" not in calibrated_result else f"error: {calibrated_result.get('error')}"
+            }
+        except Exception as e:
+            results["calibrated_v2_method"] = {"status": f"error: {str(e)}"}
         
         # Referência
         coinglass_reference = 2.5158
@@ -306,7 +348,7 @@ async def debug_historical_series():
             if method_data.get("status") == "success" and method_data.get("mvrv"):
                 diff = abs(method_data["mvrv"] - coinglass_reference)
                 method_data["diferenca_vs_coinglass"] = diff
-                method_data["precisao"] = "alta" if diff < 1.0 else "média" if diff < 2.0 else "baixa"
+                method_data["precisao"] = "alta" if diff < 0.5 else "média" if diff < 1.0 else "baixa"
         
         return {
             "status": "success",
