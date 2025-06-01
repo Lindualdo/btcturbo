@@ -163,6 +163,30 @@ async def debug_realized_price_ratio_final():
         }
     # Em app/routers/debug.py, adicionar novo endpoint:
 
+
+# Em app/routers/debug.py, adicionar:
+
+@router.get("/mvrv-improved")
+async def debug_mvrv_improved():
+    """MVRV BigQuery melhorado com TradingView"""
+    try:
+        from app.services.utils.helpers.mvrv.mvrv_bigquery_improved import calculate_mvrv_z_score_improved
+        
+        result = calculate_mvrv_z_score_improved()
+        
+        return {
+            "status": "success" if "error" not in result else "error",
+            "data": result,
+            "note": "MVRV BigQuery melhorado com TradingView + distribuição de idade"
+        }
+    except Exception as e:
+        return {
+            "status": "error",
+            "error": str(e),
+            "timestamp": datetime.utcnow().isoformat()
+        }
+
+
 @router.get("/mvrv-z-score-calibrated")
 async def debug_mvrv_calibrated():
     try:
