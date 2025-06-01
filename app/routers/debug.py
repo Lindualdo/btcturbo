@@ -1,25 +1,16 @@
-# app/routers/debug.py
+# app/routers/debug.py - ENDPOINTS ATUALIZADOS
 
-from fastapi import APIRouter
-from datetime import datetime
-from app.services.utils.helpers.market_cap_helper import (
-    get_current_market_cap, compare_with_reference, get_btc_price, get_btc_supply
-)
-from app.services.utils.helpers.realized_cap_helper import (
-    get_current_realized_cap, BigQueryHelper, calculate_mvrv_z_score
-)
-
-router = APIRouter()
-
-@router.get("/market-cap")
-async def debug_market_cap():
-    """Debug endpoint para testar cálculo de Market Cap"""
+@router.get("/mvrv-z-score-real-bigquery")
+async def debug_mvrv_z_score_real_bigquery():
+    """NOVO: MVRV Z-Score com dados REAIS do BigQuery"""
     try:
-        result = get_current_market_cap()
-        result["timestamp"] = datetime.utcnow().isoformat()
+        from app.services.utils.helpers.realized_cap.mvrv_calculator import calculate_mvrv_z_score_final
+        
+        result = calculate_mvrv_z_score_final(use_real_bigquery=True)  # DADOS REAIS
         return {
             "status": "success",
-            "data": result
+            "data": result,
+            "note": "Usando dados REAIS do BigQuery com amostragem UTXO"
         }
     except Exception as e:
         return {
@@ -28,15 +19,17 @@ async def debug_market_cap():
             "timestamp": datetime.utcnow().isoformat()
         }
 
-@router.get("/market-cap-comparison")
-async def debug_market_cap_comparison():
-    """Compara nosso Market Cap com referência CoinGecko"""
+@router.get("/mvrv-z-score-calibrated-enhanced")
+async def debug_mvrv_z_score_calibrated_enhanced():
+    """NOVO: MVRV Z-Score calibrado melhorado (fallback)"""
     try:
-        comparison = compare_with_reference()
+        from app.services.utils.helpers.realized_cap.mvrv_calculator import calculate_mvrv_z_score_final
+        
+        result = calculate_mvrv_z_score_final(use_real_bigquery=False)  # CALIBRADO MELHORADO
         return {
             "status": "success",
-            "timestamp": datetime.utcnow().isoformat(),
-            "comparison": comparison
+            "data": result,
+            "note": "Usando método calibrado melhorado com variação realista"
         }
     except Exception as e:
         return {
@@ -45,17 +38,17 @@ async def debug_market_cap_comparison():
             "timestamp": datetime.utcnow().isoformat()
         }
 
-@router.get("/btc-price")
-async def debug_btc_price():
-    """Testa apenas a coleta de preço BTC"""
+@router.get("/realized-price-ratio")
+async def debug_realized_price_ratio():
+    """NOVO: Realized Price Ratio para completar bloco CICLO"""
     try:
-        price, source = get_btc_price()
+        from app.services.utils.helpers.realized_cap.mvrv_calculator import calculate_realized_price_ratio_final
+        
+        result = calculate_realized_price_ratio_final()
         return {
             "status": "success",
-            "price": price,
-            "source": source,
-            "formatted": f"${price:,.2f}",
-            "timestamp": datetime.utcnow().isoformat()
+            "data": result,
+            "note": "Realized Price Ratio usando RC real do BigQuery"
         }
     except Exception as e:
         return {
@@ -64,70 +57,19 @@ async def debug_btc_price():
             "timestamp": datetime.utcnow().isoformat()
         }
 
-@router.get("/btc-supply")
-async def debug_btc_supply():
-    """Testa apenas a coleta de supply BTC"""
+@router.get("/bigquery-rc-real-sampling")
+async def debug_bigquery_rc_real_sampling():
+    """NOVO: Teste RC real com amostragem BigQuery"""
     try:
-        supply, source = get_btc_supply()
-        return {
-            "status": "success",
-            "supply": supply,
-            "source": source,
-            "formatted": f"{supply:,.0f} BTC",
-            "timestamp": datetime.utcnow().isoformat()
-        }
-    except Exception as e:
-        return {
-            "status": "error",
-            "error": str(e),
-            "timestamp": datetime.utcnow().isoformat()
-        }
-
-@router.get("/realized-cap")
-async def debug_realized_cap():
-    """Testa cálculo de Realized Cap"""
-    try:
-        result = get_current_realized_cap()
-        return {
-            "status": "success",
-            "data": result
-        }
-    except Exception as e:
-        return {
-            "status": "error",
-            "error": str(e),
-            "timestamp": datetime.utcnow().isoformat()
-        }
-
-@router.get("/realized-cap-comparison")
-async def debug_realized_cap_comparison():
-    """Compara BigQuery vs APIs para Realized Cap"""
-    try:
-        # Função temporariamente removida - implementar se necessário
-        return {
-            "status": "success",
-            "message": "Comparação temporariamente desabilitada",
-            "timestamp": datetime.utcnow().isoformat()
-        }
-    except Exception as e:
-        return {
-            "status": "error",
-            "error": str(e),
-            "timestamp": datetime.utcnow().isoformat()
-        }
-
-@router.get("/bigquery-test")
-async def debug_bigquery_connection():
-    """Testa apenas a conexão BigQuery"""
-    try:
-        bigquery_helper = BigQueryHelper()
-        connection_ok = bigquery_helper.test_connection()
+        from app.services.utils.helpers.realized_cap.bigquery_rc_calculator import RealizedCapCalculator
+        
+        calculator = RealizedCapCalculator()
+        result = calculator.calculate_realized_cap_real_sampling()
         
         return {
-            "status": "success" if connection_ok else "error",
-            "bigquery_connection": connection_ok,
-            "message": "BigQuery conectado com sucesso" if connection_ok else "Falha na conexão BigQuery",
-            "timestamp": datetime.utcnow().isoformat()
+            "status": "success",
+            "data": result,
+            "note": "RC calculado via amostragem REAL de UTXOs do BigQuery"
         }
     except Exception as e:
         return {
@@ -136,202 +78,78 @@ async def debug_bigquery_connection():
             "timestamp": datetime.utcnow().isoformat()
         }
 
-@router.get("/bigquery-detailed-test")
-async def debug_bigquery_detailed():
-    """Teste BigQuery com máximo detalhe possível"""
+@router.get("/compare-mvrv-methods")
+async def debug_compare_mvrv_methods():
+    """NOVO: Comparação entre métodos REAL vs CALIBRADO"""
     try:
-        from app.config import get_settings
-        import json
-        from google.oauth2 import service_account
-        from google.cloud import bigquery
+        from app.services.utils.helpers.realized_cap.mvrv_calculator import calculate_mvrv_z_score_final
         
-        settings = get_settings()
-        
-        # 1. Parse credenciais
+        # Método REAL
         try:
-            cred_info = json.loads(settings.GOOGLE_APPLICATION_CREDENTIALS_JSON)
-            service_email = cred_info.get('client_email', 'NOT_FOUND')
-            project_from_json = cred_info.get('project_id', 'NOT_FOUND')
+            real_result = calculate_mvrv_z_score_final(use_real_bigquery=True)
+            real_mvrv = real_result["mvrv_z_score"]
+            real_status = "success"
         except Exception as e:
-            return {"error": f"JSON parse failed: {str(e)}"}
+            real_mvrv = None
+            real_status = f"error: {str(e)}"
+            real_result = {}
         
-        # 2. Verificar dados básicos
-        config_details = {
-            "project_from_settings": settings.GOOGLE_CLOUD_PROJECT,
-            "project_from_json": project_from_json,
-            "service_account_email": service_email,
-            "projects_match": settings.GOOGLE_CLOUD_PROJECT == project_from_json
-        }
-        
-        # 3. Tentar criar credentials
+        # Método CALIBRADO
         try:
-            credentials = service_account.Credentials.from_service_account_info(cred_info)
-            cred_status = "✅ Credentials criadas"
+            calibrated_result = calculate_mvrv_z_score_final(use_real_bigquery=False)
+            calibrated_mvrv = calibrated_result["mvrv_z_score"]
+            calibrated_status = "success"
         except Exception as e:
-            return {
-                "status": "error",
-                "error": f"Credentials creation failed: {str(e)}",
-                "config": config_details
-            }
+            calibrated_mvrv = None
+            calibrated_status = f"error: {str(e)}"
+            calibrated_result = {}
         
-        # 4. Tentar criar client
-        try:
-            client = bigquery.Client(
-                credentials=credentials,
-                project=settings.GOOGLE_CLOUD_PROJECT
-            )
-            client_status = "✅ Client criado"
-        except Exception as e:
-            return {
-                "status": "error", 
-                "error": f"Client creation failed: {str(e)}",
-                "config": config_details,
-                "credentials_status": cred_status
-            }
+        # Comparação
+        coinglass_reference = 2.5158
         
-        # 5. Tentar query mais simples possível
-        try:
-            simple_query = "SELECT 1 as test_number"
-            job = client.query(simple_query)
-            results = list(job)
-            query_status = f"✅ Query OK - resultado: {results[0]['test_number']}"
-        except Exception as e:
-            return {
-                "status": "error",
-                "error": f"Simple query failed: {str(e)}",
-                "error_details": {
-                    "type": type(e).__name__,
-                    "message": str(e)
+        comparison = {
+            "coinglass_reference": coinglass_reference,
+            "metodos": {
+                "real_bigquery": {
+                    "mvrv": real_mvrv,
+                    "status": real_status,
+                    "diferenca_vs_coinglass": abs(real_mvrv - coinglass_reference) if real_mvrv else None,
+                    "stddev": real_result.get("componentes", {}).get("stddev_historico_bilhoes"),
+                    "metodo": real_result.get("metodo_usado")
                 },
-                "config": config_details,
-                "credentials_status": cred_status,
-                "client_status": client_status
-            }
+                "calibrated_enhanced": {
+                    "mvrv": calibrated_mvrv,
+                    "status": calibrated_status,
+                    "diferenca_vs_coinglass": abs(calibrated_mvrv - coinglass_reference) if calibrated_mvrv else None,
+                    "stddev": calibrated_result.get("componentes", {}).get("stddev_historico_bilhoes"),
+                    "metodo": calibrated_result.get("metodo_usado")
+                }
+            },
+            "recomendacao": None,
+            "timestamp": datetime.utcnow().isoformat()
+        }
         
-        # 6. Tentar acessar dataset público
-        try:
-            public_query = "SELECT COUNT(*) as total FROM `bigquery-public-data.crypto_bitcoin.transactions` LIMIT 1"
-            job2 = client.query(public_query)
-            results2 = list(job2)
-            public_access = f"✅ Acesso público OK - total: {results2[0]['total']}"
-        except Exception as e:
-            public_access = f"❌ Acesso público falhou: {str(e)}"
+        # Determinar melhor método
+        if real_status == "success" and calibrated_status == "success":
+            real_diff = abs(real_mvrv - coinglass_reference)
+            calibrated_diff = abs(calibrated_mvrv - coinglass_reference)
+            
+            if real_diff < calibrated_diff:
+                comparison["recomendacao"] = "Usar método REAL BigQuery (mais preciso)"
+            else:
+                comparison["recomendacao"] = "Usar método CALIBRADO (mais estável)"
+        elif real_status == "success":
+            comparison["recomendacao"] = "Usar método REAL BigQuery (único funcionando)"
+        elif calibrated_status == "success":
+            comparison["recomendacao"] = "Usar método CALIBRADO (único funcionando)"
+        else:
+            comparison["recomendacao"] = "Ambos métodos falharam - investigar BigQuery"
         
         return {
             "status": "success",
-            "config": config_details,
-            "credentials_status": cred_status,
-            "client_status": client_status,
-            "simple_query_status": query_status,
-            "public_data_access": public_access,
-            "timestamp": datetime.utcnow().isoformat()
+            "data": comparison
         }
         
-    except Exception as e:
-        return {
-            "status": "error",
-            "error": f"Unexpected error: {str(e)}",
-            "timestamp": datetime.utcnow().isoformat()
-        }
-
-@router.get("/bigquery-schema")
-async def debug_bigquery_schema():
-    """Descobre a estrutura real das tabelas BigQuery"""
-    try:
-        from app.services.utils.helpers.realized_cap_helper import BigQueryHelper
-        
-        bigquery_helper = BigQueryHelper()
-        
-        # Query para descobrir os campos disponíveis
-        queries = {
-            "outputs_schema": """
-                SELECT column_name, data_type 
-                FROM `bigquery-public-data.crypto_bitcoin.INFORMATION_SCHEMA.COLUMNS` 
-                WHERE table_name = 'outputs'
-                LIMIT 20
-            """,
-            "outputs_sample": """
-                SELECT * 
-                FROM `bigquery-public-data.crypto_bitcoin.outputs` 
-                LIMIT 3
-            """,
-            "transactions_sample": """
-                SELECT * 
-                FROM `bigquery-public-data.crypto_bitcoin.transactions` 
-                LIMIT 2
-            """
-        }
-        
-        results = {}
-        
-        for query_name, query in queries.items():
-            try:
-                result = list(bigquery_helper.client.query(query))
-                results[query_name] = [dict(row) for row in result]
-            except Exception as e:
-                results[query_name] = f"Error: {str(e)}"
-        
-        return {
-            "status": "success",
-            "schemas": results,
-            "timestamp": datetime.utcnow().isoformat()
-        }
-        
-    except Exception as e:
-        return {
-            "status": "error",
-            "error": str(e),
-            "timestamp": datetime.utcnow().isoformat()
-        }
-
-@router.get("/mvrv-z-score-real")
-async def debug_mvrv_z_score_real():
-    """Testa MVRV Z-Score com cálculo RC REAL via BigQuery"""
-    try:
-        from app.services.utils.helpers.realized_cap.mvrv_calculator import calculate_mvrv_z_score_final
-        
-        result = calculate_mvrv_z_score_final(use_precise_method=False)  # Método otimizado
-        return {
-            "status": "success",
-            "data": result
-        }
-    except Exception as e:
-        return {
-            "status": "error",
-            "error": str(e),
-            "timestamp": datetime.utcnow().isoformat()
-        }
-
-@router.get("/mvrv-z-score-precise")
-async def debug_mvrv_z_score_precise():
-    """Testa MVRV Z-Score com método preciso (mais lento)"""
-    try:
-        from app.services.utils.helpers.realized_cap.mvrv_calculator import calculate_mvrv_z_score_final
-        
-        result = calculate_mvrv_z_score_final(use_precise_method=True)  # Método preciso
-        return {
-            "status": "success", 
-            "data": result
-        }
-    except Exception as e:
-        return {
-            "status": "error",
-            "error": str(e),
-            "timestamp": datetime.utcnow().isoformat()
-        }
-
-@router.get("/test-rc-accuracy")
-async def debug_test_rc_accuracy():
-    """Testa precisão do nosso cálculo Realized Cap"""
-    try:
-        from app.services.utils.helpers.realized_cap.mvrv_calculator import MVRVCalculator
-        
-        calculator = MVRVCalculator()
-        result = calculator.test_realized_cap_accuracy()
-        return {
-            "status": "success",
-            "data": result
-        }
     except Exception as e:
         return {
             "status": "error",
