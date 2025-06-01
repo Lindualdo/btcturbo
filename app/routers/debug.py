@@ -284,11 +284,50 @@ async def debug_bigquery_schema():
             "timestamp": datetime.utcnow().isoformat()
         }
 
-@router.get("/mvrv-z-score")
-async def debug_mvrv_z_score():
-    """Testa cálculo completo do MVRV Z-Score"""
+@router.get("/mvrv-z-score-real")
+async def debug_mvrv_z_score_real():
+    """Testa MVRV Z-Score com cálculo RC REAL via BigQuery"""
     try:
-        result = calculate_mvrv_z_score()
+        from app.services.utils.helpers.realized_cap.mvrv_calculator import calculate_mvrv_z_score_final
+        
+        result = calculate_mvrv_z_score_final(use_precise_method=False)  # Método otimizado
+        return {
+            "status": "success",
+            "data": result
+        }
+    except Exception as e:
+        return {
+            "status": "error",
+            "error": str(e),
+            "timestamp": datetime.utcnow().isoformat()
+        }
+
+@router.get("/mvrv-z-score-precise")
+async def debug_mvrv_z_score_precise():
+    """Testa MVRV Z-Score com método preciso (mais lento)"""
+    try:
+        from app.services.utils.helpers.realized_cap.mvrv_calculator import calculate_mvrv_z_score_final
+        
+        result = calculate_mvrv_z_score_final(use_precise_method=True)  # Método preciso
+        return {
+            "status": "success", 
+            "data": result
+        }
+    except Exception as e:
+        return {
+            "status": "error",
+            "error": str(e),
+            "timestamp": datetime.utcnow().isoformat()
+        }
+
+@router.get("/test-rc-accuracy")
+async def debug_test_rc_accuracy():
+    """Testa precisão do nosso cálculo Realized Cap"""
+    try:
+        from app.services.utils.helpers.realized_cap.mvrv_calculator import MVRVCalculator
+        
+        calculator = MVRVCalculator()
+        result = calculator.test_realized_cap_accuracy()
         return {
             "status": "success",
             "data": result
