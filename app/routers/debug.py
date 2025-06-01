@@ -186,8 +186,8 @@ async def debug_mvrv_improved():
             "timestamp": datetime.utcnow().isoformat()
         }
 
-@router.get("/mvrv-improved")
-async def debug_mvrv_improved_v2():
+@router.get("/mvrv-improved_v2")
+async def debug_mvrv_improved():
     """MVRV BigQuery melhorado com TradingView"""
     try:
         from app.services.utils.helpers.mvrv.mvrv_bigquery_improved_v2 import calculate_mvrv_z_score_improved
