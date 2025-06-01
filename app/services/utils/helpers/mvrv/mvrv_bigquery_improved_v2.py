@@ -222,6 +222,10 @@ def calculate_mvrv_z_score_improved():
     """
     try:
 
+        import time
+        cache_buster = int(time.time())
+        logger.info(f"🔄 Cache buster: {cache_buster}")
+
         logger.info("🎯 Calculando MVRV Z-Score BigQuery MELHORADO...")
         
         # 1. Market Cap atual
