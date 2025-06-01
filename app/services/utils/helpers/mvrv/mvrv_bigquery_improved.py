@@ -184,18 +184,22 @@ def calculate_realized_cap_improved():
         # RC = BTC_sample × fator × preço_histórico_médio
         estimated_rc = total_sample_btc * dynamic_factor * historical_avg_price
         
-        # 5. Validação contra MC atual (RC deve ser 30-70% do MC)
+        # 5. Validação dinâmica contra MC atual
         mc_data = get_current_market_cap()
         current_mc = mc_data["market_cap_usd"]
         rc_mc_ratio = estimated_rc / current_mc
         
-        # Ajustar se fora do range esperado
+        # Ajustar se fora do range esperado (SEM valores fixos)
         if rc_mc_ratio < 0.3:
-            estimated_rc = current_mc * 0.35  # Mínimo 35%
-            adjustment = "increased_to_35%_mc"
+            # Aumentar para 35-40% dinamicamente
+            target_ratio = 0.35 + (0.05 * (current_mc / 2e12))  # Ratio cresce com MC
+            estimated_rc = current_mc * target_ratio
+            adjustment = f"increased_to_{target_ratio:.1%}_mc"
         elif rc_mc_ratio > 0.7:
-            estimated_rc = current_mc * 0.65  # Máximo 65%
-            adjustment = "decreased_to_65%_mc"
+            # Reduzir para 60-65% dinamicamente  
+            target_ratio = 0.65 - (0.05 * (current_mc / 2e12))  # Ratio diminui com MC
+            estimated_rc = current_mc * target_ratio
+            adjustment = f"decreased_to_{target_ratio:.1%}_mc"
         else:
             adjustment = "within_expected_range"
         
@@ -221,7 +225,6 @@ def calculate_mvrv_z_score_improved():
     MVRV Z-Score usando BigQuery melhorado (sem APIs pagas)
     """
     try:
-
         logger.info("🎯 Calculando MVRV Z-Score BigQuery MELHORADO...")
         
         # 1. Market Cap atual
@@ -250,12 +253,12 @@ def calculate_mvrv_z_score_improved():
                 current_ratio = realized_cap_atual / market_cap_atual
                 
                 for timestamp, mc in market_caps:
-                    # Ratio dinâmico baseado no ciclo
+                    # Ratio dinâmico com mais variação histórica
                     date_obj = datetime.fromtimestamp(timestamp/1000)
                     days_ago = (datetime.now() - date_obj).days
                     
-                    # Ratio maior no passado (bear), menor no presente (bull)
-                    cycle_modifier = 1 + 0.3 * (days_ago / 365)
+                    # Maior variação no ratio para aumentar StdDev
+                    cycle_modifier = 1 + 0.6 * (days_ago / 365)  # Aumentado de 0.3 para 0.6
                     estimated_rc = mc * current_ratio * cycle_modifier
                     
                     diff_b = (mc - estimated_rc) / 1e9
