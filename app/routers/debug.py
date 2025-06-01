@@ -123,21 +123,19 @@ async def debug_bigquery_connection():
 async def debug_mvrv_z_score_real_bigquery():
     """NOVO: MVRV Z-Score com dados REAIS do BigQuery"""
     try:
-        # Import temporário para testar se pasta existe
-        import os
-        realized_cap_path = "/app/app/services/utils/helpers/realized_cap"
-        files_exist = {
-            "bigquery_rc_calculator.py": os.path.exists(f"{realized_cap_path}/bigquery_rc_calculator.py"),
-            "historical_data.py": os.path.exists(f"{realized_cap_path}/historical_data.py"),
-            "mvrv_calculator.py": os.path.exists(f"{realized_cap_path}/mvrv_calculator.py"),
-            "__init__.py": os.path.exists(f"{realized_cap_path}/__init__.py")
-        }
+        from app.services.utils.helpers.realized_cap.mvrv_calculator import calculate_mvrv_z_score_final
         
+        result = calculate_mvrv_z_score_final(use_real_bigquery=True)
         return {
-            "status": "debug_info",
-            "message": "Arquivos ainda não criados - implementação pendente",
-            "files_status": files_exist,
-            "next_step": "Criar arquivos da pasta realized_cap/",
+            "status": "success",
+            "data": result,
+            "note": "Usando dados REAIS do BigQuery com amostragem UTXO"
+        }
+    except ImportError as e:
+        return {
+            "status": "import_error",
+            "error": str(e),
+            "debug": "Circular import detectado - corrigindo...",
             "timestamp": datetime.utcnow().isoformat()
         }
     except Exception as e:
