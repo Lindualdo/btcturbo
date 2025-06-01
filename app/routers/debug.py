@@ -121,22 +121,15 @@ async def debug_bigquery_connection():
 
 @router.get("/mvrv-z-score-real-bigquery")
 async def debug_mvrv_z_score_real_bigquery():
-    """NOVO: MVRV Z-Score com dados REAIS do BigQuery"""
+    """MVRV Z-Score simples sem imports circulares"""
     try:
-        from app.services.utils.helpers.realized_cap.mvrv_calculator import calculate_mvrv_z_score_final
+        from app.services.utils.helpers.mvrv_simple_helper import calculate_mvrv_z_score_simple
         
-        result = calculate_mvrv_z_score_final(use_real_bigquery=True)
+        result = calculate_mvrv_z_score_simple()
         return {
             "status": "success",
             "data": result,
-            "note": "Usando dados REAIS do BigQuery com amostragem UTXO"
-        }
-    except ImportError as e:
-        return {
-            "status": "import_error",
-            "error": str(e),
-            "debug": "Circular import detectado - corrigindo...",
-            "timestamp": datetime.utcnow().isoformat()
+            "note": "MVRV usando BigQuery simples sem imports circulares"
         }
     except Exception as e:
         return {
@@ -145,17 +138,17 @@ async def debug_mvrv_z_score_real_bigquery():
             "timestamp": datetime.utcnow().isoformat()
         }
 
-@router.get("/mvrv-z-score-calibrated-enhanced")
-async def debug_mvrv_z_score_calibrated_enhanced():
-    """NOVO: MVRV Z-Score calibrado melhorado"""
+@router.get("/realized-price-ratio")
+async def debug_realized_price_ratio():
+    """Realized Price Ratio simples"""
     try:
-        from app.services.utils.helpers.realized_cap.mvrv_calculator import calculate_mvrv_z_score_final
+        from app.services.utils.helpers.mvrv_simple_helper import calculate_realized_price_ratio_simple
         
-        result = calculate_mvrv_z_score_final(use_real_bigquery=False)
+        result = calculate_realized_price_ratio_simple()
         return {
             "status": "success",
             "data": result,
-            "note": "Usando método calibrado melhorado com variação realista"
+            "note": "Realized Price Ratio usando BigQuery simples"
         }
     except Exception as e:
         return {
