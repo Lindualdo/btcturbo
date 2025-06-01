@@ -92,60 +92,77 @@ class BigQueryHelper:
 
     def get_historical_mc_rc_series(self, days: int = 365) -> list:
         """
-        Busca série histórica (Market Cap - Realized Cap) para calcular StdDev
+        DADOS REAIS: Busca série histórica Market Cap via CoinGecko
         """
         try:
-            logger.info(f"🔍 Buscando série histórica MC-RC ({days} dias)...")
+            logger.info(f"🔍 Buscando série histórica REAL ({days} dias)...")
             
-            # Query para série histórica simplificada
-            query = f"""
-            WITH daily_data AS (
-              SELECT 
-                DATE(block_timestamp) as date,
-                SUM(value) / 100000000.0 as daily_btc_volume,
-                COUNT(*) as daily_outputs
-              FROM `bigquery-public-data.crypto_bitcoin.outputs`
-              WHERE DATE(block_timestamp) >= DATE_SUB(CURRENT_DATE(), INTERVAL {days} DAY)
-                AND DATE(block_timestamp) < CURRENT_DATE()
-              GROUP BY DATE(block_timestamp)
-            )
+            import requests
             
-            SELECT 
-              date,
-              daily_btc_volume,
-              daily_outputs,
-              -- Estimativa Market Cap (assumindo preço médio por período)
-              daily_btc_volume * 45000 as estimated_market_cap,
-              -- Estimativa Realized Cap (assumindo preço histórico médio)
-              daily_btc_volume * 25000 as estimated_realized_cap,
-              -- Diferença MC - RC
-              (daily_btc_volume * 45000) - (daily_btc_volume * 25000) as mc_rc_diff
-            FROM daily_data
-            WHERE daily_btc_volume > 0
-            ORDER BY date DESC
-            LIMIT {days}
-            """
+            # CoinGecko API - Market Cap histórico REAL
+            url = f"https://api.coingecko.com/api/v3/coins/bitcoin/market_chart"
+            params = {
+                "vs_currency": "usd",
+                "days": days,
+                "interval": "daily"
+            }
             
-            result = list(self.client.query(query))
+            response = requests.get(url, params=params, timeout=15)
+            response.raise_for_status()
+            data = response.json()
             
-            if result and len(result) > 10:  # Precisamos de dados suficientes
-                series = []
-                for row in result:
-                    series.append({
-                        "date": str(row.date),
-                        "mc_rc_diff": float(row.mc_rc_diff),
-                        "estimated_market_cap": float(row.estimated_market_cap),
-                        "estimated_realized_cap": float(row.estimated_realized_cap)
-                    })
+            market_caps = data["market_caps"]  # [[timestamp, market_cap], ...]
+            
+            if len(market_caps) < 30:
+                raise Exception(f"Dados insuficientes: apenas {len(market_caps)} pontos")
+            
+            # Buscar Realized Cap atual para calcular proporção
+            current_rc = self.get_realized_cap_simplified()
+            current_mc_data = self.get_current_market_cap_simple()
+            current_mc = current_mc_data["market_cap_usd"]
+            
+            # Calcular proporção atual RC/MC
+            rc_mc_ratio = current_rc / current_mc
+            
+            logger.info(f"📊 Proporção RC/MC atual: {rc_mc_ratio:.3f}")
+            
+            series = []
+            for timestamp, mc in market_caps:
+                # Realized Cap histórico baseado na proporção atual aplicada historicamente
+                # ISSO É APROXIMAÇÃO - idealmente precisaríamos RC real histórico
+                estimated_rc = mc * rc_mc_ratio
+                mc_rc_diff = mc - estimated_rc
                 
-                logger.info(f"✅ Série histórica: {len(series)} pontos obtidos")
-                return series
-            else:
-                raise Exception(f"Dados insuficientes: apenas {len(result)} pontos")
-                
+                series.append({
+                    "date": str(datetime.fromtimestamp(timestamp/1000).date()),
+                    "market_cap": mc,
+                    "estimated_realized_cap": estimated_rc,
+                    "mc_rc_diff": mc_rc_diff
+                })
+            
+            logger.info(f"✅ Série histórica REAL: {len(series)} pontos de Market Cap")
+            return series
+            
         except Exception as e:
-            logger.error(f"❌ Erro série histórica: {str(e)}")
-            raise Exception(f"Série histórica falhou: {str(e)}")
+            logger.error(f"❌ Erro série histórica REAL: {str(e)}")
+            raise Exception(f"Série histórica REAL falhou: {str(e)}")
+
+    def get_current_market_cap_simple(self) -> dict:
+        """Busca Market Cap atual via CoinGecko"""
+        try:
+            import requests
+            url = "https://api.coingecko.com/api/v3/coins/bitcoin"
+            response = requests.get(url, timeout=10)
+            response.raise_for_status()
+            data = response.json()
+            
+            market_cap = data["market_data"]["market_cap"]["usd"]
+            return {"market_cap_usd": market_cap}
+            
+        except Exception as e:
+            # Fallback para helper existente
+            from .market_cap_helper import get_current_market_cap
+            return get_current_market_cap()
 
 def get_realized_cap_fallback() -> Tuple[float, str]:
     """
@@ -294,36 +311,28 @@ def calculate_mvrv_z_score() -> dict:
     try:
         logger.info("🎯 Calculando MVRV Z-Score...")
         
-        # 1. Market Cap atual
-        from .market_cap_helper import get_current_market_cap
-        mc_data = get_current_market_cap()
+        # 1. Market Cap atual REAL
+        bigquery_helper = BigQueryHelper()
+        mc_data = bigquery_helper.get_current_market_cap_simple()
         market_cap_atual = mc_data["market_cap_usd"]
         
-        # 2. Realized Cap atual
+        # 2. Realized Cap atual REAL
         rc_data = get_current_realized_cap()
         realized_cap_atual = rc_data["realized_cap_usd"]
         
-        # 3. Série histórica
-        bigquery_helper = BigQueryHelper()
+        # 3. Série histórica REAL
         historical_series = bigquery_helper.get_historical_mc_rc_series(days=365)
         
-        # 4. Calcular StdDev
-        mc_rc_diffs = [point["mc_rc_diff"] for point in historical_series]
-        
-        import statistics
-        stddev = statistics.stdev(mc_rc_diffs)
-        mean_diff = statistics.mean(mc_rc_diffs)
-        
-        # 5. MVRV Z-Score final (normalizado)
-        current_diff = market_cap_atual - realized_cap_atual
-        
-        # Normalizar para bilhões para evitar números gigantes
-        current_diff_b = current_diff / 1e9
-        mc_rc_diffs_b = [diff / 1e9 for diff in mc_rc_diffs]
+        # 4. Calcular StdDev com dados REAIS
+        mc_rc_diffs_b = [point["mc_rc_diff"] / 1e9 for point in historical_series]  # Converter para bilhões
         
         import statistics
         stddev_b = statistics.stdev(mc_rc_diffs_b)
         mean_diff_b = statistics.mean(mc_rc_diffs_b)
+        
+        # 5. MVRV Z-Score final
+        current_diff = market_cap_atual - realized_cap_atual
+        current_diff_b = current_diff / 1e9  # Converter para bilhões
         
         mvrv_z_score = current_diff_b / stddev_b if stddev_b > 0 else 0
         
