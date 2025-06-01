@@ -2,10 +2,10 @@
 
 from fastapi import APIRouter
 from datetime import datetime
-from app.services.utils.helpers.market_cap_helper import (
+from app.services.utils.helpers.mvrv.market_cap_helper import (
     get_current_market_cap, compare_with_reference, get_btc_price, get_btc_supply
 )
-from app.services.utils.helpers.realized_cap_helper import (
+from app.services.utils.helpers.mvrv.realized_cap_helper import (
     get_current_realized_cap, BigQueryHelper, calculate_mvrv_z_score
 )
 
@@ -221,7 +221,7 @@ async def debug_compare_mvrv_methods():
 async def debug_mvrv_z_score_final():
     """ENDPOINT FINAL: MVRV Z-Score com série histórica REAL"""
     try:
-        from app.services.utils.helpers.mvrv_real_calculator import calculate_mvrv_z_score_real
+        from app.services.utils.helpers.mvrv.mvrv_real_calculator import calculate_mvrv_z_score_real
         
         result = calculate_mvrv_z_score_real()
         
@@ -241,7 +241,7 @@ async def debug_mvrv_z_score_final():
 async def debug_realized_price_ratio_final():
     """Realized Price Ratio final"""
     try:
-        from app.services.utils.helpers.mvrv_real_calculator import calculate_realized_price_ratio_real
+        from app.services.utils.helpers.mvrv.mvrv_real_calculator import calculate_realized_price_ratio_real
         
         result = calculate_realized_price_ratio_real()
         
@@ -261,7 +261,7 @@ async def debug_realized_price_ratio_final():
 async def debug_historical_series():
     """Testa apenas a série histórica"""
     try:
-        from app.services.utils.helpers.mvrv_real_calculator import get_real_historical_series
+        from app.services.utils.helpers.mvrv.mvrv_real_calculator import get_real_historical_series
         
         # Testar com menos dias para ser mais rápido
         diffs = get_real_historical_series(days=90)
@@ -312,7 +312,7 @@ async def debug_compare_all_mvrv():
         
         # Método 2: Real calculator (novo)
         try:
-            from app.services.utils.helpers.mvrv_real_calculator import calculate_mvrv_z_score_real
+            from app.services.utils.helpers.mvrv.mvrv_real_calculator import calculate_mvrv_z_score_real
             real_result = calculate_mvrv_z_score_real()
             results["real_method"] = {
                 "mvrv": real_result.get("mvrv_z_score"),
