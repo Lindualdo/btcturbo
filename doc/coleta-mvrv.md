@@ -137,3 +137,40 @@ mvrv_z_score = current_diff_b / stddev_b
 **Sistema:** Funcionando ✅
 **Precisão:** 80% (precisa ajuste RC)
 **Próximo passo:** Calibrar extrapolação BigQuery
+
+´´´
+json - return v.1.0.16
+
+[
+  {
+    "status": "success",
+    "data": {
+      "mvrv_z_score": 4.57,
+      "metodo": "real_bigquery_historical",
+      "componentes": {
+        "market_cap_atual": 2065753113444,
+        "realized_cap_atual": 650000000000,
+        "diferenca_atual_b": 1415.753113444,
+        "stddev_historico_b": 309.5604710594425,
+        "media_historica_b": 536.6117388562767
+      },
+      "serie_historica": {
+        "pontos": 366,
+        "metodo": "bigquery_sampling_real"
+      },
+      "validacao": {
+        "range_esperado": [
+          -2,
+          8
+        ],
+        "valor_plausivel": true,
+        "vs_coinglass": 2.5158,
+        "diferenca_vs_coinglass": 2.0576298975535026,
+        "precisao": "baixa"
+      },
+      "timestamp": "2025-06-01T11:16:45.991459"
+    },
+    "note": "MVRV Z-Score usando BigQuery + série histórica real"
+  }
+]
+´´´

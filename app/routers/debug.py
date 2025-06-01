@@ -119,101 +119,6 @@ async def debug_bigquery_connection():
             "timestamp": datetime.utcnow().isoformat()
         }
 
-@router.get("/mvrv-z-score-real-bigquery")
-async def debug_mvrv_z_score_real_bigquery():
-    """MVRV Z-Score simples sem imports circulares"""
-    try:
-        from app.services.utils.helpers.mvrv_simple_helper import calculate_mvrv_z_score_simple
-        
-        result = calculate_mvrv_z_score_simple()
-        return {
-            "status": "success",
-            "data": result,
-            "note": "MVRV usando BigQuery simples sem imports circulares"
-        }
-    except Exception as e:
-        return {
-            "status": "error",
-            "error": str(e),
-            "timestamp": datetime.utcnow().isoformat()
-        }
-
-@router.get("/realized-price-ratio")
-async def debug_realized_price_ratio():
-    """Realized Price Ratio simples"""
-    try:
-        from app.services.utils.helpers.mvrv_simple_helper import calculate_realized_price_ratio_simple
-        
-        result = calculate_realized_price_ratio_simple()
-        return {
-            "status": "success",
-            "data": result,
-            "note": "Realized Price Ratio usando BigQuery simples"
-        }
-    except Exception as e:
-        return {
-            "status": "error",
-            "error": str(e),
-            "timestamp": datetime.utcnow().isoformat()
-        }
-
-@router.get("/compare-mvrv-methods")
-async def debug_compare_mvrv_methods():
-    """NOVO: Comparação entre métodos REAL vs CALIBRADO"""
-    try:
-        from app.services.utils.helpers.realized_cap.mvrv_calculator import calculate_mvrv_z_score_final
-        
-        # Método REAL
-        try:
-            real_result = calculate_mvrv_z_score_final(use_real_bigquery=True)
-            real_mvrv = real_result["mvrv_z_score"]
-            real_status = "success"
-        except Exception as e:
-            real_mvrv = None
-            real_status = f"error: {str(e)}"
-            real_result = {}
-        
-        # Método CALIBRADO
-        try:
-            calibrated_result = calculate_mvrv_z_score_final(use_real_bigquery=False)
-            calibrated_mvrv = calibrated_result["mvrv_z_score"]
-            calibrated_status = "success"
-        except Exception as e:
-            calibrated_mvrv = None
-            calibrated_status = f"error: {str(e)}"
-            calibrated_result = {}
-        
-        # Comparação
-        coinglass_reference = 2.5158
-        
-        comparison = {
-            "coinglass_reference": coinglass_reference,
-            "metodos": {
-                "real_bigquery": {
-                    "mvrv": real_mvrv,
-                    "status": real_status,
-                    "diferenca_vs_coinglass": abs(real_mvrv - coinglass_reference) if real_mvrv else None
-                },
-                "calibrated_enhanced": {
-                    "mvrv": calibrated_mvrv,
-                    "status": calibrated_status,
-                    "diferenca_vs_coinglass": abs(calibrated_mvrv - coinglass_reference) if calibrated_mvrv else None
-                }
-            },
-            "timestamp": datetime.utcnow().isoformat()
-        }
-        
-        return {
-            "status": "success",
-            "data": comparison
-        }
-        
-    except Exception as e:
-        return {
-            "status": "error",
-            "error": str(e),
-            "timestamp": datetime.utcnow().isoformat()
-        }
 
 # NOVOS ENDPOINTS MVRV REAL
 
@@ -292,8 +197,7 @@ async def debug_historical_series():
             "timestamp": datetime.utcnow().isoformat()
         }
 
-@router.get("/compare-all-mvrv-methods")
-async def debug_compare_all_mvrv():
+
     """Compara todos os métodos MVRV implementados"""
     try:
         results = {}
