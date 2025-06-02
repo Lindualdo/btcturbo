@@ -1,4 +1,4 @@
-# BTC TURBO - v1.0.19
+# BTC TURBO - v1.0.21
 
 ## 🎯 Objetivo da Documentação
 
@@ -56,11 +56,9 @@ Esta documentação técnica define claramente o padrão arquitetural, responsab
 - alterar tabela indicsores_risco incluir novos campos campos
 - calcular HF e Dist. pra liquidação
 
-
 ## 1.0.16 / 17 -  coleta de dados - ciclos - MVRV - feito (precisa de ajustes)
 
 - coleta e MVRV
-
 
 ## 1.0.18 -  Fix - problema no forçar update do dash principal - feito
 
@@ -76,14 +74,14 @@ Esta documentação técnica define claramente o padrão arquitetural, responsab
 - calcular-score{tecnico}
 - helpers - postgres
 
-## 1.0.20 -  Ajustar o dash 
+## Ajustar o dash 
 
-### Bloco analise tecnica - feito
+### 1.0.20 - Bloco analise tecnica - feito
 - usar api interna desenvolvida na versão 1.0.19 - obter-indicadore{tenico}
 - incluir link nos gráficos para mostrar o detalhe (posição das emas,alertas, e dados relevantes)
 - mostrar a versão atual do sistema de forma dinamica (discreto)
 
-### Bloco geral (home) 
+### 1.0.21 - Bloco geral (home) - feito
 - usar novos pesos (tecnico 50% - ciclo 30% - momentum - 20%)
 - não iremos mais considerar o risco no score final (vamos aplicar um redutor do score geral conforme o risco)
 - teremos um botão para ver o score com a redução do risco ou sem a redução
@@ -91,27 +89,32 @@ Esta documentação técnica define claramente o padrão arquitetural, responsab
 - continuar mostrando o bloco risco para referêicia
 - mostrar a versão atual do sistema de forma dinamica (discreto)
 
-## 1.0.21 -  Página de detalhes da analise ténica
+### 1.0.22 -  Página de detalhes da analise ténica
 - criar a págida de detalhes da analise tecnica 
 - incluir os alertas exclusivos deste bloco (alertas na página principal)
 
-## Refatorar dash principal - arquivo está muito grande
-- decompor em arquivos menores - um para cada rarefa específica
+### 1.0.23 - Refatorar dash (html) principal e analise.py - arquivo está muito grande
+- decompor em arquivos menores - um para cada tarefa específica
 - está complicado para dar manutenção
+- refatorar o arquivo analise.py simplificar o json de saida
+- entender como está o funcionamento completo do dashboard e organizar
 
-## Criar outro indicador de risco (Alavancagem atual X alavancagem permitida Kelly)
+### 1.0.24 - sitema de alertas na home dash
+
+### 1.0.25 - Criar outro indicador de risco (Alavancagem atual X alavancagem permitida Kelly)
 - escala para aderencia, quanto mais aderente ao Kelly, maior pontuação
 - definir peso em relação aos outros existentes
 
-## Criar dash com graficos de linhas para monitorar disciplina no Risco e evolução financeira
+### 1.0.26 - Criar sistema de penalidade do score com base no score de risco
+- o risco, sempre pode retirar pontos do score geral, nunca acrescentar
+
+### 1.0.27 - Criar dash com graficos de linhas para monitorar disciplina no Risco e evolução financeira
 - Health factore
 - Distancia para liuquidação (percentual)
 - Alavancagem
 - Crescimento de BTC na carteira (saldo liq. em dolares X preço atual do BTC)
 - o objetivo primcipal do Hold alavancado é aumentar a qtd de BTC em carteira
 
-## Criar sistema de penalidade do score com base no score de risco
-- o risco, sempre pode retirar pontos do score geral, nunca acrescentar
 
 ##  coleta de dados - ciclos - demais indicadores
 
@@ -280,41 +283,238 @@ GET /api/v1/calcular-score/{bloco}
 2. API /api/v1/analise-btc - Formato Principal
 
 ```json
-json{
-    "timestamp": "2025-05-26T13:23:55.242171Z",
-    "score_final": 5.85,
-    "score_ajustado": 5.27,
-    "modificador_volatilidade": 0.9,
-    "classificacao_geral": "Neutro",
-    "kelly_allocation": "25%",
-    "acao_recomendada": "Manter posição conservadora",
+{
+    "timestamp": "2025-06-02T21:08:16.929740",
+    "versao": "1.0.20",
+    "configuracao": {
+        "incluir_risco": true,
+        "risco_disponivel": true,
+        "blocos_no_calculo": 3,
+        "fonte": "fresh_calculation",
+        "force_update": true,
+        "novos_pesos": "Técnico 50% | Ciclo 30% | Momentum 20% | Risco como redutor",
+        "nota_risco": "Redução por risco PREPARADA mas temporariamente desabilitada (redutor = 1.0)"
+    },
+    "score_base": 6.18,
+    "score_final": 6.18,
+    "score_ajustado": 6.18,
+    "redutor_risco": 1.0,
+    "modificador_volatilidade": 1.0,
+    "classificacao_geral": "bom",
+    "kelly_allocation": "50%",
+    "acao_recomendada": "Manter posição - condições favoráveis",
     "alertas_ativos": [
-        "Volatilidade elevada",
-        "EMA200 como resistência"
+        "PERIGO: Liquidação próxima (Health Factor < 1.15)",
+        "EUFORIA: Funding Rate acima de 0.1%, considerar redução",
+        "Mudança de tendência principal detectada (preço cruzou EMA200)",
+        "Volatilidade extremamente elevada"
     ],
     "pesos_dinamicos": {
-        "ciclo": 0.40,
-        "momentum": 0.25,
-        "risco": 0.15,
-        "tecnico": 0.20
+        "tecnico": 0.5,
+        "ciclo": 0.3,
+        "momentum": 0.2,
+        "risco": 0.0
     },
     "blocos": {
-        "ciclo": {
-            "score": 5.5,
+        "tecnico": {
+            "bloco": "tecnico",
+            "peso_bloco": "20%",
+            "score_consolidado": 7.54,
+            "classificacao_consolidada": "Correção Saudável",
+            "timestamp": "2025-06-02T15:38:03.921570",
+            "metodo": "emas_multitimeframe",
+            "timeframes": {
+                "semanal": {
+                    "peso": "70%",
+                    "score_total": 7.5,
+                    "alinhamento": 10.0,
+                    "posicao": 5.0,
+                    "emas": {
+                        "17": 96228.19,
+                        "34": 89902.48,
+                        "144": 61668.52,
+                        "305": 44519.41,
+                        "610": 30072.6
+                    }
+                },
+                "diario": {
+                    "peso": "30%",
+                    "score_total": 7.65,
+                    "alinhamento": 10.0,
+                    "posicao": 5.3,
+                    "emas": {
+                        "17": 105603.4,
+                        "34": 102856.01,
+                        "144": 93818.41,
+                        "305": 85570.88,
+                        "610": 72556.64
+                    }
+                }
+            },
+            "indicadores": {
+                "Sistema_EMAs_Multitimeframe": {
+                    "valor": "Correção Saudável",
+                    "score": 7.5,
+                    "classificacao": "Correção Saudável",
+                    "peso": "20%",
+                    "fonte": "tvdatafeed_emas",
+                    "ponderacao": "70% semanal + 30% diário"
+                },
+                "Padroes_Graficos": {
+                    "valor": "Descontinuado",
+                    "score": 0.0,
+                    "classificacao": "N/A",
+                    "peso": "0%",
+                    "fonte": "tvdatafeed_emas",
+                    "observacao": "Peso zerado - foco em EMAs"
+                }
+            },
+            "distancias": {
+                "daily": {
+                    "ema_17": "-1.28%",
+                    "ema_34": "+1.35%",
+                    "ema_144": "+11.12%",
+                    "ema_305": "+21.83%",
+                    "ema_610": "+43.68%"
+                },
+                "weekly": {
+                    "ema_17": "+8.34%",
+                    "ema_34": "+15.96%",
+                    "ema_144": "+69.05%",
+                    "ema_305": "+134.17%",
+                    "ema_610": "+246.66%"
+                },
+                "weights": {
+                    "daily": 0.3,
+                    "weekly": 0.7
+                }
+            },
+            "alertas": [],
+            "status": "success"
+        },
+        "ciclos": {
+            "bloco": "ciclo",
+            "peso_bloco": "40%",
+            "score_consolidado": 4.75,
+            "classificacao_consolidada": "neutro",
+            "timestamp": "2025-06-02T11:00:34.834000",
             "indicadores": {
                 "MVRV_Z": {
-                    "valor": 2.1,
-                    "score": 6.0
+                    "valor": 2.5572,
+                    "score": 5.5,
+                    "classificacao": "neutro",
+                    "peso": "20%",
+                    "fonte": "Glassnode"
                 },
                 "Realized_Ratio": {
-                    "valor": 1.3,
-                    "score": 5.5
+                    "valor": 2.2639,
+                    "score": 3.5,
+                    "classificacao": "ruim",
+                    "peso": "15%",
+                    "fonte": "Glassnode"
                 },
                 "Puell_Multiple": {
-                    "valor": 1.2,
-                    "score": 5.0
+                    "valor": 1.1778,
+                    "score": 5.5,
+                    "classificacao": "neutro",
+                    "peso": "5%",
+                    "fonte": "Glassnode"
                 }
-            }
+            },
+            "status": "success"
+        },
+        "momentum": {
+            "bloco": "momentum",
+            "peso_bloco": "30%",
+            "score_consolidado": 4.9,
+            "classificacao_consolidada": "neutro",
+            "timestamp": "2025-06-02T16:00:07.739000",
+            "indicadores": {
+                "RSI_Semanal": {
+                    "valor": 61.61,
+                    "score": 3.5,
+                    "classificacao": "ruim",
+                    "peso": "12%",
+                    "fonte": "Glassnode"
+                },
+                "Funding_Rates": {
+                    "valor": "0.050%",
+                    "score": 5.5,
+                    "classificacao": "neutro",
+                    "peso": "10%",
+                    "fonte": "Glassnode"
+                },
+                "Exchange_Netflow": {
+                    "valor": -2922.0,
+                    "score": 5.5,
+                    "classificacao": "neutro",
+                    "peso": "5%",
+                    "fonte": "Glassnode"
+                },
+                "Long_Short_Ratio": {
+                    "valor": 0.9478,
+                    "score": 7.5,
+                    "classificacao": "bom",
+                    "peso": "3%",
+                    "fonte": "Glassnode"
+                }
+            },
+            "status": "success"
+        },
+        "riscos": {
+            "bloco": "riscos",
+            "peso_bloco": "10%",
+            "score_consolidado": 9.5,
+            "classificacao_consolidada": "ótimo",
+            "timestamp": "2025-06-02T20:00:51.248851",
+            "indicadores": {
+                "Dist_Liquidacao": {
+                    "valor": "58.6%",
+                    "score": 9.5,
+                    "classificacao": "ótimo",
+                    "peso": "5%",
+                    "fonte": "aave/web3"
+                },
+                "Health_Factor": {
+                    "valor": 2.413361,
+                    "score": 9.5,
+                    "classificacao": "ótimo",
+                    "peso": "5%",
+                    "fonte": "aave/web3"
+                }
+            },
+            "status": "success"
+        }
+    },
+    "resumo_blocos": {
+        "tecnico": {
+            "score_consolidado": 7.54,
+            "classificacao": "Correção Saudável",
+            "peso": "50.0%",
+            "status": "success",
+            "incluido_no_calculo": true
+        },
+        "ciclos": {
+            "score_consolidado": 4.75,
+            "classificacao": "neutro",
+            "peso": "30.0%",
+            "status": "success",
+            "incluido_no_calculo": true
+        },
+        "momentum": {
+            "score_consolidado": 4.9,
+            "classificacao": "neutro",
+            "peso": "20.0%",
+            "status": "success",
+            "incluido_no_calculo": true
+        },
+        "riscos": {
+            "score_consolidado": 9.5,
+            "classificacao": "ótimo",
+            "peso": "0% (redutor)",
+            "status": "success",
+            "incluido_no_calculo": false,
+            "funcao": "Redutor do score base (temporariamente desabilitado)"
         }
     }
 }
