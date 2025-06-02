@@ -11,7 +11,7 @@ from app.routers import (
 app = FastAPI(
     title="BTC Turbo API",
     description="Sistema de análise de indicadores BTC com PostgreSQL + Dashboards HTML",
-    version="1.0.16"
+    version="1.0.19"
 )
 
 # ==========================================

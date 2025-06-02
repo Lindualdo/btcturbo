@@ -1,4 +1,4 @@
-# BTC TURBO - v1.0.16
+# BTC TURBO - v1.0.19
 
 ## 🎯 Objetivo da Documentação
 
@@ -57,13 +57,39 @@ Esta documentação técnica define claramente o padrão arquitetural, responsab
 - calcular HF e Dist. pra liquidação
 
 
-## 1.0.16 -  coleta de dados - ciclos - MVRV - feito (com ajustes aserem feito)
+## 1.0.16 / 17 -  coleta de dados - ciclos - MVRV - feito (precisa de ajustes)
 
-- coleta e calclulo prioritário do MVRV
+- coleta e MVRV
 
-## 1.0.17 -  MVRV - Ajustes e aprimoramento
 
-- Aproximar o resultado coletado com o resultado da CoinGlass
+## 1.0.18 -  Fix - problema no forçar update do dash principal - feito
+
+- Botão atualizar não estava funcionando, estava sempre usando o cach
+
+## 1.0.19 -  Coletar dados EMAs e calcular alinhamento e posição do preço - feito
+
+- Estavamos usando API externa para calcular o score e classificação
+- rotina diferente dos demais blocos porque precisa calcular internamente o indicador, não existe no mercado
+
+- coleta-indicadores{tecnico}
+- obter-indicadores{tecnico}
+- calcular-score{tecnico}
+- helpers - postgres
+
+## 1.0.20 -  Ajustar o dash 
+
+### Bloco analise tecnica 
+- usar api interna desenvolvida na versão 1.0.19 - obter-indicadore{tenico}
+- incluir link nos gráficos para mostrar o detalhe (posição das emas,alertas, e dados relevantes)
+- mostrar a versão atual do sistema de forma dinamica (discreto)
+
+### Bloco geral (home) 
+- usar novos pesos (tecnico 50% - ciclo 30% - momentum - 20%)
+- não iremos mais considerar o risco no score final (vamos aplicar um redutor do score geral conforme o risco)
+- teremos um botão para ver o score com a redução do risco ou sem a redução
+- Ainda iremos definir o percentual a ser reduzido do score com base no risco 
+- continuar mostrando o bloco risco para referêicia
+- mostrar a versão atual do sistema de forma dinamica (discreto)
 
 ## 1.0.18 -  coleta de dados - ciclos - demais indicadores
 
@@ -92,10 +118,6 @@ https://github.com/Lindualdo/btcturbo/blob/main/doc/btcturbo-alertas.espc.md
 - stablecoin_ratio
 - ajustar no Helper e demais funções
 
-
-## Implementar coletala dos dados EMAs e calclulo separado emas e posição do preço
-- atualmente estamos usando API externa para calcular o score e classificação
-- rotina diferente dos demais blocos porque precisa calcular internamente o indicador, não existe no mercado
 
 ## 🗂 Estrutura do Projeto
 
