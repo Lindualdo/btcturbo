@@ -290,7 +290,7 @@ async def dashboard_index():
               
               // Atualizar subtitle
               document.getElementById('subtitle').textContent = 
-                `Sistema v1.0.12 - Kelly: ${{dados.kelly_allocation || 'N/A'}} | ${{dados.acao_recomendada || 'N/A'}}`;
+                `Sistema v1.0.16 - Kelly: ${{dados.kelly_allocation || 'N/A'}} | ${{dados.acao_recomendada || 'N/A'}}`;
               
               // Atualizar toggle status
               const toggleStatus = document.getElementById('toggleStatus');
@@ -349,6 +349,59 @@ async def dashboard_index():
               const toggle = document.getElementById('toggleRisco');
               const incluirRisco = !toggle.checked; // Invertido: checked = excluir risco
               buscarDados(incluirRisco);
+            }}
+
+            function forcarAtualizacao() {{
+              const btnForce = document.getElementById('btnForceUpdate');
+              const toggle = document.getElementById('toggleRisco');
+              const incluirRisco = !toggle.checked;
+              
+              // Visual feedback
+              btnForce.disabled = true;
+              btnForce.innerHTML = '⏳ Atualizando...';
+              btnForce.style.background = '#666';
+              
+              // Mostrar loading nos gráficos
+              document.getElementById('subtitle').textContent = 'Forçando atualização dos dados...';
+              
+              // Chamar API com force_update=true
+              buscarDadosComForce(incluirRisco);
+            }}
+
+            async function buscarDadosComForce(incluirRisco = true) {{
+              try {{
+                const response = await fetch(`/api/v1/analise-btc?incluir_risco=${{incluirRisco}}&force_update=true`);
+                const dados = await response.json();
+                
+                if (dados.error || dados.status === 'error') {{
+                  throw new Error(dados.erro || 'Erro na API');
+                }}
+                
+                dadosAtuais = dados;
+                atualizarInterface(dados);
+                
+                // Resetar botão
+                const btnForce = document.getElementById('btnForceUpdate');
+                btnForce.disabled = false;
+                btnForce.innerHTML = '🔄 Forçar Atualização';
+                btnForce.style.background = '#f7931a';
+                
+              }} catch (error) {{
+                console.error('Erro ao forçar atualização:', error);
+                mostrarErro(error.message);
+                
+                // Resetar botão mesmo com erro
+                const btnForce = document.getElementById('btnForceUpdate');
+                btnForce.disabled = false;
+                btnForce.innerHTML = '❌ Erro - Tentar Novamente';
+                btnForce.style.background = '#e53935';
+                
+                // Voltar ao normal após 3s
+                setTimeout(() => {{
+                  btnForce.innerHTML = '🔄 Forçar Atualização';
+                  btnForce.style.background = '#f7931a';
+                }}, 3000);
+              }}
             }}
 
             function mostrarErro(mensagem) {{
