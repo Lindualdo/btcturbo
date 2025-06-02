@@ -375,28 +375,23 @@ async def dashboard_index():
               const classificacaoGeral = classificarScore(dados.score_final);
               atualizarGrafico('gaugeChart_geral', scoreGeral, 'classificacao_geral', classificacaoGeral);
               
-              // Atualizar blocos com mapeamento correto
+              // Atualizar blocos - CORRIGIDO: passar dados diretamente do bloco
               const blocos = dados.blocos || {};
               
-              // FIX: Mapear corretamente nomes da API vs Dashboard
+              // FIX: Usar nomes corretos da API
               atualizarBloco('tecnico', blocos.tecnico || {}, NOVOS_PESOS.tecnico);
-              atualizarBloco('ciclos', { blocos: { ciclo: blocos.ciclo || {} }}, NOVOS_PESOS.ciclos); // Mapeamento especial
+              atualizarBloco('ciclos', blocos.ciclos || {}, NOVOS_PESOS.ciclos);
               atualizarBloco('momentum', blocos.momentum || {}, NOVOS_PESOS.momentum);
               atualizarBloco('riscos', blocos.riscos || {}, NOVOS_PESOS.riscos);
             }
 
             function atualizarBloco(nome, dados, peso) {
-              // FIX v1.0.20: Mapear nomes corretamente entre API e interface
-              let dadosBloco;
+              // FIX v1.0.20: Simplificar mapeamento - dados já vem direto do bloco
+              let dadosBloco = dados;
               
-              if (nome === 'ciclos' && dados.blocos) {
-                // Nome no dashboard: 'ciclos' | Nome na API: 'ciclo'  
-                dadosBloco = dados.blocos.ciclo || {};
-              } else if (typeof dados === 'object' && dados.score_consolidado !== undefined) {
-                // Dados já vêm direto do bloco
-                dadosBloco = dados;
-              } else {
-                dadosBloco = {};
+              // Se dados for undefined ou não tiver score_consolidado, usar objeto vazio
+              if (!dadosBloco || typeof dadosBloco.score_consolidado === 'undefined') {
+                dadosBloco = { score_consolidado: 0, classificacao_consolidada: 'N/A' };
               }
               
               const score = Math.round((dadosBloco.score_consolidado || 0) * 10);
