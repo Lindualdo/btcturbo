@@ -35,7 +35,7 @@ class EMACalculator:
         return self.tv
     
     def fetch_ohlc_data(self, symbol: str = "BTCUSDT", exchange: str = "BINANCE", 
-                       interval: Interval = Interval.in_1_week, n_bars: int = 1000) -> Optional[pd.DataFrame]:
+                       interval: Interval = Interval.in_weekly, n_bars: int = 1000) -> Optional[pd.DataFrame]:
         """Busca dados OHLC do TradingView"""
         try:
             tv = self.get_tv_session()
@@ -194,7 +194,7 @@ class EMACalculator:
             logger.info(f"🎯 Calculando scores {timeframe}...")
             
             # Definir intervalo
-            interval = Interval.in_1_week if timeframe == "1W" else Interval.in_daily
+            interval = Interval.in_weekly if timeframe == "1W" else Interval.in_daily
             n_bars = 700 if timeframe == "1W" else 700  # Suficiente para EMA 610
             
             # Buscar dados
