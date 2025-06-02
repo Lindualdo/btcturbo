@@ -333,4 +333,222 @@ async def dashboard_index():
                 
                 statusInfo.innerHTML = `
                   <strong>✅ Redução por Risco ATIVADA</strong><br>
-                  <div style="font-size: 12px; margin-top:
+                  <div style="font-size: 12px; margin-top: 8px; color: #888;">
+                    Score Base: ${scoreBase} | Redutor: ${redutor.toFixed(2)} | Score Final: ${scoreFinal}
+                  </div>
+                  <div class="pesos-info">
+                    📈 Técnico: 50% | 🔄 Ciclo: 30% | ⚡ Momentum: 20% | 🚨 Risco: Redutor (${config.nota_risco || 'Temporariamente 1.0'})
+                  </div>
+              } else {
+                toggleStatus.textContent = 'Desativado';
+                statusInfo.innerHTML = `
+                  <strong>⚠️ Redução por Risco DESATIVADA</strong><br>
+                  <div style="font-size: 12px; margin-top: 8px; color: #888;">
+                    Usando apenas Score Base: ${dados.score_final}
+                  </div>
+                  <div class="pesos-info">
+                    📈 Técnico: 50% | 🔄 Ciclo: 30% | ⚡ Momentum: 20% | 🚨 Risco: Ignorado
+                  </div>
+                `;
+              }
+              
+              // Atualizar scores e gráficos
+              const scoreGeral = Math.round((dados.score_final || 0) * 10);
+              atualizarGrafico('gaugeChart_geral', scoreGeral, 'classificacao_geral', dados.classificacao_geral || 'N/A');
+              
+              // Atualizar blocos individuais com NOVOS PESOS
+              atualizarBloco('tecnico', resumo.tecnico || {}, '50%');
+              atualizarBloco('ciclos', resumo.ciclos || {}, '30%');
+              atualizarBloco('momentum', resumo.momentum || {}, '20%');
+              atualizarBloco('riscos', resumo.riscos || {}, '0% (Redutor)');
+            }
+
+            function atualizarBloco(nome, dados, pesoFixo) {
+              const score = Math.round((dados.score_consolidado || 0) * 10);
+              const classificacao = dados.classificacao || 'N/A';
+              const incluido = dados.incluido_no_calculo;
+              
+              atualizarGrafico(`gaugeChart_${nome}`, score, `classificacao_${nome}`, classificacao);
+              
+              // Atualizar peso com os novos valores fixos
+              const pesoElement = document.getElementById(`peso_${nome}`);
+              if (pesoElement) {
+                if (nome === 'tecnico') {
+                  pesoElement.innerHTML = 'Peso: 50% 📈';
+                } else if (nome === 'ciclos') {
+                  pesoElement.innerHTML = 'Peso: 30% 🔄';
+                } else if (nome === 'momentum') {
+                  pesoElement.innerHTML = 'Peso: 20% ⚡';
+                } else if (nome === 'riscos') {
+                  pesoElement.innerHTML = 'Peso: 0% (Redutor)';
+                }
+                pesoElement.style.color = incluido ? '#f7931a' : '#666';
+              }
+            }
+
+            function atualizarGrafico(canvasId, score, classificacaoId, classificacao) {
+              // Atualizar texto
+              const element = document.getElementById(classificacaoId);
+              if (element) {
+                element.textContent = `Score: ${score} - ${classificacao}`;
+                element.classList.remove('loading');
+              }
+              
+              // Renderizar gráfico
+              renderGauge(canvasId, score);
+            }
+
+            function atualizarDados() {
+              const toggle = document.getElementById('toggleRisco');
+              const incluirRisco = toggle.checked; // Agora: checked = incluir redução
+              buscarDados(incluirRisco);
+            }
+
+            function forcarAtualizacao() {
+              const btnForce = document.getElementById('btnForceUpdate');
+              const toggle = document.getElementById('toggleRisco');
+              const incluirRisco = toggle.checked;
+              
+              // Visual feedback
+              btnForce.disabled = true;
+              btnForce.innerHTML = '⏳ Atualizando...';
+              btnForce.style.background = '#666';
+              
+              // Mostrar loading nos gráficos
+              document.getElementById('subtitle').textContent = 'Forçando atualização dos dados v1.0.20...';
+              
+              // Chamar API com force_update=true
+              buscarDadosComForce(incluirRisco);
+            }
+
+            async function buscarDadosComForce(incluirRisco = true) {
+              try {
+                const response = await fetch(`/api/v1/analise-btc?incluir_risco=${incluirRisco}&force_update=true`);
+                const dados = await response.json();
+                
+                if (dados.error || dados.status === 'error') {
+                  throw new Error(dados.erro || 'Erro na API');
+                }
+                
+                dadosAtuais = dados;
+                atualizarInterface(dados);
+                
+                // Resetar botão
+                const btnForce = document.getElementById('btnForceUpdate');
+                btnForce.disabled = false;
+                btnForce.innerHTML = '🔄 Forçar Atualização';
+                btnForce.style.background = '#f7931a';
+                
+              } catch (error) {
+                console.error('Erro ao forçar atualização:', error);
+                mostrarErro(error.message);
+                
+                // Resetar botão mesmo com erro
+                const btnForce = document.getElementById('btnForceUpdate');
+                btnForce.disabled = false;
+                btnForce.innerHTML = '❌ Erro - Tentar Novamente';
+                btnForce.style.background = '#e53935';
+                
+                // Voltar ao normal após 3s
+                setTimeout(() => {
+                  btnForce.innerHTML = '🔄 Forçar Atualização';
+                  btnForce.style.background = '#f7931a';
+                }, 3000);
+              }
+            }
+
+            function mostrarErro(mensagem) {
+              document.getElementById('subtitle').textContent = `Erro v1.0.20: ${mensagem}`;
+              document.getElementById('statusInfo').innerHTML = 
+                `<strong>❌ Erro ao carregar dados</strong> - ${mensagem}`;
+            }
+
+            function renderGauge(canvasId, score) {
+              const canvas = document.getElementById(canvasId);
+              if (!canvas) return;
+              
+              const ctx = canvas.getContext('2d');
+              const existingChart = Chart.getChart(canvas);
+              if (existingChart) existingChart.destroy();
+
+              try {
+                new Chart(ctx, {
+                  type: 'doughnut',
+                  data: { datasets: [{ data: [100], backgroundColor: ['#0000'], borderWidth: 0, cutout: '80%' }] },
+                  options: {
+                    responsive: false, rotation: -Math.PI, circumference: Math.PI,
+                    plugins: { tooltip: { enabled: false }, legend: { display: false } }
+                  },
+                  plugins: [{
+                    afterDraw: (chart) => {
+                      const ctx = chart.ctx;
+                      const angle = (score / 100) * Math.PI;
+                      const cx = chart.width / 2;
+                      const cy = chart.height - 42;
+                      const r = chart.width / 2.4;
+
+                      ctx.save();
+                      const drawArc = (start, end, color) => {
+                        ctx.beginPath(); ctx.arc(cx, cy, r, start, end);
+                        ctx.strokeStyle = color; ctx.lineWidth = 16; ctx.stroke();
+                      };
+
+                      drawArc(Math.PI, Math.PI + Math.PI * 0.2, "#e53935");
+                      drawArc(Math.PI + Math.PI * 0.2, Math.PI + Math.PI * 0.4, "#f57c00");
+                      drawArc(Math.PI + Math.PI * 0.4, Math.PI + Math.PI * 0.6, "#fbc02d");
+                      drawArc(Math.PI + Math.PI * 0.6, Math.PI + Math.PI * 0.8, "#9acb82");
+                      drawArc(Math.PI + Math.PI * 0.8, 2 * Math.PI, "#4caf50");
+
+                      const angleRadians = Math.PI + angle;
+                      const pointerLength = r * 0.9;
+                      ctx.beginPath();
+                      ctx.moveTo(cx + pointerLength * Math.cos(angleRadians), cy + pointerLength * Math.sin(angleRadians));
+                      ctx.lineTo(cx + 6 * Math.cos(angleRadians + Math.PI / 2), cy + 6 * Math.sin(angleRadians + Math.PI / 2));
+                      ctx.lineTo(cx + 6 * Math.cos(angleRadians - Math.PI / 2), cy + 6 * Math.sin(angleRadians - Math.PI / 2));
+                      ctx.fillStyle = "#444"; ctx.fill();
+                      
+                      ctx.beginPath(); ctx.arc(cx, cy, 6, 0, 2 * Math.PI);
+                      ctx.fillStyle = "#888"; ctx.fill();
+                      ctx.restore();
+                    }
+                  }]
+                });
+              } catch (error) { 
+                console.error('Erro gráfico:', error); 
+              }
+            }
+
+            function initCharts() {
+              if (typeof Chart === 'undefined') { 
+                setTimeout(initCharts, 100); 
+                return; 
+              }
+              
+              console.log('🚀 Iniciando dashboard v1.0.20 com novos pesos');
+              // Carregar dados iniciais com redução ativada por padrão
+              buscarDados(true);
+            }
+
+            if (document.readyState === 'loading') {
+              document.addEventListener('DOMContentLoaded', initCharts);
+            } else { 
+              initCharts(); 
+            }
+          </script>
+        </body>
+        </html>
+        """
+        
+        return html
+        
+    except Exception as e:
+        return f"""
+        <html>
+        <body style="background: #0f111a; color: white; font-family: monospace; padding: 20px;">
+            <h1 style="color: #f7931a;">🔧 Debug - Dashboard Principal v1.0.20</h1>
+            <h2>Erro:</h2>
+            <pre style="color: #e53935;">{str(e)}</pre>
+            <a href="/docs" style="color: #f7931a;">← APIs</a>
+        </body>
+        </html>
+        """
