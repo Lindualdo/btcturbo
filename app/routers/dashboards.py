@@ -375,18 +375,35 @@ async def dashboard_index():
               const classificacaoGeral = classificarScore(dados.score_final);
               atualizarGrafico('gaugeChart_geral', scoreGeral, 'classificacao_geral', classificacaoGeral);
               
-              // Atualizar blocos
+              // Atualizar blocos com mapeamento correto
               const blocos = dados.blocos || {};
+              
+              // FIX: Mapear corretamente nomes da API vs Dashboard
               atualizarBloco('tecnico', blocos.tecnico || {}, NOVOS_PESOS.tecnico);
-              atualizarBloco('ciclos', blocos.ciclo || {}, NOVOS_PESOS.ciclos);
+              atualizarBloco('ciclos', { blocos: { ciclo: blocos.ciclo || {} }}, NOVOS_PESOS.ciclos); // Mapeamento especial
               atualizarBloco('momentum', blocos.momentum || {}, NOVOS_PESOS.momentum);
               atualizarBloco('riscos', blocos.riscos || {}, NOVOS_PESOS.riscos);
             }
 
             function atualizarBloco(nome, dados, peso) {
-              const score = Math.round((dados.score_consolidado || 0) * 10);
-              const classificacao = dados.classificacao_consolidada || 'N/A';
+              // FIX v1.0.20: Mapear nomes corretamente entre API e interface
+              let dadosBloco;
+              
+              if (nome === 'ciclos' && dados.blocos) {
+                // Nome no dashboard: 'ciclos' | Nome na API: 'ciclo'  
+                dadosBloco = dados.blocos.ciclo || {};
+              } else if (typeof dados === 'object' && dados.score_consolidado !== undefined) {
+                // Dados já vêm direto do bloco
+                dadosBloco = dados;
+              } else {
+                dadosBloco = {};
+              }
+              
+              const score = Math.round((dadosBloco.score_consolidado || 0) * 10);
+              const classificacao = dadosBloco.classificacao_consolidada || 'N/A';
               const pesoFormatado = (peso * 100).toFixed(0) + '%';
+              
+              console.log(`🔍 Bloco ${nome}: score_raw=${dadosBloco.score_consolidado}, score_final=${score}, class=${classificacao}`);
               
               atualizarGrafico('gaugeChart_' + nome, score, 'classificacao_' + nome, classificacao);
               

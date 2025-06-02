@@ -78,7 +78,7 @@ Esta documentação técnica define claramente o padrão arquitetural, responsab
 
 ## 1.0.20 -  Ajustar o dash 
 
-### Bloco analise tecnica 
+### Bloco analise tecnica - feito
 - usar api interna desenvolvida na versão 1.0.19 - obter-indicadore{tenico}
 - incluir link nos gráficos para mostrar o detalhe (posição das emas,alertas, e dados relevantes)
 - mostrar a versão atual do sistema de forma dinamica (discreto)
@@ -91,7 +91,29 @@ Esta documentação técnica define claramente o padrão arquitetural, responsab
 - continuar mostrando o bloco risco para referêicia
 - mostrar a versão atual do sistema de forma dinamica (discreto)
 
-## 1.0.18 -  coleta de dados - ciclos - demais indicadores
+## 1.0.21 -  Página de detalhes da analise ténica
+- criar a págida de detalhes da analise tecnica 
+- incluir os alertas exclusivos deste bloco (alertas na página principal)
+
+## Refatorar dash principal - arquivo está muito grande
+- decompor em arquivos menores - um para cada rarefa específica
+- está complicado para dar manutenção
+
+## Criar outro indicador de risco (Alavancagem atual X alavancagem permitida Kelly)
+- escala para aderencia, quanto mais aderente ao Kelly, maior pontuação
+- definir peso em relação aos outros existentes
+
+## Criar dash com graficos de linhas para monitorar disciplina no Risco e evolução financeira
+- Health factore
+- Distancia para liuquidação (percentual)
+- Alavancagem
+- Crescimento de BTC na carteira (saldo liq. em dolares X preço atual do BTC)
+- o objetivo primcipal do Hold alavancado é aumentar a qtd de BTC em carteira
+
+## Criar sistema de penalidade do score com base no score de risco
+- o risco, sempre pode retirar pontos do score geral, nunca acrescentar
+
+##  coleta de dados - ciclos - demais indicadores
 
 - Docs: 
 https://github.com/Lindualdo/btcturbo/blob/main/doc/validation-limites-indicadores.md
