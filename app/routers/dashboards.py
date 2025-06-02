@@ -1,4 +1,4 @@
-# app/routers/dashboards.py - v1.0.20 - NOVOS PESOS + TOGGLE RISCO
+# app/routers/dashboards.py - CORRIGIDO v1.0.20
 
 from fastapi import APIRouter
 from fastapi.responses import HTMLResponse
@@ -9,10 +9,10 @@ router = APIRouter()
 
 @router.get("/", response_class=HTMLResponse)
 async def dashboard_index():
-    """Dashboard principal v1.0.20 - Novos pesos + Toggle redução por risco"""
+    """Dashboard principal consolidado v1.0.20 - CORRIGIDO"""
     try:
-        # HTML Template Completo v1.0.20
-        html = f"""
+        # HTML Template Completo - SEM f-string no JavaScript
+        html = """
         <!DOCTYPE html>
         <html lang="pt-BR">
         <head>
@@ -21,64 +21,73 @@ async def dashboard_index():
           <title>BTC Turbo - Dashboard Principal v1.0.20</title>
           <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
           <style>
-            *, *::before, *::after {{ box-sizing: border-box; }}
-            html {{ overflow-x: hidden; }}
-            body {{
+            *, *::before, *::after { box-sizing: border-box; }
+            html { overflow-x: hidden; }
+            body {
               background: #0f111a; color: #fff; text-align: center;
               font-family: system-ui, sans-serif; padding: 2%; margin: 0;
               min-height: 100vh; width: 100%; overflow-x: hidden; max-width: 100vw;
-            }}
-            .version {{
-              position: absolute; top: 10px; right: 15px; 
-              font-size: 10px; color: #666; font-weight: normal;
-            }}
-            h1 {{
+            }
+            h1 {
               font-size: clamp(24px, 5vw, 32px); color: #f7931a;
               margin-bottom: 1rem; padding: 0 2%; font-weight: 700;
-            }}
-            .subtitle {{
+            }
+            .version {
+              position: absolute; top: 10px; right: 15px; 
+              font-size: 10px; color: #666; font-weight: normal;
+            }
+            .subtitle {
               color: #888; font-size: clamp(14px, 2.5vw, 18px); 
               margin-bottom: 1rem; padding: 0 2%;
-            }}
-            .toggle-container {{
+            }
+            .config-container {
               display: flex; justify-content: center; align-items: center; gap: 1rem;
               margin-bottom: 2rem; padding: 1rem; background: #161b22; border-radius: 8px;
-              max-width: 700px; margin-left: auto; margin-right: auto;
-              flex-wrap: wrap;
-            }}
-            .toggle-switch {{
-              position: relative; display: inline-block; width: 60px; height: 34px;
-            }}
-            .toggle-switch input {{
+              max-width: 800px; margin-left: auto; margin-right: auto; flex-wrap: wrap;
+            }
+            .config-section {
+              display: flex; align-items: center; gap: 0.5rem;
+            }
+            .toggle-switch {
+              position: relative; display: inline-block; width: 50px; height: 28px;
+            }
+            .toggle-switch input {
               opacity: 0; width: 0; height: 0;
-            }}
-            .slider {{
+            }
+            .slider {
               position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
-              background-color: #ccc; transition: .4s; border-radius: 34px;
-            }}
-            .slider:before {{
-              position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px;
+              background-color: #666; transition: .4s; border-radius: 28px;
+            }
+            .slider:before {
+              position: absolute; content: ""; height: 22px; width: 22px; left: 3px; bottom: 3px;
               background-color: white; transition: .4s; border-radius: 50%;
-            }}
-            input:checked + .slider {{
+            }
+            input:checked + .slider {
               background-color: #f7931a;
-            }}
-            input:checked + .slider:before {{
-              transform: translateX(26px);
-            }}
-            .toggle-label {{
-              color: #fff; font-weight: 600; font-size: clamp(14px, 2vw, 16px);
-            }}
-            .status-info {{
+            }
+            input:checked + .slider:before {
+              transform: translateX(22px);
+            }
+            .toggle-label {
+              color: #fff; font-weight: 600; font-size: clamp(12px, 2vw, 14px);
+            }
+            .btn-update {
+              background: #f7931a; color: #000; border: none; border-radius: 6px;
+              padding: 8px 16px; cursor: pointer; font-weight: 600;
+              font-size: 12px; transition: all 0.3s ease;
+            }
+            .btn-update:hover {
+              background: #e8851a; transform: translateY(-1px);
+            }
+            .btn-update:disabled {
+              background: #666; cursor: not-allowed; transform: none;
+            }
+            .status-info {
               background: #1e1e1e; padding: 1rem; border-radius: 8px; margin-bottom: 2rem;
-              max-width: 900px; margin-left: auto; margin-right: auto;
-              border-left: 4px solid #f7931a;
-            }}
-            .pesos-info {{
-              background: #0a0d14; padding: 0.8rem; border-radius: 6px; margin-top: 1rem;
-              font-size: 12px; color: #f7931a; border: 1px solid #333;
-            }}
-            .dashboard-grid {{
+              max-width: 800px; margin-left: auto; margin-right: auto;
+              border-left: 4px solid #f7931a; text-align: left;
+            }
+            .dashboard-grid {
               display: grid; 
               grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
               gap: clamp(12px, 2vw, 24px); 
@@ -87,132 +96,120 @@ async def dashboard_index():
               margin-left: auto; 
               margin-right: auto;
               padding: 0 1rem;
-            }}
-            .grafico {{
+            }
+            .grafico {
               background: #161b22; border-radius: 12px;
               padding: clamp(16px, 3vw, 24px); 
               box-shadow: 0 4px 20px rgba(0,0,0,0.6);
               display: flex; flex-direction: column; align-items: center;
               transition: all 0.3s ease;
               border: 2px solid transparent;
-            }}
-            .grafico.clicavel {{
+            }
+            .grafico.clicavel {
               cursor: pointer;
-            }}
-            .grafico.clicavel:hover {{
+            }
+            .grafico.clicavel:hover {
               border-color: #f7931a;
               transform: translateY(-4px);
               box-shadow: 0 8px 25px rgba(247, 147, 26, 0.3);
-            }}
-            .grafico.risco-como-redutor {{
+            }
+            .grafico.risco-reduzido {
               opacity: 0.8;
-              border: 2px dashed #666;
-              position: relative;
-            }}
-            .grafico.risco-como-redutor::before {{
-              content: "REDUTOR";
-              position: absolute;
-              top: 8px;
-              right: 8px;
-              background: #666;
-              color: white;
-              padding: 2px 6px;
-              border-radius: 4px;
-              font-size: 10px;
-              font-weight: bold;
-            }}
-            .grafico h3 {{
+              border: 2px dashed #f7931a;
+            }
+            .grafico h3 {
               font-size: clamp(16px, 2.5vw, 20px); 
               margin: 0 0 1rem 0; 
               color: #fff;
-            }}
-            .grafico.principal h3 {{
+            }
+            .grafico.principal h3 {
               color: #f7931a;
               font-size: clamp(18px, 3vw, 24px);
-            }}
-            .classificacao {{
+            }
+            .classificacao {
               font-size: clamp(13px, 2.2vw, 16px); 
               margin-top: 1rem; 
               font-weight: 600;
-            }}
-            .info-adicional {{
+            }
+            .info-adicional {
               font-size: clamp(11px, 1.8vw, 14px); 
               color: #888; 
               margin-top: 0.5rem;
               text-align: center;
-            }}
-            .peso-info {{
+            }
+            .peso-info {
               font-size: clamp(10px, 1.6vw, 12px);
               color: #f7931a;
               margin-top: 0.25rem;
-              font-weight: bold;
-            }}
-            canvas {{ max-width: 100%; height: auto; }}
+            }
+            canvas { max-width: 100%; height: auto; }
             
-            .footer {{
+            .footer {
               margin-top: 3rem; padding-top: 2rem; 
               border-top: 1px solid #333; text-align: center;
-            }}
-            .footer a {{
+            }
+            .footer a {
               color: #f7931a; text-decoration: none; 
               margin: 0 clamp(8px, 2vw, 16px);
               font-size: clamp(12px, 2vw, 14px);
-            }}
-            .footer a:hover {{ text-decoration: underline; }}
+            }
+            .footer a:hover { text-decoration: underline; }
             
-            .loading {{
+            .loading {
               color: #f7931a; font-style: italic;
-            }}
+            }
+            .error {
+              color: #e53935; font-style: italic;
+            }
             
-            @media (max-width: 768px) {{
-              .dashboard-grid {{
+            @media (max-width: 768px) {
+              .dashboard-grid {
                 grid-template-columns: 1fr;
                 gap: 16px;
                 padding: 0 0.5rem;
-              }}
-              .grafico {{
+              }
+              .grafico {
                 padding: 20px 16px;
-              }}
-              .toggle-container {{
+              }
+              .config-container {
                 flex-direction: column; gap: 0.5rem; text-align: center;
-              }}
-              .version {{ position: static; text-align: center; margin-bottom: 10px; }}
-            }}
+              }
+              .version { 
+                position: static; text-align: center; margin-bottom: 10px; 
+              }
+            }
           </style>
         </head>
         <body>
-          <div class="version">v1.0.20</div>
+          <div class="version">BTC Turbo v1.0.20</div>
           <h1>🚀 BTC Turbo - Dashboard Principal</h1>
           <div class="subtitle" id="subtitle">
             Sistema v1.0.20 - Carregando dados...
           </div>
           
-          <!-- Toggle para redução por risco -->
-          <div class="toggle-container">
-            <span class="toggle-label">Aplicar Redução por Risco:</span>
-            <label class="toggle-switch">
-              <input type="checkbox" id="toggleRisco" checked onchange="atualizarDados()">
-              <span class="slider"></span>
-            </label>
-            <span class="toggle-label" id="toggleStatus">Ativado</span>
+          <!-- Configurações -->
+          <div class="config-container">
+            <div class="config-section">
+              <span class="toggle-label">Redução por Risco:</span>
+              <label class="toggle-switch">
+                <input type="checkbox" id="toggleReducaoRisco" onchange="atualizarDados()">
+                <span class="slider"></span>
+              </label>
+              <span class="toggle-label" id="toggleStatus">Desabilitada</span>
+            </div>
             
-            <!-- Botão Forçar Atualização -->
-            <button id="btnForceUpdate" onclick="forcarAtualizacao()" style="
-              background: #f7931a; color: #000; border: none; border-radius: 6px;
-              padding: 8px 16px; margin-left: 16px; cursor: pointer; font-weight: 600;
-              font-size: 14px; transition: all 0.3s ease;
-            " onmouseover="this.style.background='#e8851a'" onmouseout="this.style.background='#f7931a'">
-              🔄 Forçar Atualização
+            <button id="btnForceUpdate" onclick="forcarAtualizacao()" class="btn-update">
+              🔄 Atualizar Dados
             </button>
           </div>
 
-          <!-- Status da configuração atual -->
+          <!-- Status -->
           <div class="status-info" id="statusInfo">
             Carregando configuração...
           </div>
           
           <div class="dashboard-grid">
-            <!-- Score Geral (Não clicável) -->
+            <!-- Score Geral -->
             <div class="grafico principal">
               <h3>🎯 Score Geral</h3>
               <canvas id="gaugeChart_geral" width="200" height="180"></canvas>
@@ -220,11 +217,11 @@ async def dashboard_index():
                 Carregando...
               </div>
               <div class="info-adicional" id="info_geral">
-                Novos pesos v1.0.20
+                Consolidado v1.0.20
               </div>
             </div>
 
-            <!-- Bloco Técnico (50% - AUMENTADO) -->
+            <!-- Técnico (50%) -->
             <div class="grafico clicavel" onclick="navegarPara('/dashboard/tecnico')">
               <h3>📈 Análise Técnica</h3>
               <canvas id="gaugeChart_tecnico" width="200" height="180"></canvas>
@@ -234,10 +231,10 @@ async def dashboard_index():
               <div class="info-adicional" id="info_tecnico">
                 Clique para detalhes
               </div>
-              <div class="peso-info" id="peso_tecnico">Peso: 50% 📈</div>
+              <div class="peso-info" id="peso_tecnico">Peso: 50%</div>
             </div>
 
-            <!-- Bloco Ciclos (30% - REDUZIDO) -->
+            <!-- Ciclos (30%) -->
             <div class="grafico clicavel" onclick="navegarPara('/dashboard/ciclos')">
               <h3>🔄 Ciclos</h3>
               <canvas id="gaugeChart_ciclos" width="200" height="180"></canvas>
@@ -247,10 +244,10 @@ async def dashboard_index():
               <div class="info-adicional" id="info_ciclos">
                 Clique para detalhes
               </div>
-              <div class="peso-info" id="peso_ciclos">Peso: 30% 🔄</div>
+              <div class="peso-info" id="peso_ciclos">Peso: 30%</div>
             </div>
 
-            <!-- Bloco Momentum (20% - REDUZIDO) -->
+            <!-- Momentum (20%) -->
             <div class="grafico clicavel" onclick="navegarPara('/dashboard/momentum')">
               <h3>⚡ Momentum</h3>
               <canvas id="gaugeChart_momentum" width="200" height="180"></canvas>
@@ -260,20 +257,20 @@ async def dashboard_index():
               <div class="info-adicional" id="info_momentum">
                 Clique para detalhes
               </div>
-              <div class="peso-info" id="peso_momentum">Peso: 20% ⚡</div>
+              <div class="peso-info" id="peso_momentum">Peso: 20%</div>
             </div>
 
-            <!-- Bloco Riscos (COMO REDUTOR) -->
-            <div class="grafico clicavel risco-como-redutor" id="grafico_riscos" onclick="navegarPara('/dashboard/riscos')">
+            <!-- Riscos (Referência) -->
+            <div class="grafico clicavel" id="grafico_riscos" onclick="navegarPara('/dashboard/riscos')">
               <h3>🚨 Riscos</h3>
               <canvas id="gaugeChart_riscos" width="200" height="180"></canvas>
               <div id="classificacao_riscos" class="classificacao loading">
                 Carregando...
               </div>
               <div class="info-adicional" id="info_riscos">
-                Usado como redutor do score
+                Só referência
               </div>
-              <div class="peso-info" id="peso_riscos">Peso: 0% (Redutor)</div>
+              <div class="peso-info" id="peso_riscos">Peso: 0%</div>
             </div>
           </div>
 
@@ -286,144 +283,16 @@ async def dashboard_index():
 
           <script>
             let dadosAtuais = null;
+            const NOVOS_PESOS = { tecnico: 0.5, ciclos: 0.3, momentum: 0.2, riscos: 0.0 };
 
-            function navegarPara(url) {{
+            function navegarPara(url) {
               window.location.href = url;
-            }}
-
-            async function buscarDados(incluirRisco = true) {{
-              try {{
-                const response = await fetch(`/api/v1/analise-btc?incluir_risco=${{incluirRisco}}`);
-                const dados = await response.json();
-                
-                if (dados.error || dados.status === 'error') {{
-                  throw new Error(dados.erro || 'Erro na API');
-                }}
-                
-                dadosAtuais = dados;
-                atualizarInterface(dados);
-                
-              }} catch (error) {{
-                console.error('Erro ao buscar dados:', error);
-                mostrarErro(error.message);
-              }}
-            }}
-
-            function atualizarInterface(dados) {{
-              const config = dados.configuracao || {{}};
-              const resumo = dados.resumo_blocos || {{}};
-              const versao = dados.versao || "1.0.20";
-              
-              // Atualizar subtitle com novos dados
-              const kelly = dados.kelly_allocation || 'N/A';
-              const acao = dados.acao_recomendada || 'N/A';
-              document.getElementById('subtitle').textContent = 
-                `Sistema v${{versao}} - Kelly: ${{kelly}} | ${{acao}}`;
-              
-              // Atualizar toggle status
-              const toggleStatus = document.getElementById('toggleStatus');
-              const statusInfo = document.getElementById('statusInfo');
-              
-              if (config.incluir_risco) {{
-                toggleStatus.textContent = 'Ativado';
-                
-                const scoreBase = dados.score_base || dados.score_final;
-                const scoreFinal = dados.score_final;
-                const redutor = dados.redutor_risco || 1.0;
-                
-                statusInfo.innerHTML = `
-                  <strong>✅ Redução por Risco ATIVADA</strong><br>
-                  <div style="font-size: 12px; margin-top: 8px; color: #888;">
-                    Score Base: ${scoreBase} | Redutor: ${redutor.toFixed(2)} | Score Final: ${scoreFinal}
-                  </div>
-                  <div class="pesos-info">
-                    📈 Técnico: 50% | 🔄 Ciclo: 30% | ⚡ Momentum: 20% | 🚨 Risco: Redutor ({config.nota_risco or 'Temporariamente 1.0'})
-                  </div>
-              } else {
-                toggleStatus.textContent = 'Desativado';
-                statusInfo.innerHTML = `
-                  <strong>⚠️ Redução por Risco DESATIVADA</strong><br>
-                  <div style="font-size: 12px; margin-top: 8px; color: #888;">
-                    Usando apenas Score Base: ${dados.score_final}
-                  </div>
-                  <div class="pesos-info">
-                    📈 Técnico: 50% | 🔄 Ciclo: 30% | ⚡ Momentum: 20% | 🚨 Risco: Ignorado
-                  </div>
-                `;
-              }
-              
-              // Atualizar scores e gráficos
-              const scoreGeral = Math.round((dados.score_final || 0) * 10);
-              atualizarGrafico('gaugeChart_geral', scoreGeral, 'classificacao_geral', dados.classificacao_geral || 'N/A');
-              
-              // Atualizar blocos individuais com NOVOS PESOS
-              atualizarBloco('tecnico', resumo.tecnico || {}, '50%');
-              atualizarBloco('ciclos', resumo.ciclos || {}, '30%');
-              atualizarBloco('momentum', resumo.momentum || {}, '20%');
-              atualizarBloco('riscos', resumo.riscos || {}, '0% (Redutor)');
             }
 
-            function atualizarBloco(nome, dados, pesoFixo) {
-              const score = Math.round((dados.score_consolidado || 0) * 10);
-              const classificacao = dados.classificacao || 'N/A';
-              const incluido = dados.incluido_no_calculo;
-              
-              atualizarGrafico(`gaugeChart_${nome}`, score, `classificacao_${nome}`, classificacao);
-              
-              // Atualizar peso com os novos valores fixos
-              const pesoElement = document.getElementById(`peso_${nome}`);
-              if (pesoElement) {
-                if (nome === 'tecnico') {
-                  pesoElement.innerHTML = 'Peso: 50% 📈';
-                } else if (nome === 'ciclos') {
-                  pesoElement.innerHTML = 'Peso: 30% 🔄';
-                } else if (nome === 'momentum') {
-                  pesoElement.innerHTML = 'Peso: 20% ⚡';
-                } else if (nome === 'riscos') {
-                  pesoElement.innerHTML = 'Peso: 0% (Redutor)';
-                }
-                pesoElement.style.color = incluido ? '#f7931a' : '#666';
-              }
-            }
-
-            function atualizarGrafico(canvasId, score, classificacaoId, classificacao) {
-              // Atualizar texto
-              const element = document.getElementById(classificacaoId);
-              if (element) {
-                element.textContent = `Score: ${score} - ${classificacao}`;
-                element.classList.remove('loading');
-              }
-              
-              // Renderizar gráfico
-              renderGauge(canvasId, score);
-            }
-
-            function atualizarDados() {
-              const toggle = document.getElementById('toggleRisco');
-              const incluirRisco = toggle.checked; // Agora: checked = incluir redução
-              buscarDados(incluirRisco);
-            }
-
-            function forcarAtualizacao() {
-              const btnForce = document.getElementById('btnForceUpdate');
-              const toggle = document.getElementById('toggleRisco');
-              const incluirRisco = toggle.checked;
-              
-              // Visual feedback
-              btnForce.disabled = true;
-              btnForce.innerHTML = '⏳ Atualizando...';
-              btnForce.style.background = '#666';
-              
-              // Mostrar loading nos gráficos
-              document.getElementById('subtitle').textContent = 'Forçando atualização dos dados v1.0.20...';
-              
-              // Chamar API com force_update=true
-              buscarDadosComForce(incluirRisco);
-            }
-
-            async function buscarDadosComForce(incluirRisco = true) {
+            async function buscarDados(aplicarReducaoRisco = false) {
               try {
-                const response = await fetch(`/api/v1/analise-btc?incluir_risco=${incluirRisco}&force_update=true`);
+                // Sempre buscar SEM risco na nova versão
+                const response = await fetch('/api/v1/analise-btc?incluir_risco=false&force_update=false');
                 const dados = await response.json();
                 
                 if (dados.error || dados.status === 'error') {
@@ -431,36 +300,191 @@ async def dashboard_index():
                 }
                 
                 dadosAtuais = dados;
-                atualizarInterface(dados);
                 
-                // Resetar botão
+                // Calcular score com novos pesos
+                const scoreRecalculado = calcularScoreComNovosPesos(dados, aplicarReducaoRisco);
+                atualizarInterface(scoreRecalculado);
+                
+              } catch (error) {
+                console.error('Erro ao buscar dados:', error);
+                mostrarErro(error.message);
+              }
+            }
+
+            function calcularScoreComNovosPesos(dados, aplicarReducaoRisco) {
+              const blocos = dados.blocos || {};
+              
+              let scoreTotal = 0;
+              let pesoTotal = 0;
+              
+              // Aplicar novos pesos
+              for (const [nomeBloco, peso] of Object.entries(NOVOS_PESOS)) {
+                if (peso > 0 && blocos[nomeBloco]) {
+                  const scoreBloco = blocos[nomeBloco].score_consolidado || 0;
+                  scoreTotal += scoreBloco * peso;
+                  pesoTotal += peso;
+                }
+              }
+              
+              let scoreFinal = pesoTotal > 0 ? scoreTotal / pesoTotal : 0;
+              
+              // Aplicar redução por risco se habilitada
+              let modificadorRisco = 1.0;
+              if (aplicarReducaoRisco && blocos.riscos) {
+                const scoreRisco = blocos.riscos.score_consolidado || 10;
+                // Fórmula: redução maior quando risco for menor
+                modificadorRisco = Math.max(0.7, Math.min(1.0, scoreRisco / 10));
+                scoreFinal *= modificadorRisco;
+              }
+              
+              return {
+                ...dados,
+                score_final: scoreFinal,
+                score_original: scoreTotal / pesoTotal,
+                modificador_risco: modificadorRisco,
+                pesos_aplicados: NOVOS_PESOS,
+                reducao_risco_ativa: aplicarReducaoRisco
+              };
+            }
+
+            function atualizarInterface(dados) {
+              // Atualizar subtitle
+              const kelly = calcularKelly(dados.score_final);
+              const acao = determinarAcao(dados.score_final);
+              document.getElementById('subtitle').textContent = 
+                'Sistema v1.0.20 - Kelly: ' + kelly + ' | ' + acao;
+              
+              // Atualizar toggle status
+              const toggleStatus = document.getElementById('toggleStatus');
+              const statusInfo = document.getElementById('statusInfo');
+              const graficoRiscos = document.getElementById('grafico_riscos');
+              
+              if (dados.reducao_risco_ativa) {
+                toggleStatus.textContent = 'Ativa';
+                statusInfo.innerHTML = '<strong>⚠️ Redução por Risco ATIVA</strong> - Score reduzido em ' + 
+                  ((1 - dados.modificador_risco) * 100).toFixed(0) + '%';
+                graficoRiscos.classList.add('risco-reduzido');
+              } else {
+                toggleStatus.textContent = 'Desabilitada';
+                statusInfo.innerHTML = '<strong>✅ Score SEM redução</strong> - Novos pesos: Técnico 50%, Ciclos 30%, Momentum 20%';
+                graficoRiscos.classList.remove('risco-reduzido');
+              }
+              
+              // Atualizar scores
+              const scoreGeral = Math.round(dados.score_final * 10);
+              const classificacaoGeral = classificarScore(dados.score_final);
+              atualizarGrafico('gaugeChart_geral', scoreGeral, 'classificacao_geral', classificacaoGeral);
+              
+              // Atualizar blocos
+              const blocos = dados.blocos || {};
+              atualizarBloco('tecnico', blocos.tecnico || {}, NOVOS_PESOS.tecnico);
+              atualizarBloco('ciclos', blocos.ciclo || {}, NOVOS_PESOS.ciclos);
+              atualizarBloco('momentum', blocos.momentum || {}, NOVOS_PESOS.momentum);
+              atualizarBloco('riscos', blocos.riscos || {}, NOVOS_PESOS.riscos);
+            }
+
+            function atualizarBloco(nome, dados, peso) {
+              const score = Math.round((dados.score_consolidado || 0) * 10);
+              const classificacao = dados.classificacao_consolidada || 'N/A';
+              const pesoFormatado = (peso * 100).toFixed(0) + '%';
+              
+              atualizarGrafico('gaugeChart_' + nome, score, 'classificacao_' + nome, classificacao);
+              
+              const pesoElement = document.getElementById('peso_' + nome);
+              if (pesoElement) {
+                pesoElement.textContent = 'Peso: ' + pesoFormatado;
+                pesoElement.style.color = peso > 0 ? '#f7931a' : '#666';
+              }
+            }
+
+            function atualizarGrafico(canvasId, score, classificacaoId, classificacao) {
+              const element = document.getElementById(classificacaoId);
+              if (element) {
+                element.textContent = 'Score: ' + score + ' - ' + classificacao;
+                element.classList.remove('loading', 'error');
+              }
+              
+              renderGauge(canvasId, score);
+            }
+
+            function classificarScore(score) {
+              if (score >= 8.0) return "ótimo";
+              if (score >= 6.0) return "bom";
+              if (score >= 4.0) return "neutro";
+              if (score >= 2.0) return "ruim";
+              return "crítico";
+            }
+
+            function calcularKelly(score) {
+              if (score >= 8.0) return "75%";
+              if (score >= 6.0) return "50%";
+              if (score >= 4.0) return "25%";
+              if (score >= 2.0) return "10%";
+              return "0%";
+            }
+
+            function determinarAcao(score) {
+              if (score >= 8.0) return "Aumentar posição";
+              if (score >= 6.0) return "Manter posição";
+              if (score >= 4.0) return "Posição neutra";
+              if (score >= 2.0) return "Reduzir exposição";
+              return "Zerar alavancagem";
+            }
+
+            function atualizarDados() {
+              const toggle = document.getElementById('toggleReducaoRisco');
+              const aplicarReducao = toggle.checked;
+              buscarDados(aplicarReducao);
+            }
+
+            function forcarAtualizacao() {
+              const btnForce = document.getElementById('btnForceUpdate');
+              const toggle = document.getElementById('toggleReducaoRisco');
+              const aplicarReducao = toggle.checked;
+              
+              btnForce.disabled = true;
+              btnForce.innerHTML = '⏳ Atualizando...';
+              
+              document.getElementById('subtitle').textContent = 'Forçando atualização dos dados...';
+              
+              buscarDadosComForce(aplicarReducao);
+            }
+
+            async function buscarDadosComForce(aplicarReducaoRisco = false) {
+              try {
+                const response = await fetch('/api/v1/analise-btc?incluir_risco=false&force_update=true');
+                const dados = await response.json();
+                
+                if (dados.error || dados.status === 'error') {
+                  throw new Error(dados.erro || 'Erro na API');
+                }
+                
+                dadosAtuais = dados;
+                const scoreRecalculado = calcularScoreComNovosPesos(dados, aplicarReducaoRisco);
+                atualizarInterface(scoreRecalculado);
+                
                 const btnForce = document.getElementById('btnForceUpdate');
                 btnForce.disabled = false;
-                btnForce.innerHTML = '🔄 Forçar Atualização';
-                btnForce.style.background = '#f7931a';
+                btnForce.innerHTML = '🔄 Atualizar Dados';
                 
               } catch (error) {
                 console.error('Erro ao forçar atualização:', error);
                 mostrarErro(error.message);
                 
-                // Resetar botão mesmo com erro
                 const btnForce = document.getElementById('btnForceUpdate');
                 btnForce.disabled = false;
                 btnForce.innerHTML = '❌ Erro - Tentar Novamente';
-                btnForce.style.background = '#e53935';
                 
-                // Voltar ao normal após 3s
                 setTimeout(() => {
-                  btnForce.innerHTML = '🔄 Forçar Atualização';
-                  btnForce.style.background = '#f7931a';
+                  btnForce.innerHTML = '🔄 Atualizar Dados';
                 }, 3000);
               }
             }
 
             function mostrarErro(mensagem) {
-              document.getElementById('subtitle').textContent = `Erro v1.0.20: ${mensagem}`;
+              document.getElementById('subtitle').textContent = 'Erro: ' + mensagem;
               document.getElementById('statusInfo').innerHTML = 
-                `<strong>❌ Erro ao carregar dados</strong> - ${mensagem}`;
+                '<strong>❌ Erro ao carregar dados</strong> - ' + mensagem;
             }
 
             function renderGauge(canvasId, score) {
@@ -524,9 +548,8 @@ async def dashboard_index():
                 return; 
               }
               
-              console.log('🚀 Iniciando dashboard v1.0.20 com novos pesos');
-              // Carregar dados iniciais com redução ativada por padrão
-              buscarDados(true);
+              console.log('🚀 Iniciando Dashboard v1.0.20');
+              buscarDados(false); // Inicia sem redução de risco
             }
 
             if (document.readyState === 'loading') {
