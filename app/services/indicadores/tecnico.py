@@ -1,7 +1,8 @@
 # app/services/indicadores/tecnico.py
 
 from datetime import datetime
-from app.services.utils.helpers.postgres import get_dados_tecnico, get_emas_detalhadas
+from app.services.utils.helpers.postgres import get_dados_tecnico
+from app.services.utils.helpers.postgres.tecnico_helper import get_emas_detalhadas
 
 def obter_indicadores():
     """
