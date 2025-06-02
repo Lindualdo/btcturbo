@@ -366,7 +366,7 @@ async def dashboard_index():
                 graficoRiscos.classList.add('risco-reduzido');
               } else {
                 toggleStatus.textContent = 'Desabilitada';
-                statusInfo.innerHTML = '<strong>✅ Score SEM redução</strong> - Novos pesos: Técnico 50%, Ciclos 30%, Momentum 20%';
+                statusInfo.innerHTML = '<strong>✅ Score SEM redução</strong>';
                 graficoRiscos.classList.remove('risco-reduzido');
               }
               
