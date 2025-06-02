@@ -337,7 +337,7 @@ async def dashboard_index():
                     Score Base: ${scoreBase} | Redutor: ${redutor.toFixed(2)} | Score Final: ${scoreFinal}
                   </div>
                   <div class="pesos-info">
-                    📈 Técnico: 50% | 🔄 Ciclo: 30% | ⚡ Momentum: 20% | 🚨 Risco: Redutor (${config.nota_risco || 'Temporariamente 1.0'})
+                    📈 Técnico: 50% | 🔄 Ciclo: 30% | ⚡ Momentum: 20% | 🚨 Risco: Redutor ({config.nota_risco or 'Temporariamente 1.0'})
                   </div>
               } else {
                 toggleStatus.textContent = 'Desativado';
