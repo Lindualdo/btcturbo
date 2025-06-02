@@ -99,12 +99,9 @@ async def dashboard_tecnico():
             <a href="/dashboard/tecnico" class="ativo">Técnica</a>
           </div>
 
-          <!-- Status da API -->
-          <div class="status-api" id="statusApi">
-            <strong>🔄 Conectando API interna...</strong>
-            <div style="font-size: 12px; margin-top: 4px; color: #888;">
-              Endpoint: GET /api/v1/obter-indicadores/tecnico
-            </div>
+          <!-- Alertas Relevantes (só mostra se houver) -->
+          <div class="status-api" id="statusApi" style="display: none;">
+            <!-- Alertas dinâmicos -->
           </div>
           
           <div class="dashboard-grid">
@@ -133,15 +130,6 @@ async def dashboard_tecnico():
               <div id="class_diario" class="classificacao loading">Carregando...</div>
               <div class="info-text">Peso: 30% do total</div>
               <a href="/dashboard/tecnico/detalhes#diario" class="detalhes-btn">🔍 Detalhes 1D</a>
-            </div>
-
-            <!-- Sistema EMAs Legado (fallback) -->
-            <div class="grafico" id="grafico_legado" style="display:none;">
-              <h3>📈 Sistema EMAs</h3>
-              <canvas id="gauge_legado" width="200" height="180"></canvas>
-              <div id="class_legado" class="classificacao loading">Carregando...</div>
-              <div class="info-text">Dados legados</div>
-              <a href="/dashboard/tecnico/detalhes" class="detalhes-btn">📋 Ver Detalhes</a>
             </div>
           </div>
 
