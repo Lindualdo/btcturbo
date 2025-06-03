@@ -89,15 +89,15 @@ Esta documentação técnica define claramente o padrão arquitetural, responsab
 - continuar mostrando o bloco risco para referêicia
 - mostrar a versão atual do sistema de forma dinamica (discreto)
 
-### 1.0.22 -  Página de detalhes da analise ténica
-- criar a págida de detalhes da analise tecnica 
-- incluir os alertas exclusivos deste bloco (alertas na página principal)
-
-### 1.0.23 - Refatorar dash (html) principal e analise.py - arquivo está muito grande
+### 1.0.22 - Refatorar dash (html) principal e analise.py - arquivo está muito grande
 - decompor em arquivos menores - um para cada tarefa específica
 - está complicado para dar manutenção
 - refatorar o arquivo analise.py simplificar o json de saida
 - entender como está o funcionamento completo do dashboard e organizar
+
+### 1.0.23 -  Página de detalhes da analise ténica
+- criar a págida de detalhes da analise tecnica 
+- incluir os alertas exclusivos deste bloco (alertas na página principal)
 
 ### 1.0.24 - sitema de alertas na home dash
 
@@ -115,6 +115,7 @@ Esta documentação técnica define claramente o padrão arquitetural, responsab
 - Crescimento de BTC na carteira (saldo liq. em dolares X preço atual do BTC)
 - o objetivo primcipal do Hold alavancado é aumentar a qtd de BTC em carteira
 
+## Incluir outros indicadoes de anlise tecnica alema das EMAs
 
 ##  coleta de dados - ciclos - demais indicadores
 
@@ -130,7 +131,11 @@ https://github.com/Lindualdo/btcturbo/blob/main/doc/validation-limites-indicador
 * web3
 * APIs
 
+##  coleta de indicadores  - momentum
+
 ---
+
+
 
 ## alertas
 - implementar sistemas de alertas

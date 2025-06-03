@@ -21,7 +21,7 @@ def get_ciclo_data_from_notion() -> Dict:
 
     indicador_map = {
         "mvrv_z-score": "mvrv_z_score",
-        "realized_price": "realized_ratio",
+        "realized_ratio": "realized_ratio",
         "puell_multiple": "puell_multiple"
     }
 
