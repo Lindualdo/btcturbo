@@ -1,4 +1,4 @@
-# app/main.py
+# app/main.py - CORRIGIDO v1.0.21
 
 from fastapi import FastAPI
 from fastapi.templating import Jinja2Templates
@@ -11,18 +11,26 @@ from app.routers import (
     dashboards, dashboard_riscos, dashboard_momentum, dashboard_ciclos, dashboard_tecnico
 )
 
-# Configuração de templates e arquivos estáticos
-templates = Jinja2Templates(directory="app/templates")
-
 app = FastAPI(
     title="BTC Turbo API",
-    description="Sistema de análise de indicadores BTC com Templates",
-    version="1.0.23"
+    description="Sistema de análise de indicadores BTC com Templates Jinja2",
+    version="1.0.21"
 )
 
-# Servir arquivos estáticos (CSS, JS)
-app.mount("/static", StaticFiles(directory="app/templates/static"), name="static")
+# ==========================================
+# CONFIGURAÇÃO ESTÁTICA - CRÍTICO
+# ==========================================
 
+# Verificar se diretório static existe
+static_path = Path("app/templates/static")
+if static_path.exists():
+    app.mount("/static", StaticFiles(directory="app/templates/static"), name="static")
+    print(f"✅ Arquivos estáticos configurados: {static_path}")
+else:
+    print(f"⚠️ AVISO: Diretório static não encontrado em {static_path}")
+
+# Configuração de templates
+templates = Jinja2Templates(directory="app/templates")
 
 # ==========================================
 # ROUTERS DE DADOS (APIs)
@@ -47,9 +55,6 @@ app.include_router(dashboard_momentum.router, prefix="/dashboard", tags=["📱 D
 app.include_router(dashboard_ciclos.router, prefix="/dashboard", tags=["📱 Dashboards"])
 app.include_router(dashboard_tecnico.router, prefix="/dashboard", tags=["📱 Dashboards"])
 
-# TODO: Futuro - Implementar bloco técnico interno (substituir API externa)
-# Quando implementado, remover chamada externa e usar app.services.scores.tecnico
-
 # ==========================================
 # ENDPOINTS BÁSICOS
 # ==========================================
@@ -69,20 +74,52 @@ async def health():
 @app.get("/")
 async def root():
     return {
-        "message": "🚀 BTC Turbo API v1.0.10",
+        "message": "🚀 BTC Turbo API v1.0.21",
         "status": "✅ Online",
-        "architecture": "Router por Bloco",
+        "architecture": "Jinja2 Templates + FastAPI",
         "dashboards": {
             "index": "/dashboard/",
             "funcionando": [
                 "/dashboard/riscos",
-                "/dashboard/momentum",
+                "/dashboard/momentum", 
                 "/dashboard/ciclos",
                 "/dashboard/tecnico"
             ],
             "notas": {
-                "tecnico": "Consumindo API externa temporariamente"
+                "templates": "Sistema refatorado para Jinja2",
+                "static_files": "CSS/JS integrados"
             }
         },
         "apis": "/docs"
     }
+
+# ==========================================
+# STARTUP EVENT (VERIFICAÇÕES)
+# ==========================================
+
+@app.on_event("startup")
+async def startup_event():
+    """Verificações no startup"""
+    print("🚀 BTC Turbo v1.0.21 - Iniciando...")
+    
+    # Verificar estrutura de templates
+    template_path = Path("app/templates")
+    if template_path.exists():
+        print(f"✅ Templates configurados: {template_path}")
+        
+        # Verificar arquivos críticos
+        critical_files = [
+            "base.html",
+            "dashboard_principal.html"
+        ]
+        
+        for file in critical_files:
+            file_path = template_path / file
+            if file_path.exists():
+                print(f"✅ Template encontrado: {file}")
+            else:
+                print(f"❌ Template faltando: {file}")
+    else:
+        print(f"❌ ERRO: Diretório templates não encontrado")
+    
+    print("🎯 Sistema iniciado - Dashboard disponível em /dashboard/")
