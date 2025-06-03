@@ -1,4 +1,4 @@
-# BTC TURBO - v1.0.21
+# BTC TURBO - v1.0.23
 
 ## 🎯 Objetivo da Documentação
 
@@ -60,11 +60,11 @@ Esta documentação técnica define claramente o padrão arquitetural, responsab
 
 - coleta e MVRV
 
-## 1.0.18 -  Fix - problema no forçar update do dash principal - feito
+## 1.0.18 -  Fix - problema no forçar update do dash principal - feito - 01/06
 
 - Botão atualizar não estava funcionando, estava sempre usando o cach
 
-## 1.0.19 -  Coletar dados EMAs e calcular alinhamento e posição do preço - feito
+## 1.0.19 -  Coletar dados EMAs e calcular alinhamento e posição do preço - feito - 01/06
 
 - Estavamos usando API externa para calcular o score e classificação
 - rotina diferente dos demais blocos porque precisa calcular internamente o indicador, não existe no mercado
@@ -76,12 +76,12 @@ Esta documentação técnica define claramente o padrão arquitetural, responsab
 
 ## Ajustar o dash 
 
-### 1.0.20 - Bloco analise tecnica - feito
+### 1.0.20 - Bloco analise tecnica - feito - 02/06
 - usar api interna desenvolvida na versão 1.0.19 - obter-indicadore{tenico}
 - incluir link nos gráficos para mostrar o detalhe (posição das emas,alertas, e dados relevantes)
 - mostrar a versão atual do sistema de forma dinamica (discreto)
 
-### 1.0.21 - Bloco geral (home) - feito
+### 1.0.21 - Bloco geral (home) - feito -02/06
 - usar novos pesos (tecnico 50% - ciclo 30% - momentum - 20%)
 - não iremos mais considerar o risco no score final (vamos aplicar um redutor do score geral conforme o risco)
 - teremos um botão para ver o score com a redução do risco ou sem a redução
@@ -89,30 +89,38 @@ Esta documentação técnica define claramente o padrão arquitetural, responsab
 - continuar mostrando o bloco risco para referêicia
 - mostrar a versão atual do sistema de forma dinamica (discreto)
 
-### 1.0.22  - Importar indicadores do Notion (ciclos e momentum) - Feito
+### 1.0.22  - Importar indicadores do Notion (ciclos e momentum) - Feito - 03/06
 - Os indicadores são coletados manualmente e gravados no Notion
 - o sistema importa esses dados /coletar-indicadores/{bloco}
 
-### 1.0.23 - Refatorar dash (html) principal e analise.py - arquivo está muito grande
+### 1.0.23 - Refatorar dash (html) principal e analise.py - arquivo está muito grande - feito - 03/06
 - decompor em arquivos menores - um para cada tarefa específica
 - está complicado para dar manutenção
 - refatorar o arquivo analise.py simplificar o json de saida
 - entender como está o funcionamento completo do dashboard e organizar
 
-### 1.0.24 -  Página de detalhes da analise ténica
+### 1.0.24 - Otimizar o refactore do dashboar
+
+- o refactore foi feito e já está modularizado
+- reduziu muito o tamanho do arquivo dashboard.py (router home) que estava com mais de 500 linhas agora reduziu para 87
+- o arquivo /template/dashboard_principal.html entá com mais de 300 linhas, ainda é muito grande
+- o arquivo /template/static/js/dashboard.js está complexo demais, não deveria... tem fuções lá que fazem calculos que já vem pronto na api analise-btc consulida pelo arquivo analise.py e pela pagina principal
+
+
+### 1.0.25 -  Página de detalhes da analise ténica
 - criar a págida de detalhes da analise tecnica 
 - incluir os alertas exclusivos deste bloco (alertas na página principal)
 
-### 1.0.25 - sitema de alertas na home dash
+### 1.0.26 - sitema de alertas na home dash
 
-### 1.0.26 - Criar outro indicador de risco (Alavancagem atual X alavancagem permitida Kelly)
+### 1.0.27 - Criar outro indicador de risco (Alavancagem atual X alavancagem permitida Kelly)
 - escala para aderencia, quanto mais aderente ao Kelly, maior pontuação
 - definir peso em relação aos outros existentes
 
-### 1.0.27 - Criar sistema de penalidade do score com base no score de risco
+### 1.0.28 - Criar sistema de penalidade do score com base no score de risco
 - o risco, sempre pode retirar pontos do score geral, nunca acrescentar
 
-### 1.0.28 - Criar dash com graficos de linhas para monitorar disciplina no Risco e evolução financeira
+### 1.0.29 - Criar dash com graficos de linhas para monitorar disciplina no Risco e evolução financeira
 - Health factore
 - Distancia para liuquidação (percentual)
 - Alavancagem
