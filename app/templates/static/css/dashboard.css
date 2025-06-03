@@ -1,5 +1,5 @@
 /* ==========================================
-   BTC TURBO - DASHBOARD CSS v1.0.21
+   BTC TURBO - DASHBOARD CSS v1.0.21 SIMPLES
    ========================================== */
 
 /* Painel de Configuração */
@@ -98,4 +98,14 @@ input:checked + .slider:before {
     background: #666; 
     cursor: not-allowed; 
     transform: none;
+}
+
+/* Status */
+.status-info {
+    text-align: center;
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    background: rgba(22, 27, 34, 0.7);
+    border-radius: 6px;
+    color: #fff;
 }

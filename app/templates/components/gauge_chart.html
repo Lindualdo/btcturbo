@@ -1,6 +1,6 @@
-<!-- Componente Gauge Chart -->
+<!-- Componente Gauge Chart Simples -->
 <div class="grafico {% if gauge.clickable %}clicavel{% endif %} {% if gauge.is_main %}principal{% endif %} {% if gauge.is_reference %}risco-reduzido{% endif %}" 
-     {% if gauge.clickable and gauge.url %}onclick="Dashboard.navegarPara('{{ gauge.url }}')"{% endif %}>
+     {% if gauge.clickable and gauge.url %}onclick="window.location.href='{{ gauge.url }}'"{% endif %}>
     
     <h3>{{ gauge.title }}</h3>
     

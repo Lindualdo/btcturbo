@@ -1,47 +1,308 @@
 {% extends "base.html" %}
 
 {% block title %}BTC Turbo - Dashboard Principal v1.0.21{% endblock %}
-
 {% block page_title %}🚀 BTC Turbo - Dashboard Principal{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', path='css/dashboard.css') }}">
+<style>
+.config-container {
+    display: flex; justify-content: center; align-items: center; gap: 1rem;
+    margin-bottom: 2rem; padding: 1rem; background: #161b22; border-radius: 8px;
+    max-width: 800px; margin-left: auto; margin-right: auto; flex-wrap: wrap;
+}
+.config-section { display: flex; align-items: center; gap: 0.5rem; }
+.toggle-switch { position: relative; display: inline-block; width: 50px; height: 28px; }
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.slider {
+    position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #666; transition: .4s; border-radius: 28px;
+}
+.slider:before {
+    position: absolute; content: ""; height: 22px; width: 22px; left: 3px; bottom: 3px;
+    background-color: white; transition: .4s; border-radius: 50%;
+}
+input:checked + .slider { background-color: #f7931a; }
+input:checked + .slider:before { transform: translateX(22px); }
+.toggle-label { color: #fff; font-weight: 600; font-size: clamp(12px, 2vw, 14px); }
+.btn-update {
+    background: #f7931a; color: #000; border: none; border-radius: 6px;
+    padding: 8px 16px; cursor: pointer; font-weight: 600; font-size: 12px;
+    transition: all 0.3s ease;
+}
+.btn-update:hover { background: #e8851a; transform: translateY(-1px); }
+.btn-update:disabled { background: #666; cursor: not-allowed; transform: none; }
+</style>
 {% endblock %}
 
 {% block content %}
-<!-- Painel de Controle -->
 <div class="config-container">
     <div class="config-section">
         <span class="toggle-label">Redução por Risco:</span>
         <label class="toggle-switch">
-            <input type="checkbox" id="toggleReducaoRisco" onchange="Dashboard.atualizarDados()">
+            <input type="checkbox" id="toggleReducaoRisco" onchange="carregarDados()">
             <span class="slider"></span>
         </label>
         <span class="toggle-label" id="toggleStatus">Desabilitada</span>
     </div>
     
-    <button id="btnForceUpdate" onclick="Dashboard.forcarAtualizacao()" class="btn-update">
+    <button id="btnForceUpdate" onclick="forcarUpdate()" class="btn-update">
         🔄 Atualizar Dados
     </button>
 </div>
 
-<!-- Status do Sistema -->
 <div class="status-info" id="statusInfo">
-    <strong>⏳ Carregando configuração...</strong>
+    <strong>⏳ Carregando dados...</strong>
 </div>
 
-<!-- Grid de Gráficos -->
-<div class="dashboard-grid">    
+<div class="dashboard-grid">
     {% for gauge in gauges %}
-        {% include "components/gauge_chart.html" %}
+    <div class="grafico {% if gauge.clickable %}clicavel{% endif %} {% if gauge.is_main %}principal{% endif %}" 
+         {% if gauge.clickable and gauge.url %}onclick="window.location.href='{{ gauge.url }}'"{% endif %}>
+        
+        <h3>{{ gauge.title }}</h3>
+        <canvas id="gaugeChart_{{ gauge.id }}" width="200" height="180"></canvas>
+        
+        <div id="classificacao_{{ gauge.id }}" class="classificacao loading">
+            Carregando...
+        </div>
+        
+        {% if gauge.info %}
+        <div class="info-adicional">{{ gauge.info }}</div>
+        {% endif %}
+        
+        {% if gauge.peso is defined %}
+        <div class="peso-info">Peso: {{ gauge.peso }}%</div>
+        {% endif %}
+        
+        {% if gauge.clickable and gauge.url %}
+        <a href="{{ gauge.url }}" class="detalhes-btn">🔍 Ver Detalhes</a>
+        {% endif %}
+    </div>
     {% endfor %}
 </div>
 {% endblock %}
 
 {% block scripts %}
 <script>
-    // Configuração global
-    window.DASHBOARD_CONFIG = {{ config | tojson }};
+// ==========================================
+// DASHBOARD - APENAS CARREGAR E EXIBIR
+// ==========================================
+
+const API_URL = '{{ config.api_endpoint }}';
+
+// CARREGAR DADOS DA API
+async function carregarDados() {
+    try {
+        document.getElementById('statusInfo').innerHTML = '<strong>🔄 Carregando dados...</strong>';
+        
+        // Buscar dados da API
+        const response = await fetch(API_URL);
+        const dados = await response.json();
+        
+        console.log('📊 Dados recebidos:', dados);
+        
+        if (dados.error) {
+            throw new Error(dados.erro || 'Erro na API');
+        }
+        
+        // EXIBIR DADOS (sem calcular nada)
+        exibirDados(dados);
+        
+    } catch (error) {
+        console.error('❌ Erro:', error);
+        document.getElementById('statusInfo').innerHTML = '<strong>❌ Erro: ' + error.message + '</strong>';
+    }
+}
+
+// EXIBIR DADOS NO HTML
+function exibirDados(dados) {
+    console.log('🖥️ Exibindo dados...');
+    
+    // 1. SCORE GERAL (direto da API)
+    const scoreGeral = Math.round(dados.score_final * 10);
+    const classificacaoGeral = dados.classificacao;
+    exibirGrafico('geral', scoreGeral, classificacaoGeral);
+    
+    // 2. BLOCOS INDIVIDUAIS (direto da API)
+    const blocos = dados.blocos || {};
+    
+    for (const [nome, dadosBloco] of Object.entries(blocos)) {
+        if (dadosBloco && dadosBloco.score_consolidado !== undefined) {
+            const score = Math.round(dadosBloco.score_consolidado * 10);
+            const classificacao = dadosBloco.classificacao_consolidada;
+            
+            // Mapear nome da API para ID do gráfico
+            let graficoId = nome;
+            if (nome === 'tecnicos') graficoId = 'tecnico';
+            if (nome === 'ciclo') graficoId = 'ciclos';
+            if (nome === 'risco') graficoId = 'riscos';
+            
+            exibirGrafico(graficoId, score, classificacao);
+            console.log(`✅ ${graficoId}: ${score} (${classificacao})`);
+        }
+    }
+    
+    // 3. STATUS E INFORMAÇÕES
+    document.getElementById('statusInfo').innerHTML = '<strong>✅ Dados carregados - Score: ' + scoreGeral + '</strong>';
+    
+    // 4. ATUALIZAR SUBTITLE
+    const subtitle = document.getElementById('subtitle');
+    if (subtitle && dados.kelly && dados.acao) {
+        subtitle.textContent = `Sistema v1.0.21 - Kelly: ${dados.kelly} | ${dados.acao}`;
+    }
+}
+
+// EXIBIR GRÁFICO
+function exibirGrafico(id, score, classificacao) {
+    // Atualizar texto
+    const textElement = document.getElementById('classificacao_' + id);
+    if (textElement) {
+        textElement.textContent = `Score: ${score} - ${classificacao}`;
+        textElement.classList.remove('loading');
+    }
+    
+    // Renderizar gráfico gauge
+    renderizarGauge('gaugeChart_' + id, score);
+}
+
+// FORÇAR ATUALIZAÇÃO
+async function forcarUpdate() {
+    try {
+        const btn = document.getElementById('btnForceUpdate');
+        btn.disabled = true;
+        btn.innerHTML = '⏳ Atualizando...';
+        
+        const response = await fetch(API_URL + '?force_update=true');
+        const dados = await response.json();
+        
+        if (dados.error) throw new Error(dados.erro);
+        
+        exibirDados(dados);
+        
+        btn.disabled = false;
+        btn.innerHTML = '🔄 Atualizar Dados';
+        
+    } catch (error) {
+        console.error('❌ Erro:', error);
+        document.getElementById('btnForceUpdate').innerHTML = '❌ Erro';
+        setTimeout(() => {
+            document.getElementById('btnForceUpdate').innerHTML = '🔄 Atualizar Dados';
+            document.getElementById('btnForceUpdate').disabled = false;
+        }, 3000);
+    }
+}
+
+// RENDERIZAR GRÁFICO GAUGE
+function renderizarGauge(canvasId, score) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    
+    // Destruir gráfico anterior se existir
+    const existingChart = Chart.getChart(canvas);
+    if (existingChart) existingChart.destroy();
+
+    try {
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: { 
+                datasets: [{ 
+                    data: [100], 
+                    backgroundColor: ['transparent'], 
+                    borderWidth: 0, 
+                    cutout: '80%' 
+                }] 
+            },
+            options: {
+                responsive: false,
+                rotation: -Math.PI,
+                circumference: Math.PI,
+                plugins: { 
+                    tooltip: { enabled: false }, 
+                    legend: { display: false } 
+                }
+            },
+            plugins: [{
+                afterDraw: function(chart) {
+                    const ctx = chart.ctx;
+                    const cx = chart.width / 2;
+                    const cy = chart.height - 42;
+                    const radius = chart.width / 2.4;
+                    const angle = (score / 100) * Math.PI;
+
+                    ctx.save();
+
+                    // Desenhar arcos coloridos de fundo
+                    function desenharArco(inicio, fim, cor) {
+                        ctx.beginPath();
+                        ctx.arc(cx, cy, radius, inicio, fim);
+                        ctx.strokeStyle = cor;
+                        ctx.lineWidth = 16;
+                        ctx.stroke();
+                    }
+
+                    desenharArco(Math.PI, Math.PI * 1.2, "#e53935");
+                    desenharArco(Math.PI * 1.2, Math.PI * 1.4, "#f57c00");
+                    desenharArco(Math.PI * 1.4, Math.PI * 1.6, "#fbc02d");
+                    desenharArco(Math.PI * 1.6, Math.PI * 1.8, "#9acb82");
+                    desenharArco(Math.PI * 1.8, Math.PI * 2, "#4caf50");
+
+                    // Desenhar ponteiro
+                    const ponteiroAngulo = Math.PI + angle;
+                    const ponteiroTamanho = radius * 0.9;
+                    
+                    ctx.beginPath();
+                    ctx.moveTo(
+                        cx + ponteiroTamanho * Math.cos(ponteiroAngulo),
+                        cy + ponteiroTamanho * Math.sin(ponteiroAngulo)
+                    );
+                    ctx.lineTo(
+                        cx + 6 * Math.cos(ponteiroAngulo + Math.PI / 2),
+                        cy + 6 * Math.sin(ponteiroAngulo + Math.PI / 2)
+                    );
+                    ctx.lineTo(
+                        cx + 6 * Math.cos(ponteiroAngulo - Math.PI / 2),
+                        cy + 6 * Math.sin(ponteiroAngulo - Math.PI / 2)
+                    );
+                    ctx.fillStyle = "#444";
+                    ctx.fill();
+
+                    // Centro do ponteiro
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, 6, 0, 2 * Math.PI);
+                    ctx.fillStyle = "#888";
+                    ctx.fill();
+
+                    ctx.restore();
+                }
+            }]
+        });
+    } catch (error) {
+        console.error('❌ Erro ao renderizar gráfico:', canvasId, error);
+    }
+}
+
+// INICIALIZAR QUANDO DOM CARREGAR
+function inicializar() {
+    console.log('🚀 Dashboard Ultra Simples iniciando...');
+    
+    // Verificar se Chart.js carregou
+    if (typeof Chart === 'undefined') {
+        console.log('⏳ Aguardando Chart.js...');
+        setTimeout(inicializar, 100);
+        return;
+    }
+    
+    console.log('✅ Chart.js carregado, buscando dados...');
+    carregarDados();
+}
+
+// AUTO-INICIALIZAR
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', inicializar);
+} else {
+    inicializar();
+}
 </script>
-<script src="{{ url_for('static', path='dashboard_principal.js') }}"></script>
 {% endblock %}
