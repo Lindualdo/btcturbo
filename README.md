@@ -89,33 +89,37 @@ Esta documentação técnica define claramente o padrão arquitetural, responsab
 - continuar mostrando o bloco risco para referêicia
 - mostrar a versão atual do sistema de forma dinamica (discreto)
 
-### 1.0.22 - Refatorar dash (html) principal e analise.py - arquivo está muito grande
+### 1.0.22  - Importar indicadores do Notion (ciclos e momentum) - Feito
+- Os indicadores são coletados manualmente e gravados no Notion
+- o sistema importa esses dados /coletar-indicadores/{bloco}
+
+### 1.0.23 - Refatorar dash (html) principal e analise.py - arquivo está muito grande
 - decompor em arquivos menores - um para cada tarefa específica
 - está complicado para dar manutenção
 - refatorar o arquivo analise.py simplificar o json de saida
 - entender como está o funcionamento completo do dashboard e organizar
 
-### 1.0.23 -  Página de detalhes da analise ténica
+### 1.0.24 -  Página de detalhes da analise ténica
 - criar a págida de detalhes da analise tecnica 
 - incluir os alertas exclusivos deste bloco (alertas na página principal)
 
-### 1.0.24 - sitema de alertas na home dash
+### 1.0.25 - sitema de alertas na home dash
 
-### 1.0.25 - Criar outro indicador de risco (Alavancagem atual X alavancagem permitida Kelly)
+### 1.0.26 - Criar outro indicador de risco (Alavancagem atual X alavancagem permitida Kelly)
 - escala para aderencia, quanto mais aderente ao Kelly, maior pontuação
 - definir peso em relação aos outros existentes
 
-### 1.0.26 - Criar sistema de penalidade do score com base no score de risco
+### 1.0.27 - Criar sistema de penalidade do score com base no score de risco
 - o risco, sempre pode retirar pontos do score geral, nunca acrescentar
 
-### 1.0.27 - Criar dash com graficos de linhas para monitorar disciplina no Risco e evolução financeira
+### 1.0.28 - Criar dash com graficos de linhas para monitorar disciplina no Risco e evolução financeira
 - Health factore
 - Distancia para liuquidação (percentual)
 - Alavancagem
 - Crescimento de BTC na carteira (saldo liq. em dolares X preço atual do BTC)
 - o objetivo primcipal do Hold alavancado é aumentar a qtd de BTC em carteira
 
-## Incluir outros indicadoes de anlise tecnica alema das EMAs
+## Incluir outros indicadoes de anlise tecnica alem das EMAs
 
 ##  coleta de dados - ciclos - demais indicadores
 
