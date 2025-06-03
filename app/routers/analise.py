@@ -1,4 +1,4 @@
-# app/routers/analise.py - v1.0.21 - JSON SIMPLIFICADO
+# app/routers/analise.py - CORRIGIDO v1.0.21 - Dashboard Funcional
 
 from fastapi import APIRouter, Query
 from datetime import datetime
@@ -70,11 +70,14 @@ def simplificar_alertas(alertas_raw: list) -> list:
     return alertas_simples[:5]  # Máximo 5 alertas
 
 def extrair_dados_bloco(dados_bloco: dict, nome_bloco: str) -> dict:
-    """Extrai apenas dados essenciais de cada bloco"""
+    """
+    CORRIGIDO: Extrai dados com campos compatíveis com Dashboard
+    Dashboard espera: score_consolidado e classificacao_consolidada
+    """
     if dados_bloco.get("status") != "success":
         return {
-            "score": 0,
-            "classificacao": "erro",
+            "score_consolidado": 0,           # ← CORRIGIDO: era "score"
+            "classificacao_consolidada": "erro",  # ← CORRIGIDO: era "classificacao"
             "peso": PESOS_BLOCOS.get(nome_bloco, 0),
             "status": "erro"
         }
@@ -83,8 +86,8 @@ def extrair_dados_bloco(dados_bloco: dict, nome_bloco: str) -> dict:
     classificacao = classificar_score(score)
     
     resultado = {
-        "score": round(score, 1),
-        "classificacao": classificacao,
+        "score_consolidado": round(score, 1),     # ← CORRIGIDO: Dashboard compatível
+        "classificacao_consolidada": classificacao,  # ← CORRIGIDO: Dashboard compatível
         "peso": PESOS_BLOCOS.get(nome_bloco, 0),
         "status": "ok"
     }
@@ -101,39 +104,46 @@ async def analise_btc_simplificada(
     force_update: bool = Query(False, description="Forçar recálculo ignorando cache")
 ):
     """
-    API consolidada v1.0.21 - JSON SIMPLIFICADO
+    API consolidada v1.0.21 - CORRIGIDA para Dashboard
     
-    Mudanças:
-    - JSON 85% menor
-    - Apenas dados essenciais para dashboard
-    - Cache otimizado
-    - Response mais rápido
+    Correções:
+    - Campos compatíveis: score_consolidado, classificacao_consolidada
+    - Cache retorna blocos corretamente
+    - Cálculo de score usando campos corretos
     """
     try:
-        logging.info(f"🔄 Análise BTC v1.0.21 SIMPLIFICADA - force_update={force_update}")
+        logging.info(f"🔄 Análise BTC v1.0.21 CORRIGIDA - force_update={force_update}")
         
-        # 1. VERIFICAR CACHE (se não forçar update)
+        # 1. VERIFICAR CACHE CORRIGIDO (se não forçar update)
         if not force_update:
-            cache_data = get_score_cache_diario(incluir_risco=False)  # Sempre False na v1.0.21
+            cache_data = get_score_cache_diario(incluir_risco=False)
             if cache_data:
                 logging.info(f"✅ Cache encontrado - Score: {cache_data['score_final']}")
                 
-                # Resposta simplificada do cache
-                return {
-                    "timestamp": cache_data['timestamp'].isoformat(),
-                    "score_final": float(cache_data['score_final']),
-                    "classificacao": cache_data['classificacao_geral'],
-                    "kelly": cache_data['kelly_allocation'],
-                    "acao": cache_data['acao_recomendada'],
-                    "alertas": ["Dados em cache - use force_update para atualizar"],
-                    "blocos": cache_data['dados_completos'].get('blocos_simples', {}) if cache_data['dados_completos'] else {},
-                    "config": {
-                        "versao": "1.0.21",
-                        "incluir_risco": False,
-                        "fonte": "cache",
-                        "data_cache": cache_data['data'].isoformat()
+                # CORRIGIDO: Verificar se dados_completos existe e tem blocos
+                dados_cache = cache_data.get('dados_completos', {})
+                blocos_cache = dados_cache.get('blocos_simples', {})
+                
+                # Se cache não tem blocos, forçar recálculo
+                if not blocos_cache:
+                    logging.warning("⚠️ Cache sem blocos - recalculando...")
+                else:
+                    # CORRIGIDO: Retornar cache com blocos
+                    return {
+                        "timestamp": cache_data['timestamp'].isoformat(),
+                        "score_final": float(cache_data['score_final']),
+                        "classificacao": cache_data['classificacao_geral'],
+                        "kelly": cache_data['kelly_allocation'],
+                        "acao": cache_data['acao_recomendada'],
+                        "alertas": dados_cache.get('alertas_cache', []),
+                        "blocos": blocos_cache,  # ← CORRIGIDO: Usar blocos do cache
+                        "config": {
+                            "versao": "1.0.21",
+                            "incluir_risco": False,
+                            "fonte": "cache",
+                            "data_cache": cache_data['data'].isoformat()
+                        }
                     }
-                }
         
         # 2. CALCULAR DADOS FRESCOS
         logging.info("🔄 Calculando dados frescos...")
@@ -146,7 +156,7 @@ async def analise_btc_simplificada(
             "riscos": riscos.calcular_score()
         }
         
-        # 3. CALCULAR SCORE FINAL COM NOVOS PESOS
+        # 3. CALCULAR SCORE FINAL CORRIGIDO
         score_total = 0
         peso_total = 0
         blocos_simplificados = {}
@@ -158,7 +168,8 @@ async def analise_btc_simplificada(
             # Somar apenas blocos com peso > 0
             if bloco_simples["peso"] > 0 and bloco_simples["status"] == "ok":
                 peso_normalizado = bloco_simples["peso"] / 100  # Converter % para decimal
-                score_total += bloco_simples["score"] * peso_normalizado
+                # CORRIGIDO: Usar score_consolidado em vez de score
+                score_total += bloco_simples["score_consolidado"] * peso_normalizado
                 peso_total += peso_normalizado
         
         # Score final
@@ -176,7 +187,7 @@ async def analise_btc_simplificada(
             logging.error(f"Erro alertas: {str(e)}")
             alertas_simples = ["Sistema de alertas indisponível"]
         
-        # 5. RESPOSTA SIMPLIFICADA
+        # 5. RESPOSTA CORRIGIDA
         resposta_final = {
             "timestamp": datetime.utcnow().isoformat(),
             "score_final": score_final,
@@ -184,7 +195,7 @@ async def analise_btc_simplificada(
             "kelly": kelly_final,
             "acao": acao_final,
             "alertas": alertas_simples,
-            "blocos": blocos_simplificados,
+            "blocos": blocos_simplificados,  # ← CORRIGIDO: Sempre retorna blocos
             "config": {
                 "versao": "1.0.21",
                 "incluir_risco": False,
@@ -193,11 +204,11 @@ async def analise_btc_simplificada(
             }
         }
         
-        # 6. SALVAR CACHE SIMPLIFICADO
+        # 6. SALVAR CACHE CORRIGIDO
         try:
-            # Dados para cache (apenas essenciais)
+            # CORRIGIDO: Dados para cache com blocos completos
             dados_cache = {
-                "blocos_simples": blocos_simplificados,
+                "blocos_simples": blocos_simplificados,  # ← CORRIGIDO: Salvar blocos no cache
                 "alertas_cache": alertas_simples
             }
             
@@ -207,14 +218,14 @@ async def analise_btc_simplificada(
                 kelly_allocation=kelly_final,
                 acao_recomendada=acao_final,
                 pesos_dinamicos={"versao": "1.0.21", "simplificado": True},
-                dados_completos=dados_cache,
+                dados_completos=dados_cache,  # ← CORRIGIDO: Incluir blocos no cache
                 incluir_risco=False
             )
-            logging.info(f"✅ Cache simplificado salvo - Score: {score_final}")
+            logging.info(f"✅ Cache corrigido salvo - Score: {score_final}")
         except Exception as e:
             logging.error(f"⚠️ Falha ao salvar cache: {str(e)}")
         
-        logging.info(f"✅ Análise v1.0.21 concluída - Score: {score_final} ({classificacao_final})")
+        logging.info(f"✅ Análise v1.0.21 CORRIGIDA concluída - Score: {score_final} ({classificacao_final})")
         return resposta_final
         
     except Exception as e:
@@ -226,7 +237,7 @@ async def analise_btc_simplificada(
             "kelly": "0%",
             "acao": "Sistema indisponível",
             "alertas": [f"Erro: {str(e)}"],
-            "blocos": {},
+            "blocos": {},  # ← Vazio em caso de erro
             "config": {
                 "versao": "1.0.21",
                 "incluir_risco": False,
