@@ -1,7 +1,7 @@
-# app/routers/analise.py - v1.0.20 - NOVOS PESOS + TOGGLE RISCO
+# app/routers/analise.py - v1.0.21 - JSON SIMPLIFICADO
 
 from fastapi import APIRouter, Query
-from datetime import datetime, date
+from datetime import datetime
 from app.services.scores import ciclos, momentum, riscos, tecnico
 from app.services import alertas as alertas_service
 from app.services.utils.helpers.postgres.scores_consolidados_helper import (
@@ -11,246 +11,226 @@ import logging
 
 router = APIRouter()
 
+# CONFIGURAÇÃO DOS PESOS v1.0.21
+PESOS_BLOCOS = {
+    "tecnico": 50,
+    "ciclos": 30, 
+    "momentum": 20,
+    "riscos": 0  # Apenas referência
+}
+
+def classificar_score(score: float) -> str:
+    """Classificação simplificada"""
+    if score >= 8.0: return "ótimo"
+    elif score >= 6.0: return "bom"
+    elif score >= 4.0: return "neutro"
+    elif score >= 2.0: return "ruim"
+    else: return "crítico"
+
+def calcular_kelly(score: float) -> str:
+    """Kelly Criterion simplificado"""
+    if score >= 8.0: return "75%"
+    elif score >= 6.0: return "50%" 
+    elif score >= 4.0: return "25%"
+    elif score >= 2.0: return "10%"
+    else: return "0%"
+
+def determinar_acao(score: float) -> str:
+    """Ação recomendada simplificada"""
+    if score >= 8.0: return "Aumentar posição"
+    elif score >= 6.0: return "Manter posição"
+    elif score >= 4.0: return "Posição neutra"
+    elif score >= 2.0: return "Reduzir exposição"
+    else: return "Zerar alavancagem"
+
+def simplificar_alertas(alertas_raw: list) -> list:
+    """Simplifica alertas para dashboard"""
+    alertas_simples = []
+    
+    for alerta_obj in alertas_raw:
+        if isinstance(alerta_obj, dict):
+            msg = alerta_obj.get("mensagem", "")
+        else:
+            msg = str(alerta_obj)
+        
+        # Simplificar mensagens longas
+        if "Liquidação próxima" in msg:
+            alertas_simples.append("Liquidação próxima (HF < 1.15)")
+        elif "Funding Rate" in msg and "0.1%" in msg:
+            alertas_simples.append("Funding Rate alto (0.1%)")
+        elif "EMA200" in msg:
+            alertas_simples.append("Mudança de tendência detectada")
+        elif "Volatilidade" in msg:
+            alertas_simples.append("Volatilidade elevada")
+        else:
+            # Manter alertas curtos apenas
+            if len(msg) < 50:
+                alertas_simples.append(msg)
+    
+    return alertas_simples[:5]  # Máximo 5 alertas
+
+def extrair_dados_bloco(dados_bloco: dict, nome_bloco: str) -> dict:
+    """Extrai apenas dados essenciais de cada bloco"""
+    if dados_bloco.get("status") != "success":
+        return {
+            "score": 0,
+            "classificacao": "erro",
+            "peso": PESOS_BLOCOS.get(nome_bloco, 0),
+            "status": "erro"
+        }
+    
+    score = dados_bloco.get("score_consolidado", 0)
+    classificacao = classificar_score(score)
+    
+    resultado = {
+        "score": round(score, 1),
+        "classificacao": classificacao,
+        "peso": PESOS_BLOCOS.get(nome_bloco, 0),
+        "status": "ok"
+    }
+    
+    # Adicionar nota específica para riscos
+    if nome_bloco == "riscos":
+        resultado["nota"] = "Apenas referência"
+    
+    return resultado
+
 @router.get("/analise-btc")
-async def analise_btc(
-    incluir_risco: bool = Query(True, description="Incluir redução por risco no cálculo do score final"),
+async def analise_btc_simplificada(
+    incluir_risco: bool = Query(False, description="Não usado na v1.0.21 - mantido para compatibilidade"),
     force_update: bool = Query(False, description="Forçar recálculo ignorando cache")
 ):
-    """API consolidada v1.0.20 - NOVOS PESOS: Técnico 50% | Ciclo 30% | Momentum 20% | Risco como redutor"""
+    """
+    API consolidada v1.0.21 - JSON SIMPLIFICADO
+    
+    Mudanças:
+    - JSON 85% menor
+    - Apenas dados essenciais para dashboard
+    - Cache otimizado
+    - Response mais rápido
+    """
     try:
-        logging.info(f"🔄 Análise BTC v1.0.20 - incluir_risco={incluir_risco}, force_update={force_update}")
+        logging.info(f"🔄 Análise BTC v1.0.21 SIMPLIFICADA - force_update={force_update}")
         
-        # 1. VERIFICAR CACHE PRIMEIRO (se não forçar update)
+        # 1. VERIFICAR CACHE (se não forçar update)
         if not force_update:
-            cache_data = get_score_cache_diario(incluir_risco=incluir_risco)
+            cache_data = get_score_cache_diario(incluir_risco=False)  # Sempre False na v1.0.21
             if cache_data:
-                logging.info(f"✅ Usando cache - Score: {cache_data['score_final']}")
+                logging.info(f"✅ Cache encontrado - Score: {cache_data['score_final']}")
                 
-                # Montar resposta do cache
-                resposta_cache = {
+                # Resposta simplificada do cache
+                return {
                     "timestamp": cache_data['timestamp'].isoformat(),
-                    "configuracao": {
-                        "incluir_risco": cache_data['incluir_risco'],
-                        "fonte": "cache",
-                        "data_cache": cache_data['data'].isoformat(),
-                        "nota": f"Dados em cache para {cache_data['data']} - Use force_update=true para recalcular"
-                    },
                     "score_final": float(cache_data['score_final']),
-                    "score_ajustado": float(cache_data['score_final']),
-                    "modificador_volatilidade": 1.0,
-                    "classificacao_geral": cache_data['classificacao_geral'],
-                    "kelly_allocation": cache_data['kelly_allocation'],
-                    "acao_recomendada": cache_data['acao_recomendada'],
-                    "alertas_ativos": ["Cache ativo - Use force_update para dados atuais"],
-                    "pesos_dinamicos": cache_data['pesos_dinamicos'] or {},
-                    "blocos": cache_data['dados_completos'].get('blocos', {}) if cache_data['dados_completos'] else {},
-                    "resumo_blocos": cache_data['dados_completos'].get('resumo_blocos', {}) if cache_data['dados_completos'] else {}
+                    "classificacao": cache_data['classificacao_geral'],
+                    "kelly": cache_data['kelly_allocation'],
+                    "acao": cache_data['acao_recomendada'],
+                    "alertas": ["Dados em cache - use force_update para atualizar"],
+                    "blocos": cache_data['dados_completos'].get('blocos_simples', {}) if cache_data['dados_completos'] else {},
+                    "config": {
+                        "versao": "1.0.21",
+                        "incluir_risco": False,
+                        "fonte": "cache",
+                        "data_cache": cache_data['data'].isoformat()
+                    }
                 }
-                
-                return resposta_cache
         
-        # 2. CALCULAR FRESH DATA (quando não há cache ou force_update=True)
-        logging.info("🔄 Calculando dados frescos via APIs...")
+        # 2. CALCULAR DADOS FRESCOS
+        logging.info("🔄 Calculando dados frescos...")
         
         # Buscar scores de todos os blocos
-        score_ciclos = ciclos.calcular_score()
-        score_momentum = momentum.calcular_score() 
-        score_riscos = riscos.calcular_score()
-        score_tecnico = tecnico.calcular_score()
-        
-        # 3. NOVOS PESOS v1.0.20
-        peso_tecnico_original = 0.50   # 🔥 AUMENTADO de 20% para 50%
-        peso_ciclo_original = 0.30     # 🔄 REDUZIDO de 40% para 30%
-        peso_momentum_original = 0.20  # 🔄 REDUZIDO de 30% para 20%
-        # RISCO: Não mais no cálculo principal (0%), usado como redutor
-        
-        # Verificar blocos válidos
-        blocos_validos = []
-        peso_total_disponivel = 0
-        
-        if score_tecnico.get("status") == "success":
-            blocos_validos.append(("tecnico", score_tecnico, peso_tecnico_original))
-            peso_total_disponivel += peso_tecnico_original
-            
-        if score_ciclos.get("status") == "success":
-            blocos_validos.append(("ciclos", score_ciclos, peso_ciclo_original))
-            peso_total_disponivel += peso_ciclo_original
-            
-        if score_momentum.get("status") == "success":
-            blocos_validos.append(("momentum", score_momentum, peso_momentum_original))
-            peso_total_disponivel += peso_momentum_original
-        
-        logging.info(f"✅ Blocos no cálculo: {len(blocos_validos)} - Peso total: {peso_total_disponivel}")
-        
-        # 4. CALCULAR SCORE BASE (sem risco)
-        if peso_total_disponivel > 0:
-            score_base = 0
-            pesos_finais = {}
-            
-            for nome_bloco, dados_bloco, peso_original in blocos_validos:
-                peso_normalizado = peso_original / peso_total_disponivel
-                score_bloco = dados_bloco.get("score_consolidado", 0)
-                score_base += (score_bloco * peso_normalizado)
-                pesos_finais[nome_bloco] = peso_normalizado
-                
-            score_base = round(score_base, 2)
-        else:
-            score_base = 0
-            pesos_finais = {}
-            logging.warning("⚠️ Nenhum bloco válido encontrado para calcular score")
-        
-        # 5. APLICAR REDUTOR POR RISCO (se incluir_risco=True)
-        risco_disponivel = score_riscos.get("status") == "success"
-        
-        if incluir_risco and risco_disponivel:
-            # 🔧 FIXO EM 1.0 POR ENQUANTO (sem redução)
-            # Futuramente: calcular redutor baseado no Health Factor
-            redutor_risco = 1.0  # 1.0 = sem redução
-            score_final = score_base * redutor_risco
-            
-            # Adicionar risco nos pesos finais para visualização (peso 0)
-            pesos_finais["riscos"] = 0.0
-            
-            nota_risco = "Redução por risco PREPARADA mas temporariamente desabilitada (redutor = 1.0)"
-        else:
-            redutor_risco = 1.0
-            score_final = score_base
-            pesos_finais["riscos"] = 0.0
-            nota_risco = "Redução por risco DESABILITADA pelo usuário"
-        
-        score_final = round(score_final, 2)
-        
-        # 6. Classificação e ações
-        def classificar_score(score):
-            if score >= 8.0: return "ótimo"
-            elif score >= 6.0: return "bom"
-            elif score >= 4.0: return "neutro"
-            elif score >= 2.0: return "ruim"
-            else: return "crítico"
-        
-        def calcular_kelly(score):
-            if score >= 8.0: return "75%"
-            elif score >= 6.0: return "50%"
-            elif score >= 4.0: return "25%"
-            elif score >= 2.0: return "10%"
-            else: return "0%"
-        
-        def determinar_acao(score):
-            if score >= 8.0: return "Aumentar posição - condições excepcionais"
-            elif score >= 6.0: return "Manter posição - condições favoráveis"
-            elif score >= 4.0: return "Posição neutra - mercado equilibrado"
-            elif score >= 2.0: return "Reduzir exposição - condições desfavoráveis"
-            else: return "Zerar alavancagem - risco extremo"
-        
-        classificacao_geral = classificar_score(score_final)
-        kelly_allocation = calcular_kelly(score_final)
-        acao_recomendada = determinar_acao(score_final)
-        
-        # 7. Buscar alertas
-        try:
-            alertas_data = alertas_service.get_alertas()
-            alertas_ativos = [alerta["mensagem"] for alerta in alertas_data.get("alertas_ativos", [])]
-        except Exception as e:
-            logging.error(f"Erro ao buscar alertas: {str(e)}")
-            alertas_ativos = ["Sistema de alertas temporariamente indisponível"]
-        
-        # 8. Preparar pesos dinâmicos para resposta
-        pesos_dinamicos = {
-            "tecnico": pesos_finais.get("tecnico", 0),
-            "ciclo": pesos_finais.get("ciclos", 0),
-            "momentum": pesos_finais.get("momentum", 0),
-            "risco": pesos_finais.get("riscos", 0)  # Sempre 0 (não mais no cálculo)
+        dados_blocos = {
+            "tecnico": tecnico.calcular_score(),
+            "ciclos": ciclos.calcular_score(),
+            "momentum": momentum.calcular_score(),
+            "riscos": riscos.calcular_score()
         }
         
-        # 9. Estruturar resposta final
-        resposta_consolidada = {
+        # 3. CALCULAR SCORE FINAL COM NOVOS PESOS
+        score_total = 0
+        peso_total = 0
+        blocos_simplificados = {}
+        
+        for nome_bloco, dados in dados_blocos.items():
+            bloco_simples = extrair_dados_bloco(dados, nome_bloco)
+            blocos_simplificados[nome_bloco] = bloco_simples
+            
+            # Somar apenas blocos com peso > 0
+            if bloco_simples["peso"] > 0 and bloco_simples["status"] == "ok":
+                peso_normalizado = bloco_simples["peso"] / 100  # Converter % para decimal
+                score_total += bloco_simples["score"] * peso_normalizado
+                peso_total += peso_normalizado
+        
+        # Score final
+        score_final = round(score_total, 1) if peso_total > 0 else 0
+        classificacao_final = classificar_score(score_final)
+        kelly_final = calcular_kelly(score_final)
+        acao_final = determinar_acao(score_final)
+        
+        # 4. BUSCAR ALERTAS SIMPLIFICADOS
+        try:
+            alertas_data = alertas_service.get_alertas()
+            alertas_raw = alertas_data.get("alertas_ativos", [])
+            alertas_simples = simplificar_alertas(alertas_raw)
+        except Exception as e:
+            logging.error(f"Erro alertas: {str(e)}")
+            alertas_simples = ["Sistema de alertas indisponível"]
+        
+        # 5. RESPOSTA SIMPLIFICADA
+        resposta_final = {
             "timestamp": datetime.utcnow().isoformat(),
-            "versao": "1.0.20",
-            "configuracao": {
-                "incluir_risco": incluir_risco,
-                "risco_disponivel": risco_disponivel,
-                "blocos_no_calculo": len(blocos_validos),
-                "fonte": "fresh_calculation",
-                "force_update": force_update,
-                "novos_pesos": "Técnico 50% | Ciclo 30% | Momentum 20% | Risco como redutor",
-                "nota_risco": nota_risco
-            },
-            "score_base": score_base,
             "score_final": score_final,
-            "score_ajustado": score_final,
-            "redutor_risco": redutor_risco,
-            "modificador_volatilidade": 1.0,
-            "classificacao_geral": classificacao_geral,
-            "kelly_allocation": kelly_allocation,
-            "acao_recomendada": acao_recomendada,
-            "alertas_ativos": alertas_ativos,
-            "pesos_dinamicos": pesos_dinamicos,
-            "blocos": {
-                "tecnico": score_tecnico,
-                "ciclos": score_ciclos,
-                "momentum": score_momentum,
-                "riscos": score_riscos
-            },
-            "resumo_blocos": {
-                "tecnico": {
-                    "score_consolidado": score_tecnico.get("score_consolidado", 0),
-                    "classificacao": score_tecnico.get("classificacao_consolidada", "N/A"),
-                    "peso": f"{pesos_dinamicos['tecnico']*100:.1f}%",
-                    "status": score_tecnico.get("status", "error"),
-                    "incluido_no_calculo": "tecnico" in [b[0] for b in blocos_validos]
-                },
-                "ciclos": {
-                    "score_consolidado": score_ciclos.get("score_consolidado", 0),
-                    "classificacao": score_ciclos.get("classificacao_consolidada", "N/A"),
-                    "peso": f"{pesos_dinamicos['ciclo']*100:.1f}%",
-                    "status": score_ciclos.get("status", "error"),
-                    "incluido_no_calculo": "ciclos" in [b[0] for b in blocos_validos]
-                },
-                "momentum": {
-                    "score_consolidado": score_momentum.get("score_consolidado", 0),
-                    "classificacao": score_momentum.get("classificacao_consolidada", "N/A"),
-                    "peso": f"{pesos_dinamicos['momentum']*100:.1f}%",
-                    "status": score_momentum.get("status", "error"),
-                    "incluido_no_calculo": "momentum" in [b[0] for b in blocos_validos]
-                },
-                "riscos": {
-                    "score_consolidado": score_riscos.get("score_consolidado", 0),
-                    "classificacao": score_riscos.get("classificacao_consolidada", "N/A"),
-                    "peso": "0% (redutor)",
-                    "status": score_riscos.get("status", "error"),
-                    "incluido_no_calculo": False,
-                    "funcao": "Redutor do score base (temporariamente desabilitado)"
-                }
+            "classificacao": classificacao_final,
+            "kelly": kelly_final,
+            "acao": acao_final,
+            "alertas": alertas_simples,
+            "blocos": blocos_simplificados,
+            "config": {
+                "versao": "1.0.21",
+                "incluir_risco": False,
+                "fonte": "fresh_calculation",
+                "pesos": "Técnico 50% | Ciclo 30% | Momentum 20%"
             }
         }
         
-        # 10. SALVAR NO CACHE para próximas consultas
+        # 6. SALVAR CACHE SIMPLIFICADO
         try:
+            # Dados para cache (apenas essenciais)
+            dados_cache = {
+                "blocos_simples": blocos_simplificados,
+                "alertas_cache": alertas_simples
+            }
+            
             save_score_cache_diario(
                 score_final=score_final,
-                classificacao_geral=classificacao_geral,
-                kelly_allocation=kelly_allocation,
-                acao_recomendada=acao_recomendada,
-                pesos_dinamicos=pesos_dinamicos,
-                dados_completos=resposta_consolidada,
-                incluir_risco=incluir_risco
+                classificacao_geral=classificacao_final,
+                kelly_allocation=kelly_final,
+                acao_recomendada=acao_final,
+                pesos_dinamicos={"versao": "1.0.21", "simplificado": True},
+                dados_completos=dados_cache,
+                incluir_risco=False
             )
-            logging.info(f"✅ Cache salvo para hoje - Score: {score_final}")
+            logging.info(f"✅ Cache simplificado salvo - Score: {score_final}")
         except Exception as e:
             logging.error(f"⚠️ Falha ao salvar cache: {str(e)}")
         
-        logging.info(f"✅ Análise v1.0.20 concluída - Score: {score_final} ({classificacao_geral})")
-        return resposta_consolidada
+        logging.info(f"✅ Análise v1.0.21 concluída - Score: {score_final} ({classificacao_final})")
+        return resposta_final
         
     except Exception as e:
-        logging.error(f"❌ Erro na análise consolidada: {str(e)}")
+        logging.error(f"❌ Erro na análise: {str(e)}")
         return {
             "timestamp": datetime.utcnow().isoformat(),
-            "versao": "1.0.20",
-            "status": "error",
-            "erro": f"Falha na análise consolidada: {str(e)}",
             "score_final": 0,
-            "classificacao_geral": "erro",
-            "kelly_allocation": "0%",
-            "acao_recomendada": "Sistema indisponível - aguarde correção"
+            "classificacao": "erro",
+            "kelly": "0%",
+            "acao": "Sistema indisponível",
+            "alertas": [f"Erro: {str(e)}"],
+            "blocos": {},
+            "config": {
+                "versao": "1.0.21",
+                "incluir_risco": False,
+                "fonte": "error",
+                "erro": str(e)
+            }
         }
