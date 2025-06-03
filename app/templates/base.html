@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}BTC Turbo{% endblock %}</title>
+    
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', path='/css/dashboard.css') }}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        {% block header %}
+        <div class="version">{% block version %}BTC Turbo v1.0.21{% endblock %}</div>
+        <h1>{% block page_title %}🚀 BTC Turbo{% endblock %}</h1>
+        {% if subtitle %}
+        <div class="subtitle" id="subtitle">{{ subtitle }}</div>
+        {% endif %}
+        {% endblock %}
+    </header>
+
+    <!-- Navigation -->
+    {% include 'components/navigation.html' %}
+    
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    {% include 'components/footer.html' %}
+
+    <!-- Base JavaScript -->
+    <script src="{{ url_for('static', path='/js/charts.js') }}"></script>
+    <script src="{{ url_for('static', path='/js/utils.js') }}"></script>
+    
+    <!-- Page-specific JavaScript -->
+    {% block scripts %}{% endblock %}
+</body>
+</html>

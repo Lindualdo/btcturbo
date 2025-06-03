@@ -1,0 +1,30 @@
+<!-- Gauge Chart Component -->
+<div class="grafico {% if clickable %}clicavel{% endif %} {% if is_main %}principal{% endif %} {% if risco_reduzido %}risco-reduzido{% endif %}" 
+     {% if clickable and url %}onclick="navegarPara('{{ url }}')"{% endif %}>
+    
+    <h3>{{ title }}</h3>
+    
+    <canvas id="gaugeChart_{{ id }}" width="200" height="180"></canvas>
+    
+    <div id="classificacao_{{ id }}" class="classificacao loading">
+        Carregando...
+    </div>
+    
+    {% if info %}
+    <div class="info-adicional" id="info_{{ id }}">
+        {{ info }}
+    </div>
+    {% endif %}
+    
+    {% if peso is defined %}
+    <div class="peso-info" id="peso_{{ id }}">
+        Peso: {{ peso }}%
+    </div>
+    {% endif %}
+    
+    {% if clickable and url %}
+    <a href="{{ url }}" class="detalhes-btn">
+        🔍 Ver Detalhes
+    </a>
+    {% endif %}
+</div>

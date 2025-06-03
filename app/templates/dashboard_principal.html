@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}BTC Turbo - Dashboard Principal v1.0.21{% endblock %}
+
+{% block page_title %}🚀 BTC Turbo - Dashboard Principal{% endblock %}
+
+{% block content %}
+<!-- Configurações -->
+<div class="config-container">
+    <div class="config-section">
+        <span class="toggle-label">Redução por Risco:</span>
+        <label class="toggle-switch">
+            <input type="checkbox" id="toggleReducaoRisco" onchange="atualizarDados()">
+            <span class="slider"></span>
+        </label>
+        <span class="toggle-label" id="toggleStatus">Desabilitada</span>
+    </div>
+    
+    <button id="btnForceUpdate" onclick="forcarAtualizacao()" class="btn-update">
+        🔄 Atualizar Dados
+    </button>
+</div>
+
+<!-- Status -->
+<div class="status-info" id="statusInfo">
+    Carregando configuração...
+</div>
+
+<!-- Dashboard Grid -->
+<div class="dashboard-grid">
+    <!-- Score Geral -->
+    {% include 'components/gauge_chart.html' with context %}
+    {% set id = 'geral' %}
+    {% set title = '🎯 Score Geral' %}
+    {% set is_main = true %}
+    {% set info = 'Consolidado v1.0.21' %}
+    
+    <!-- Técnico (50%) -->
+    {% include 'components/gauge_chart.html' with context %}
+    {% set id = 'tecnico' %}
+    {% set title = '📈 Análise Técnica' %}
+    {% set clickable = true %}
+    {% set url = '/dashboard/tecnico' %}
+    {% set info = 'Clique para detalhes' %}
+    {% set peso = 50 %}
+    
+    <!-- Ciclos (30%) -->
+    {% include 'components/gauge_chart.html' with context %}
+    {% set id = 'ciclos' %}
+    {% set title = '🔄 Ciclos' %}
+    {% set clickable = true %}
+    {% set url = '/dashboard/ciclos' %}
+    {% set info = 'Clique para detalhes' %}
+    {% set peso = 30 %}
+    
+    <!-- Momentum (20%) -->
+    {% include 'components/gauge_chart.html' with context %}
+    {% set id = 'momentum' %}
+    {% set title = '⚡ Momentum' %}
+    {% set clickable = true %}
+    {% set url = '/dashboard/momentum' %}
+    {% set info = 'Clique para detalhes' %}
+    {% set peso = 20 %}
+    
+    <!-- Riscos (Referência) -->
+    {% include 'components/gauge_chart.html' with context %}
+    {% set id = 'riscos' %}
+    {% set title = '🚨 Riscos' %}
+    {% set clickable = true %}
+    {% set url = '/dashboard/riscos' %}
+    {% set info = 'Só referência' %}
+    {% set peso = 0 %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', path='/js/dashboard_principal.js') }}"></script>
+<script>
+    // Configurações específicas da página
+    const CONFIG = {
+        versao: '1.0.21',
+        api_endpoint: '/api/v1/analise-btc',
+        novos_pesos: { tecnico: 50, ciclos: 30, momentum: 20, riscos: 0 }
+    };
+    
+    // Inicializar dashboard quando página carregar
+    document.addEventListener('DOMContentLoaded', function() {
+        initDashboard(CONFIG);
+    });
+</script>
+{% endblock %}

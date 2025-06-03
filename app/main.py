@@ -1,6 +1,9 @@
 # app/main.py
 
 from fastapi import FastAPI
+from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
+from pathlib import Path
 from datetime import datetime
 from app.routers import debug
 from app.routers import (
@@ -8,11 +11,18 @@ from app.routers import (
     dashboards, dashboard_riscos, dashboard_momentum, dashboard_ciclos, dashboard_tecnico
 )
 
+# Configuração de templates e arquivos estáticos
+templates = Jinja2Templates(directory="app/templates")
+
 app = FastAPI(
     title="BTC Turbo API",
-    description="Sistema de análise de indicadores BTC com PostgreSQL + Dashboards HTML",
-    version="1.0.19"
+    description="Sistema de análise de indicadores BTC com Templates",
+    version="1.0.23"
 )
+
+# Servir arquivos estáticos (CSS, JS)
+app.mount("/static", StaticFiles(directory="app/templates/static"), name="static")
+
 
 # ==========================================
 # ROUTERS DE DADOS (APIs)

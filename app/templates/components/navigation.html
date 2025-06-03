@@ -1,0 +1,22 @@
+<nav class="menu-scroll">
+    <a href="/dashboard/" 
+       class="{% if current_page == 'home' %}ativo{% endif %}">
+        Home
+    </a>
+    <a href="/dashboard/riscos" 
+       class="{% if current_page == 'riscos' %}ativo{% endif %}">
+        Riscos
+    </a>
+    <a href="/dashboard/momentum" 
+       class="{% if current_page == 'momentum' %}ativo{% endif %}">
+        Momentum
+    </a>
+    <a href="/dashboard/ciclos" 
+       class="{% if current_page == 'ciclos' %}ativo{% endif %}">
+        Ciclos
+    </a>
+    <a href="/dashboard/tecnico" 
+       class="{% if current_page == 'tecnico' %}ativo{% endif %}">
+        Técnica
+    </a>
+</nav>
