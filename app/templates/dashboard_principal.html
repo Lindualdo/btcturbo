@@ -246,49 +246,50 @@ async function forcarAtualizacao() {
 }
 
 // ==========================================
-// CÁLCULOS E PROCESSAMENTO
-// ==========================================
-
-function calcularScoreComNovosPesos(dados, aplicarReducaoRisco) {
-    const blocos = dados.blocos || {};
-    
-    let scoreTotal = 0;
-    let pesoTotal = 0;
-    
-    // Aplicar novos pesos v1.0.21
-    for (const [nomeBloco, peso] of Object.entries(CONFIG.novos_pesos)) {
-        if (peso > 0 && blocos[nomeBloco]) {
-            const scoreBloco = blocos[nomeBloco].score || 0;
-            const pesoDecimal = peso / 100; // Converter % para decimal
-            scoreTotal += scoreBloco * pesoDecimal;
-            pesoTotal += pesoDecimal;
-        }
-    }
-    
-    let scoreFinal = pesoTotal > 0 ? scoreTotal : 0;
-    
-    // Aplicar redução por risco se habilitada
-    let modificadorRisco = 1.0;
-    if (aplicarReducaoRisco && blocos.riscos) {
-        const scoreRisco = blocos.riscos.score || 10;
-        // Fórmula: redução maior quando risco for menor
-        modificadorRisco = Math.max(0.7, Math.min(1.0, scoreRisco / 10));
-        scoreFinal *= modificadorRisco;
-    }
-    
-    return {
-        ...dados,
-        score_final: scoreFinal,
-        score_original: scoreTotal,
-        modificador_risco: modificadorRisco,
-        pesos_aplicados: CONFIG.novos_pesos,
-        reducao_risco_ativa: aplicarReducaoRisco
-    };
-}
-
-// ==========================================
 // INTERFACE UPDATES
 // ==========================================
+
+function updateBlocos(dados) {
+    const blocos = dados.blocos || {};
+    
+    // Mapeamento correto dos nomes
+    const mapeamentoBlocos = {
+        "tecnico": ["tecnico", "tecnicos"],
+        "ciclos": ["ciclos", "ciclo"], 
+        "momentum": ["momentum"],
+        "riscos": ["riscos", "risco"]
+    };
+    
+    // Atualizar cada bloco
+    for (const [nome, peso] of Object.entries(CONFIG.novos_pesos)) {
+        // Buscar dados do bloco
+        let dadosBloco = null;
+        const possiveisNomes = mapeamentoBlocos[nome] || [nome];
+        
+        for (const nomeApi of possiveisNomes) {
+            if (blocos[nomeApi]) {
+                dadosBloco = blocos[nomeApi];
+                break;
+            }
+        }
+        
+        if (dadosBloco) {
+            // CORRIGIDO: usar dados reais da API
+            const score = Math.round((dadosBloco.score_consolidado || 0) * 10);
+            const classificacao = dadosBloco.classificacao_consolidada || 'N/A';
+            
+            atualizarGrafico(nome, score, classificacao);
+            updatePeso(nome, peso);
+            
+            console.log(`📊 Gráfico ${nome}: score=${score}, classificacao=${classificacao}`);
+        } else {
+            // Fallback se bloco não encontrado
+            atualizarGrafico(nome, 0, 'N/A');
+            updatePeso(nome, peso);
+            console.warn(`⚠️ Bloco ${nome} não encontrado, usando fallback`);
+        }
+    }
+}
 
 function atualizarInterface(dados) {
     // Atualizar subtitle
@@ -312,20 +313,6 @@ function updateScoreGeral(dados) {
     const scoreGeral = Math.round(dados.score_final * 10);
     const classificacaoGeral = classificarScore(dados.score_final);
     atualizarGrafico('geral', scoreGeral, classificacaoGeral);
-}
-
-function updateBlocos(dados) {
-    const blocos = dados.blocos || {};
-    
-    // Atualizar cada bloco
-    for (const [nome, peso] of Object.entries(CONFIG.novos_pesos)) {
-        const dadosBloco = blocos[nome] || { score: 0, classificacao: 'N/A' };
-        const score = Math.round((dadosBloco.score || 0) * 10);
-        const classificacao = dadosBloco.classificacao || 'N/A';
-        
-        atualizarGrafico(nome, score, classificacao);
-        updatePeso(nome, peso);
-    }
 }
 
 function updateToggleStatus(dados) {
@@ -535,6 +522,83 @@ function renderGauge(canvasId, score) {
     } catch (error) { 
         console.error('Erro ao renderizar gráfico:', canvasId, error); 
     }
+}
+
+// ==========================================
+// FIX PARA DASHBOARD PRINCIPAL v1.0.21
+// ==========================================
+
+function calcularScoreComNovosPesos(dados, aplicarReducaoRisco) {
+    console.log('🔍 DEBUG - Dados recebidos:', dados);
+    
+    const blocos = dados.blocos || {};
+    console.log('📊 DEBUG - Blocos disponíveis:', Object.keys(blocos));
+    
+    let scoreTotal = 0;
+    let pesoTotal = 0;
+    
+    // Mapeamento correto dos nomes (API vs JavaScript)
+    const mapeamentoBlocos = {
+        "tecnico": ["tecnico", "tecnicos"], // API pode retornar qualquer um
+        "ciclos": ["ciclos", "ciclo"],
+        "momentum": ["momentum"],
+        "riscos": ["riscos", "risco"]
+    };
+    
+    // Aplicar novos pesos v1.0.21
+    for (const [nomeBloco, peso] of Object.entries(CONFIG.novos_pesos)) {
+        if (peso > 0) {
+            // Buscar bloco com nome correto
+            let dadosBloco = null;
+            const possiveisNomes = mapeamentoBlocos[nomeBloco] || [nomeBloco];
+            
+            for (const nome of possiveisNomes) {
+                if (blocos[nome]) {
+                    dadosBloco = blocos[nome];
+                    break;
+                }
+            }
+            
+            if (dadosBloco) {
+                // CORRIGIDO: usar score_consolidado em vez de score
+                const scoreBloco = dadosBloco.score_consolidado || 0;
+                const pesoDecimal = peso / 100;
+                
+                scoreTotal += scoreBloco * pesoDecimal;
+                pesoTotal += pesoDecimal;
+                
+                console.log(`✅ ${nomeBloco}: score=${scoreBloco}, peso=${peso}%`);
+            } else {
+                console.warn(`⚠️ Bloco ${nomeBloco} não encontrado na API`);
+            }
+        }
+    }
+    
+    let scoreFinal = pesoTotal > 0 ? scoreTotal : 0;
+    
+    // Aplicar redução por risco se habilitada
+    let modificadorRisco = 1.0;
+    if (aplicarReducaoRisco && blocos.riscos) {
+        const scoreRisco = blocos.riscos.score_consolidado || 10;
+        modificadorRisco = Math.max(0.7, Math.min(1.0, scoreRisco / 10));
+        scoreFinal *= modificadorRisco;
+    }
+    
+    console.log('🎯 Score calculado:', {
+        scoreTotal,
+        scoreFinal,
+        modificadorRisco,
+        aplicarReducaoRisco
+    });
+    
+    return {
+        ...dados,
+        score_final: scoreFinal,
+        score_original: scoreTotal,
+        modificador_risco: modificadorRisco,
+        pesos_aplicados: CONFIG.novos_pesos,
+        reducao_risco_ativa: aplicarReducaoRisco
+    };
 }
 
 // ==========================================
