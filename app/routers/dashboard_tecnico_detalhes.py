@@ -1,4 +1,4 @@
-# app/routers/dashboard_tecnico_detalhes.py - v1.0.25
+# app/routers/dashboard_tecnico_detalhes.py - v1.0.26
 
 from fastapi import APIRouter
 from fastapi.responses import HTMLResponse
@@ -59,6 +59,10 @@ async def dashboard_tecnico_detalhes():
             .score-classificacao {{
               font-size: clamp(16px, 3vw, 20px); color: #fff;
               margin-top: 1%; font-weight: 600;
+            }}
+            .btc-price {{
+              font-size: clamp(18px, 4vw, 24px); color: #4caf50;
+              margin-top: 2%; font-weight: 700;
             }}
             .score-detalhes {{
               font-size: 14px; color: #888; margin-top: 2%;
@@ -170,6 +174,7 @@ async def dashboard_tecnico_detalhes():
           <div class="score-principal">
             <div id="scorePrincipal" class="score-numero loading">Carregando...</div>
             <div id="classificacaoPrincipal" class="score-classificacao"></div>
+            <div id="btcPrice" class="btc-price"></div>
             <div class="score-detalhes">
               <span id="ponderacao">70% Semanal + 30% Diário</span>
               <span id="timestamp">Atualizando...</span>
@@ -341,9 +346,16 @@ async def dashboard_tecnico_detalhes():
                 classificacao = getClassificacaoTecnica(scoreNumerico);
               }}
               
-              document.getElementById('scorePrincipal').textContent = parseInt(scoreNumerico * 10);
+              // CORREÇÃO 1: Score inteiro multiplicado por 10
+              document.getElementById('scorePrincipal').textContent = Math.round(scoreNumerico * 10);
               document.getElementById('scorePrincipal').classList.remove('loading');
               document.getElementById('classificacaoPrincipal').textContent = classificacao;
+              
+              // CORREÇÃO 2: Mostrar BTC_Price
+              const btcPrice = dados.BTC_Price;
+              if (btcPrice) {{
+                document.getElementById('btcPrice').textContent = `BTC: $$${{btcPrice.toLocaleString()}}`;
+              }}
               
               // Timestamp
               const timestamp = new Date(dados.timestamp);
@@ -353,7 +365,7 @@ async def dashboard_tecnico_detalhes():
             function atualizarBlocosEMAs(timeframes) {{
               // Diário - Posição
               const diario = timeframes.diario || {{}};
-              atualizarTabelaPosicao('tabelaDiarioPosicao', diario.emas || {{}}, 'BTC');
+              atualizarTabelaPosicao('tabelaDiarioPosicao', diario.emas || {{}}, dadosCompletos.BTC_Price);
               atualizarScore('scoreDiarioPosicao', diario.scores?.posicao || 0, 'Posição');
               
               // Diário - Alinhamento  
@@ -362,7 +374,7 @@ async def dashboard_tecnico_detalhes():
               
               // Semanal - Posição
               const semanal = timeframes.semanal || {{}};
-              atualizarTabelaPosicao('tabelaSemanalPosicao', semanal.emas || {{}}, 'BTC');
+              atualizarTabelaPosicao('tabelaSemanalPosicao', semanal.emas || {{}}, dadosCompletos.BTC_Price);
               atualizarScore('scoreSemanalPosicao', semanal.scores?.posicao || 0, 'Posição');
               
               // Semanal - Alinhamento
@@ -370,7 +382,7 @@ async def dashboard_tecnico_detalhes():
               atualizarScore('scoreSemanalAlinhamento', semanal.scores?.alinhamento || 0, 'Alinhamento');
             }}
 
-            function atualizarTabelaPosicao(tabelaId, emas, preco) {{
+            function atualizarTabelaPosicao(tabelaId, emas, btcPrice) {{
               const tabela = document.getElementById(tabelaId);
               if (!tabela) return;
               
@@ -379,10 +391,10 @@ async def dashboard_tecnico_detalhes():
               
               emasOrdenadas.forEach(periodo => {{
                 const emaValor = emas[periodo];
-                if (!emaValor) return;
+                if (!emaValor || !btcPrice) return;
                 
-                // Simular preço atual (seria vindo da API)
-                const precoAtual = emaValor * 1.05; // Mock: 5% acima
+                // CORREÇÃO 3: Usar BTC_Price real em vez de mock
+                const precoAtual = btcPrice;
                 const distancia = ((precoAtual - emaValor) / emaValor * 100);
                 
                 const status = precoAtual > emaValor ? 'Acima' : 'Abaixo';
