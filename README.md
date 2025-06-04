@@ -1,4 +1,4 @@
-# BTC TURBO - v1.0.23
+# BTC TURBO - v1.0.24
 
 ## 🎯 Objetivo da Documentação
 
@@ -74,7 +74,7 @@ Esta documentação técnica define claramente o padrão arquitetural, responsab
 - calcular-score{tecnico}
 - helpers - postgres
 
-## Ajustar o dash 
+## Ajustar o dash
 
 ### 1.0.20 - Bloco analise tecnica - feito - 02/06
 - usar api interna desenvolvida na versão 1.0.19 - obter-indicadore{tenico}
@@ -99,13 +99,9 @@ Esta documentação técnica define claramente o padrão arquitetural, responsab
 - refatorar o arquivo analise.py simplificar o json de saida
 - entender como está o funcionamento completo do dashboard e organizar
 
-### 1.0.24 - Otimizar o refactore do dashboar
-
-- o refactore foi feito e já está modularizado
-- reduziu muito o tamanho do arquivo dashboard.py (router home) que estava com mais de 500 linhas agora reduziu para 87
-- o arquivo /template/dashboard_principal.html entá com mais de 300 linhas, ainda é muito grande
-- o arquivo /template/static/js/dashboard.js está complexo demais, não deveria... tem fuções lá que fazem calculos que já vem pronto na api analise-btc consulida pelo arquivo analise.py e pela pagina principal
-
+### 1.0.24 - Otimizar o refactore do dashboar - feito 04/06
+/docs/dashboard-espec.md
+- simplificação, otimização, modularização, estrutura mais fácil de dar manutenção
 
 ### 1.0.25 -  Página de detalhes da analise ténica
 - criar a págida de detalhes da analise tecnica 
@@ -120,6 +116,8 @@ Esta documentação técnica define claramente o padrão arquitetural, responsab
 ### 1.0.28 - Criar sistema de penalidade do score com base no score de risco
 - o risco, sempre pode retirar pontos do score geral, nunca acrescentar
 
+## 1.0.29 - criar histórico ( scores blocos, consolidado e indicadores bruto)
+
 ### 1.0.29 - Criar dash com graficos de linhas para monitorar disciplina no Risco e evolução financeira
 - Health factore
 - Distancia para liuquidação (percentual)
@@ -130,6 +128,10 @@ Esta documentação técnica define claramente o padrão arquitetural, responsab
 ## Incluir outros indicadoes de anlise tecnica alem das EMAs
 
 ##  coleta de dados - ciclos - demais indicadores
+
+## - histórico dos indicadores dados bruto
+
+## - histórico dos scores geral e score dos blocos
 
 - Docs: 
 https://github.com/Lindualdo/btcturbo/blob/main/doc/validation-limites-indicadores.md

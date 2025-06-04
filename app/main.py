@@ -1,4 +1,4 @@
-# app/main.py - CORRIGIDO v1.0.23
+# app/main.py - CORRIGIDO v1.0.24
 
 from fastapi import FastAPI
 from fastapi.templating import Jinja2Templates
@@ -14,7 +14,7 @@ from app.routers import (
 app = FastAPI(
     title="BTC Turbo API",
     description="Sistema de análise de indicadores BTC com Templates Jinja2",
-    version="1.0.23"
+    version="1.0.24"
 )
 
 # ==========================================

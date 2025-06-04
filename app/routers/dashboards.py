@@ -12,7 +12,7 @@ templates = Jinja2Templates(directory="app/templates")
 
 @router.get("/", response_class=HTMLResponse)
 async def dashboard_principal(request: Request):
-    """Dashboard principal v1.0.21 - Simplificado com config externa"""
+    """Dashboard principal v1.0.24 - Simplificado com config externa"""
     
     context = build_dashboard_context(request, DASHBOARD_CONFIG)
     return templates.TemplateResponse("dashboard_principal.html", context)
