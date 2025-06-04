@@ -6,6 +6,7 @@ from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 from datetime import datetime
 from app.routers import debug
+from app.routers import dashboard_tecnico_detalhes
 from app.routers import (
     coleta, indicadores, score, analise, diagnostico, 
     dashboards, dashboard_riscos, dashboard_momentum, dashboard_ciclos, dashboard_tecnico
@@ -16,6 +17,9 @@ app = FastAPI(
     description="Sistema de análise de indicadores BTC com Templates Jinja2",
     version="1.0.24"
 )
+
+
+
 
 # ==========================================
 # CONFIGURAÇÃO ESTÁTICA - CRÍTICO
@@ -54,6 +58,7 @@ app.include_router(dashboard_riscos.router, prefix="/dashboard", tags=["📱 Das
 app.include_router(dashboard_momentum.router, prefix="/dashboard", tags=["📱 Dashboards"])
 app.include_router(dashboard_ciclos.router, prefix="/dashboard", tags=["📱 Dashboards"])
 app.include_router(dashboard_tecnico.router, prefix="/dashboard", tags=["📱 Dashboards"])
+app.include_router(dashboard_tecnico_detalhes.router, prefix="/dashboard")
 
 # ==========================================
 # ENDPOINTS BÁSICOS
