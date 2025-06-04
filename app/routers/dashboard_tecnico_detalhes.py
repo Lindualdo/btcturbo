@@ -93,13 +93,6 @@ async def dashboard_tecnico_detalhes():
             <tbody id="alinhamentoSemanal"><tr><td colspan="3" class="loading">Carregando...</td></tr></tbody>
           </table>
         </div>
-        
-        <div class="section">
-          <h2 class="section-title">🚨 Alertas Específicos</h2>
-          <div id="alertas" style="background: #1e1e1e; border-radius: 8px; padding: 20px; border-left: 4px solid #e53935;">
-            <div class="loading">Carregando alertas...</div>
-          </div>
-        </div>
       </div>
 
       <script>
