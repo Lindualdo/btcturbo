@@ -7,7 +7,7 @@ router = APIRouter()
 
 @router.get("/tecnico/detalhes", response_class=HTMLResponse)
 async def dashboard_tecnico_detalhes():
-    """Página de detalhes da análise técnica - v1.0.25"""
+    """Página de detalhes da análise técnica - v1.0.26"""
     try:
         html = f"""
         <!DOCTYPE html>
@@ -15,7 +15,7 @@ async def dashboard_tecnico_detalhes():
         <head>
           <meta charset="UTF-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-          <title>BTC Turbo - Detalhes Técnicos v1.0.25</title>
+          <title>BTC Turbo - Detalhes Técnicos v1.0.26</title>
           <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
           <style>
             *, *::before, *::after {{ box-sizing: border-box; }}
@@ -157,7 +157,7 @@ async def dashboard_tecnico_detalhes():
           </style>
         </head>
         <body>
-          <div class="version">v1.0.25</div>
+          <div class="version">v1.0.26</div>
           
           <!-- HEADER -->
           <div class="header">
@@ -521,7 +521,7 @@ async def dashboard_tecnico_detalhes():
 
             // INICIALIZAÇÃO
             function initDetalhes() {{
-              console.log('🚀 Iniciando página de detalhes v1.0.25');
+              console.log('🚀 Iniciando página de detalhes v1.0.26');
               buscarDadosDetalhados();
             }}
 
@@ -541,7 +541,7 @@ async def dashboard_tecnico_detalhes():
         return f"""
         <html>
         <body style="background: #0f111a; color: white; font-family: monospace; padding: 20px;">
-            <h1 style="color: #f7931a;">🔧 Detalhes Técnicos v1.0.25</h1>
+            <h1 style="color: #f7931a;">🔧 Detalhes Técnicos v1.0.26</h1>
             <h2>Erro do Sistema:</h2>
             <pre style="color: #e53935;">{str(e)}</pre>
             <a href="/dashboard/tecnico" style="color: #f7931a;">← Voltar ao Dashboard Técnico</a>
