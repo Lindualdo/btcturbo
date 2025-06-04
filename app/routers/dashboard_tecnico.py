@@ -120,7 +120,6 @@ async def dashboard_tecnico():
               <canvas id="gauge_semanal" width="200" height="180"></canvas>
               <div id="class_semanal" class="classificacao loading">Carregando...</div>
               <div class="info-text">Peso: 70% do total</div>
-              <a href="/dashboard/tecnico/detalhes#semanal" class="detalhes-btn">🔍 Detalhes 1W</a>
             </div>
                     
             <!-- EMAs Diário -->
@@ -129,7 +128,6 @@ async def dashboard_tecnico():
               <canvas id="gauge_diario" width="200" height="180"></canvas>
               <div id="class_diario" class="classificacao loading">Carregando...</div>
               <div class="info-text">Peso: 30% do total</div>
-              <a href="/dashboard/tecnico/detalhes#diario" class="detalhes-btn">🔍 Detalhes 1D</a>
             </div>
           </div>
 
