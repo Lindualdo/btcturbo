@@ -145,8 +145,8 @@ async def analise_btc_simplificada(
                         }
                     }
         
-        # 2. CALCULAR DADOS FRESCOS
-        logging.info("🔄 Calculando dados frescos...")
+        # 2. CALCULAR DADOS ATUAIS
+        logging.info("🔄 Calculando dados atuais...")
         
         # Buscar scores de todos os blocos
         dados_blocos = {
