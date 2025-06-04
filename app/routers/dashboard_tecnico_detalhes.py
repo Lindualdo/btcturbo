@@ -64,17 +64,33 @@ async def dashboard_tecnico_detalhes():
         
         <div class="section diario">
           <h2 class="section-title">📊 Timeframe Diário (Peso: 30%)</h2>
+          
+          <h3 style="margin: 20px 0 10px 0; font-size: 16px;">Posição do preço em relação às médias</h3>
           <table>
             <thead><tr><th>EMA</th><th>Valor</th><th>Distância</th></tr></thead>
             <tbody id="tabelaDiario"><tr><td colspan="3" class="loading">Carregando...</td></tr></tbody>
+          </table>
+          
+          <h3 style="margin: 20px 0 10px 0; font-size: 16px;">Alinhamento das médias</h3>
+          <table>
+            <thead><tr><th>Comparação</th><th>Status</th><th>Significado</th></tr></thead>
+            <tbody id="alinhamentoDiario"><tr><td colspan="3" class="loading">Carregando...</td></tr></tbody>
           </table>
         </div>
         
         <div class="section semanal">
           <h2 class="section-title">📅 Timeframe Semanal (Peso: 70%)</h2>
+          
+          <h3 style="margin: 20px 0 10px 0; font-size: 16px;">Posição do preço em relação às médias</h3>
           <table>
             <thead><tr><th>EMA</th><th>Valor</th><th>Distância</th></tr></thead>
             <tbody id="tabelaSemanal"><tr><td colspan="3" class="loading">Carregando...</td></tr></tbody>
+          </table>
+          
+          <h3 style="margin: 20px 0 10px 0; font-size: 16px;">Alinhamento das médias</h3>
+          <table>
+            <thead><tr><th>Comparação</th><th>Status</th><th>Significado</th></tr></thead>
+            <tbody id="alinhamentoSemanal"><tr><td colspan="3" class="loading">Carregando...</td></tr></tbody>
           </table>
         </div>
       </div>
@@ -96,9 +112,11 @@ async def dashboard_tecnico_detalhes():
             
             // Tabela Diário
             renderTabela('tabelaDiario', data.timeframes.diario.emas, data.distancias.daily);
+            renderAlinhamento('alinhamentoDiario', data.timeframes.diario.emas);
             
             // Tabela Semanal  
             renderTabela('tabelaSemanal', data.timeframes.semanal.emas, data.distancias.weekly);
+            renderAlinhamento('alinhamentoSemanal', data.timeframes.semanal.emas);
             
           } catch (error) {
             document.getElementById('scoreNumero').textContent = 'Erro';
@@ -123,6 +141,33 @@ async def dashboard_tecnico_detalhes():
                 <td>EMA ${periodo}</td>
                 <td>$${emaValor.toLocaleString()}</td>
                 <td class="${distanciaClass}">${distancia}</td>
+              </tr>
+            `;
+          });
+          
+          tabela.innerHTML = html;
+        }
+
+        function renderAlinhamento(id, emas) {
+          const tabela = document.getElementById(id);
+          
+          const comparacoes = [
+            {nome: 'EMA 17 > EMA 34', ema1: emas['17'], ema2: emas['34'], desc: 'Momentum curto'},
+            {nome: 'EMA 34 > EMA 144', ema1: emas['34'], ema2: emas['144'], desc: 'Tendência média'},
+            {nome: 'EMA 144 > EMA 305', ema1: emas['144'], ema2: emas['305'], desc: 'Estrutura macro'},
+            {nome: 'EMA 305 > EMA 610', ema1: emas['305'], ema2: emas['610'], desc: 'Base de ciclo'}
+          ];
+          
+          let html = '';
+          comparacoes.forEach(comp => {
+            const status = comp.ema1 > comp.ema2 ? 'Bullish' : 'Bearish';
+            const statusClass = status === 'Bullish' ? 'bull' : 'bear';
+            
+            html += `
+              <tr>
+                <td>${comp.nome}</td>
+                <td class="${statusClass}">${status}</td>
+                <td>${comp.desc}</td>
               </tr>
             `;
           });
