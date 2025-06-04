@@ -93,6 +93,13 @@ async def dashboard_tecnico_detalhes():
             <tbody id="alinhamentoSemanal"><tr><td colspan="3" class="loading">Carregando...</td></tr></tbody>
           </table>
         </div>
+        
+        <div class="section">
+          <h2 class="section-title">🚨 Alertas Específicos</h2>
+          <div id="alertas" style="background: #1e1e1e; border-radius: 8px; padding: 20px; border-left: 4px solid #e53935;">
+            <div class="loading">Carregando alertas...</div>
+          </div>
+        </div>
       </div>
 
       <script>
@@ -125,6 +132,9 @@ async def dashboard_tecnico_detalhes():
             // Scores Semanal
             document.getElementById('scorePosicaoSemanal').textContent = `(Score: ${Math.round(data.timeframes.semanal.scores.posicao * 10)})`;
             document.getElementById('scoreAlinhamentoSemanal').textContent = `(Score: ${Math.round(data.timeframes.semanal.scores.alinhamento * 10)})`;
+            
+            // Alertas
+            renderAlertas(data);
             
           } catch (error) {
             document.getElementById('scoreNumero').textContent = 'Erro';
@@ -181,6 +191,63 @@ async def dashboard_tecnico_detalhes():
           });
           
           tabela.innerHTML = html;
+        }
+
+        function renderAlertas(data) {
+          const container = document.getElementById('alertas');
+          const btcPrice = parseFloat(data.indicadores.BTC_Price.valor.replace(/[$,]/g, ''));
+          
+          const diario = data.timeframes.diario;
+          const semanal = data.timeframes.semanal;
+          const distDiario = data.distancias.daily;
+          const distSemanal = data.distancias.weekly;
+          
+          let alertas = [];
+          
+          // 1. Distância Extrema
+          const dist305Semanal = parseFloat(distSemanal.ema_305.replace(/[+%]/g, ''));
+          const dist610Semanal = parseFloat(distSemanal.ema_610.replace(/[+%]/g, ''));
+          
+          if (dist305Semanal > 10) {
+            alertas.push('🔴 PERIGO: Preço >10% acima da EMA 305 semanal - Pullback iminente');
+          }
+          if (dist610Semanal > 15) {
+            alertas.push('🚨 CRÍTICO: Preço >15% acima da EMA 610 semanal - Topo local provável');
+          }
+          
+          // 2. Quebra de Estrutura
+          const dist144Diario = parseFloat(distDiario.ema_144.replace(/[+%-]/g, ''));
+          const dist305SemanalAbs = parseFloat(distSemanal.ema_305.replace(/[+%-]/g, ''));
+          
+          if (distDiario.ema_144.startsWith('-')) {
+            alertas.push('⚠️ PRIMEIRO ALERTA: Perda da EMA 144 no diário detectada');
+          }
+          if (distSemanal.ema_305.startsWith('-')) {
+            alertas.push('🚨 SAIR DA POSIÇÃO: Perda da EMA 305 no semanal');
+          }
+          
+          // 3. Divergências
+          const scoreSemanal = Math.round(semanal.scores.consolidado * 10);
+          const posicaoDiario = Math.round(diario.scores.posicao * 10);
+          
+          if (diario.scores.alinhamento === 10 && posicaoDiario < 50) {
+            alertas.push('⚠️ DIVERGÊNCIA: Alinhamento bullish mas posição fraca (<50) - Momentum fraco');
+          }
+          if (scoreSemanal < 60) {
+            alertas.push('🔴 RISCO MACRO: Score semanal <60 - Tendência macro em risco');
+          }
+          
+          // Se não há alertas críticos
+          if (alertas.length === 0) {
+            alertas.push('✅ Nenhum alerta crítico detectado no momento');
+          }
+          
+          let html = '';
+          alertas.forEach(alerta => {
+            html += `<div style="margin-bottom: 10px; padding: 10px; background: #2a2a2a; border-radius: 5px; font-size: 14px;">${alerta}</div>`;
+          });
+          
+          container.innerHTML = html;
         }
 
         document.addEventListener('DOMContentLoaded', init);
