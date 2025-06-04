@@ -1,4 +1,4 @@
-# BTC TURBO - v1.0.24
+# BTC TURBO - v1.0.25
 
 ## 🎯 Objetivo da Documentação
 
@@ -103,11 +103,11 @@ Esta documentação técnica define claramente o padrão arquitetural, responsab
 /docs/dashboard-espec.md
 - simplificação, otimização, modularização, estrutura mais fácil de dar manutenção
 
-### 1.0.25 -  Página de detalhes da analise ténica
+### 1.0.25 -  Página de detalhes da analise ténica - FEITO 04/06
 - criar a págida de detalhes da analise tecnica 
 - incluir os alertas exclusivos deste bloco (alertas na página principal)
 
-### 1.0.26 - sitema de alertas na home dash
+### 1.0.26 - sistema de alertas na home dash
 
 ### 1.0.27 - Criar outro indicador de risco (Alavancagem atual X alavancagem permitida Kelly)
 - escala para aderencia, quanto mais aderente ao Kelly, maior pontuação

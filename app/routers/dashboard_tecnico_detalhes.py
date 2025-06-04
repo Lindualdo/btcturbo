@@ -65,13 +65,13 @@ async def dashboard_tecnico_detalhes():
         <div class="section diario">
           <h2 class="section-title">📊 Timeframe Diário (Peso: 30%)</h2>
           
-          <h3 style="margin: 20px 0 10px 0; font-size: 16px;">Posição do preço em relação às médias</h3>
+          <h3 style="margin: 20px 0 10px 0; font-size: 16px;">Posição do preço em relação às médias <span id="scorePosicaoDiario" style="color: #f7931a; font-weight: 600;"></span></h3>
           <table>
             <thead><tr><th>EMA</th><th>Valor</th><th>Distância</th></tr></thead>
             <tbody id="tabelaDiario"><tr><td colspan="3" class="loading">Carregando...</td></tr></tbody>
           </table>
           
-          <h3 style="margin: 20px 0 10px 0; font-size: 16px;">Alinhamento das médias</h3>
+          <h3 style="margin: 20px 0 10px 0; font-size: 16px;">Alinhamento das médias <span id="scoreAlinhamentoDiario" style="color: #f7931a; font-weight: 600;"></span></h3>
           <table>
             <thead><tr><th>Comparação</th><th>Status</th><th>Significado</th></tr></thead>
             <tbody id="alinhamentoDiario"><tr><td colspan="3" class="loading">Carregando...</td></tr></tbody>
@@ -81,13 +81,13 @@ async def dashboard_tecnico_detalhes():
         <div class="section semanal">
           <h2 class="section-title">📅 Timeframe Semanal (Peso: 70%)</h2>
           
-          <h3 style="margin: 20px 0 10px 0; font-size: 16px;">Posição do preço em relação às médias</h3>
+          <h3 style="margin: 20px 0 10px 0; font-size: 16px;">Posição do preço em relação às médias <span id="scorePosicaoSemanal" style="color: #f7931a; font-weight: 600;"></span></h3>
           <table>
             <thead><tr><th>EMA</th><th>Valor</th><th>Distância</th></tr></thead>
             <tbody id="tabelaSemanal"><tr><td colspan="3" class="loading">Carregando...</td></tr></tbody>
           </table>
           
-          <h3 style="margin: 20px 0 10px 0; font-size: 16px;">Alinhamento das médias</h3>
+          <h3 style="margin: 20px 0 10px 0; font-size: 16px;">Alinhamento das médias <span id="scoreAlinhamentoSemanal" style="color: #f7931a; font-weight: 600;"></span></h3>
           <table>
             <thead><tr><th>Comparação</th><th>Status</th><th>Significado</th></tr></thead>
             <tbody id="alinhamentoSemanal"><tr><td colspan="3" class="loading">Carregando...</td></tr></tbody>
@@ -114,9 +114,17 @@ async def dashboard_tecnico_detalhes():
             renderTabela('tabelaDiario', data.timeframes.diario.emas, data.distancias.daily);
             renderAlinhamento('alinhamentoDiario', data.timeframes.diario.emas);
             
+            // Scores Diário
+            document.getElementById('scorePosicaoDiario').textContent = `(Score: ${Math.round(data.timeframes.diario.scores.posicao * 10)})`;
+            document.getElementById('scoreAlinhamentoDiario').textContent = `(Score: ${Math.round(data.timeframes.diario.scores.alinhamento * 10)})`;
+            
             // Tabela Semanal  
             renderTabela('tabelaSemanal', data.timeframes.semanal.emas, data.distancias.weekly);
             renderAlinhamento('alinhamentoSemanal', data.timeframes.semanal.emas);
+            
+            // Scores Semanal
+            document.getElementById('scorePosicaoSemanal').textContent = `(Score: ${Math.round(data.timeframes.semanal.scores.posicao * 10)})`;
+            document.getElementById('scoreAlinhamentoSemanal').textContent = `(Score: ${Math.round(data.timeframes.semanal.scores.alinhamento * 10)})`;
             
           } catch (error) {
             document.getElementById('scoreNumero').textContent = 'Erro';
