@@ -105,12 +105,9 @@ Esta documentação técnica define claramente o padrão arquitetural, responsab
 
 ### 1.0.25 -  Página de detalhes da analise ténica - FEITO 04/06
 - criar a págida de detalhes da analise tecnica 
-- incluir os alertas exclusivos deste bloco (alertas na página de detalhe)
-- alertas na página principal (unificar depois)
+- incluir os alertas exclusivos deste bloco (alertas na página principal)
 
 ### 1.0.26 - sistema de alertas na home dash
-- unificar com alertas da analise tecnica que está na página de detalhes
-- validar/revisar alertas da analise tecnica da distancia do preço em relação as médias
 
 ### 1.0.27 - Criar outro indicador de risco (Alavancagem atual X alavancagem permitida Kelly)
 - escala para aderencia, quanto mais aderente ao Kelly, maior pontuação
