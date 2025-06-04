@@ -6,7 +6,7 @@ from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 from datetime import datetime
 from app.routers import debug
-from app.routers import dashboard_tecnico_detalhes
+from app.routers.dashboard_tecnico_detalhes import router as dashboard_tecnico_detalhes_router
 from app.routers import (
     coleta, indicadores, score, analise, diagnostico, 
     dashboards, dashboard_riscos, dashboard_momentum, dashboard_ciclos, dashboard_tecnico
@@ -58,7 +58,7 @@ app.include_router(dashboard_riscos.router, prefix="/dashboard", tags=["📱 Das
 app.include_router(dashboard_momentum.router, prefix="/dashboard", tags=["📱 Dashboards"])
 app.include_router(dashboard_ciclos.router, prefix="/dashboard", tags=["📱 Dashboards"])
 app.include_router(dashboard_tecnico.router, prefix="/dashboard", tags=["📱 Dashboards"])
-app.include_router(dashboard_tecnico_detalhes.router, prefix="/dashboard")
+app.include_router(dashboard_tecnico_detalhes_router, prefix="/dashboard")
 
 # ==========================================
 # ENDPOINTS BÁSICOS
