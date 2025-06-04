@@ -4,85 +4,15 @@
 {% block page_title %}🚀 BTC Turbo - Dashboard Principal{% endblock %}
 
 {% block extra_css %}
-<style>
-.config-container {
-    display: flex; justify-content: center; align-items: center; gap: 1rem;
-    margin-bottom: 2rem; padding: 1rem; background: #161b22; border-radius: 8px;
-    max-width: 800px; margin-left: auto; margin-right: auto; flex-wrap: wrap;
-}
-.config-section { display: flex; align-items: center; gap: 0.5rem; }
-.toggle-switch { position: relative; display: inline-block; width: 50px; height: 28px; }
-.toggle-switch input { opacity: 0; width: 0; height: 0; }
-.slider {
-    position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
-    background-color: #666; transition: .4s; border-radius: 28px;
-}
-.slider:before {
-    position: absolute; content: ""; height: 22px; width: 22px; left: 3px; bottom: 3px;
-    background-color: white; transition: .4s; border-radius: 50%;
-}
-input:checked + .slider { background-color: #f7931a; }
-input:checked + .slider:before { transform: translateX(22px); }
-.toggle-label { color: #fff; font-weight: 600; font-size: clamp(12px, 2vw, 14px); }
-.btn-update {
-    background: #f7931a; color: #000; border: none; border-radius: 6px;
-    padding: 8px 16px; cursor: pointer; font-weight: 600; font-size: 12px;
-    transition: all 0.3s ease;
-}
-.btn-update:hover { background: #e8851a; transform: translateY(-1px); }
-.btn-update:disabled { background: #666; cursor: not-allowed; transform: none; }
-</style>
+{% include 'components/dashboard-styles.html' %}
 {% endblock %}
 
 {% block content %}
-<div class="config-container">
-    <div class="config-section">
-        <span class="toggle-label">Redução por Risco:</span>
-        <label class="toggle-switch">
-            <input type="checkbox" id="toggleReducaoRisco" onchange="carregarDados()">
-            <span class="slider"></span>
-        </label>
-        <span class="toggle-label" id="toggleStatus">Desabilitada</span>
-    </div>
-    
-    <button id="btnForceUpdate" onclick="forcarUpdate()" class="btn-update">
-        🔄 Atualizar Dados
-    </button>
-</div>
-
-<div class="status-info" id="statusInfo">
-    <strong>⏳ Carregando dados...</strong>
-</div>
-
-<div class="dashboard-grid">
-    {% for gauge in gauges %}
-    <div class="grafico {% if gauge.clickable %}clicavel{% endif %} {% if gauge.is_main %}principal{% endif %}" 
-         {% if gauge.clickable and gauge.url %}onclick="window.location.href='{{ gauge.url }}'"{% endif %}>
-        
-        <h3>{{ gauge.title }}</h3>
-        <canvas id="gaugeChart_{{ gauge.id }}" width="200" height="180"></canvas>
-        
-        <div id="classificacao_{{ gauge.id }}" class="classificacao loading">
-            Carregando...
-        </div>
-        
-        {% if gauge.info %}
-        <div class="info-adicional">{{ gauge.info }}</div>
-        {% endif %}
-        
-        {% if gauge.peso is defined %}
-        <div class="peso-info">Peso: {{ gauge.peso }}%</div>
-        {% endif %}
-        
-        {% if gauge.clickable and gauge.url %}
-        <a href="{{ gauge.url }}" class="detalhes-btn">🔍 Ver Detalhes</a>
-        {% endif %}
-    </div>
-    {% endfor %}
-</div>
+{% include 'components/dashboard-config.html' %}
+{% include 'components/status-panel.html' %}
+{% include 'components/gauge-grid.html' %}
 {% endblock %}
 
 {% block scripts %}
-<!-- Dashboard Core JS -->
 <script src="/static/js/dashboard-core.js"></script>
 {% endblock %}

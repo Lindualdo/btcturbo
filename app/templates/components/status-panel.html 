@@ -1,0 +1,4 @@
+<!-- Painel de Status -->
+<div class="status-info" id="statusInfo">
+    <strong>⏳ Carregando dados...</strong>
+</div>
