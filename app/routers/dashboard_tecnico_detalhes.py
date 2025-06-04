@@ -341,7 +341,7 @@ async def dashboard_tecnico_detalhes():
                 classificacao = getClassificacaoTecnica(scoreNumerico);
               }}
               
-              document.getElementById('scorePrincipal').textContent = Math.round(scoreNumerico * 10);
+              document.getElementById('scorePrincipal').textContent = parseInt(scoreNumerico * 10);
               document.getElementById('scorePrincipal').classList.remove('loading');
               document.getElementById('classificacaoPrincipal').textContent = classificacao;
               
