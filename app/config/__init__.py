@@ -9,7 +9,7 @@ from functools import lru_cache
 class Settings(BaseSettings):
     # Application
     APP_NAME: str = "BTC TURBO"
-    APP_VERSION: str = "1.0.1"
+    APP_VERSION: str = "5.0.0"
     HOST: str = Field("0.0.0.0", description="Host address for Uvicorn")
     PORT: int = Field(8000, description="Port for Uvicorn server")
 

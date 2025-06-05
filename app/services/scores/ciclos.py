@@ -88,7 +88,7 @@ def calcular_score():
     # 4. Retornar JSON formatado
     return {
         "bloco": "ciclo",
-        "peso": "50%",
+        "peso_bloco": "50%",
         "score": round(score_consolidado, 2),
         "classificacao_consolidada": interpretar_classificacao_consolidada(score_consolidado),
         "timestamp": dados_indicadores["timestamp"],

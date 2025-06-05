@@ -20,21 +20,21 @@ CICLO (50%) - peso do bloco
 
 MOMENTUM (20%) - peso do bloco
 ├── Score_Bloco - soma do score ponderado de cada indicador
-├── RSI Semanal (8%)
+├── RSI Semanal (40%)
 │   └── < 30: Score 9-10 | 30-45: Score 7-8 | 45-55: Score 5-6 | 55-70: Score 3-4 | > 70: Score 0-2
-├── Funding Rates 7D (7%)
+├── Funding Rates 7D (35%)
 │   └── < -0.05%: Score 9-10 | -0.05-0%: Score 7-8 | 0-0.02%: Score 5-6 | 0.02-0.1%: Score 3-4 | > 0.1%: Score 0-2
-├── STH-SOPR (3%)
+├── Exchange_Netflow (15%) - será substituido por STH-SOPR
 │   └── < 0.9: Score 9-10 | 0.9-0.97: Score 7-8 | 0.97-1.03: Score 5-6 | 1.03-1.1: Score 3-4 | > 1.1: Score 0-2
-└── Long/Short Ratio (2%)
+└── Long/Short Ratio (10%)
     └── < 0.8: Score 9-10 | 0.8-0.95: Score 7-8 | 0.95-1.05: Score 5-6 | 1.05-1.3: Score 3-4 | > 1.3: Score 0-2
 
 TÉCNICO (30%) - peso do bloco
 ├── Score_Bloco - soma do score ponderado de cada indicador
-├── Sistema EMAs (20%)
-│   ├── Alinhamento: EMA17>34>144>305>610 = Score 10 (10%)
-│   └── Posição: Preço vs cada EMA (10%)
-└── Bollinger Band Width (10%)
+├── Sistema EMAs (70%)
+│   ├── Alinhamento: EMA17>34>144>305>610 = Score 10 (50%)
+│   └── Posição: Preço vs cada EMA (50%)
+└── Bollinger Band Width (30%)
     └── < 5%: Score 9-10 | 5-10%: Score 7-8 | 10-20%: Score 5-6 | 20-30%: Score 3-4 | > 30%: Score 0-2
 ```
 

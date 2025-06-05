@@ -95,20 +95,20 @@ def calcular_score():
     netflow_score, netflow_classificacao = calcular_netflow_score(netflow_valor)
     ls_score, ls_classificacao = calcular_ls_ratio_score(ls_valor)
     
-    # 3. Aplicar pesos NOVOS v1.0.12:
-    # RSI: 12%, Funding: 10%, Netflow: 5%, L/S: 3% do total 30%
-    # Normalizando para o bloco: RSI: 40%, Funding: 33.33%, Netflow: 16.67%, L/S: 10%
+    # 3. Aplicar pesos (RSI 40%, Funding_Rates 35%, Exchange_Netflow (STH-SOPR) 15% , Long_Short_Ratio 10%)
+    # NOTA: O do bloco é a soma do score ponderado de cada indicador
+
     score_consolidado = (
-        (rsi_score * 0.40) +        # 12% / 30% = 40%
-        (funding_score * 0.3333) +  # 10% / 30% = 33.33%
-        (netflow_score * 0.1667) +  # 5% / 30% = 16.67%
-        (ls_score * 0.10)           # 3% / 30% = 10%
+        (rsi_score * 0.40) +        
+        (funding_score * 0.35) +  
+        (netflow_score * 0.15) + 
+        (ls_score * 0.10)         
     )
     
     # 4. Retornar JSON formatado
     return {
         "bloco": "momentum",
-        "peso_bloco": "30%",
+        "peso_bloco": "20%",
         "score_consolidado": round(score_consolidado, 2),
         "classificacao_consolidada": interpretar_classificacao_consolidada(score_consolidado),
         "timestamp": dados_indicadores["timestamp"],
@@ -116,29 +116,33 @@ def calcular_score():
             "RSI_Semanal": {
                 "valor": rsi_valor,
                 "score": round(rsi_score, 1),
+                "score_consolidado": round(rsi_score * 0.40,2),
                 "classificacao": rsi_classificacao,
-                "peso": "12%",
+                "peso": "40%",
                 "fonte": indicadores["RSI_Semanal"]["fonte"]
             },
             "Funding_Rates": {
                 "valor": funding_valor,
                 "score": round(funding_score, 1),
+                "score_consolidado": round(funding_score * 0.35, 2),
                 "classificacao": funding_classificacao,
-                "peso": "10%",
+                "peso": "35%",
                 "fonte": indicadores["Funding_Rates"]["fonte"]
             },
             "Exchange_Netflow": {
                 "valor": netflow_valor,
                 "score": round(netflow_score, 1),
+                "score_consolidado": round(netflow_score * 0.15, 2), 
                 "classificacao": netflow_classificacao,
-                "peso": "5%",
+                "peso": "15%",
                 "fonte": indicadores["Exchange_Netflow"]["fonte"]
             },
             "Long_Short_Ratio": {
                 "valor": ls_valor,
                 "score": round(ls_score, 1),
+                "score_consolidado": round(ls_score * 0.10, 2),
                 "classificacao": ls_classificacao,
-                "peso": "3%",
+                "peso": "10%",
                 "fonte": indicadores["Long_Short_Ratio"]["fonte"]
             }
         },
