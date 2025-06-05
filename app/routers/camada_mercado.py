@@ -103,11 +103,13 @@ async def analisar_mercado():
                 if dados.get("status") == "success":
                     # Ciclos retorna "score", outros podem retornar "score_consolidado"
                     score_bloco = dados.get("score") or dados.get("score_consolidado", 0)
-                    score_ponderado = (score_bloco * peso) / 100
+                    # Converter de base 10 para base 100
+                    score_bloco_100 = score_bloco * 10
+                    score_ponderado = (score_bloco_100 * peso) / 100
                     
                     scores_blocos[bloco] = score_bloco
                     breakdown[bloco] = {
-                        "score_bruto": score_bloco,
+                        "score_bruto": score_bloco_100,
                         "peso": f"{peso}%",
                         "score_ponderado": round(score_ponderado, 2),
                         "classificacao": dados.get("classificacao_consolidada", "unknown"),

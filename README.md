@@ -70,7 +70,7 @@ app/
 # Output: Score 0-10, nível segurança, alertas
 ```
 
-#### `/api/v1/camada-mercado`
+#### `/api/v1/camada-mercado` - feito 5.0.2 - 05/06
 ```python
 # Consolida: Ciclos (50%) + Técnico (30%) + Momentum (20%)
 # Input: usa /obter-indicadores/{bloco} existentes
