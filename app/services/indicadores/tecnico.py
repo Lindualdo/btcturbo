@@ -11,10 +11,20 @@ def obter_indicadores():
     # Primeiro tenta obter EMAs detalhadas + BBW (novo formato)
     emas_data = get_emas_detalhadas()
     
-    if emas_data and "bbw" in emas_data:
-        return format_emas_bbw_response(emas_data)
-    elif emas_data:
-        return format_emas_response(emas_data)
+    if emas_data:
+        # Verificar se tem BBW válido (não nulo e não zero)
+        bbw_data = emas_data.get("bbw", {})
+        has_valid_bbw = (
+            bbw_data and 
+            bbw_data.get("percentage") is not None and 
+            bbw_data.get("score") is not None and
+            bbw_data.get("percentage") > 0
+        )
+        
+        if has_valid_bbw:
+            return format_emas_bbw_response(emas_data)
+        else:
+            return format_emas_response(emas_data)
     
     # Fallback para dados legados
     dados_db = get_dados_tecnico()

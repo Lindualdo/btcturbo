@@ -18,7 +18,7 @@ def interpretar_classificacao(score):
 def calcular_score():
     """
     Calcula score consolidado do bloco TÉCNICO usando dados já processados
-    REFATORADO: usa score_bloco_final calculado na coleta
+    REFATORADO: usa estrutura organizada com EMAs + BBW
     """
     # 1. Obter dados brutos da API
     dados_indicadores = indicadores_tecnico.obter_indicadores()
@@ -32,8 +32,8 @@ def calcular_score():
     
     indicadores = dados_indicadores["indicadores"]
     
-    # 2. Verificar se temos score já calculado (novo sistema)
-    if "Score_Bloco_Final" in indicadores:
+    # 2. Verificar qual estrutura temos
+    if "Sistema_EMAs" in indicadores and "Bollinger_Band_Width" in indicadores:
         return calcular_score_com_bbw(dados_indicadores)
     elif "Score_Final_Ponderado" in indicadores:
         return calcular_score_emas_detalhadas(dados_indicadores)
