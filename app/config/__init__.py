@@ -65,8 +65,3 @@ class Settings(BaseSettings):
 def get_settings() -> Settings:
     """Retorna uma instância singleton das configurações carregadas do .env"""
     return Settings()
-
-# Dashboard config (novo)
-from .dashboard_config import DASHBOARD_CONFIG
-
-__all__ = ["get_settings", "Settings", "DASHBOARD_CONFIG"]
