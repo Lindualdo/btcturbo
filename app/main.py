@@ -1,36 +1,17 @@
 # app/main.py -  v5.0.0
 
 from fastapi import FastAPI
-from fastapi.templating import Jinja2Templates
-from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 from datetime import datetime
-from app.routers import debug
 from app.routers import (
     coleta, indicadores, score, analise, diagnostico
 )
 
 app = FastAPI(
     title="BTC Turbo API",
-    description="Sistema de análise de indicadores BTC com Templates Jinja2",
+    description="Sistema de análise de indicadores BTC",
     version="5.0.0"
 )
-
-
-# ==========================================
-# CONFIGURAÇÃO ESTÁTICA - CRÍTICO
-# ==========================================
-
-# Verificar se diretório static existe
-static_path = Path("app/templates/static")
-if static_path.exists():
-    app.mount("/static", StaticFiles(directory="app/templates/static"), name="static")
-    print(f"✅ Arquivos estáticos configurados: {static_path}")
-else:
-    print(f"⚠️ AVISO: Diretório static não encontrado em {static_path}")
-
-# Configuração de templates
-templates = Jinja2Templates(directory="app/templates")
 
 # ==========================================
 # ROUTERS DE DADOS (APIs)
@@ -46,8 +27,6 @@ app.include_router(analise.router, prefix="/api/v1", tags=["📈 Análise"])
 # ==========================================
 # ENDPOINTS BÁSICOS
 # ==========================================
-
-app.include_router(debug.router, prefix="/api/v1/debug", tags=["🔧 Debug"])
 
 @app.get("/ping")
 async def ping():
