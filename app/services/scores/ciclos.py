@@ -77,18 +77,17 @@ def calcular_score():
     realized_score, realized_classificacao = calcular_realized_score(realized_valor)
     puell_score, puell_classificacao = calcular_puell_score(puell_valor)
     
-    # 3. Aplicar pesos (MVRV: 20%, Realized: 15%, Puell: 5% do total 40%)
-    # Normalizando para o bloco: MVRV: 50%, Realized: 37.5%, Puell: 12.5%
+    # 3. Aplicar pesos (MVRV: 50%, Realized: 40%, Puell: 10%)
     score_consolidado = (
         (mvrv_score * 0.50) +
-        (realized_score * 0.375) +
-        (puell_score * 0.125)
+        (realized_score * 0.40) +
+        (puell_score * 0.10)
     )
     
     # 4. Retornar JSON formatado
     return {
         "bloco": "ciclo",
-        "peso_bloco": "40%",
+        "peso_bloco": "50%",
         "score_consolidado": round(score_consolidado, 2),
         "classificacao_consolidada": interpretar_classificacao_consolidada(score_consolidado),
         "timestamp": dados_indicadores["timestamp"],
@@ -97,21 +96,21 @@ def calcular_score():
                 "valor": mvrv_valor,
                 "score": round(mvrv_score, 1),
                 "classificacao": mvrv_classificacao,
-                "peso": "20%",
+                "peso": "50%",
                 "fonte": indicadores["MVRV_Z"]["fonte"]
             },
             "Realized_Ratio": {
                 "valor": realized_valor,
                 "score": round(realized_score, 1),
                 "classificacao": realized_classificacao,
-                "peso": "15%",
+                "peso": "40%",
                 "fonte": indicadores["Realized_Ratio"]["fonte"]
             },
             "Puell_Multiple": {
                 "valor": puell_valor,
                 "score": round(puell_score, 1),
                 "classificacao": puell_classificacao,
-                "peso": "5%",
+                "peso": "10%",
                 "fonte": indicadores["Puell_Multiple"]["fonte"]
             }
         },

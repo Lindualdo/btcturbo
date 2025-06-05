@@ -1,4 +1,4 @@
-# app/main.py - CORRIGIDO v1.0.24
+# app/main.py -  v5.0.0
 
 from fastapi import FastAPI
 from fastapi.templating import Jinja2Templates
@@ -6,19 +6,15 @@ from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 from datetime import datetime
 from app.routers import debug
-from app.routers.dashboard_tecnico_detalhes import router as dashboard_tecnico_detalhes_router
 from app.routers import (
-    coleta, indicadores, score, analise, diagnostico, 
-    dashboards, dashboard_riscos, dashboard_momentum, dashboard_ciclos, dashboard_tecnico
+    coleta, indicadores, score, analise, diagnostico
 )
 
 app = FastAPI(
     title="BTC Turbo API",
     description="Sistema de análise de indicadores BTC com Templates Jinja2",
-    version="1.0.24"
+    version="5.0.0"
 )
-
-
 
 
 # ==========================================
@@ -46,19 +42,6 @@ app.include_router(indicadores.router, prefix="/api/v1", tags=["📊 Indicadores
 app.include_router(score.router, prefix="/api/v1", tags=["🎯 Scores"])
 app.include_router(analise.router, prefix="/api/v1", tags=["📈 Análise"])
 
-# ==========================================
-# ROUTERS DE DASHBOARDS (HTML)
-# ==========================================
-
-# Dashboard principal (índice)
-app.include_router(dashboards.router, prefix="/dashboard", tags=["📱 Dashboards"])
-
-# Dashboards específicos
-app.include_router(dashboard_riscos.router, prefix="/dashboard", tags=["📱 Dashboards"])
-app.include_router(dashboard_momentum.router, prefix="/dashboard", tags=["📱 Dashboards"])
-app.include_router(dashboard_ciclos.router, prefix="/dashboard", tags=["📱 Dashboards"])
-app.include_router(dashboard_tecnico.router, prefix="/dashboard", tags=["📱 Dashboards"])
-app.include_router(dashboard_tecnico_detalhes_router, prefix="/dashboard")
 
 # ==========================================
 # ENDPOINTS BÁSICOS
@@ -105,7 +88,7 @@ async def root():
 @app.on_event("startup")
 async def startup_event():
     """Verificações no startup"""
-    print("🚀 BTC Turbo v1.0.21 - Iniciando...")
+    print("🚀 BTC Turbo v5.0.0 - Iniciando...")
     
     # Verificar estrutura de templates
     template_path = Path("app/templates")
