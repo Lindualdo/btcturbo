@@ -77,19 +77,20 @@ def calcular_score():
     realized_score, realized_classificacao = calcular_realized_score(realized_valor)
     puell_score, puell_classificacao = calcular_puell_score(puell_valor)
     
-    # 3. Aplicar pesos (MVRV: 25%, Realized: 20%, Puell: 5%)
-    score_consolidado = (
-        (mvrv_score * 0.25) +
-        (realized_score * 0.20) +
-        (puell_score * 0.5)
+    # 3. Aplicar pesos (MVRV: 50%, Realized: 40%, Puell: 10%)
+    # NOTA: O do bloco é a soma do score ponderado de cada indicador
+    score_ponderado = (
+        (mvrv_score * 0.50) +
+        (realized_score * 0.40) +
+        (puell_score * 0.10)
     )
     
     # 4. Retornar JSON formatado
     return {
         "bloco": "ciclo",
-        "peso_bloco": "50%",
-        "score_consolidado": round(score_consolidado, 2),
-        "classificacao_consolidada": interpretar_classificacao_consolidada(score_consolidado),
+        "peso_analise_mercado": "50%",
+        "score_bloco": round(score_ponderado, 2),
+        "classificacao_consolidada": interpretar_classificacao_consolidada(score_ponderado),
         "timestamp": dados_indicadores["timestamp"],
         "indicadores": {
             "MVRV_Z": {

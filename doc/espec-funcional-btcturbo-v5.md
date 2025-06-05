@@ -9,12 +9,13 @@
 **Pergunta:** "O mercado está favorável para estar posicionado?"
 
 ```
-CICLO (50%)
-├── MVRV Z-Score (25%)
+CICLO (50%) - peso percentual na analise de mercado 
+├──Score_Bloco - soma do score ponderado de cada indicador
+├── MVRV Z-Score (50%)
 │   └── < 0: Score 9-10 | 0-2: Score 7-8 | 2-4: Score 5-6 | 4-6: Score 3-4 | > 6: Score 0-2
-├── Realized Price Ratio (20%)
+├── Realized Price Ratio (40%)
 │   └── < 0.7: Score 9-10 | 0.7-1: Score 7-8 | 1-1.5: Score 5-6 | 1.5-2.5: Score 3-4 | > 2.5: Score 0-2
-└── Puell Multiple (5%)
+└── Puell Multiple (10%)
     └── < 0.5: Score 9-10 | 0.5-1: Score 7-8 | 1-2: Score 5-6 | 2-4: Score 3-4 | > 4: Score 0-2
 
 MOMENTUM (20%)
