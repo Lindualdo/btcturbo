@@ -1,16 +1,16 @@
-# app/main.py -  v5.0.0
+# app/main.py - v5.0.1 com Camada Mercado
 
 from fastapi import FastAPI
 from pathlib import Path
 from datetime import datetime
 from app.routers import (
-    coleta, indicadores, score, analise, diagnostico, camada_risco
+    coleta, indicadores, score, analise, diagnostico, camada_risco, camada_mercado
 )
 
 app = FastAPI(
     title="BTC Turbo API",
     description="Sistema de análise de indicadores BTC",
-    version="5.0.0"
+    version="5.0.1"
 )
 
 # ==========================================
@@ -22,7 +22,8 @@ app.include_router(coleta.router, prefix="/api/v1", tags=["📥 Coleta"])
 app.include_router(indicadores.router, prefix="/api/v1", tags=["📊 Indicadores"]) 
 app.include_router(score.router, prefix="/api/v1", tags=["🎯 Scores"])
 app.include_router(analise.router, prefix="/api/v1", tags=["📈 Análise"])
-app.include_router(camada_risco.router, prefix="/api/v1", tags=["📈 camada_risco"])
+app.include_router(camada_risco.router, prefix="/api/v1", tags=["🛡️ Camada Risco"])
+app.include_router(camada_mercado.router, prefix="/api/v1", tags=["🎯 Camada Mercado"])  # NOVO
 
 
 # ==========================================
@@ -42,23 +43,25 @@ async def health():
 @app.get("/")
 async def root():
     return {
-        "message": "🚀 BTC Turbo API v1.0.21",
+        "message": "🚀 BTC Turbo API v5.0.1",
         "status": "✅ Online",
-        "architecture": "Jinja2 Templates + FastAPI",
-        "dashboards": {
-            "index": "/dashboard/",
-            "funcionando": [
-                "/dashboard/riscos",
-                "/dashboard/momentum", 
-                "/dashboard/ciclos",
-                "/dashboard/tecnico"
-            ],
-            "notas": {
-                "templates": "Sistema refatorado para Jinja2",
-                "static_files": "CSS/JS integrados"
-            }
+        "architecture": "4 Camadas de Análise",
+        "new_features": {
+            "camada_mercado": "/api/v1/camada-mercado",
+            "description": "Consolida Ciclo + Técnico + Momentum"
         },
-        "apis": "/docs"
+        "apis": {
+            "docs": "/docs",
+            "camadas": {
+                "mercado": "/api/v1/camada-mercado",
+                "risco": "/api/v1/camada-risco"
+            },
+            "blocos": {
+                "ciclos": "/api/v1/calcular-score/ciclos",
+                "tecnico": "/api/v1/calcular-score/tecnico", 
+                "momentum": "/api/v1/calcular-score/momentum"
+            }
+        }
     }
 
 # ==========================================
@@ -68,26 +71,7 @@ async def root():
 @app.on_event("startup")
 async def startup_event():
     """Verificações no startup"""
-    print("🚀 BTC Turbo v5.0.0 - Iniciando...")
-    
-    # Verificar estrutura de templates
-    template_path = Path("app/templates")
-    if template_path.exists():
-        print(f"✅ Templates configurados: {template_path}")
-        
-        # Verificar arquivos críticos
-        critical_files = [
-            "base.html",
-            "dashboard_principal.html"
-        ]
-        
-        for file in critical_files:
-            file_path = template_path / file
-            if file_path.exists():
-                print(f"✅ Template encontrado: {file}")
-            else:
-                print(f"❌ Template faltando: {file}")
-    else:
-        print(f"❌ ERRO: Diretório templates não encontrado")
-    
-    print("🎯 Sistema iniciado - Dashboard disponível em /dashboard/")
+    print("🚀 BTC Turbo v5.0.1 - Iniciando...")
+    print("✅ Nova API: Camada Mercado implementada")
+    print("🎯 Disponível em: /api/v1/camada-mercado")
+    print("📊 Consolida: Ciclos (50%) + Técnico (30%) + Momentum (20%)")
