@@ -95,25 +95,25 @@ def calcular_score():
             "MVRV_Z": {
                 "valor": mvrv_valor,
                 "score": round(mvrv_score, 2),
-                "score_ponderado": round(mvrv_score * 0.25, 2),
+                "score_ponderado": round(mvrv_score * 0.50, 2),
                 "classificacao": mvrv_classificacao,
-                "peso": "25%",
+                "peso": "50%",
                 "fonte": indicadores["MVRV_Z"]["fonte"]
             },
             "Realized_Ratio": {
                 "valor": realized_valor,
                 "score": round(realized_score, 2),
-                "score_ponderado": round(realized_score * 0.20, 2),
+                "score_ponderado": round(realized_score * 0.40, 2),
                 "classificacao": realized_classificacao,
-                "peso": "20%",
+                "peso": "40%",
                 "fonte": indicadores["Realized_Ratio"]["fonte"]
             },
             "Puell_Multiple": {
                 "valor": puell_valor,
                 "score": round(puell_score, 2),
-                "score_ponderado": round(puell_score * 0.05, 2),
+                "score_ponderado": round(puell_score * 0.10, 2),
                 "classificacao": puell_classificacao,
-                "peso": "5%",
+                "peso": "10%",
                 "fonte": indicadores["Puell_Multiple"]["fonte"]
             }
         },
