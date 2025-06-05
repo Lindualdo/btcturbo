@@ -88,6 +88,11 @@ async def analisar_mercado():
         
         for bloco, peso in PESOS_CAMADA_MERCADO.items():
             try:
+                # Usar os endpoints de score que já existem
+                import requests
+                from fastapi import Request
+                
+                # Fazer chamada interna para os endpoints existentes
                 if bloco == "ciclos":
                     dados = ciclos.calcular_score()
                 elif bloco == "tecnico":
@@ -96,7 +101,8 @@ async def analisar_mercado():
                     dados = momentum.calcular_score()
                 
                 if dados.get("status") == "success":
-                    score_bloco = dados.get("score_consolidado", 0)
+                    # Ciclos retorna "score", outros podem retornar "score_consolidado"
+                    score_bloco = dados.get("score") or dados.get("score_consolidado", 0)
                     score_ponderado = (score_bloco * peso) / 100
                     
                     scores_blocos[bloco] = score_bloco
