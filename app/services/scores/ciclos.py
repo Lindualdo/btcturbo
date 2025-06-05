@@ -79,7 +79,7 @@ def calcular_score():
     
     # 3. Aplicar pesos (MVRV: 50%, Realized: 40%, Puell: 10%)
     # NOTA: O do bloco é a soma do score ponderado de cada indicador
-    score_ponderado = (
+    score_consolidado = (
         (mvrv_score * 0.50) +
         (realized_score * 0.40) +
         (puell_score * 0.10)
@@ -88,15 +88,15 @@ def calcular_score():
     # 4. Retornar JSON formatado
     return {
         "bloco": "ciclo",
-        "peso_analise_mercado": "50%",
-        "score_bloco": round(score_ponderado, 2),
-        "classificacao_consolidada": interpretar_classificacao_consolidada(score_ponderado),
+        "peso": "50%",
+        "score": round(score_consolidado, 2),
+        "classificacao_consolidada": interpretar_classificacao_consolidada(score_consolidado),
         "timestamp": dados_indicadores["timestamp"],
         "indicadores": {
             "MVRV_Z": {
                 "valor": mvrv_valor,
                 "score": round(mvrv_score, 2),
-                "score_ponderado": round(mvrv_score * 0.50, 2),
+                "score_consolidado": round(mvrv_score * 0.50, 2),
                 "classificacao": mvrv_classificacao,
                 "peso": "50%",
                 "fonte": indicadores["MVRV_Z"]["fonte"]
@@ -104,7 +104,7 @@ def calcular_score():
             "Realized_Ratio": {
                 "valor": realized_valor,
                 "score": round(realized_score, 2),
-                "score_ponderado": round(realized_score * 0.40, 2),
+                "score_consolidado": round(realized_score * 0.40, 2),
                 "classificacao": realized_classificacao,
                 "peso": "40%",
                 "fonte": indicadores["Realized_Ratio"]["fonte"]
@@ -112,7 +112,7 @@ def calcular_score():
             "Puell_Multiple": {
                 "valor": puell_valor,
                 "score": round(puell_score, 2),
-                "score_ponderado": round(puell_score * 0.10, 2),
+                "score_consolidado": round(puell_score * 0.10, 2),
                 "classificacao": puell_classificacao,
                 "peso": "10%",
                 "fonte": indicadores["Puell_Multiple"]["fonte"]
