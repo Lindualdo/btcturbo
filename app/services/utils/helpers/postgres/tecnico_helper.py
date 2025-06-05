@@ -1,4 +1,4 @@
-# app/services/utils/helpers/postgres/tecnico_helper.py
+# app/services/utils/helpers/postgres/tecnico_helper.py - ATUALIZADO
 
 import logging
 import json
@@ -6,52 +6,14 @@ from datetime import datetime
 from typing import Dict, Optional
 from .base import execute_query
 
-
 logger = logging.getLogger(__name__)
-
-def get_dados_tecnico() -> Optional[Dict]:
-    """Busca dados mais recentes do bloco técnico"""
-    try:
-        logger.info("🔍 Buscando dados do bloco TÉCNICO...")
-        
-        query = """
-            SELECT 
-                -- EMAs Semanal
-                ema_17_1w, ema_34_1w, ema_144_1w, ema_305_1w, ema_610_1w,
-                -- EMAs Diário  
-                ema_17_1d, ema_34_1d, ema_144_1d, ema_305_1d, ema_610_1d,
-                -- Preço e scores
-                btc_price_current,
-                score_1w_ema, score_1w_price, score_1d_ema, score_1d_price,
-                score_consolidado_1w, score_consolidado_1d, score_final_ponderado,
-                -- Campos legados (compatibilidade)
-                sistema_emas, padroes_graficos,
-                -- Metadados
-                distancias_json, timestamp, fonte, metadados
-            FROM indicadores_tecnico 
-            ORDER BY timestamp DESC 
-            LIMIT 1
-        """
-        
-        result = execute_query(query, fetch_one=True)
-        
-        if result:
-            logger.info(f"✅ Dados técnico encontrados: score_final={result.get('score_final_ponderado')}, timestamp={result['timestamp']}")
-            return result
-        else:
-            logger.warning("⚠️ Nenhum dado encontrado na tabela indicadores_tecnico")
-            return None
-            
-    except Exception as e:
-        logger.error(f"❌ Erro ao buscar dados do bloco técnico: {str(e)}")
-        return None
 
 def insert_dados_tecnico_completo(dados: Dict) -> bool:
     """
-    Insere dados técnicos completos com EMAs e scores calculados
+    Insere dados técnicos completos com EMAs, BBW e scores calculados
     """
     try:
-        logger.info("💾 Inserindo dados técnico completos...")
+        logger.info("💾 Inserindo dados técnico completos com BBW...")
         
         # Converter distancias_json para string JSON
         distancias_json_str = json.dumps(dados.get("distancias_json", {}))
@@ -64,10 +26,14 @@ def insert_dados_tecnico_completo(dados: Dict) -> bool:
                 ema_17_1d, ema_34_1d, ema_144_1d, ema_305_1d, ema_610_1d,
                 -- Preço atual
                 btc_price_current,
-                -- Scores individuais
+                -- Scores individuais EMAs
                 score_1w_ema, score_1w_price, score_1d_ema, score_1d_price,
-                -- Scores consolidados
+                -- Scores consolidados EMAs
                 score_consolidado_1w, score_consolidado_1d, score_final_ponderado,
+                -- BBW (NOVO)
+                bbw_percentage, score_bbw,
+                -- Score final do bloco (NOVO)
+                score_bloco_final,
                 -- Compatibilidade (usar score final como sistema_emas)
                 sistema_emas, padroes_graficos,
                 -- Metadados
@@ -77,7 +43,9 @@ def insert_dados_tecnico_completo(dados: Dict) -> bool:
                 %s, %s, %s, %s, %s,  -- EMAs 1D
                 %s,                  -- BTC price
                 %s, %s, %s, %s,      -- Scores individuais
-                %s, %s, %s,          -- Scores consolidados
+                %s, %s, %s,          -- Scores consolidados EMAs
+                %s, %s,              -- BBW (NOVO)
+                %s,                  -- Score bloco final (NOVO)
                 %s, %s,              -- Compatibilidade
                 %s, %s, %s           -- Metadados
             )
@@ -107,84 +75,85 @@ def insert_dados_tecnico_completo(dados: Dict) -> bool:
             dados.get("score_1d_ema"),
             dados.get("score_1d_price"),
             
-            # Scores consolidados
+            # Scores consolidados EMAs
             dados.get("score_consolidado_1w"),
             dados.get("score_consolidado_1d"),
             dados.get("score_final_ponderado"),
             
+            # BBW (NOVO)
+            dados.get("bbw_percentage"),
+            dados.get("score_bbw"),
+            
+            # Score final do bloco (NOVO)
+            dados.get("score_bloco_final"),
+            
             # Compatibilidade (campos legados)
-            dados.get("score_final_ponderado"),  # sistema_emas = score final
-            0.0,                                 # padroes_graficos = 0 (descontinuado)
+            dados.get("score_bloco_final"),  # sistema_emas = score final do bloco
+            0.0,                             # padroes_graficos = 0 (descontinuado)
             
             # Metadados
             distancias_json_str,
-            dados.get("fonte", "tvdatafeed_emas"),
+            dados.get("fonte", "tvdatafeed_emas_bbw"),
             dados.get("timestamp", datetime.utcnow())
         )
         
         execute_query(query, params)
-        logger.info("✅ Dados técnico completos inseridos com sucesso")
+        logger.info("✅ Dados técnico completos com BBW inseridos com sucesso")
         return True
         
     except Exception as e:
         logger.error(f"❌ Erro ao inserir dados técnico: {str(e)}")
         return False
 
-def insert_dados_tecnico(sistema_emas: float, padroes: float, fonte: str = "Sistema") -> bool:
+def get_dados_tecnico() -> Optional[Dict]:
     """
-    Função legada mantida para compatibilidade
+    Busca dados mais recentes do bloco técnico (ATUALIZADO para BBW)
     """
     try:
-        logger.info(f"💾 Inserindo dados técnico legados: EMAs={sistema_emas}, Padrões={padroes}")
-        
-        query = """
-            INSERT INTO indicadores_tecnico (sistema_emas, padroes_graficos, fonte, timestamp)
-            VALUES (%s, %s, %s, %s)
-        """
-        params = (sistema_emas, padroes, fonte, datetime.utcnow())
-        
-        execute_query(query, params)
-        logger.info("✅ Dados técnico legados inseridos com sucesso")
-        return True
-        
-    except Exception as e:
-        logger.error(f"❌ Erro ao inserir dados técnico legados: {str(e)}")
-        return False
-
-def get_historico_tecnico(limit: int = 10) -> list:
-    """Busca histórico de dados do bloco técnico"""
-    try:
-        logger.info(f"📊 Buscando histórico do bloco TÉCNICO (últimos {limit} registros)")
+        logger.info("🔍 Buscando dados do bloco TÉCNICO...")
         
         query = """
             SELECT 
-                score_final_ponderado, score_consolidado_1w, score_consolidado_1d,
-                btc_price_current, sistema_emas, padroes_graficos,
-                timestamp, fonte
+                -- EMAs Semanal
+                ema_17_1w, ema_34_1w, ema_144_1w, ema_305_1w, ema_610_1w,
+                -- EMAs Diário  
+                ema_17_1d, ema_34_1d, ema_144_1d, ema_305_1d, ema_610_1d,
+                -- Preço e scores EMAs
+                btc_price_current,
+                score_1w_ema, score_1w_price, score_1d_ema, score_1d_price,
+                score_consolidado_1w, score_consolidado_1d, score_final_ponderado,
+                -- BBW (NOVO)
+                bbw_percentage, score_bbw,
+                -- Score final do bloco (NOVO)
+                score_bloco_final,
+                -- Campos legados (compatibilidade)
+                sistema_emas, padroes_graficos,
+                -- Metadados
+                distancias_json, timestamp, fonte, metadados
             FROM indicadores_tecnico 
             ORDER BY timestamp DESC 
-            LIMIT %s
+            LIMIT 1
         """
         
-        result = execute_query(query, params=(limit,), fetch_all=True)
+        result = execute_query(query, fetch_one=True)
         
         if result:
-            logger.info(f"✅ {len(result)} registros históricos encontrados")
+            logger.info(f"✅ Dados técnico encontrados: score_bloco={result.get('score_bloco_final')}, bbw={result.get('bbw_percentage')}%, timestamp={result['timestamp']}")
             return result
         else:
-            logger.warning("⚠️ Nenhum histórico encontrado")
-            return []
+            logger.warning("⚠️ Nenhum dado encontrado na tabela indicadores_tecnico")
+            return None
             
     except Exception as e:
-        logger.error(f"❌ Erro ao buscar histórico técnico: {str(e)}")
-        return []
+        logger.error(f"❌ Erro ao buscar dados do bloco técnico: {str(e)}")
+        return None
 
 def get_emas_detalhadas() -> Optional[Dict]:
     """
-    Busca EMAs detalhadas por timeframe (função específica para análise)
+    Busca EMAs detalhadas por timeframe (ATUALIZADO para incluir BBW)
     """
     try:
-        logger.info("🔍 Buscando EMAs detalhadas...")
+        logger.info("🔍 Buscando EMAs detalhadas com BBW...")
         
         query = """
             SELECT 
@@ -196,6 +165,11 @@ def get_emas_detalhadas() -> Optional[Dict]:
                 score_1d_ema, score_1d_price, score_consolidado_1d,
                 -- Geral
                 btc_price_current, score_final_ponderado,
+                -- BBW (NOVO)
+                bbw_percentage, score_bbw,
+                -- Score final do bloco (NOVO)
+                score_bloco_final,
+                -- Metadados
                 distancias_json, timestamp, fonte
             FROM indicadores_tecnico 
             ORDER BY timestamp DESC 
@@ -205,7 +179,7 @@ def get_emas_detalhadas() -> Optional[Dict]:
         result = execute_query(query, fetch_one=True)
         
         if result:
-            # Estruturar dados por timeframe
+            # Estruturar dados por timeframe + BBW
             dados_estruturados = {
                 "semanal": {
                     "emas": {
@@ -239,14 +213,21 @@ def get_emas_detalhadas() -> Optional[Dict]:
                 },
                 "geral": {
                     "btc_price": float(result["btc_price_current"]) if result["btc_price_current"] else 0,
-                    "score_final": float(result["score_final_ponderado"]) if result["score_final_ponderado"] else 0,
+                    "score_emas": float(result["score_final_ponderado"]) if result["score_final_ponderado"] else 0,
+                    "score_bloco_final": float(result["score_bloco_final"]) if result["score_bloco_final"] else 0,
                     "timestamp": result["timestamp"],
                     "fonte": result["fonte"]
+                },
+                # BBW (NOVO)
+                "bbw": {
+                    "percentage": float(result["bbw_percentage"]) if result["bbw_percentage"] else 0,
+                    "score": float(result["score_bbw"]) if result["score_bbw"] else 0,
+                    "peso": 0.3
                 },
                 "distancias": result["distancias_json"] if result["distancias_json"] else {}
             }
             
-            logger.info(f"✅ EMAs detalhadas encontradas: score_final={dados_estruturados['geral']['score_final']}")
+            logger.info(f"✅ EMAs detalhadas com BBW encontradas: score_bloco={dados_estruturados['geral']['score_bloco_final']}")
             return dados_estruturados
         else:
             logger.warning("⚠️ Nenhuma EMA detalhada encontrada")
@@ -255,3 +236,54 @@ def get_emas_detalhadas() -> Optional[Dict]:
     except Exception as e:
         logger.error(f"❌ Erro ao buscar EMAs detalhadas: {str(e)}")
         return None
+
+def get_historico_tecnico(limit: int = 10) -> list:
+    """Busca histórico de dados do bloco técnico (ATUALIZADO)"""
+    try:
+        logger.info(f"📊 Buscando histórico do bloco TÉCNICO (últimos {limit} registros)")
+        
+        query = """
+            SELECT 
+                score_bloco_final, score_final_ponderado, score_bbw, bbw_percentage,
+                score_consolidado_1w, score_consolidado_1d,
+                btc_price_current, sistema_emas, padroes_graficos,
+                timestamp, fonte
+            FROM indicadores_tecnico 
+            ORDER BY timestamp DESC 
+            LIMIT %s
+        """
+        
+        result = execute_query(query, params=(limit,), fetch_all=True)
+        
+        if result:
+            logger.info(f"✅ {len(result)} registros históricos encontrados")
+            return result
+        else:
+            logger.warning("⚠️ Nenhum histórico encontrado")
+            return []
+            
+    except Exception as e:
+        logger.error(f"❌ Erro ao buscar histórico técnico: {str(e)}")
+        return []
+
+# Função legada mantida para compatibilidade
+def insert_dados_tecnico(sistema_emas: float, padroes: float, fonte: str = "Sistema") -> bool:
+    """
+    Função legada mantida para compatibilidade
+    """
+    try:
+        logger.info(f"💾 Inserindo dados técnico legados: EMAs={sistema_emas}, Padrões={padroes}")
+        
+        query = """
+            INSERT INTO indicadores_tecnico (sistema_emas, padroes_graficos, fonte, timestamp)
+            VALUES (%s, %s, %s, %s)
+        """
+        params = (sistema_emas, padroes, fonte, datetime.utcnow())
+        
+        execute_query(query, params)
+        logger.info("✅ Dados técnico legados inseridos com sucesso")
+        return True
+        
+    except Exception as e:
+        logger.error(f"❌ Erro ao inserir dados técnico legados: {str(e)}")
+        return False
