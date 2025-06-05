@@ -61,3 +61,36 @@ app/
 *Risco usado como redutor, não no cálculo principal*
 
 ---
+
+## 🎯 FASE 1 - Backend Refactoring
+
+### 1.1 Novos Routers
+
+#### `/api/v1/camada-mercado`
+```python
+# Consolida: Ciclos (50%) + Técnico (30%) + Momentum (20%)
+# Input: usa /obter-indicadores/{bloco} existentes
+# Output: Score 0-10, classificação, ação recomendada
+```
+
+#### `/api/v1/camada-risco`  - feito
+```python
+# Health Factor + Distância Liquidação
+# Input: indicadores_risco existentes + novos se necessário
+# Output: Score 0-10, nível segurança, alertas
+```
+
+#### `/api/v1/camada-dimensionamento`
+```python
+# Tabela MVRV x RSI Mensal → Max Alavancagem
+# Input: MVRV do ciclos + RSI mensal (novo indicador)
+# Output: Alavancagem máxima, stop loss, fase mercado
+```
+
+#### `/api/v1/camada-tatico`
+```python
+# Matriz EMA144 + RSI Diário → Ações específicas
+# Input: dados das 3 camadas anteriores
+# Output: Ação (HOLD/ADD/REDUCE), tamanho, timing
+```
+---
