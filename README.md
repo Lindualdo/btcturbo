@@ -107,8 +107,16 @@ Esta documentação técnica define claramente o padrão arquitetural, responsab
 - criar a págida de detalhes da analise tecnica 
 - incluir os alertas exclusivos deste bloco (alertas na página detalhe)
 
+### 1.0.26 - Ajuste dinamico de pesos no score
+- ajustes de riscos
+- ajustes de volatilidade
+- ajuste regime de mercado
+
 ### 1.0.26 - sistema de alertas na home dash
 
+- alertas de oportunidades
+- incluir a versão de forma dinamica pegando do main ou variável de config em todos as página do dash (hoje está estática)
+- corrigir valor no indicador Exchange Netflow do bloco momentum -  4 casas decimais ou K ao final do numero inteiro (milhares de BTCs)
 - unificar com alertas da analise tecnica que está na página de detalhes
 - validar/revisar alertas da analise tecnica da distancia do preço em relação as médias
 - criar um router/service unificado de todosos alertas
@@ -120,8 +128,10 @@ Esta documentação técnica define claramente o padrão arquitetural, responsab
 
 ### 1.0.28 - Criar sistema de penalidade do score com base no score de risco
 - o risco, sempre pode retirar pontos do score geral, nunca acrescentar
+- definir critérios objetivos - consultar especialista analise BTC
 
 ## 1.0.29 - criar histórico ( scores blocos, consolidado e indicadores bruto)
+- consutar especialista Analise BTC, se agrega ou não na tomada de decisão
 
 ### 1.0.29 - Criar dash com graficos de linhas para monitorar disciplina no Risco e evolução financeira
 - Health factore
@@ -131,8 +141,11 @@ Esta documentação técnica define claramente o padrão arquitetural, responsab
 - o objetivo primcipal do Hold alavancado é aumentar a qtd de BTC em carteira
 
 ## Incluir outros indicadoes de anlise tecnica alem das EMAs
+- definir indcadores e price action
 
-##  coleta de dados - ciclos - demais indicadores
+##  coleta indicadores dinamico (ciclos e momentum)
+- buscar dados publicos, necessários para as formulas e calcular no sistema
+- não usar APIs pagas
 
 ## - histórico dos indicadores dados bruto
 

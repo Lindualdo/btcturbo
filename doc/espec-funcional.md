@@ -5,23 +5,23 @@
 
 ```
 SISTEMA v4.0 FINAL
-├── CICLO (40%)
+├── CICLO (30%)
 │   ├── MVRV Z-Score (20%)
 │   ├── Realized Price Ratio (15%)
 │   └── Puell Multiple (5%)
 │
-├── MOMENTUM (30%)
+├── MOMENTUM (20%)
 │   ├── RSI Semanal (12%) ← +2%
 │   ├── Funding Rates (10%) ← +2%
 │   ├── Exchange Netflow 7D (5%) ← NOVO
 │   ├── Long/Short Ratio (3%) ← Mantém
 │
-├── RISCO (10%) # Já ajustado
+├── RISCO (0%) # Já ajustado
 │   ├── Distância Liquidação (5%)
 │   └── Health Factor (5%)
 │   └── Alavancagem - Kelly - Futuro
 │
-└── TÉCNICO (20%)
+└── TÉCNICO (50%)
     ├── Sistema EMAs (20%) - futuro 15 %
     └── Padrões Gráficos (0%) - futuro 5%
 
@@ -136,7 +136,7 @@ SISTEMA v4.0 FINAL
 
 ---
 
-## ⚠️ 3. RISCO (10% do peso total)
+## ⚠️ 3. RISCO (0% do peso total)
 
 ### Distância do Liquidation (6%)
 **Fórmula**: `((Preço Atual - Preço Liquidação) / Preço Atual) × 100`
@@ -159,20 +159,9 @@ SISTEMA v4.0 FINAL
 | 1.1-1.3 | 3-4 | Ruim |
 | < 1.1 | 0-2 | Crítico |
 
-### Stablecoin Supply Ratio (0%) [DESCONTINUADO]
-**Fórmula**: `Market Cap Stablecoins / Market Cap BTC`
-
-| SSR | Score | Classificação |
-|-----|-------|--------------|
-| > 15% | 9-10 | Ótimo |
-| 10-15% | 7-8 | Bom |
-| 5-10% | 5-6 | Neutro |
-| 2-5% | 3-4 | Ruim |
-| < 2% | 0-2 | Crítico |
-
 ---
 
-## 📉 4. TÉCNICO (20% do peso total)
+## 📉 4. TÉCNICO (50% do peso total)
 
 ### Sistema EMAs Multi-Timeframe (20%) - (FUTURO 15%)
 
