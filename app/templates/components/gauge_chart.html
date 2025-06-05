@@ -1,0 +1,30 @@
+<!-- Componente Gauge Chart Simples -->
+<div class="grafico {% if gauge.clickable %}clicavel{% endif %} {% if gauge.is_main %}principal{% endif %} {% if gauge.is_reference %}risco-reduzido{% endif %}" 
+     {% if gauge.clickable and gauge.url %}onclick="window.location.href='{{ gauge.url }}'"{% endif %}>
+    
+    <h3>{{ gauge.title }}</h3>
+    
+    <canvas id="gaugeChart_{{ gauge.id }}" width="200" height="180"></canvas>
+    
+    <div id="classificacao_{{ gauge.id }}" class="classificacao loading">
+        Carregando...
+    </div>
+    
+    {% if gauge.info %}
+    <div class="info-adicional" id="info_{{ gauge.id }}">
+        {{ gauge.info }}
+    </div>
+    {% endif %}
+    
+    {% if gauge.peso is defined %}
+    <div class="peso-info" id="peso_{{ gauge.id }}">
+        Peso: {{ gauge.peso }}%
+    </div>
+    {% endif %}
+    
+    {% if gauge.clickable and gauge.url %}
+    <a href="{{ gauge.url }}" class="detalhes-btn">
+        🔍 Ver Detalhes
+    </a>
+    {% endif %}
+</div>

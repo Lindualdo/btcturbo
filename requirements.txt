@@ -1,0 +1,16 @@
+fastapi
+uvicorn
+pandas
+git+https://github.com/rongardF/tvdatafeed.git
+beautifulsoup4
+requests
+notion-client
+pydantic-settings>=2.0.0
+web3>=6.0.0
+google-cloud-bigquery>=3.11.4
+google-auth>=2.17.3
+sqlalchemy
+psycopg2-binary
+python-dotenv
+numpy
+jinja2

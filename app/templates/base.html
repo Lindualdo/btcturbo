@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}BTC Turbo{% endblock %}</title>
+    
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        {% block header %}
+        <div class="version">{% block version %}BTC Turbo v1.0.21{% endblock %}</div>
+        <h1>{% block page_title %}🚀 BTC Turbo{% endblock %}</h1>
+        {% if subtitle %}
+        <div class="subtitle" id="subtitle">{{ subtitle }}</div>
+        {% endif %}
+        {% endblock %}
+    </header>
+
+    <!-- Navigation -->
+    <nav class="menu-scroll">
+        <a href="/dashboard/" 
+           class="{% if current_page == 'home' %}ativo{% endif %}">
+            Home
+        </a>
+        <a href="/dashboard/riscos" 
+           class="{% if current_page == 'riscos' %}ativo{% endif %}">
+            Riscos
+        </a>
+        <a href="/dashboard/momentum" 
+           class="{% if current_page == 'momentum' %}ativo{% endif %}">
+            Momentum
+        </a>
+        <a href="/dashboard/ciclos" 
+           class="{% if current_page == 'ciclos' %}ativo{% endif %}">
+            Ciclos
+        </a>
+        <a href="/dashboard/tecnico" 
+           class="{% if current_page == 'tecnico' %}ativo{% endif %}">
+            Técnica
+        </a>
+    </nav>
+    
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <a href="/docs">📋 APIs de Dados</a>
+        <a href="/ping">🏥 Health Check</a>
+        <a href="/api/v1/diagnostico/health-check">🔧 Diagnóstico</a>
+        <a href="/api/v1/analise-btc">📊 API Consolidada</a>
+        <a href="/api/v1/analise-btc?force_update=true">🔄 Force Update</a>
+    </footer>
+
+    <!-- Page-specific JavaScript -->
+    {% block scripts %}{% endblock %}
+</body>
+</html>
