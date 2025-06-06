@@ -156,7 +156,7 @@ async def analisar_mercado():
         
         # 4. Resposta consolidada
         return {
-            "camada": "mercado",
+            "analise": "mercado",
             "timestamp": datetime.utcnow().isoformat(),
             "score_consolidado": round(score_normalizado, 1),
             "score_maximo": 100,
