@@ -189,3 +189,71 @@ def get_bbw_interpretation(bbw_percentage: float) -> dict:
         "categoria": category,
         **interpretations[category]
     }
+
+def obter_bbw_com_score() -> dict:
+    """
+    NOVA FUNÇÃO: Obter BBW com score calculado
+    Usada pela análise tática completa
+    """
+    try:
+        from app.services.utils.helpers.tradingview_helper import fetch_ohlc_data, calculate_ema
+        from tvDatafeed import Interval
+        import logging
+        
+        logger = logging.getLogger(__name__)
+        logger.info("📊 Calculando BBW com score...")
+        
+        # Buscar dados para BBW
+        df = fetch_ohlc_data(
+            symbol="BTCUSDT",
+            exchange="BINANCE",
+            interval=Interval.in_daily,
+            n_bars=30
+        )
+        
+        # Calcular Bollinger Bands
+        upper_band, lower_band, middle_band = calculate_bollinger_bands(
+            df['close'], period=20, std_dev=2.0
+        )
+        
+        # Calcular BBW%
+        bbw_percentage = calculate_bbw_percentage(upper_band, lower_band, middle_band)
+        
+        # Calcular score BBW
+        score_bbw = calculate_bbw_score(bbw_percentage)
+        
+        # Determinar estado
+        if bbw_percentage < 5:
+            estado = "compressao_extrema"
+        elif bbw_percentage < 10:
+            estado = "volatilidade_baixa"
+        elif bbw_percentage < 20:
+            estado = "volatilidade_normal"
+        elif bbw_percentage < 30:
+            estado = "volatilidade_alta"
+        else:
+            estado = "volatilidade_extrema"
+        
+        logger.info(f"✅ BBW: {bbw_percentage:.2f}% ({estado})")
+        
+        return {
+            "bbw_percentage": bbw_percentage,
+            "score_bbw": score_bbw,
+            "estado": estado,
+            "bands": {
+                "upper": upper_band,
+                "lower": lower_band,
+                "middle": middle_band
+            },
+            "status": "success"
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Erro obtendo BBW: {str(e)}")
+        return {
+            "bbw_percentage": 15.0,  # Fallback neutro
+            "score_bbw": 5.0,
+            "estado": "erro",
+            "status": "error",
+            "erro": str(e)
+        }
