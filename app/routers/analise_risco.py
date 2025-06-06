@@ -1,4 +1,4 @@
-# app/routers/analise_risco.py - SIMPLIFICADA
+# app/routers/analise_risco.py - CORRIGIDA
 
 from fastapi import APIRouter
 from datetime import datetime
@@ -16,7 +16,7 @@ def classificar_risco(score: float) -> str:
     else:
         return "crítico"
 
-def obter_acao_recomendada(score) -> str:
+def obter_acao_recomendada(score: float) -> str:
     """Determina ação baseada no score de risco"""
     if score >= 80:
         return "Posição segura - pode aumentar alavancagem"
@@ -44,7 +44,7 @@ async def analisar_risco():
         
         if dados_riscos.get("status") != "success":
             return {
-                "camada": "risco",
+                "analise": "risco",
                 "timestamp": datetime.utcnow().isoformat(),
                 "score_consolidado": 0,
                 "classificacao": "erro",
@@ -80,11 +80,11 @@ async def analisar_risco():
         }
         
         classificacao = classificar_risco(score_consolidado)
-        acao = obter_acao_recomendada(score_consolidado, breakdown)
+        acao = obter_acao_recomendada(score_consolidado)
         
         # 4. Resposta consolidada
         return {
-            "camada": "risco",
+            "analise": "risco",
             "timestamp": dados_riscos.get("timestamp", datetime.utcnow().isoformat()),
             "score_consolidado": round(score_consolidado, 1),
             "score_maximo": 100,
@@ -104,7 +104,7 @@ async def analisar_risco():
     except Exception as e:
         logging.error(f"❌ Erro na análise da camada risco: {str(e)}")
         return {
-            "camada": "risco",
+            "analise": "risco",
             "timestamp": datetime.utcnow().isoformat(),
             "score_consolidado": 0,
             "classificacao": "erro",
