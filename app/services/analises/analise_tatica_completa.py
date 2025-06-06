@@ -17,8 +17,6 @@ from app.services.analises.analise_mercado import calcular_analise_mercado
 from app.services.analises.analise_risco import calcular_analise_risco
 from app.services.analises.analise_alavancagem import calcular_analise_alavancagem
 
-
-
 def calcular_analise_tatica_completa():
     """
     FUNÇÃO PRINCIPAL: Análise Tática Completa com 8 Cenários
