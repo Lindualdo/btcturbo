@@ -41,6 +41,19 @@ def calcular_analise_tatica():
                 "componente_faltante": "rsi_diario",
                 "acao_recomendada": "Corrigir conexão TradingView para continuar"
             }
+    
+
+        # 2. Buscar dados de posição (opcional)
+        try:
+            posicao_atual = obter_dados_posicao()
+            if posicao_atual:
+                logging.info("✅ Dados de posição obtidos")
+            else:
+                logging.warning("⚠️ Dados de posição não disponíveis")
+                posicao_atual = None
+        except Exception as e:
+            logging.warning(f"⚠️ Erro obtendo posição: {str(e)}")
+            posicao_atual = None
         
         # 3. Encontrar ação na matriz - dados críticos OK
         regra_tatica = encontrar_acao_tatica(ema_distance, rsi_diario)
