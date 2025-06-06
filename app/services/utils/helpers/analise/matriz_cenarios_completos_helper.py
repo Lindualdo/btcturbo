@@ -111,14 +111,15 @@ CENARIOS_COMPLETOS = [
     },
     
    
-    {
+   {
         "id": "inicio_bear",
         "nome": "Início Bear Market", 
         "descricao": "Quebra de estrutura bullish",
         "condicoes": {
             "score_mercado_min": 0,
-            "score_mercado_max": 38,  # ← CORRIGIDO: era 45, spec diz < 40
-            "score_risco_min": 65,    # ← CORRIGIDO: era 60, spec diz 65+
+            "score_mercado_max": 38,
+            "score_risco_min": 50,      # ✅ Corrigido: era 65
+            "score_risco_max": 60,      # ✅ Adicionado: limite superior
             "mvrv_min": 1.5,
             "mvrv_max": 3.0,
             "ema_distance_min": -15,
@@ -141,11 +142,11 @@ CENARIOS_COMPLETOS = [
     {
         "id": "bear_profundo",
         "nome": "Bear Market Profundo",
-        "descricao": "Capitulação geral - oportunidade histórica", 
+        "descricao": "Capitulação geral - zerar alavancagem", 
         "condicoes": {
             "score_mercado_min": 0,
-            "score_mercado_max": 25,  # ← CORRIGIDO: era 30, spec diz < 30
-            "score_risco_max": 45,    # ← CORRIGIDO: era score_risco_min: 40, spec diz < 50
+            "score_mercado_max": 25,
+            "score_risco_max": 45,    # Mantém conforme doc
             "mvrv_min": 0.0,
             "mvrv_max": 1.5,
             "ema_distance_min": -999,
@@ -154,15 +155,15 @@ CENARIOS_COMPLETOS = [
             "rsi_diario_max": 35
         },
         "acao": {
-            "decisao": "ACUMULAR_HISTORICO",
-            "tamanho_percent": 75,
-            "alavancagem_recomendada": 1.5,
-            "stop_loss": 20,
-            "target": "Aguardar Score > 60",
-            "justificativa": "Oportunidade histórica de acumulação"
+            "decisao": "ACUMULAR_SPOT_APENAS",    # ✅ Corrigido
+            "tamanho_percent": 75,                # Mantém para spot
+            "alavancagem_recomendada": 0.0,       # ✅ Corrigido: Zerar alavancagem
+            "stop_loss": 0,                       # Sem stop para spot
+            "target": "Aguardar Score > 60",      # ✅ Conforme doc
+            "justificativa": "Zerar alavancagem - acumular spot apenas"  # ✅ Conforme doc
         },
         "prioridade": 1,
-        "score_bonus": 30
+        "score_bonus": 30  # Mantém bonus alto para oportunidade histórica
     },
     
     {

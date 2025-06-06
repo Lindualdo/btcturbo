@@ -4,19 +4,26 @@ import logging
 
 # Matriz de Decisão EMA 144 + RSI Diário conforme especificação v5.0
 MATRIZ_TATICA = [
+    # EMA > +20%
     {"ema_min": 20.1, "ema_max": 999, "rsi_min": 70, "rsi_max": 100, "acao": "REALIZAR", "tamanho": 40, "justificativa": "Extremo sobrecomprado"},
     {"ema_min": 20.1, "ema_max": 999, "rsi_min": 50, "rsi_max": 70, "acao": "REALIZAR", "tamanho": 25, "justificativa": "Muito esticado"},
     {"ema_min": 20.1, "ema_max": 999, "rsi_min": 0, "rsi_max": 50, "acao": "HOLD", "tamanho": 0, "justificativa": "Divergência, aguardar"},
     
+    # EMA +10% a +20%
     {"ema_min": 10.1, "ema_max": 20, "rsi_min": 70, "rsi_max": 100, "acao": "REALIZAR", "tamanho": 25, "justificativa": "Sobrecomprado"},
     {"ema_min": 10.1, "ema_max": 20, "rsi_min": 50, "rsi_max": 70, "acao": "HOLD", "tamanho": 0, "justificativa": "Tendência saudável"},
     {"ema_min": 10.1, "ema_max": 20, "rsi_min": 0, "rsi_max": 50, "acao": "HOLD", "tamanho": 0, "justificativa": "Momentum fraco"},
     
-    {"ema_min": -5, "ema_max": 10, "rsi_min": 0, "rsi_max": 100, "acao": "HOLD", "tamanho": 0, "justificativa": "Zona neutra"},
+    # EMA -5% a +10% - CONFORME DEFINIDO
+    {"ema_min": -5, "ema_max": 10, "rsi_min": 50, "rsi_max": 100, "acao": "HOLD", "tamanho": 0, "justificativa": "Zona neutra - aguardar"},
+    {"ema_min": -5, "ema_max": 10, "rsi_min": 20, "rsi_max": 50, "acao": "ADICIONAR", "tamanho": 25, "justificativa": "Zona favorável - aumentar posição"},
+    {"ema_min": -5, "ema_max": 10, "rsi_min": 0, "rsi_max": 20, "acao": "HOLD", "tamanho": 0, "justificativa": "RSI muito baixo - aguardar"},
     
+    # EMA -10% a -5%
     {"ema_min": -10, "ema_max": -5.1, "rsi_min": 50, "rsi_max": 100, "acao": "HOLD", "tamanho": 0, "justificativa": "Sem confirmação"},
     {"ema_min": -10, "ema_max": -5.1, "rsi_min": 0, "rsi_max": 50, "acao": "ADICIONAR", "tamanho": 35, "justificativa": "Desconto + oversold"},
     
+    # EMA < -10%
     {"ema_min": -999, "ema_max": -10.1, "rsi_min": 30, "rsi_max": 100, "acao": "ADICIONAR", "tamanho": 50, "justificativa": "Grande desconto"},
     {"ema_min": -999, "ema_max": -10.1, "rsi_min": 0, "rsi_max": 30, "acao": "ADICIONAR", "tamanho": 75, "justificativa": "Capitulação"},
 ]
