@@ -196,36 +196,34 @@ def calculate_ema(prices: pd.Series, period: int) -> pd.Series:
 
 def calculate_rsi(prices: pd.Series, period: int = 14) -> pd.Series:
     """
-    NOVA FUNÇÃO: Calcula RSI padronizado
-    
-    Args:
-        prices: Série de preços de fechamento
-        period: Período do RSI (padrão 14)
-        
-    Returns:
-        pd.Series: RSI calculado (0-100)
+    CORRIGIDO: Calcula RSI sem NaN usando EWM
     """
     try:
-        if len(prices) < period:
-            raise Exception(f"Dados insuficientes: {len(prices)} < {period}")
+        if len(prices) < period + 1:  # +1 para diff
+            raise Exception(f"Dados insuficientes: {len(prices)} < {period + 1}")
         
         # Calcular mudanças
-        delta = prices.diff()
+        delta = prices.diff().dropna()
         
         # Separar ganhos e perdas
         gain = delta.where(delta > 0, 0)
         loss = -delta.where(delta < 0, 0)
         
-        # Calcular médias móveis
-        avg_gain = gain.rolling(window=period).mean()
-        avg_loss = loss.rolling(window=period).mean()
+        # Usar EWM em vez de rolling para evitar NaN
+        alpha = 1.0 / period
+        avg_gain = gain.ewm(alpha=alpha, adjust=False).mean()
+        avg_loss = loss.ewm(alpha=alpha, adjust=False).mean()
+        
+        # Evitar divisão por zero
+        avg_loss = avg_loss.replace(0, 1e-10)
         
         # Calcular RS e RSI
         rs = avg_gain / avg_loss
         rsi = 100 - (100 / (1 + rs))
         
+        # Validar resultado
         if rsi.isna().any():
-            raise Exception("RSI contém valores NaN")
+            raise Exception("RSI ainda contém NaN após correção")
         
         return rsi
         
