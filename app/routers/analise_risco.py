@@ -29,7 +29,7 @@ def obter_acao_recomendada(score: float) -> str:
     else:
         return "PERIGO - fechar posição imediatamente"
 
-@router.get("/camada-risco")
+@router.get("/analise-risco")
 async def analisar_risco():
     """
     API principal da Camada 2: Gestão de Risco
