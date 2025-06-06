@@ -16,7 +16,7 @@ def classificar_risco(score: float) -> str:
     else:
         return "crítico"
 
-def obter_acao_recomendada(score: float) -> str:
+def obter_acao_recomendada(score) -> str:
     """Determina ação baseada no score de risco"""
     if score >= 80:
         return "Posição segura - pode aumentar alavancagem"

@@ -71,7 +71,7 @@ def get_market_insights(breakdown: dict) -> list:
     
     return insights
 
-@router.get("/camada-mercado")
+@router.get("/analise-mercado")
 async def analisar_mercado():
     """
     API principal da Camada 1: Análise de Mercado
