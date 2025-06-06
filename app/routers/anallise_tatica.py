@@ -1,7 +1,7 @@
 # app/routers/analise_tatica.py
 
 from fastapi import APIRouter
-from app.services.analise_tatica import calcular_analise_tatica
+from  app.services.analises.analise_tatica import calcular_analise_tatica
 
 router = APIRouter()
 
