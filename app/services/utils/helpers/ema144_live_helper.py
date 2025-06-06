@@ -18,12 +18,12 @@ def obter_ema144_distance_atualizada():
         # 1. Conectar TradingView (baseado em ema_calculator.py)
         tv = _get_tv_session()
         
-        # 2. Buscar dados semanal (EMA144 é calculada em timeframe semanal)
+        # 2. Buscar dados semanal (EMA144 é calculada em timeframe diário)
         df = tv.get_hist(
             symbol="BTCUSDT",
             exchange="BINANCE",
-            interval=Interval.in_weekly,
-            n_bars=700  # Suficiente para EMA 610 (maior período)
+            interval=Interval.in_daily,  # EMA144 é calculada em diário
+            n_bars=2000  # Suficiente para EMA 610 (maior período)
         )
         
         if df is None or df.empty:
@@ -46,10 +46,55 @@ def obter_ema144_distance_atualizada():
         logger.info(f"✅ Preço atual: ${preco_atual:,.2f}")
         logger.info(f"✅ Distância: {distance_percent:+.2f}%")
         
+        return round(distance_percent, 2)
+            
+    except Exception as e:
+        logger.error(f"❌ Erro obtendo EMA144 atualizada: {str(e)}")
+        raise Exception(f"EMA144 distance atualizada indisponível: {str(e)}")
+
+def obter_dados_completos_ema144_distance_atualizada():
+    """
+    Busca EMA144 e preço atual via TradingView (dados atualizados)
+    Baseado em ema_calculator.py
+    """
+    try:
+        logger.info("📊 Buscando EMA144 atualizada via TradingView...")
+        
+        # 1. Conectar TradingView (baseado em ema_calculator.py)
+        tv = _get_tv_session()
+        
+        # 2. Buscar dados semanal (EMA144 é calculada em timeframe diário)
+        df = tv.get_hist(
+            symbol="BTCUSDT",
+            exchange="BINANCE",
+            interval=Interval.in_daily,  # EMA144 é calculada em diário
+            n_bars=2000  # Suficiente para EMA 610 (maior período)
+        )
+        
+        if df is None or df.empty:
+            raise Exception("Dados TradingView indisponíveis")
+        
+        if len(df) < 144:
+            raise Exception(f"Dados insuficientes: {len(df)} barras < 144 necessárias")
+        
+        # 3. Calcular EMA144
+        ema_144_series = df['close'].ewm(span=144, adjust=False).mean()
+        ema_144_valor = float(ema_144_series.iloc[-1])
+        
+        # 4. Preço atual (última barra)
+        preco_atual = float(df['close'].iloc[-1])
+        
+        # 5. Calcular distância percentual
+        distance_percent = ((preco_atual - ema_144_valor) / ema_144_valor) * 100
+        
+        logger.info(f"✅ EMA144 atualizada: ${ema_144_valor:,.2f}")
+        logger.info(f"✅ Preço atual: ${preco_atual:,.2f}")
+        logger.info(f"✅ Distância: {distance_percent:+.2f}%")
+
         return {
             "distance_percent": round(distance_percent, 2),
             "preco_atual": preco_atual,
-            "ema_144": ema_144_valor,
+            "ema_144_daily": ema_144_valor,
             "timeframe": "1W",
             "fonte": "tradingview_live",
             "barras_utilizadas": len(df)
@@ -58,6 +103,9 @@ def obter_ema144_distance_atualizada():
     except Exception as e:
         logger.error(f"❌ Erro obtendo EMA144 atualizada: {str(e)}")
         raise Exception(f"EMA144 distance atualizada indisponível: {str(e)}")
+
+
+
 
 def _get_tv_session():
     """

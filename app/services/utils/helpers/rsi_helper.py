@@ -30,7 +30,7 @@ def obter_rsi_diario():
             symbol='BTCUSDT',
             exchange='BINANCE',
             interval=Interval.in_daily,
-            n_bars=30  # 30 dias para calcular RSI de 14 períodos
+            n_bars=200  # 30 dias para calcular RSI de 14 períodos
         )
         
         if df is not None and not df.empty and len(df) >= 14:
