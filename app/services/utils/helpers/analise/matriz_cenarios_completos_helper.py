@@ -248,11 +248,27 @@ def avaliar_cenario_completo(
             
             return cenario, motivo
     
-    # Fallback: usar matriz tática básica (EMA+RSI)
-    motivo = "Nenhum cenário específico atendido - usando matriz tática básica como fallback"
+    # Fallback: nenhum cenário específico
+    cenario_fallback = {
+        "id": "indefinido",
+        "nome": "Cenário Indefinido",
+        "descricao": "Condições não mapeadas nos cenários principais",
+        "acao": {
+            "decisao": "HOLD_NEUTRO",
+            "tamanho_percent": 0,
+            "alavancagem_recomendada": 1.0,
+            "stop_loss": 10,
+            "target": "Aguardar condições mais claras",
+            "justificativa": "Cenário não mapeado - manter posição"
+        },
+        "prioridade": 99,
+        "score_bonus": 0
+    }
+    
+    motivo = "Nenhum cenário específico atendido - usando fallback"
     logger.warning(f"⚠️ {motivo}")
     
-    return None, motivo
+    return cenario_fallback, motivo
 
 def _verificar_condicoes_cenario(
     cenario: Dict,
