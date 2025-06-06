@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from pathlib import Path
 from datetime import datetime
 from app.routers import (
-    analise_mercado, analise_risco, coleta, indicadores, score, analise, diagnostico, analise_alavancagem
+    analise_mercado, analise_risco, coleta, indicadores, score, analise, diagnostico, analise_alavancagem,anallise_tatica
 )
 
 app = FastAPI(
@@ -21,10 +21,16 @@ app.include_router(diagnostico.router, prefix="/api/v1/diagnostico", tags=["🔧
 app.include_router(coleta.router, prefix="/api/v1", tags=["📥 Coleta"]) 
 app.include_router(indicadores.router, prefix="/api/v1", tags=["📊 Indicadores"]) 
 app.include_router(score.router, prefix="/api/v1", tags=["🎯 Scores"])
-app.include_router(analise.router, prefix="/api/v1", tags=["📈 Análise"])
-app.include_router(analise_risco.router, prefix="/api/v1", tags=["🛡️ Analise Risco"])
+app.include_router(analise.router, prefix="/api/v1", tags=["📈 Análise"]) #será descontinuada - foi substituida por analises em camadas
+
+# ==========================================
+# ROUTERS CAMADAS DE ANÁLISE (APIs)
+# ==========================================
 app.include_router(analise_mercado.router, prefix="/api/v1", tags=["🎯 Analise Mercado"])  # NOVO
+app.include_router(analise_risco.router, prefix="/api/v1", tags=["🛡️ Analise Risco"])
 app.include_router(analise_alavancagem.router, prefix="/api/v1", tags=["🎯 Analise Alavancagem"])  # NOVO
+app.include_router(anallise_tatica.router, prefix="/api/v1", tags=["🎯 Analise Tatica"])  # NOVO
+
 
 # ==========================================
 # ENDPOINTS BÁSICOS
