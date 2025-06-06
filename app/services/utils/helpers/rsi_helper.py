@@ -1,18 +1,15 @@
 # app/services/utils/helpers/rsi_helper.py - SIMPLIFICADO
-
-import logging
+import logging  # ← ADICIONAR ESTA LINHA
 from app.services.utils.helpers.tradingview_helper import get_rsi_current
 from tvDatafeed import Interval
 
+logger = logging.getLogger(__name__)  # ← ADICIONAR ESTA LINHA
+
 def obter_rsi_diario():
-    """
-    SIMPLIFICADO: RSI Diário via TradingView helper unificado
-    Mantém interface original para compatibilidade
-    """
+    """RSI Diário via TradingView helper unificado"""
     try:
         logger.info("📊 Buscando RSI Diário via TradingView helper...")
         
-        # Usar função unificada
         rsi_diario = get_rsi_current(
             symbol='BTCUSDT',
             exchange='BINANCE', 
@@ -24,7 +21,7 @@ def obter_rsi_diario():
         return rsi_diario
             
     except Exception as e:
-        logging.error(f"❌ Erro obtendo RSI Diário: {str(e)}")
+        logger.error(f"❌ Erro obtendo RSI Diário: {str(e)}")
         raise Exception(f"RSI Diário indisponível: {str(e)}")
 
 def obter_rsi_mensal():
