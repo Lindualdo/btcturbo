@@ -9,8 +9,10 @@
 **Pergunta:** "O mercado está favorável para estar posicionado?"
 
 ```
-CICLO (50%) - peso do bloco
-├──Score_Bloco - soma do score ponderado de cada indicador
+Pesos: Ciclo 50%, Momentum 20%, Técnico 30%
+
+CICLO
+├── Score_Bloco - soma do score ponderado de cada indicador
 ├── MVRV Z-Score (50%)
 │   └── < 0: Score 9-10 | 0-2: Score 7-8 | 2-4: Score 5-6 | 4-6: Score 3-4 | > 6: Score 0-2
 ├── Realized Price Ratio (40%)
@@ -18,7 +20,7 @@ CICLO (50%) - peso do bloco
 └── Puell Multiple (10%)
     └── < 0.5: Score 9-10 | 0.5-1: Score 7-8 | 1-2: Score 5-6 | 2-4: Score 3-4 | > 4: Score 0-2
 
-MOMENTUM (20%) - peso do bloco
+MOMENTUM
 ├── Score_Bloco - soma do score ponderado de cada indicador
 ├── RSI Semanal (40%)
 │   └── < 30: Score 9-10 | 30-45: Score 7-8 | 45-55: Score 5-6 | 55-70: Score 3-4 | > 70: Score 0-2
@@ -29,7 +31,7 @@ MOMENTUM (20%) - peso do bloco
 └── Long/Short Ratio (10%)
     └── < 0.8: Score 9-10 | 0.8-0.95: Score 7-8 | 0.95-1.05: Score 5-6 | 1.05-1.3: Score 3-4 | > 1.3: Score 0-2
 
-TÉCNICO (30%) - peso do bloco
+TÉCNICO
 ├── Score_Bloco - soma do score ponderado de cada indicador
 ├── Sistema EMAs (70%)
 │   ├── Alinhamento: EMA17>34>144>305>610 = Score 10 (50%)
@@ -38,7 +40,7 @@ TÉCNICO (30%) - peso do bloco
     └── < 5%: Score 9-10 | 5-10%: Score 7-8 | 10-20%: Score 5-6 | 20-30%: Score 3-4 | > 30%: Score 0-2
 ```
 
-**Decisão:** Score > 60 = Mercado favorável ✅
+**Decisão:** Score da analise de mercado > 60 = Mercado favorável ✅
 
 ---
 

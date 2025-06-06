@@ -3,8 +3,9 @@
 from datetime import datetime
 import logging
 from app.services.utils.helpers.matriz_tatica_helper import encontrar_acao_tatica, calcular_score_tatico
-from app.services.utils.helpers.rsi_helper import obter_rsi_diario, obter_ema144_distance
+from app.services.utils.helpers.rsi_helper import obter_rsi_diario
 from app.services.utils.helpers.simulacao_helper import obter_dados_posicao, simular_impacto_posicao
+from app.services.utils.helpers.ema144_live_helper import obter_ema144_distance_atualizada
 
 def calcular_analise_tatica():
     """
@@ -16,7 +17,7 @@ def calcular_analise_tatica():
         
         # 1. Validar dados críticos - FAIL FAST
         try:
-            ema_distance = obter_ema144_distance()
+            ema_distance = obter_ema144_distance_atualizada()
             logging.info(f"✅ EMA144 distance: {ema_distance:+.1f}%")
         except Exception as e:
             return {
