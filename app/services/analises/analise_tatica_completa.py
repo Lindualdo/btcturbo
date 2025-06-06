@@ -2,14 +2,14 @@
 
 from datetime import datetime
 import logging
-from app.services.utils.helpers.matriz_cenarios_completos_helper import (
+from app.services.utils.helpers.analise.matriz_cenarios_completos_helper import (
     avaliar_cenario_completo, calcular_score_cenario_completo,
     gerar_insights_cenario, gerar_alertas_cenario
 )
-from app.services.utils.helpers.matriz_tatica_helper import encontrar_acao_tatica, calcular_score_tatico
+from app.services.utils.helpers.analise.matriz_tatica_helper import encontrar_acao_tatica, calcular_score_tatico
 from app.services.utils.helpers.rsi_helper import obter_rsi_diario
-from app.services.utils.helpers.ema144_live_helper import obter_ema144_distance_atualizada
-from app.services.utils.helpers.simulacao_helper import obter_dados_posicao, simular_impacto_posicao
+from app.services.utils.helpers.analise.ema144_live_helper import obter_ema144_distance_atualizada
+from app.services.utils.helpers.analise.simulacao_helper import obter_dados_posicao, simular_impacto_posicao
 
 # Importar services das outras camadas
 from app.services.analises.analise_mercado import calcular_analise_mercado
