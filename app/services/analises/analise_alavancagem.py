@@ -1,7 +1,8 @@
-# app/services/analises/analise_alavancagem.py
+# app/services/analises/analise_alavancagem.py - CORRIGIDO (RSI MENSAL REAL)
 
 from datetime import datetime
 from app.services.scores import ciclos
+from app.services.utils.helpers.rsi_helper import obter_rsi_mensal_para_alavancagem  # ← IMPORT ADICIONADO
 import logging
 
 # Tabela MVRV × RSI conforme especificação v5.0
@@ -27,20 +28,16 @@ def obter_mvrv_do_ciclo():
 
 def obter_rsi_mensal():
     """
-    TODO: Implementar busca de RSI Mensal
-    Por enquanto, usar fallback baseado em MVRV
+    CORRIGIDO: Busca RSI Mensal REAL via TradingView - SEM FALLBACKS FIXOS
     """
-    # Fallback: estimar RSI baseado em MVRV
-    mvrv = obter_mvrv_do_ciclo()
-    
-    if mvrv < 1.0:
-        return 25  # Oversold extremo
-    elif mvrv < 2.0:
-        return 40  # Oversold
-    elif mvrv < 3.0:
-        return 60  # Neutro alto
-    else:
-        return 75  # Overbought
+    try:
+        rsi_mensal = obter_rsi_mensal_para_alavancagem()
+        logging.info(f"✅ RSI Mensal real obtido: {rsi_mensal:.1f}")
+        return rsi_mensal
+        
+    except Exception as e:
+        logging.error(f"❌ Erro obtendo RSI Mensal: {str(e)}")
+        raise Exception(f"RSI Mensal indisponível: {str(e)} - necessário para análise alavancagem")
 
 def obter_dados_posicao():
     """Busca dados da posição atual via indicadores de risco"""
@@ -187,9 +184,9 @@ def get_insights_alavancagem(mvrv: float, rsi_mensal: float, fase: str, max_leve
     
     # Insights por RSI
     if rsi_mensal < 35:
-        insights.append(f"📉 RSI Mensal {rsi_mensal} - oversold extremo")
+        insights.append(f"📉 RSI Mensal {rsi_mensal:.0f} - oversold extremo")
     elif rsi_mensal > 70:
-        insights.append(f"📈 RSI Mensal {rsi_mensal} - overbought")
+        insights.append(f"📈 RSI Mensal {rsi_mensal:.0f} - overbought")
     
     return insights
 
@@ -198,15 +195,13 @@ def calcular_analise_alavancagem():
     FUNÇÃO PRINCIPAL: Análise de Dimensionamento (Camada 3)
     
     Usa tabela MVRV × RSI Mensal para determinar alavancagem máxima
+    CORRIGIDO: RSI Mensal real - SEM FALLBACKS FIXOS
     """
     try:
         logging.info("⚖️ Iniciando análise de alavancagem...")
         
         # 1. Buscar dados necessários
         mvrv = obter_mvrv_do_ciclo()
-        rsi_mensal = obter_rsi_mensal()  # TODO: implementar fonte real
-        posicao_atual = obter_dados_posicao()
-        
         if mvrv == 0:
             return {
                 "analise": "alavancagem",
@@ -214,10 +209,28 @@ def calcular_analise_alavancagem():
                 "score_consolidado": 0,
                 "classificacao": "erro",
                 "max_leverage": 1.0,
-                "acao_recomendada": "Sistema indisponível - usar apenas spot",
+                "acao_recomendada": "MVRV indisponível - usar apenas spot",
                 "status": "error",
                 "erro": "MVRV indisponível"
             }
+        
+        # RSI Mensal REAL (sem fallbacks)
+        try:
+            rsi_mensal = obter_rsi_mensal()
+        except Exception as e:
+            return {
+                "analise": "alavancagem",
+                "timestamp": datetime.utcnow().isoformat(),
+                "score_consolidado": 0,
+                "classificacao": "erro",
+                "max_leverage": 1.0,
+                "acao_recomendada": "RSI Mensal indisponível - corrigir TradingView",
+                "status": "error",
+                "erro": str(e),
+                "componente_faltante": "rsi_mensal"
+            }
+        
+        posicao_atual = obter_dados_posicao()
         
         # 2. Encontrar parâmetros na tabela
         parametros = encontrar_parametros_alavancagem(mvrv, rsi_mensal)
@@ -272,14 +285,16 @@ def calcular_analise_alavancagem():
             
             "inputs": {
                 "mvrv_z_score": round(mvrv, 2),
-                "rsi_mensal": rsi_mensal,
+                "rsi_mensal": round(rsi_mensal, 1),  # ← AGORA É REAL
                 "mvrv_range": f"{parametros['mvrv_min']}-{parametros['mvrv_max']}",
                 "rsi_range": f"{parametros['rsi_min']}-{parametros['rsi_max']}"
             },
             
             "analise": {
                 "insights": insights,
-                "confiabilidade": "alta" if rsi_mensal != obter_rsi_mensal() else "média"  # Se RSI for calculado
+                "confiabilidade": "alta",  # ← AGORA É ALTA (RSI real)
+                "fonte_rsi": "tradingview_mensal",  # ← ESPECIFICAR FONTE
+                "dados_reais": True  # ← CONFIRMAR DADOS REAIS
             },
             
             "recomendacoes": {
@@ -291,7 +306,8 @@ def calcular_analise_alavancagem():
             "alertas": [
                 f"⚠️ Não exceder {max_leverage}x de alavancagem",
                 f"🛡️ Stop loss obrigatório em -{stop_loss}%",
-                "📊 Reavaliar a cada mudança significativa de MVRV"
+                "📊 Reavaliar a cada mudança significativa de MVRV",
+                f"📈 RSI Mensal atual: {rsi_mensal:.1f} ({fase})"  # ← ADICIONAR RSI REAL
             ],
             
             "status": "success"

@@ -1,4 +1,4 @@
-# app/services/analises/analise_tatica_completa.py
+# app/services/analises/analise_tatica_completa.py - CORRIGIDO (BBW REAL)
 
 from datetime import datetime
 import logging
@@ -10,6 +10,7 @@ from app.services.utils.helpers.analise.matriz_tatica_helper import encontrar_ac
 from app.services.utils.helpers.rsi_helper import obter_rsi_diario
 from app.services.utils.helpers.analise.ema144_live_helper import obter_ema144_distance_atualizada
 from app.services.utils.helpers.analise.simulacao_helper import obter_dados_posicao, simular_impacto_posicao
+from app.services.utils.helpers.bbw_calculator import obter_bbw_com_score  # ← ADICIONADO
 
 # Importar services das outras camadas
 from app.services.analises.analise_mercado import calcular_analise_mercado
@@ -74,34 +75,58 @@ def calcular_analise_tatica_completa():
         except Exception as e:
             return _erro_dados_criticos("alavancagem", str(e))
         
-        # 1.5 Dados extras (opcionais)
+        # 1.5 Dados extras (obrigatórios para cenários específicos)
         dados_extras = {}
         try:
             posicao_atual = obter_dados_posicao()
             if posicao_atual and dados_risco.get("composicao", {}).get("breakdown"):
                 breakdown_risco = dados_risco["composicao"]["breakdown"]
                 
-                # Extrair Health Factor
-                hf_valor = breakdown_risco.get("health_factor", {}).get("valor_display", "999")
+                # Health Factor - FAIL FAST se não disponível
+                hf_valor = breakdown_risco.get("health_factor", {}).get("valor_display")
+                if not hf_valor or hf_valor == "N/A":
+                    return _erro_dados_criticos("health_factor", "Health Factor indisponível - verificar coleta dados AAVE")
+                
                 try:
                     dados_extras["health_factor"] = float(str(hf_valor).replace("$", "").replace(",", ""))
-                except:
-                    dados_extras["health_factor"] = 999
+                except (ValueError, TypeError):
+                    return _erro_dados_criticos("health_factor", f"Health Factor inválido: {hf_valor}")
                 
-                # Extrair Distância Liquidação
-                dist_valor = breakdown_risco.get("dist_liquidacao", {}).get("valor_display", "100%")
+                # Distância Liquidação - FAIL FAST se não disponível  
+                dist_valor = breakdown_risco.get("dist_liquidacao", {}).get("valor_display")
+                if not dist_valor or dist_valor == "N/A":
+                    return _erro_dados_criticos("dist_liquidacao", "Distância liquidação indisponível - verificar cálculo risco")
+                
                 try:
                     dados_extras["dist_liquidacao"] = float(str(dist_valor).replace("%", ""))
-                except:
-                    dados_extras["dist_liquidacao"] = 100
+                except (ValueError, TypeError):
+                    return _erro_dados_criticos("dist_liquidacao", f"Distância liquidação inválida: {dist_valor}")
                 
-                logging.info(f"✅ Dados extras: HF={dados_extras.get('health_factor')}, Dist={dados_extras.get('dist_liquidacao')}%")
+                logging.info(f"✅ Dados extras: HF={dados_extras['health_factor']}, Dist={dados_extras['dist_liquidacao']}%")
+            else:
+                return _erro_dados_criticos("posicao_risco", "Dados de posição ou breakdown risco indisponíveis")
             
-            # TODO: Adicionar BBW quando disponível
-            dados_extras["bbw_percentage"] = 15  # Fallback neutro
+            # BBW - OBRIGATÓRIO para cenários específicos (SEM FALLBACK)
+            try:
+                bbw_data = obter_bbw_com_score()
+                
+                if not bbw_data or "bbw_percentage" not in bbw_data:
+                    return _erro_dados_criticos("bbw", "BBW retornou dados inválidos")
+                
+                dados_extras["bbw_percentage"] = bbw_data["bbw_percentage"]
+                
+                # Log detalhado do BBW
+                estado = bbw_data.get("estado", "unknown")
+                score_bbw = bbw_data.get("score_bbw", 0)
+                logging.info(f"✅ BBW obtido: {dados_extras['bbw_percentage']:.2f}% ({estado}, score: {score_bbw})")
+                
+            except ImportError as e:
+                return _erro_dados_criticos("bbw", f"BBW Calculator não encontrado: {str(e)} - verificar implementação")
+            except Exception as e:
+                return _erro_dados_criticos("bbw", f"Erro obtendo BBW: {str(e)} - verificar conexão TradingView")
             
         except Exception as e:
-            logging.warning(f"⚠️ Dados extras indisponíveis: {str(e)}")
+            return _erro_dados_criticos("dados_extras", f"Falha crítica na coleta: {str(e)}")
         
         # ==========================================
         # 2. MATRIZ TÁTICA BÁSICA (EMA + RSI)
@@ -132,28 +157,71 @@ def calcular_analise_tatica_completa():
         # 4. DECISÃO FINAL INTEGRADA
         # ==========================================
         
-        # Score final integrado
-        score_final = calcular_score_cenario_completo(
-            cenario_identificado,
-            score_tatico_basico,
-            score_mercado,
-            score_risco
-        )
-        
-        # Decisão final (cenário override matriz básica)
-        acao_final = cenario_identificado["acao"]
-        decisao_final = acao_final["decisao"]
+        # Se nenhum cenário específico foi identificado, usar matriz tática básica
+        if cenario_identificado is None:
+            logging.info("📊 Usando matriz tática básica como fallback")
+            
+            # Score final = score tático básico + pequeno bonus das outras camadas
+            score_final = score_tatico_basico + (score_mercado * 0.2) + (score_risco * 0.2)
+            score_final = max(0, min(100, score_final))
+            
+            # Decisão = matriz tática básica
+            acao_final = regra_tatica_basica["acao"]
+            tamanho_final = regra_tatica_basica["tamanho"]
+            decisao_final = "MATRIZ_TATICA_BASICA"
+            
+            # Criar cenário fictício para uniformizar resposta
+            cenario_display = {
+                "id": "matriz_tatica_basica",
+                "nome": "Matriz Tática Básica",
+                "descricao": "Decisão baseada apenas em EMA144 + RSI Diário",
+                "prioridade": 98,
+                "score_bonus": 0
+            }
+            
+            acao_final_dict = {
+                "decisao": decisao_final,
+                "tamanho_percent": tamanho_final,
+                "alavancagem_recomendada": max_leverage_permitida,
+                "stop_loss": 10,
+                "target": "Baseado em EMA144 + RSI",
+                "justificativa": regra_tatica_basica["justificativa"]
+            }
+            
+            override_cenario = False
+            
+        else:
+            # Cenário específico identificado
+            logging.info(f"🎯 Cenário específico: {cenario_identificado['nome']}")
+            
+            # Score final integrado
+            score_final = calcular_score_cenario_completo(
+                cenario_identificado,
+                score_tatico_basico,
+                score_mercado,
+                score_risco
+            )
+            
+            # Decisão final (cenário override matriz básica)
+            acao_final_dict = cenario_identificado["acao"]
+            decisao_final = acao_final_dict["decisao"]
+            
+            cenario_display = cenario_identificado
+            override_cenario = True
         
         # Mapeamento de decisões para ações padrão
         if decisao_final in ["ENTRAR", "ADICIONAR_AGRESSIVO"]:
             acao_padrao = "ADICIONAR"
-            tamanho_final = acao_final.get("tamanho_percent", 40)
+            tamanho_final = acao_final_dict.get("tamanho_percent", 40)
         elif decisao_final in ["REALIZAR_PARCIAL", "REALIZAR_AGRESSIVO"]:
             acao_padrao = "REALIZAR"
-            tamanho_final = acao_final.get("tamanho_percent", 30)
+            tamanho_final = acao_final_dict.get("tamanho_percent", 30)
         elif decisao_final in ["REDUZIR_DEFENSIVO", "EMERGENCIA_REDUZIR"]:
             acao_padrao = "REALIZAR"
-            tamanho_final = acao_final.get("tamanho_percent", 70)
+            tamanho_final = acao_final_dict.get("tamanho_percent", 70)
+        elif decisao_final == "MATRIZ_TATICA_BASICA":
+            acao_padrao = regra_tatica_basica["acao"]
+            tamanho_final = regra_tatica_basica["tamanho"]
         else:
             acao_padrao = "HOLD"
             tamanho_final = 0
@@ -182,9 +250,29 @@ def calcular_analise_tatica_completa():
             "max_leverage": max_leverage_permitida
         }
         
-        # Insights e alertas do cenário
-        insights_cenario = gerar_insights_cenario(cenario_identificado, dados_contexto)
-        alertas_cenario = gerar_alertas_cenario(cenario_identificado, dados_contexto)
+        # Insights e alertas (cenário específico ou matriz básica)
+        if override_cenario:
+            insights_finais = gerar_insights_cenario(cenario_display, dados_contexto)
+            alertas_finais = gerar_alertas_cenario(cenario_display, dados_contexto)
+        else:
+            # Insights da matriz tática básica
+            insights_finais = [
+                "📊 Decisão baseada em matriz tática básica (EMA144 + RSI)",
+                f"🎯 Condições não mapeadas nos 8 cenários específicos"
+            ]
+            
+            if acao_padrao == "ADICIONAR":
+                insights_finais.append("💎 Oportunidade de acumulação identificada")
+            elif acao_padrao == "REALIZAR":
+                insights_finais.append("💰 Momento de proteção de lucros")
+            else:
+                insights_finais.append("⏳ Aguardar melhores condições")
+            
+            alertas_finais = [
+                f"📊 EMA144: {ema_distance:+.1f}% | RSI: {rsi_diario:.0f}",
+                f"🎯 Matriz básica: {acao_padrao} {tamanho_final}%" if tamanho_final > 0 else "🎯 Manter posição atual",
+                "📈 Usar alavancagem permitida baseada em MVRV"
+            ]
         
         # ==========================================
         # 6. RESPOSTA CONSOLIDADA
@@ -197,16 +285,17 @@ def calcular_analise_tatica_completa():
             "score_consolidado": round(score_final, 1),
             "score_maximo": 100,
             "classificacao": _classificar_score_final(score_final),
-            "acao_recomendada": _formatar_acao_final(acao_final),
+            "acao_recomendada": _formatar_acao_final(acao_final_dict),
             
             # Cenário identificado
             "cenario_identificado": {
-                "id": cenario_identificado["id"],
-                "nome": cenario_identificado["nome"],
-                "descricao": cenario_identificado["descricao"],
-                "prioridade": cenario_identificado["prioridade"],
+                "id": cenario_display["id"],
+                "nome": cenario_display["nome"],
+                "descricao": cenario_display["descricao"],
+                "prioridade": cenario_display["prioridade"],
                 "motivo_escolha": motivo_cenario,
-                "override_tatico": cenario_identificado.get("override", False)
+                "override_tatico": override_cenario,
+                "tipo": "cenario_especifico" if override_cenario else "matriz_tatica_basica"
             },
             
             # Decisão final integrada
@@ -214,10 +303,10 @@ def calcular_analise_tatica_completa():
                 "acao": acao_padrao,
                 "tamanho_percent": tamanho_final,
                 "decisao_cenario": decisao_final,
-                "alavancagem_recomendada": acao_final["alavancagem_recomendada"],
-                "stop_loss_percent": acao_final["stop_loss"],
-                "target": acao_final["target"],
-                "justificativa": acao_final["justificativa"]
+                "alavancagem_recomendada": acao_final_dict["alavancagem_recomendada"],
+                "stop_loss_percent": acao_final_dict["stop_loss"],
+                "target": acao_final_dict["target"],
+                "justificativa": acao_final_dict["justificativa"]
             },
             
             # Inputs das 4 camadas
@@ -248,20 +337,21 @@ def calcular_analise_tatica_completa():
             
             # Composição do score final
             "composicao_score": {
-                "formula": "Score = (Tático×40%) + (Mercado×30%) + (Risco×30%) + Bonus_Cenário",
-                "calculo": f"Score = ({score_tatico_basico:.1f}×0.4) + ({score_mercado:.1f}×0.3) + ({score_risco:.1f}×0.3) + {cenario_identificado.get('score_bonus', 0)}",
-                "score_base": round((score_tatico_basico * 0.4) + (score_mercado * 0.3) + (score_risco * 0.3), 1),
-                "bonus_cenario": cenario_identificado.get("score_bonus", 0),
-                "score_final": round(score_final, 1)
+                "formula": "Score = (Tático×40%) + (Mercado×30%) + (Risco×30%) + Bonus_Cenário" if override_cenario else "Score = Tático + (Mercado×20%) + (Risco×20%)",
+                "calculo": f"Score = ({score_tatico_basico:.1f}×0.4) + ({score_mercado:.1f}×0.3) + ({score_risco:.1f}×0.3) + {cenario_display.get('score_bonus', 0)}" if override_cenario else f"Score = {score_tatico_basico:.1f} + ({score_mercado:.1f}×0.2) + ({score_risco:.1f}×0.2)",
+                "score_base": round((score_tatico_basico * 0.4) + (score_mercado * 0.3) + (score_risco * 0.3), 1) if override_cenario else round(score_tatico_basico + (score_mercado * 0.2) + (score_risco * 0.2), 1),
+                "bonus_cenario": cenario_display.get("score_bonus", 0),
+                "score_final": round(score_final, 1),
+                "metodo": "cenario_especifico" if override_cenario else "matriz_tatica_basica"
             },
             
             # Análise contextual
             "analise_contextual": {
-                "insights": insights_cenario,
-                "confianca_decisao": _avaliar_confianca_integrada(score_final, cenario_identificado),
-                "timing_execucao": _avaliar_timing_integrado(cenario_identificado),
-                "nivel_urgencia": _avaliar_urgencia(cenario_identificado),
-                "override_ativo": cenario_identificado.get("override", False)
+                "insights": insights_finais,
+                "confianca_decisao": _avaliar_confianca_integrada(score_final, cenario_display) if override_cenario else _avaliar_confianca_matriz_basica(score_final),
+                "timing_execucao": _avaliar_timing_integrado(cenario_display) if override_cenario else _avaliar_timing_matriz_basica(score_final),
+                "nivel_urgencia": _avaliar_urgencia(cenario_display) if override_cenario else "BAIXA",
+                "override_ativo": override_cenario
             },
             
             # Comparação matriz básica vs cenário
@@ -271,17 +361,17 @@ def calcular_analise_tatica_completa():
                     "tamanho": regra_tatica_basica["tamanho"],
                     "justificativa": regra_tatica_basica["justificativa"]
                 },
-                "cenario_completo": {
+                "decisao_final": {
                     "acao": acao_padrao,
                     "tamanho": tamanho_final,
-                    "justificativa": acao_final["justificativa"]
+                    "justificativa": acao_final_dict["justificativa"]
                 },
-                "decisao_prevaleceu": "cenario_completo",
-                "motivo_override": f"Cenário '{cenario_identificado['nome']}' tem prioridade {cenario_identificado['prioridade']}"
+                "decisao_prevaleceu": "cenario_especifico" if override_cenario else "matriz_basica",
+                "motivo_escolha": f"Cenário '{cenario_display['nome']}' tem prioridade {cenario_display['prioridade']}" if override_cenario else "Nenhum cenário específico atendido"
             },
             
             # Alertas integrados
-            "alertas": alertas_cenario,
+            "alertas": alertas_finais,
             
             # Simulação (se disponível)
             "simulacao": simulacao or {
@@ -395,3 +485,21 @@ def _avaliar_urgencia(cenario: dict) -> str:
         return "MÉDIA"
     else:
         return "BAIXA"
+
+def _avaliar_confianca_matriz_basica(score: float) -> str:
+    """Avalia confiança da matriz tática básica"""
+    if score >= 70:
+        return "alta"
+    elif score >= 50:
+        return "media"
+    else:
+        return "baixa"
+
+def _avaliar_timing_matriz_basica(score: float) -> str:
+    """Avalia timing da matriz tática básica"""
+    if score >= 80:
+        return "24_horas"
+    elif score >= 60:
+        return "48_horas"
+    else:
+        return "monitorar_evolucao"

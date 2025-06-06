@@ -1,64 +1,119 @@
-# app/services/utils/helpers/rsi_helper.py - CORRIGIDO
+# app/services/utils/helpers/rsi_helper.py - SIMPLIFICADO
 
 import logging
+from app.services.utils.helpers.tradingview_helper import get_rsi_current
+from tvDatafeed import Interval
 
 def obter_rsi_diario():
-    """Busca RSI Diário via TradingView - CORRIGIDO"""
+    """
+    SIMPLIFICADO: RSI Diário via TradingView helper unificado
+    Mantém interface original para compatibilidade
+    """
     try:
-        from tvDatafeed import TvDatafeed, Interval
-        from app.config import get_settings
+        logger.info("📊 Buscando RSI Diário via TradingView helper...")
         
-        settings = get_settings()
-        
-        # Corrigido: remover auto_login e usar credenciais se disponíveis
-        try:
-            if settings.TV_USERNAME and settings.TV_PASSWORD:
-                logging.info("🔗 Conectando TradingView com credenciais...")
-                tv = TvDatafeed(
-                    username=settings.TV_USERNAME,
-                    password=settings.TV_PASSWORD
-                )
-            else:
-                logging.info("🔗 Conectando TradingView sem login...")
-                tv = TvDatafeed()  # Sem parâmetros - modo anônimo
-        except Exception as e:
-            logging.warning(f"⚠️ Falha login TradingView: {e} - tentando modo anônimo")
-            tv = TvDatafeed()
-        
-        # Buscar dados diários do BTC para calcular RSI
-        df = tv.get_hist(
+        # Usar função unificada
+        rsi_diario = get_rsi_current(
             symbol='BTCUSDT',
-            exchange='BINANCE',
-            interval=Interval.in_daily,
-            n_bars=200  # 30 dias para calcular RSI de 14 períodos
+            exchange='BINANCE', 
+            timeframe=Interval.in_daily,
+            period=14
         )
         
-        if df is not None and not df.empty and len(df) >= 14:
-            # Calcular RSI manualmente
-            closes = df['close']
-            delta = closes.diff()
-            
-            gain = delta.where(delta > 0, 0)
-            loss = -delta.where(delta < 0, 0)
-            
-            avg_gain = gain.rolling(window=14).mean()
-            avg_loss = loss.rolling(window=14).mean()
-            
-            rs = avg_gain / avg_loss
-            rsi = 100 - (100 / (1 + rs))
-            
-            # Pegar último valor
-            rsi_atual = float(rsi.iloc[-1])
-            
-            # Validação
-            if 0 <= rsi_atual <= 100:
-                logging.info(f"✅ RSI Diário obtido via TradingView: {rsi_atual:.1f}")
-                return rsi_atual
-            else:
-                raise ValueError(f"RSI inválido: {rsi_atual}")
-        else:
-            raise Exception("Dados insuficientes do TradingView")
+        logger.info(f"✅ RSI Diário obtido: {rsi_diario:.1f}")
+        return rsi_diario
             
     except Exception as e:
-        logging.error(f"❌ Erro obtendo RSI Diário via TradingView: {str(e)}")
+        logging.error(f"❌ Erro obtendo RSI Diário: {str(e)}")
         raise Exception(f"RSI Diário indisponível: {str(e)}")
+
+def obter_rsi_mensal():
+    """
+    SIMPLIFICADO: RSI Mensal via TradingView helper unificado
+    """
+    try:
+        logging.info("📊 Buscando RSI Mensal via TradingView helper...")
+        
+        # Usar função unificada
+        rsi_mensal = get_rsi_current(
+            symbol='BTCUSDT',
+            exchange='BINANCE',
+            timeframe=Interval.in_monthly,
+            period=14
+        )
+        
+        logging.info(f"✅ RSI Mensal obtido: {rsi_mensal:.1f}")
+        return rsi_mensal
+        
+    except Exception as e:
+        logging.error(f"❌ Erro obtendo RSI Mensal: {str(e)}")
+        raise Exception(f"RSI Mensal indisponível: {str(e)}")
+
+def obter_rsi_mensal_para_alavancagem():
+    """
+    SIMPLIFICADO: Função específica para análise de alavancagem
+    """
+    try:
+        rsi_mensal = obter_rsi_mensal()
+        
+        # Validação específica para tabela MVRV
+        if not (0 <= rsi_mensal <= 100):
+            raise ValueError(f"RSI Mensal fora do range: {rsi_mensal}")
+        
+        logging.info(f"✅ RSI Mensal para alavancagem: {rsi_mensal:.1f}")
+        return rsi_mensal
+        
+    except Exception as e:
+        logging.error(f"❌ RSI Mensal para alavancagem falhou: {str(e)}")
+        raise Exception(f"RSI Mensal indisponível para análise alavancagem: {str(e)}")
+
+def obter_rsi_com_detalhes(timeframe="daily"):
+    """
+    SIMPLIFICADO: RSI com informações detalhadas usando helper unificado
+    """
+    try:
+        if timeframe == "monthly":
+            rsi_valor = obter_rsi_mensal()
+            tf_display = "Mensal"
+        else:
+            rsi_valor = obter_rsi_diario()
+            tf_display = "Diário"
+        
+        # Classificar RSI
+        if rsi_valor < 30:
+            classificacao = "oversold"
+            status = "🟢 Oversold - oportunidade compra"
+        elif rsi_valor > 70:
+            classificacao = "overbought"
+            status = "🔴 Overbought - considerar venda"
+        elif rsi_valor < 45:
+            classificacao = "neutro_baixo"
+            status = "🟡 Neutro baixo"
+        elif rsi_valor > 55:
+            classificacao = "neutro_alto"
+            status = "🟡 Neutro alto"
+        else:
+            classificacao = "neutro"
+            status = "⚪ Neutro"
+        
+        return {
+            "rsi_valor": round(rsi_valor, 1),
+            "timeframe": tf_display,
+            "classificacao": classificacao,
+            "status": status,
+            "interpretacao": {
+                "oversold": rsi_valor < 30,
+                "overbought": rsi_valor > 70,
+                "neutro": 30 <= rsi_valor <= 70
+            },
+            "timestamp": "utc_now"
+        }
+        
+    except Exception as e:
+        logging.error(f"❌ Erro RSI detalhado: {str(e)}")
+        raise Exception(f"RSI detalhado indisponível: {str(e)}")
+
+# COMPATIBILIDADE: Manter funções legadas
+def obter_rsi_diario_original():
+    """DEPRECATED: Use obter_rsi_diario()"""
+    return obter_rsi_diario()

@@ -110,14 +110,15 @@ CENARIOS_COMPLETOS = [
         "score_bonus": 22
     },
     
+   
     {
         "id": "inicio_bear",
-        "nome": "Início Bear Market",
+        "nome": "Início Bear Market", 
         "descricao": "Quebra de estrutura bullish",
         "condicoes": {
             "score_mercado_min": 0,
-            "score_mercado_max": 45,
-            "score_risco_min": 60,
+            "score_mercado_max": 38,  # ← CORRIGIDO: era 45, spec diz < 40
+            "score_risco_min": 65,    # ← CORRIGIDO: era 60, spec diz 65+
             "mvrv_min": 1.5,
             "mvrv_max": 3.0,
             "ema_distance_min": -15,
@@ -140,11 +141,11 @@ CENARIOS_COMPLETOS = [
     {
         "id": "bear_profundo",
         "nome": "Bear Market Profundo",
-        "descricao": "Capitulação geral - oportunidade histórica",
+        "descricao": "Capitulação geral - oportunidade histórica", 
         "condicoes": {
             "score_mercado_min": 0,
-            "score_mercado_max": 30,
-            "score_risco_min": 40,
+            "score_mercado_max": 25,  # ← CORRIGIDO: era 30, spec diz < 30
+            "score_risco_max": 45,    # ← CORRIGIDO: era score_risco_min: 40, spec diz < 50
             "mvrv_min": 0.0,
             "mvrv_max": 1.5,
             "ema_distance_min": -999,
@@ -162,7 +163,7 @@ CENARIOS_COMPLETOS = [
         },
         "prioridade": 1,
         "score_bonus": 30
-    },
+    }
     
     {
         "id": "risco_critico",
