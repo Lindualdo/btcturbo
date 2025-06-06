@@ -243,7 +243,7 @@ async def analisar_alavancagem():
                 "posicao_total": format_currency(posicao_atual["posicao_total"]),
                 "capital_liquido": format_currency(posicao_atual["capital_liquido"]),
                 "alavancagem_atual": f"{posicao_atual['alavancagem_atual']:.2f}x",
-                "alavancagem_recomendada": f"{max_leverage:.1f}x",
+                "alavancagem_permitida": f"{max_leverage:.1f}x",
                 "status": simulacao.get("status", "unknown"),
                 "valor_disponivel": format_currency(simulacao.get("valor_disponivel", 0)) if simulacao.get("valor_disponivel", 0) > 0 else "$0.00",
                 "valor_a_reduzir": format_currency(simulacao.get("valor_a_reduzir", 0)) if simulacao.get("valor_a_reduzir", 0) > 0 else "$0.00",

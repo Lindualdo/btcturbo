@@ -63,25 +63,26 @@ app/
 
 ### 1.2 Novos Routers
 
-#### `/api/v1/analise-risco`  - feito junto da v 5.0.1 05/06
+#### `/api/v1/analise-risco`  - 5.0.3 - feito - 06/06
 ```python
 # Health Factor + Distância Liquidação
 # Input: indicadores_risco existentes + novos se necessário
 # Output: Score 0-10, nível segurança, alertas
 ```
 
-#### `/api/v1/analise-mercado` - feito 5.0.2 - 05/06
+#### `/api/v1/analise-mercado` - 5.0.2 - feito  - 06/06
 ```python
 # Consolida: Ciclos (50%) + Técnico (30%) + Momentum (20%)
 # Input: usa /obter-indicadores/{bloco} existentes
 # Output: Score 0-10, classificação, ação recomendada
 ```
 
-#### `/api/v1/analise-alavancagem`
+#### `/api/v1/analise-alavancagem` -  5.0.4 - feito - 06/06
 ```python
 # Tabela MVRV x RSI Mensal → Max Alavancagem
 # Input: MVRV do ciclos + RSI mensal (novo indicador)
 # Output: Alavancagem máxima, stop loss, fase mercado
+# Output: Simulação do valor permitido em dolares para alavancagem
 ```
 
 #### `/api/v1/analise-tatico`
