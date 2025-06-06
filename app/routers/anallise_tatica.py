@@ -1,7 +1,7 @@
-# app/routers/analise_tatica.py
+# app/routers/anallise_tatica.py - REFATORADO
 
 from fastapi import APIRouter
-from  app.services.analises.analise_tatica import calcular_analise_tatica
+from app.services.analises.analise_tatica import calcular_analise_tatica
 
 router = APIRouter()
 
