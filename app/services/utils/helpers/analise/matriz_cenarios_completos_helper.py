@@ -163,7 +163,7 @@ CENARIOS_COMPLETOS = [
         },
         "prioridade": 1,
         "score_bonus": 30
-    }
+    },
     
     {
         "id": "risco_critico",
