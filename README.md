@@ -63,28 +63,28 @@ app/
 
 ### 1.2 Novos Routers
 
-#### `/api/v1/camada-risco`  - feito junto da v 5.0.1 05/06
+#### `/api/v1/analise-risco`  - feito junto da v 5.0.1 05/06
 ```python
 # Health Factor + Distância Liquidação
 # Input: indicadores_risco existentes + novos se necessário
 # Output: Score 0-10, nível segurança, alertas
 ```
 
-#### `/api/v1/camada-mercado` - feito 5.0.2 - 05/06
+#### `/api/v1/analise-mercado` - feito 5.0.2 - 05/06
 ```python
 # Consolida: Ciclos (50%) + Técnico (30%) + Momentum (20%)
 # Input: usa /obter-indicadores/{bloco} existentes
 # Output: Score 0-10, classificação, ação recomendada
 ```
 
-#### `/api/v1/camada-dimensionamento`
+#### `/api/v1/analise-alavancagem`
 ```python
 # Tabela MVRV x RSI Mensal → Max Alavancagem
 # Input: MVRV do ciclos + RSI mensal (novo indicador)
 # Output: Alavancagem máxima, stop loss, fase mercado
 ```
 
-#### `/api/v1/camada-tatico`
+#### `/api/v1/analise-tatico`
 ```python
 # Matriz EMA144 + RSI Diário → Ações específicas
 # Input: dados das 3 camadas anteriores

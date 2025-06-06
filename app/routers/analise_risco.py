@@ -1,4 +1,4 @@
-# app/routers/camada_risco.py - SIMPLIFICADA
+# app/routers/analise_risco.py - SIMPLIFICADA
 
 from fastapi import APIRouter
 from datetime import datetime

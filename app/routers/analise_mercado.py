@@ -1,4 +1,4 @@
-# app/routers/camada_mercado.py
+# app/routers/analise_mercado.py
 
 from fastapi import APIRouter
 from datetime import datetime

@@ -3,9 +3,9 @@
 
 ---
 
-## 🎯 Estrutura de 4 Camadas
+## 🎯 Estrutura de 4 Análises
 
-### Camada 1: Análise de Mercado (Score 0-100)
+### Análise 1: Análise de Mercado (Score 0-100)
 **Pergunta:** "O mercado está favorável para estar posicionado?"
 
 ```
@@ -42,7 +42,7 @@ TÉCNICO (30%) - peso do bloco
 
 ---
 
-### Camada 2: Gestão de Risco (Score 0-100)
+### Análise 2: Gestão de Risco (Score 0-100)
 **Pergunta:** "Minha posição atual está segura?"
 
 ```
@@ -56,7 +56,7 @@ TÉCNICO (30%) - peso do bloco
 
 ---
 
-### Camada 3: Dimensionamento (Tabela MVRV)
+### Análise 3: Alavancagem (Tabela MVRV)
 **Pergunta:** "Qual alavancagem máxima posso usar?"
 
 | MVRV | RSI Mensal | Fase | Max Alavancagem | Stop Loss |
@@ -68,7 +68,7 @@ TÉCNICO (30%) - peso do bloco
 
 ---
 
-### Camada 4: Execução Tática
+### Análise 4: Execução Tática
 **Pergunta:** "Quando e quanto adicionar/realizar?"
 
 #### Matriz de Decisão EMA 144 + RSI Diário

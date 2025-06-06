@@ -217,7 +217,7 @@ for each day in period:
 
 ### 2. Cálculo de Scores
 ```python
-# Score de Mercado (Camada 1)
+# Score de Mercado (Análise 1)
 cycle_score = (
     mvrv_score * 0.25 +
     realized_ratio_score * 0.20 +

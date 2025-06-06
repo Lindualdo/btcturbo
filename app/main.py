@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from pathlib import Path
 from datetime import datetime
 from app.routers import (
-    coleta, indicadores, score, analise, diagnostico, camada_risco, camada_mercado
+    analise_mercado, analise_risco, coleta, indicadores, score, analise, diagnostico
 )
 
 app = FastAPI(
@@ -22,8 +22,8 @@ app.include_router(coleta.router, prefix="/api/v1", tags=["📥 Coleta"])
 app.include_router(indicadores.router, prefix="/api/v1", tags=["📊 Indicadores"]) 
 app.include_router(score.router, prefix="/api/v1", tags=["🎯 Scores"])
 app.include_router(analise.router, prefix="/api/v1", tags=["📈 Análise"])
-app.include_router(camada_risco.router, prefix="/api/v1", tags=["🛡️ Camada Risco"])
-app.include_router(camada_mercado.router, prefix="/api/v1", tags=["🎯 Camada Mercado"])  # NOVO
+app.include_router(analise_risco.router, prefix="/api/v1", tags=["🛡️ Analise Risco"])
+app.include_router(analise_mercado.router, prefix="/api/v1", tags=["🎯 Analise Mercado"])  # NOVO
 
 
 # ==========================================
