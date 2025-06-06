@@ -1,14 +1,29 @@
-# app/services/utils/helpers/rsi_helper.py
+# app/services/utils/helpers/rsi_helper.py - CORRIGIDO
 
 import logging
 
 def obter_rsi_diario():
-    """Busca RSI Diário via TradingView"""
+    """Busca RSI Diário via TradingView - CORRIGIDO"""
     try:
-        from app.services.utils.helpers.trandview_helper import get_tv_datafeed
-        from tvDatafeed import Interval
+        from tvDatafeed import TvDatafeed, Interval
+        from app.config import get_settings
         
-        tv = get_tv_datafeed()
+        settings = get_settings()
+        
+        # Corrigido: remover auto_login e usar credenciais se disponíveis
+        try:
+            if settings.TV_USERNAME and settings.TV_PASSWORD:
+                logging.info("🔗 Conectando TradingView com credenciais...")
+                tv = TvDatafeed(
+                    username=settings.TV_USERNAME,
+                    password=settings.TV_PASSWORD
+                )
+            else:
+                logging.info("🔗 Conectando TradingView sem login...")
+                tv = TvDatafeed()  # Sem parâmetros - modo anônimo
+        except Exception as e:
+            logging.warning(f"⚠️ Falha login TradingView: {e} - tentando modo anônimo")
+            tv = TvDatafeed()
         
         # Buscar dados diários do BTC para calcular RSI
         df = tv.get_hist(
@@ -49,15 +64,34 @@ def obter_rsi_diario():
         raise Exception(f"RSI Diário indisponível: {str(e)}")
 
 def obter_ema144_distance():
-    """Busca distância do preço em relação à EMA 144"""
+    """Busca distância do preço em relação à EMA 144 - MELHORADO"""
     try:
-        from app.services.scores import tecnico
+        from app.services.utils.helpers.postgres.tecnico_helper import get_emas_detalhadas
         
+        # Tentar buscar direto do PostgreSQL
+        emas_data = get_emas_detalhadas()
+        
+        if emas_data:
+            # Buscar EMA 144 semanal (preferência)
+            semanal = emas_data.get("semanal", {})
+            emas = semanal.get("emas", {})
+            btc_price = emas_data.get("geral", {}).get("btc_price", 0)
+            
+            if emas.get(144) and btc_price > 0:
+                ema_144 = emas[144]
+                distance = ((btc_price - ema_144) / ema_144) * 100
+                logging.info(f"✅ EMA144 distance calculada: {distance:+.1f}% (${btc_price:,.0f} vs ${ema_144:,.0f})")
+                return distance
+        
+        # Fallback: buscar via PostgreSQL se disponível
+        from app.services.scores import tecnico
         dados_tecnico = tecnico.calcular_score()
+        
         if dados_tecnico.get("status") == "success":
-            # Tentar buscar da estrutura detalhada primeiro
-            if "indicadores" in dados_tecnico and "Sistema_EMAs" in dados_tecnico["indicadores"]:
-                detalhes = dados_tecnico["indicadores"]["Sistema_EMAs"].get("detalhes", {})
+            # Verificar se tem dados detalhados de EMAs
+            indicadores = dados_tecnico.get("indicadores", {})
+            if "Sistema_EMAs" in indicadores:
+                detalhes = indicadores["Sistema_EMAs"].get("detalhes", {})
                 semanal = detalhes.get("semanal", {})
                 distancias = semanal.get("distancias", {})
                 
@@ -65,23 +99,11 @@ def obter_ema144_distance():
                 for key, value in distancias.items():
                     if "144" in key and isinstance(value, str) and "%" in value:
                         try:
-                            # Extrair percentual: "+17.2%" -> 17.2
                             distance = float(value.replace("%", "").replace("+", ""))
-                            logging.info(f"✅ EMA144 distance obtida: {distance:+.1f}%")
+                            logging.info(f"✅ EMA144 distance obtida via PostgreSQL: {distance:+.1f}%")
                             return distance
                         except:
                             continue
-            
-            # Fallback: usar score técnico como proxy
-            score = dados_tecnico.get("score_consolidado", 5)
-            if score > 7:
-                return 15.0
-            elif score > 5:
-                return 5.0
-            elif score > 3:
-                return -5.0
-            else:
-                return -15.0
                 
         raise Exception("Dados técnicos indisponíveis")
         
