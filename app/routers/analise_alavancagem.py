@@ -1,4 +1,19 @@
-# app/routers/analise_alavancagem.py
+def obter_rsi_mensal():
+    """
+    TODO: Implementar busca de RSI Mensal
+    Por enquanto, usar fallback baseado em MVRV
+    """
+    # Fallback: estimar RSI baseado em MVRV
+    mvrv = obter_mvrv_do_ciclo()
+    
+    if mvrv < 1.0:
+        return 25  # Oversold extremo
+    elif mvrv < 2.0:
+        return 40  # Oversold
+    elif mvrv < 3.0:
+        return 60  # Neutro alto
+    else:
+        return 75  # Overbought# app/routers/analise_alavancagem.py
 
 from fastapi import APIRouter
 from datetime import datetime
@@ -28,22 +43,79 @@ def obter_mvrv_do_ciclo():
         logging.error(f"❌ Erro obtendo MVRV: {str(e)}")
         return 0.0
 
-def obter_rsi_mensal():
-    """
-    TODO: Implementar busca de RSI Mensal
-    Por enquanto, usar fallback baseado em MVRV
-    """
-    # Fallback: estimar RSI baseado em MVRV
-    mvrv = obter_mvrv_do_ciclo()
-    
-    if mvrv < 1.0:
-        return 25  # Oversold extremo
-    elif mvrv < 2.0:
-        return 40  # Oversold
-    elif mvrv < 3.0:
-        return 60  # Neutro alto
-    else:
-        return 75  # Overbought
+def obter_dados_posicao():
+    """Busca dados da posição atual via indicadores de risco"""
+    try:
+        from app.services.indicadores import riscos
+        dados_riscos = riscos.obter_indicadores()
+        
+        if dados_riscos.get("status") == "success":
+            posicao = dados_riscos.get("posicao_atual", {})
+            return {
+                "divida_total": posicao.get("divida_total", {}).get("valor_numerico", 0.0),
+                "posicao_total": posicao.get("posicao_total", {}).get("valor_numerico", 0.0),
+                "capital_liquido": posicao.get("capital_liquido", {}).get("valor_numerico", 0.0),
+                "alavancagem_atual": posicao.get("alavancagem_atual", {}).get("valor_numerico", 0.0),
+                "btc_price": posicao.get("btc_price", {}).get("valor_numerico", 0.0)
+            }
+        return None
+    except Exception as e:
+        logging.error(f"❌ Erro obtendo dados posição: {str(e)}")
+        return None
+
+def calcular_simulacao_alavancagem(posicao_atual: dict, max_leverage: float) -> dict:
+    """Calcula simulação de alavancagem baseada na posição atual"""
+    try:
+        capital_liquido = posicao_atual["capital_liquido"]
+        posicao_atual_total = posicao_atual["posicao_total"]
+        divida_atual = posicao_atual["divida_total"]
+        alavancagem_atual = posicao_atual["alavancagem_atual"]
+        
+        if capital_liquido <= 0:
+            return {"erro": "Capital líquido inválido"}
+        
+        # Calcular posição alvo
+        posicao_alvo = max_leverage * capital_liquido
+        diferenca = posicao_alvo - posicao_atual_total
+        
+        if diferenca > 0:
+            # Pode aumentar alavancagem
+            status = "pode_aumentar"
+            valor_disponivel = diferenca
+            valor_a_reduzir = 0
+            acao = f"Pode emprestar mais ${valor_disponivel:,.2f} e aumentar colateral"
+        elif diferenca < 0:
+            # Deve reduzir alavancagem
+            status = "deve_reduzir"
+            valor_disponivel = 0
+            valor_a_reduzir = abs(diferenca)
+            acao = f"Deve reduzir colateral em ${valor_a_reduzir:,.2f} e pagar dívida"
+        else:
+            # Exatamente no limite
+            status = "adequada"
+            valor_disponivel = 0
+            valor_a_reduzir = 0
+            acao = "Alavancagem adequada - manter posição atual"
+        
+        return {
+            "status": status,
+            "posicao_alvo": posicao_alvo,
+            "diferenca": diferenca,
+            "valor_disponivel": valor_disponivel,
+            "valor_a_reduzir": valor_a_reduzir,
+            "acao": acao
+        }
+        
+    except Exception as e:
+        logging.error(f"❌ Erro simulação: {str(e)}")
+        return {"erro": str(e)}
+
+def format_currency(value):
+    """Formata valor em dólares"""
+    try:
+        return f"${float(value):,.2f}"
+    except:
+        return "$0.00"
 
 def encontrar_parametros_alavancagem(mvrv: float, rsi_mensal: float) -> dict:
     """Encontra parâmetros na tabela MVRV × RSI"""
@@ -135,6 +207,7 @@ async def analisar_alavancagem():
         # 1. Buscar dados necessários
         mvrv = obter_mvrv_do_ciclo()
         rsi_mensal = obter_rsi_mensal()  # TODO: implementar fonte real
+        posicao_atual = obter_dados_posicao()
         
         if mvrv == 0:
             return {
@@ -158,13 +231,32 @@ async def analisar_alavancagem():
         # 3. Calcular score da oportunidade
         score_consolidado = calcular_score_alavancagem(max_leverage)
         
-        # 4. Gerar análise
+        # 4. Simulação de alavancagem (se dados disponíveis)
+        simulacao = None
+        situacao_atual = None
+        
+        if posicao_atual:
+            simulacao = calcular_simulacao_alavancagem(posicao_atual, max_leverage)
+            
+            situacao_atual = {
+                "divida_total": format_currency(posicao_atual["divida_total"]),
+                "posicao_total": format_currency(posicao_atual["posicao_total"]),
+                "capital_liquido": format_currency(posicao_atual["capital_liquido"]),
+                "alavancagem_atual": f"{posicao_atual['alavancagem_atual']:.2f}x",
+                "alavancagem_recomendada": f"{max_leverage:.1f}x",
+                "status": simulacao.get("status", "unknown"),
+                "valor_disponivel": format_currency(simulacao.get("valor_disponivel", 0)) if simulacao.get("valor_disponivel", 0) > 0 else "$0.00",
+                "valor_a_reduzir": format_currency(simulacao.get("valor_a_reduzir", 0)) if simulacao.get("valor_a_reduzir", 0) > 0 else "$0.00",
+                "acao_simulacao": simulacao.get("acao", "N/A")
+            }
+        
+        # 5. Gerar análise
         classificacao = classificar_oportunidade(score_consolidado)
         acao = obter_acao_recomendada(max_leverage, fase)
         insights = get_insights_alavancagem(mvrv, rsi_mensal, fase, max_leverage)
         
-        # 5. Resposta consolidada
-        return {
+        # 6. Resposta consolidada
+        response = {
             "analise": "alavancagem",
             "timestamp": datetime.utcnow().isoformat(),
             "score_consolidado": round(score_consolidado, 1),
@@ -206,6 +298,18 @@ async def analisar_alavancagem():
             
             "status": "success"
         }
+        
+        # Adicionar situação atual se disponível
+        if situacao_atual:
+            response["situacao_atual"] = situacao_atual
+            
+            # Adicionar alertas específicos da simulação
+            if situacao_atual["status"] == "deve_reduzir":
+                response["alertas"].insert(0, f"🚨 URGENTE: Reduzir posição em {situacao_atual['valor_a_reduzir']}")
+            elif situacao_atual["status"] == "pode_aumentar":
+                response["alertas"].append(f"💡 Disponível para aumento: {situacao_atual['valor_disponivel']}")
+        
+        return response
         
     except Exception as e:
         logging.error(f"❌ Erro na análise de alavancagem: {str(e)}")
