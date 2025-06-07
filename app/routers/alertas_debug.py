@@ -49,21 +49,21 @@ async def debug_alertas_geral():
     return debug_service.debug_geral()
 
 # Endpoints TODO - próximas implementações
-@router.get("/taticos", summary="Debug Alertas Tático [TODO]")
+@router.get("/taticos", summary="Debug Alertas Tático")
 async def debug_alertas_taticos():
     """TODO: Entradas/saídas específicas"""
-    return {
-        "categoria": "TÁTICOS",
-        "status": "TODO",
-        "alertas_planejados": [
-            "EMA144 < -8% + RSI < 40 (compra)",
-            "Score mercado > 70 + leverage baixo (aumentar)",
-            "EMA144 > 15% + 5 dias green (parcial)",
-            "Matriz tática breakout",
-            "DCA opportunity",
-            "Funding negativo + preço estável"
-        ]
-    }
+    
+    """
+    - EMA144 < -8% + RSI < 40 (compra)",
+    - Score mercado > 70 + leverage baixo (aumentar)",
+    - EMA144 > 15% + 5 dias green (parcial)",
+    - Matriz tática breakout",
+    - DCA opportunity",
+    - Funding negativo + preço estável"
+    """
+
+    return debug_service.debug_tatico()
+
 
 @router.get("/onchain", summary="Debug Alertas OnChain [TODO]")
 async def debug_alertas_onchain():
