@@ -75,7 +75,7 @@ class VolatilidadeDetector:
                 else:
                     break
             
-            if bbw_atual < 5.0 and dias_comprimido >= 7:
+            if bbw_atual < 10 and dias_comprimido >= 7: #alterado para teste
                 return AlertaCreate(
                     tipo=TipoAlerta.VOLATILIDADE,
                     categoria=CategoriaAlerta.CRITICO,
