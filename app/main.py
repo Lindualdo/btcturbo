@@ -36,7 +36,7 @@ app.include_router(anallise_tatica.router, prefix="/api/v1", tags=["🎯 Analise
 # ==========================================
 # ROUTERS ALERTAS (APIs)
 # ==========================================
-app.include_router(alertas.router, prefix="/api", tags=["alertas"])  # ← ADICIONAR
+app.include_router(alertas.router, prefix="/api/v1", tags=["alertas"])  # ← ADICIONAR
 
 
 # ==========================================
