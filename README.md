@@ -92,5 +92,7 @@ app/
 # Output: Ação (HOLD/ADD/REDUCE), tamanho, timing
 ```
 ---
-### `/api/v1/alertas` 5.0.8
+### `/api/v1/alertas` e `/api/v1/alertas/prioritarios-debug` 5.0.8 - feito - 07/06
 - doc: btc-alerts-system.md
+- versão inicial cirada - 5 alertas prioritários
+- estrutura completa mockada pronta para evoluir
