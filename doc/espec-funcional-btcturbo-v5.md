@@ -404,7 +404,13 @@ Resultado: ________________
 ---
 
 *Sistema Hold Alavancado BTC v5.0*
-*Última atualização: Janeiro 2025*
-*Próxima revisão: Abril 2025*
+*Última atualização: Junho 2025*
+*Próxima revisão: Set 2025*
+
+
+
+
+---
+
 
 **Aviso:** Este sistema é para traders experientes. Alavancagem pode resultar em perda total. Sempre faça sua própria pesquisa.
