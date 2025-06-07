@@ -3,7 +3,7 @@
 from fastapi import FastAPI
 from pathlib import Path
 from datetime import datetime
-from app.routers import alertas_debug  # ← ADICIONAR
+from app.routers import alertas_debug ,alertas # ← ADICIONAR
 from app.routers import (
     analise_mercado, analise_risco, coleta, indicadores, score, analise, diagnostico, analise_alavancagem,anallise_tatica
 )
