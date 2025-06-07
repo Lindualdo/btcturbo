@@ -246,23 +246,41 @@ class PosicaoDetector:
             return None
     
     def _calculate_portfolio_loss_24h(self, dados_risco) -> Optional[float]:
-        """Calcula perda do portfólio em 24h"""
+        """Calcula variação do portfólio em 24h (positivo = ganho, negativo = perda)"""
         try:
-            # Usar dados do PostgreSQL se disponível
-            # Por enquanto, mock baseado em variação do BTC
-            from ...utils.helpers.price_helper import get_btc_price
+            from ...utils.helpers.postgres import get_historico_risco
             
-            btc_atual = get_btc_price()
-            net_asset_value = dados_risco.get("net_asset_value", 0)
+            # NAV atual
+            nav_atual = dados_risco.get("net_asset_value", 0)
+            if not nav_atual:
+                return None
             
-            # Mock: assumir perda proporcional se NAV baixo
-            if net_asset_value < 50000:  # Exemplo: se NAV < 50k = perda alta
-                return 25.0  # Mock de 25% de perda
+            # Buscar histórico 24h
+            historico = get_historico_risco(limit=50)
             
-            return None  # Sem perda crítica detectada
+            if not historico or len(historico) < 2:
+                return None
+            
+            # Buscar registro de ~24h atrás
+            from datetime import datetime, timedelta
+            cutoff_24h = datetime.utcnow() - timedelta(hours=24)
+            
+            nav_24h_atras = None
+            for registro in historico:
+                if registro.get("timestamp") and registro.get("timestamp") <= cutoff_24h:
+                    nav_24h_atras = registro.get("net_asset_value")
+                    break
+            
+            if not nav_24h_atras:
+                return None
+            
+            # Calcular variação percentual (positivo = ganho, negativo = perda)
+            variacao_percent = ((nav_atual - nav_24h_atras) / nav_24h_atras) * 100
+            
+            return variacao_percent
             
         except Exception as e:
-            logger.error(f"❌ Erro calculando portfolio loss: {str(e)}")
+            logger.error(f"❌ Erro calculando variação portfolio: {str(e)}")
             return None
 
     def get_debug_info(self) -> dict:
@@ -302,9 +320,9 @@ class PosicaoDetector:
                 },
                 "portfolio_loss_24h": {
                     "valor_atual": portfolio_loss,
-                    "threshold": 20.0,
-                    "disparado": portfolio_loss > 20 if portfolio_loss else False,
-                    "acao": "Stop Loss ativado" if portfolio_loss and portfolio_loss > 20 else "Monitorar"
+                    "threshold": -20.0,  # Negativo = perda
+                    "disparado": portfolio_loss < -20 if portfolio_loss else False,
+                    "acao": "Stop Loss ativado" if portfolio_loss and portfolio_loss < -20 else "Monitorar"
                 },
                 "overleveraged": {
                     "valor_atual": alavancagem_atual,
@@ -321,7 +339,7 @@ class PosicaoDetector:
                     "health_factor": health_factor,
                     "dist_liquidacao": dist_liquidacao,
                     "score_risco": score_risco,
-                    "portfolio_loss_24h": portfolio_loss,
+                    "aumento_capital_24h": portfolio_loss,  # Positivo = ganho, negativo = perda
                     "alavancagem_atual": alavancagem_atual,
                     "max_leverage_permitido": max_leverage
                 },
