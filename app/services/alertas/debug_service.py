@@ -2,7 +2,7 @@
 
 import logging
 from typing import Dict, Any
-from .detectores.posicao_detector import PosicaoDetector
+from .detectores.criticos_detector import   CriticosDetector
 from .detectores.volatilidade_detector import VolatilidadeDetector
 from datetime import datetime
 
@@ -15,7 +15,7 @@ class AlertasDebugService:
     """
     
     def __init__(self):
-        self.posicao_detector = PosicaoDetector()
+        self.posicao_detector = CriticosDetector()
         self.volatilidade_detector = VolatilidadeDetector()
     
     def debug_criticos(self) -> Dict[str, Any]:

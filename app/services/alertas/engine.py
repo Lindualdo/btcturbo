@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from typing import List, Optional, Dict, Any
 
 from .models import AlertaResponse, AlertaCreate, AlertaResumo, TipoAlerta, CategoriaAlerta
-from .detectores.posicao_detector import PosicaoDetector
+from .detectores.criticos_detector import PosicaoDetector
 from .detectores.volatilidade_detector import VolatilidadeDetector
 from .detectores.mercado_detector import MercadoDetector
 #from .detectores.tatico_detector import TaticoDetector

@@ -6,7 +6,7 @@ from app.services.alertas.debug_service import AlertasDebugService
 router = APIRouter()
 debug_service = AlertasDebugService()
 
-@router.get("/posicao", summary="Debug Alertas Críticos (Posição)")
+@router.get("/critico", summary="Debug Alertas Críticos (Posição)")
 async def debug_alertas_posicao():
     """
     Debug categoria CRÍTICOS - Posição
@@ -17,6 +17,7 @@ async def debug_alertas_posicao():
     - Leverage > MVRV Max * 1.2
     """
     return debug_service.debug_criticos()
+
 
 @router.get("/volatilidade", summary="Debug Alertas Volatilidade")
 async def debug_alertas_volatilidade():

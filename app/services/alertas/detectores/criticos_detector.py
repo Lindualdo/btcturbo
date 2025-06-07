@@ -10,7 +10,7 @@ from ...analises.analise_alavancagem import calcular_analise_alavancagem
 
 logger = logging.getLogger(__name__)
 
-class PosicaoDetector:
+class CriticosDetector:
     """
     Detecta TODOS os 5 alertas críticos conforme doc:
     1. Health Factor < 1.3
