@@ -1,5 +1,4 @@
 # app/services/alertas/detectores/posicao_detector.py
-#ALERTAS CRITICOS - DETECTOR DE POSIÇÃO
 
 import logging
 from typing import List, Optional
@@ -193,7 +192,8 @@ class PosicaoDetector:
             if analise_alavancagem.get("status") != "success":
                 return None
             
-            alavancagem_atual = self._extract_leverage_value(dados_risco.get("alavancagem_atual"))
+            # CORRIGIDO: Campo correto da tabela indicadores_risco
+            alavancagem_atual = self._extract_leverage_value(dados_risco.get("alavancagem"))
             max_permitido = analise_alavancagem.get("alavancagem_recomendada", 2.0)
             threshold_critico = max_permitido * 1.2
             
@@ -277,7 +277,7 @@ class PosicaoDetector:
             dist_liquidacao = self._extract_distance_value(dados_risco.get("dist_liquidacao")) if dados_risco else None
             score_risco = analise_risco.get("score_consolidado", 100) if analise_risco.get("status") == "success" else None
             portfolio_loss = self._calculate_portfolio_loss_24h(dados_risco) if dados_risco else None
-            alavancagem_atual = self._extract_leverage_value(dados_risco.get("alavancagem_atual")) if dados_risco else None
+            alavancagem_atual = self._extract_leverage_value(dados_risco.get("alavancagem")) if dados_risco else None
             max_leverage = analise_alavancagem.get("alavancagem_recomendada", 2.0) if analise_alavancagem.get("status") == "success" else None
             
             # Verificar cada alerta
