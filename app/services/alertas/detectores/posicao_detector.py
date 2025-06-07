@@ -5,6 +5,7 @@ from typing import List
 from ..models import AlertaCreate, AlertaDetectado, TipoAlerta, CategoriaAlerta
 from ...utils.helpers.postgres import get_dados_risco
 from ...analises.analise_risco import calcular_analise_risco
+from typing import List, Optional
 
 logger = logging.getLogger(__name__)
 
