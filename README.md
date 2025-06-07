@@ -92,5 +92,5 @@ app/
 # Output: Ação (HOLD/ADD/REDUCE), tamanho, timing
 ```
 ---
-### `/api/v1/alertas` 5.0.7
+### `/api/v1/alertas` 5.0.8
 - doc: btc-alerts-system.md
