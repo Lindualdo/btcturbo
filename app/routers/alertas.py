@@ -18,30 +18,22 @@ async def verificar_alertas():
     """
     return alertas_engine.verificar_todos_alertas()
 
-@router.get("/alertas/ativos", response_model=List[AlertaResponse])
-async def get_alertas_ativos(
-    categoria: Optional[str] = Query(None, description="critico, urgente, informativo"),
-    tipo: Optional[str] = Query(None, description="posicao, mercado, volatilidade, tatico, onchain"),
-    limit: int = Query(20, le=100)
-):
+@router.get("/alertas/ativos")
+async def get_alertas_ativos(categoria: str = None, tipo: str = None, limit: int = 20):
     """
     Retorna alertas ativos para dashboard
     """
     return alertas_engine.get_alertas_ativos(categoria=categoria, tipo=tipo, limit=limit)
 
-@router.get("/alertas/resumo", response_model=AlertaResumo)
+@router.get("/alertas/resumo")
 async def get_resumo_alertas():
     """
     Widget principal do dashboard - contadores por categoria
     """
     return alertas_engine.get_resumo_alertas()
 
-@router.get("/alertas/historico", response_model=List[AlertaResponse])
-async def get_historico_alertas(
-    dias: int = Query(7, le=30, description="Últimos N dias"),
-    incluir_resolvidos: bool = Query(True),
-    tipo: Optional[str] = Query(None)
-):
+@router.get("/alertas/historico")
+async def get_historico_alertas(dias: int = 7, incluir_resolvidos: bool = True, tipo: str = None):
     """
     Timeline histórico de alertas
     """
@@ -59,20 +51,20 @@ async def resolver_alerta(alerta_id: int):
     """
     success = alertas_engine.resolver_alerta(alerta_id)
     if not success:
-        raise HTTPException(status_code=404, detail="Alerta não encontrado")
+        return {"error": "Alerta não encontrado"}
     return {"status": "resolvido", "alerta_id": alerta_id}
 
 @router.post("/alertas/{alerta_id}/snooze")
-async def snooze_alerta(alerta_id: int, minutos: int = Query(60, le=1440)):
+async def snooze_alerta(alerta_id: int, minutos: int = 60):
     """
     Silencia alerta por X minutos
     """
     success = alertas_engine.snooze_alerta(alerta_id, minutos)
     if not success:
-        raise HTTPException(status_code=404, detail="Alerta não encontrado")
+        return {"error": "Alerta não encontrado"}
     return {"status": "snoozed", "alerta_id": alerta_id, "ate": datetime.utcnow() + timedelta(minutes=minutos)}
 
-@router.get("/alertas/config", response_model=List[AlertaConfig])
+@router.get("/alertas/config")
 async def get_config_alertas():
     """
     Configurações atuais de alertas
@@ -80,7 +72,7 @@ async def get_config_alertas():
     return alertas_engine.get_config_alertas()
 
 @router.put("/alertas/config")
-async def update_config_alertas(configs: List[AlertaConfig]):
+async def update_config_alertas(configs: List[dict]):
     """
     Atualiza configurações de alertas
     """
