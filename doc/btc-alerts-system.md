@@ -76,17 +76,13 @@ if volume_spike > 300:
 
 ### 3️⃣ ALERTAS DE VOLATILIDADE (Timing)
 
-#### 🔴 Compressão Extrema
-```python
-if bbw < 5 and days_compressed > 7:
-    alert("🔥 EXPLOSÃO IMINENTE: BBW {value}% há {days} dias")
-    
-if atr_percentage < 1.5:
-    alert("🔥 VOLATILIDADE HISTÓRICA: ATR mínimo atingido")
-    
-if bbw < 7 and volume_decline > 50:
-    alert("🔥 SETUP COMPLETO: Baixa vol + volume caindo")
-```
+### Alertas (5):
+1. BBW < 10% por 5+ dias → "🔥 EXPLOSÃO IMINENTE"
+2. Volume spike > 200% → "⚡ VOLUME SPIKE"
+3. ATR < 2% → "🔥 ATR MÍNIMO"
+4. EMA144 > 15% + RSI > 65 → "💰 ZONA REALIZAÇÃO"
+5. Pump & Drift detectado → "📊 PUMP & DRIFT"
+
 
 #### 🟡 Padrões de Movimento
 ```python
