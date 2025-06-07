@@ -339,7 +339,11 @@ class PosicaoDetector:
                     "health_factor": health_factor,
                     "dist_liquidacao": dist_liquidacao,
                     "score_risco": score_risco,
-                    "aumento_capital_24h": portfolio_loss,  # Positivo = ganho, negativo = perda
+                    "aumento_capital_24h": {
+                        "percentual": round(portfolio_loss, 2) if portfolio_loss else None,
+                        "valor_dolares": round((portfolio_loss / 100) * dados_risco.get("net_asset_value", 0), 2) if portfolio_loss and dados_risco.get("net_asset_value") else None,
+                        "formatado": f"+{portfolio_loss:.2f}%" if portfolio_loss and portfolio_loss > 0 else f"{portfolio_loss:.2f}%" if portfolio_loss else None
+                    },
                     "alavancagem_atual": alavancagem_atual,
                     "max_leverage_permitido": max_leverage
                 },
