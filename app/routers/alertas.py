@@ -1,6 +1,6 @@
 # app/routers/alertas.py
 
-from fastapi import APIRouter, Query, HTTPException
+from fastapi import APIRouter
 from typing import List, Optional
 from datetime import datetime, timedelta
 
