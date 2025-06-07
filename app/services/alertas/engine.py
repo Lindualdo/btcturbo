@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from typing import List, Optional, Dict, Any
 
 from .models import AlertaResponse, AlertaCreate, AlertaResumo, TipoAlerta, CategoriaAlerta
-from .detectores.criticos_detector import PosicaoDetector
+from .detectores.criticos_detector import CriticosDetector
 from .detectores.volatilidade_detector import VolatilidadeDetector
 from .detectores.mercado_detector import MercadoDetector
 #from .detectores.tatico_detector import TaticoDetector
@@ -25,7 +25,7 @@ class AlertasEngine:
     def __init__(self):
         # Detectores por categoria - ATUALIZADO
         self.detectores = {
-            TipoAlerta.POSICAO: PosicaoDetector(),
+            TipoAlerta.POSICAO: CriticosDetector(),
             TipoAlerta.VOLATILIDADE: VolatilidadeDetector(),  # NOVO
             TipoAlerta.MERCADO: MercadoDetector()
             #TipoAlerta.TATICO: TaticoDetector(),
