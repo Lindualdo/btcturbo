@@ -333,7 +333,7 @@ class CriticosDetector:
             }
             
             return {
-                "categoria": "CRÍTICOS - Posição",
+                "categoria": "CRÍTICOS - Proteção de Capital",
                 "timestamp": datetime.utcnow().isoformat(),
                 "dados_coletados": {
                     "health_factor": health_factor,
