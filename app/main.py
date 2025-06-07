@@ -3,6 +3,7 @@
 from fastapi import FastAPI
 from pathlib import Path
 from datetime import datetime
+from app.routers import alertas  # ← ADICIONAR
 from app.routers import (
     analise_mercado, analise_risco, coleta, indicadores, score, analise, diagnostico, analise_alavancagem,anallise_tatica
 )
@@ -30,6 +31,12 @@ app.include_router(analise_mercado.router, prefix="/api/v1", tags=["🎯 Analise
 app.include_router(analise_risco.router, prefix="/api/v1", tags=["🛡️ Analise Risco"])
 app.include_router(analise_alavancagem.router, prefix="/api/v1", tags=["🎯 Analise Alavancagem"])  # NOVO
 app.include_router(anallise_tatica.router, prefix="/api/v1", tags=["🎯 Analise Tatica"])  # NOVO
+
+
+# ==========================================
+# ROUTERS ALERTAS (APIs)
+# ==========================================
+app.include_router(alertas.router, prefix="/api", tags=["alertas"])  # ← ADICIONAR
 
 
 # ==========================================
