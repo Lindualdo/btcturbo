@@ -27,7 +27,7 @@ class AlertasEngine:
         self.detectores = {
             TipoAlerta.POSICAO: PosicaoDetector(),
             TipoAlerta.MERCADO: MercadoDetector(),
-            TipoAlerta.VOLATILIDADE: VolatilidadeDetector(),
+            TipoAlerta.VOLATILIDADE: VolatilidadeDetector()
             #TipoAlerta.TATICO: TaticoDetector(),
             #TipoAlerta.ONCHAIN: OnchainDetector()
         }
