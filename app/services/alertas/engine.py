@@ -8,10 +8,10 @@ from .models import AlertaResponse, AlertaCreate, AlertaResumo, TipoAlerta, Cate
 from .detectores.posicao_detector import PosicaoDetector
 from .detectores.mercado_detector import MercadoDetector
 from .detectores.volatilidade_detector import VolatilidadeDetector
-from .detectores.tatico_detector import TaticoDetector
-from .detectores.onchain_detector import OnchainDetector
+#from .detectores.tatico_detector import TaticoDetector
+#from .detectores.onchain_detector import OnchainDetector
 from .processamento.filtros import FiltrosAlertas
-from .processamento.formatter import AlertaFormatter
+#from .processamento.formatter import AlertaFormatter
 from ..utils.helpers.postgres.alertas_helper import AlertasPostgresHelper
 
 logger = logging.getLogger(__name__)
@@ -28,12 +28,12 @@ class AlertasEngine:
             TipoAlerta.POSICAO: PosicaoDetector(),
             TipoAlerta.MERCADO: MercadoDetector(),
             TipoAlerta.VOLATILIDADE: VolatilidadeDetector(),
-            TipoAlerta.TATICO: TaticoDetector(),
-            TipoAlerta.ONCHAIN: OnchainDetector()
+            #TipoAlerta.TATICO: TaticoDetector(),
+            #TipoAlerta.ONCHAIN: OnchainDetector()
         }
         
         self.filtros = FiltrosAlertas()
-        self.formatter = AlertaFormatter()
+        #self.formatter = AlertaFormatter()
         self.db_helper = AlertasPostgresHelper()
         self.ultima_verificacao = None
     
