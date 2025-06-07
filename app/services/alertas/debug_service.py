@@ -3,6 +3,7 @@
 import logging
 from typing import Dict, Any
 from .detectores.posicao_detector import PosicaoDetector
+from .detectores.volatilidade_detector import VolatilidadeDetector
 from datetime import datetime
 
 logger = logging.getLogger(__name__)
@@ -15,50 +16,101 @@ class AlertasDebugService:
     
     def __init__(self):
         self.posicao_detector = PosicaoDetector()
+        self.volatilidade_detector = VolatilidadeDetector()
     
     def debug_criticos(self) -> Dict[str, Any]:
-        """Debug completo da categoria CRÍTICOS"""
+        """Debug completo da categoria CRÍTICOS (Posição)"""
         try:
             logger.info("🔍 Iniciando debug categoria CRÍTICOS...")
-            
-            # Usar o mesmo detector que produção
-            debug_info = self.posicao_detector.get_debug_info()
-            
-            # Executar detecção real para comparar
-            alertas_detectados = self.posicao_detector.verificar_alertas()
-            alertas_criticos = [a for a in alertas_detectados if a.categoria.value == "critico"]
-            
-            # Consolidar informações
-            debug_completo = {
-                **debug_info,
-                "alertas_detectados": len(alertas_criticos),
-                "alertas_detalhes": [
-                    {
-                        "titulo": a.titulo,
-                        "mensagem": a.mensagem,
-                        "valor_atual": a.valor_atual,
-                        "threshold": a.threshold_configurado,
-                        "acao": a.dados_contexto.get("acao_recomendada"),
-                        "tipo": a.dados_contexto.get("tipo_critico")
-                    } for a in alertas_criticos
-                ],
-                "resumo_categoria": {
-                    "categoria": "CRÍTICOS",
-                    "total_alertas_possiveis": 5,
-                    "alertas_disparados": len(alertas_criticos),
-                    "urgencia": "IMEDIATA" if alertas_criticos else "MONITORAR",
-                    "proxima_verificacao": "5min" if alertas_criticos else "15min"
-                }
-            }
-            
-            logger.info(f"✅ Debug críticos: {len(alertas_criticos)} alertas ativos")
-            return debug_completo
+            return self.posicao_detector.get_debug_info()
             
         except Exception as e:
             logger.error(f"❌ Erro debug críticos: {str(e)}")
-            return {
-                "categoria": "CRÍTICOS",
-                "timestamp": datetime.utcnow().isoformat(),
-                "erro": str(e),
-                "status": "error"
+            return self._error_response("CRÍTICOS", str(e))
+    
+    def debug_volatilidade(self) -> Dict[str, Any]:
+        """Debug completo da categoria VOLATILIDADE"""
+        try:
+            logger.info("🔍 Iniciando debug categoria VOLATILIDADE...")
+            return self.volatilidade_detector.get_debug_info()
+            
+        except Exception as e:
+            logger.error(f"❌ Erro debug volatilidade: {str(e)}")
+            return self._error_response("VOLATILIDADE", str(e))
+    
+    def debug_geral(self) -> Dict[str, Any]:
+        """Overview todas as categorias implementadas"""
+        try:
+            logger.info("🔍 Debug geral - todas categorias...")
+            
+            # Debug de cada categoria
+            debug_criticos = self.debug_criticos()
+            debug_volatilidade = self.debug_volatilidade()
+            
+            # Consolidar métricas
+            total_alertas = (
+                debug_criticos.get("alertas_detectados", 0) +
+                debug_volatilidade.get("alertas_detectados", 0)
+            )
+            
+            # Status por categoria
+            categorias_status = {
+                "criticos": {
+                    "implementado": True,
+                    "funcionando": debug_criticos.get("status") != "error",
+                    "alertas_ativos": debug_criticos.get("alertas_detectados", 0),
+                    "urgencia": debug_criticos.get("resumo_categoria", {}).get("urgencia", "NORMAL")
+                },
+                "volatilidade": {
+                    "implementado": True,
+                    "funcionando": debug_volatilidade.get("status") != "error",
+                    "alertas_ativos": debug_volatilidade.get("alertas_detectados", 0),
+                    "urgencia": debug_volatilidade.get("resumo_categoria", {}).get("urgencia", "NORMAL")
+                },
+                "mercado": {
+                    "implementado": False,
+                    "status": "TODO - MVRV extremos, mudanças regime"
+                },
+                "tatico": {
+                    "implementado": False,
+                    "status": "TODO - Entradas/saídas específicas"
+                },
+                "onchain": {
+                    "implementado": False,
+                    "status": "TODO - Baleias, divergências"
+                }
             }
+            
+            return {
+                "overview": "Sistema de Alertas - Debug Geral",
+                "timestamp": datetime.utcnow().isoformat(),
+                "sistema_status": {
+                    "categorias_implementadas": 2,
+                    "categorias_pendentes": 3,
+                    "total_alertas_ativos": total_alertas,
+                    "sistema_operacional": True
+                },
+                "categorias_status": categorias_status,
+                "detalhes_por_categoria": {
+                    "criticos": debug_criticos,
+                    "volatilidade": debug_volatilidade
+                },
+                "proximos_passos": [
+                    "Implementar categoria MERCADO",
+                    "Implementar categoria TÁTICO", 
+                    "Implementar categoria ONCHAIN"
+                ]
+            }
+            
+        except Exception as e:
+            logger.error(f"❌ Erro debug geral: {str(e)}")
+            return self._error_response("GERAL", str(e))
+    
+    def _error_response(self, categoria: str, erro: str) -> Dict[str, Any]:
+        """Resposta padrão para erros"""
+        return {
+            "categoria": categoria,
+            "timestamp": datetime.utcnow().isoformat(),
+            "erro": erro,
+            "status": "error"
+        }

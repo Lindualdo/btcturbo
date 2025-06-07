@@ -6,12 +6,12 @@ from typing import List, Optional, Dict, Any
 
 from .models import AlertaResponse, AlertaCreate, AlertaResumo, TipoAlerta, CategoriaAlerta
 from .detectores.posicao_detector import PosicaoDetector
-from .detectores.mercado_detector import MercadoDetector
 from .detectores.volatilidade_detector import VolatilidadeDetector
+from .detectores.mercado_detector import MercadoDetector
 #from .detectores.tatico_detector import TaticoDetector
 #from .detectores.onchain_detector import OnchainDetector
 from .processamento.filtros import FiltrosAlertas
-#from .processamento.formatter import AlertaFormatter
+from .processamento.filtros import AlertaFormatter
 from ..utils.helpers.postgres.alertas_helper import AlertasPostgresHelper
 
 logger = logging.getLogger(__name__)
@@ -23,17 +23,17 @@ class AlertasEngine:
     """
     
     def __init__(self):
-        # Detectores por categoria
+        # Detectores por categoria - ATUALIZADO
         self.detectores = {
             TipoAlerta.POSICAO: PosicaoDetector(),
-            TipoAlerta.MERCADO: MercadoDetector(),
-            TipoAlerta.VOLATILIDADE: VolatilidadeDetector()
+            TipoAlerta.VOLATILIDADE: VolatilidadeDetector(),  # NOVO
+            TipoAlerta.MERCADO: MercadoDetector()
             #TipoAlerta.TATICO: TaticoDetector(),
             #TipoAlerta.ONCHAIN: OnchainDetector()
         }
         
         self.filtros = FiltrosAlertas()
-        #self.formatter = AlertaFormatter()
+        self.formatter = AlertaFormatter()
         self.db_helper = AlertasPostgresHelper()
         self.ultima_verificacao = None
     
@@ -199,7 +199,16 @@ class AlertasEngine:
     
     def check_detectores_status(self) -> Dict[str, str]:
         """Status dos detectores"""
-        return {tipo.value: "ok" for tipo in self.detectores.keys()}
+        status = {}
+        for tipo, detector in self.detectores.items():
+            try:
+                # Teste básico: verificar se o detector está funcional
+                detector.verificar_alertas()
+                status[tipo.value] = "operational"
+            except Exception as e:
+                status[tipo.value] = f"error: {str(e)[:50]}"
+        
+        return status
     
     def _get_proxima_acao_sugerida(self) -> Optional[str]:
         """Sugere próxima ação baseada nos alertas críticos"""
