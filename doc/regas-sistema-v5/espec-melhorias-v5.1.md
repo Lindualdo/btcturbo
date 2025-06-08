@@ -1,8 +1,8 @@
 # Sistema BTC Hold Alavancado - Melhorias v5.1
 
-## 📊 1. Ajuste de Pesos - Bloco CICLO
+## 📊 1. Ajuste de Pesos - Bloco CICLO - feito ✅
 
-### Alteração: Substituir MVRV Z-Score por combinação MVRV + NUPL
+### Alteração: Substituir MVRV Z-Score por combinação MVRV + NUPL - feito
 
 **De:**
 ```
@@ -29,9 +29,9 @@ CICLO
 
 ---
 
-## 📈 2. Ajuste de Pesos - Sistema Geral
+## 📈 2. Ajuste de Pesos - Sistema Geral - feito ✅
 
-### Alteração: Aumentar peso da Análise Técnica
+### Alteração: Aumentar peso da Análise Técnica - ✅
 
 **De:**
 ```
@@ -67,7 +67,6 @@ CICLO
 
 ### Novo: Bônus por Momentum Semanal
 
-### trocar Exchange Net Flow por STH-SOPR manter mesmo peso
 
 ```python
 def calcular_bonus_momentum():
@@ -190,12 +189,12 @@ if ema_distance < 10 and rsi < 40:
 3. ⏳ Incluir indicadores_timing no JSON
 
 ### Fase 2 (1 semana):
-1. ⏳ Ajustar pesos MVRV/NUPL
+1. ✅ ⏳ Ajustar pesos MVRV/NUPL 
 2. ⏳ Implementar bonus momentum
 3. ⏳ Webhook Telegram
 
 ### Fase 3 (2 semanas):
-1. ⏳ Aumentar peso técnico para 40%
+1.  ✅ ⏳ Aumentar peso técnico para 40%
 2. ⏳ Dashboard básico
 3. ⏳ Histórico de alertas
 
@@ -211,14 +210,8 @@ Com as alterações:
 
 ---
 
-# Tabela de Score SOPR (Spent Output Profit Ratio)
-
-## Indicador: SOPR
-**Fonte:** Glassnode  
-**Endpoint:** `/v1/metrics/indicators/sopr`  
-**Peso no Sistema:** 10% (dentro do bloco Momentum que tem peso 20%)
-
-## Tabela de Conversão SOPR → Score
+## trocar Exchange Net Flow por STH-SOPR manter mesmo peso ✅
+## Tabela de conversão SOPR → Score
 
 | Faixa SOPR | Score | Classificação | Interpretação de Mercado |
 |------------|-------|---------------|--------------------------|

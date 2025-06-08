@@ -160,7 +160,7 @@ CICLO
 ---
 
 
-# Alteração de Exchange Net Flow por SOPR (Spent Output Profit Ratio) - 5.1.3
+# Alteração de Exchange Net Flow por SOPR (Spent Output Profit Ratio) - 5.1.3 - feito - 08/06
 
 ## Indicador: SOPR
 
@@ -217,3 +217,68 @@ def calcular_score_sopr(valor_sopr):
 - **Score 4-5**: Zona neutra (aguardar)
 - **Score 2-3**: Zona de realização parcial
 - **Score 0-1**: Zona de redução/saída
+
+---
+
+## Fase 1 (Imediato):
+1. ✅ Sistema de alertas críticos (já implementado)
+2. ⏳ Adicionar alertas de oportunidade técnica
+3. ⏳ Incluir indicadores_timing no JSON
+
+## 🔔 4. Novos Alertas Prioritários
+
+### 4.1 Alertas de Oportunidade Técnica - 5.1.4
+```python
+# Setup Técnico Forte
+if consecutive_weekly_ath >= 3:
+    alert("📈 Setup técnico forte - 3+ ATHs semanais")
+    
+if golden_cross_4h and score < 60:
+    alert("⚡ Golden cross 4H com score neutro - divergência")
+    
+if price_test_psychological and held:
+    alert("💪 Suporte psicológico defendido - força compradora")
+```
+
+### 4.2 Alertas de Divergência . 5.1.5
+```python
+# Técnica vs On-chain
+if technical_score > 80 and cycle_score < 50:
+    alert("🔄 Divergência: Técnica forte, on-chain fraco")
+    
+if ema_alignment_perfect and mvrv > 3:
+    alert("⚠️ EMAs perfeitas mas MVRV alto - cautela")
+```
+
+### 4.3 Alertas de Execução - 5.1.6
+```python
+# Zona neutra com oportunidade
+if ema_distance < 10 and rsi > 70:
+    alert("📊 RSI alto em zona neutra - realizar parcial")
+    
+if ema_distance < 10 and rsi < 40:
+    alert("🛒 RSI baixo em zona neutra - oportunidade compra")
+```
+
+---
+
+## Novo: Bônus por Momentum Semanal
+
+```python
+def calcular_bonus_momentum():
+    bonus = 0
+    
+    # Velas verdes consecutivas
+    if consecutive_green_weekly >= 3:
+        bonus += 5
+        
+    # ATH semanal
+    if weekly_close == all_time_high:
+        bonus += 3
+        
+    # Defesa de suporte psicológico
+    if tested_and_held_round_number:
+        bonus += 2
+        
+    return min(bonus, 10)  # Máximo 10 pontos
+```
