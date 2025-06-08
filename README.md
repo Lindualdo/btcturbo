@@ -163,9 +163,6 @@ CICLO
 # Alteração de Exchange Net Flow por SOPR (Spent Output Profit Ratio) - 5.1.3
 
 ## Indicador: SOPR
-**Fonte:** Glassnode  
-**Endpoint:** `/v1/metrics/indicators/sopr`  
-**Peso no Sistema:** 10% (dentro do bloco Momentum que tem peso 20%)
 
 ## Tabela de Conversão SOPR → Score
 
