@@ -6,7 +6,7 @@
 
 **De:**
 ```
-CICLO (50%)
+CICLO
 ├── MVRV Z-Score (25%)
 ├── Realized Price Ratio (20%)
 └── Puell Multiple (5%)
@@ -14,7 +14,7 @@ CICLO (50%)
 
 **Para:**
 ```
-CICLO (50%)
+CICLO
 ├── MVRV Z-Score (15%)    ← Reduzido
 ├── NUPL (10%)            ← Novo
 ├── Realized Price Ratio (20%)

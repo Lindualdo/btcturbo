@@ -124,3 +124,30 @@ app/
 - Sistema atual muito conservador para momentum claro
 
 ---
+
+### Alteração: Substituir MVRV Z-Score por combinação MVRV + NUPL - 5.1.2
+
+**De:**
+```
+CICLO
+├── MVRV Z-Score (50%)
+├── Realized Price Ratio (40%)
+└── Puell Multiple (10%)
+```
+
+**Para:**
+```
+CICLO 
+├── MVRV Z-Score (30%)    ← Reduzido
+├── NUPL (20%)            ← Novo
+├── Realized Price Ratio (40%)
+└── Puell Multiple (10%)
+```
+
+**Justificativa:**
+- MVRV tem lag significativo em topos (10-20% após pico)
+- NUPL mais responsivo: >0.75 = euforia clara
+- Diversificação reduz dependência de indicador único
+- Histórico: MVRV errou topos 2021 e 2024
+
+---
