@@ -1,4 +1,5 @@
-# BTC Turbo - Documentação Técnica de Arquitetura - 5.0.14
+# BTC Turbo - Documentação Técnica de Arquitetura - 5.1.1
+Doc: btc-system-improvements melhorias: 5.1
 
 ## 📋 Visão Geral
 
@@ -97,3 +98,29 @@ app/
 `/alertas-debug/urgentes` - debug da categoria  - retorna alertas + dados para validação
 `/alertas-debug/bolatilidade` - debug da categoria  - retorna alertas + dados para validação
 `/alertas-debug/taticos` - debug da categoria  - retorna alertas + dados para validação
+
+## Melhorias - Versão sistema - 5.1 
+
+### Alteração: Aumentar peso da Análise Técnica - 5.1.1 - feito - 08/06
+
+**De:**
+```
+├── CICLO: 50%
+├── MOMENTUM: 20%
+└── TÉCNICO: 30%
+```
+
+**Para:**
+```
+├── CICLO: 40%      ← Reduzido
+├── MOMENTUM: 20%   ← Mantém
+└── TÉCNICO: 40%    ← Aumentado
+```
+
+**Justificativa:**
+- AT antecipa movimentos on-chain
+- Setup atual (4 ATHs semanais) não capturado com peso 30%
+- Price action é leading indicator
+- Sistema atual muito conservador para momentum claro
+
+---
