@@ -159,3 +159,64 @@ CICLO
 ```
 ---
 
+
+# Alteração de Exchange Net Flow por SOPR (Spent Output Profit Ratio) - 5.1.3
+
+## Indicador: SOPR
+**Fonte:** Glassnode  
+**Endpoint:** `/v1/metrics/indicators/sopr`  
+**Peso no Sistema:** 10% (dentro do bloco Momentum que tem peso 20%)
+
+## Tabela de Conversão SOPR → Score
+
+| Faixa SOPR | Score | Classificação | Interpretação de Mercado |
+|------------|-------|---------------|--------------------------|
+| < 0.90 | 10 | Capitulação Extrema | Pânico total, fundo histórico provável |
+| 0.90 - 0.93 | 9 | Capitulação Forte | Vendas com grandes perdas |
+| 0.93 - 0.95 | 8 | Capitulação | Pressão vendedora intensa |
+| 0.95 - 0.97 | 7 | Pressão Alta | Realizando perdas moderadas |
+| 0.97 - 0.99 | 6 | Pressão Moderada | Vendas no prejuízo leve |
+| 0.99 - 1.00 | 5 | Pressão Leve | Mercado indeciso |
+| 1.00 - 1.01 | 5 | Neutro | Equilíbrio entre lucro/perda |
+| 1.01 - 1.02 | 4 | Realização Leve | Pequenos lucros realizados |
+| 1.02 - 1.03 | 3 | Realização Moderada | Tomada de lucro saudável |
+| 1.03 - 1.05 | 2 | Realização Alta | Forte tomada de lucro |
+| 1.05 - 1.08 | 1 | Ganância | Realização excessiva |
+| > 1.08 | 0 | Ganância Extrema | Euforia, topo local provável |
+
+## Fórmula de Cálculo
+
+```python
+def calcular_score_sopr(valor_sopr):
+    if valor_sopr < 0.90:
+        return 10
+    elif valor_sopr < 0.93:
+        return 9
+    elif valor_sopr < 0.95:
+        return 8
+    elif valor_sopr < 0.97:
+        return 7
+    elif valor_sopr < 0.99:
+        return 6
+    elif valor_sopr <= 1.01:
+        return 5
+    elif valor_sopr < 1.02:
+        return 4
+    elif valor_sopr < 1.03:
+        return 3
+    elif valor_sopr < 1.05:
+        return 2
+    elif valor_sopr < 1.08:
+        return 1
+    else:
+        return 0
+```
+
+## InterClassificação
+
+### Zonas de Ação
+- **Score 8-10**: Zona de compra agressiva (capitulação)
+- **Score 6-7**: Zona de compra moderada
+- **Score 4-5**: Zona neutra (aguardar)
+- **Score 2-3**: Zona de realização parcial
+- **Score 0-1**: Zona de redução/saída
