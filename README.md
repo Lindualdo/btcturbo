@@ -125,7 +125,7 @@ app/
 
 ---
 
-### Alteração: Substituir MVRV Z-Score por combinação MVRV + NUPL - 5.1.2
+### Alteração: Substituir MVRV Z-Score por combinação MVRV + NUPL - 5.1.2 - feito - 08/06
 
 **De:**
 ```
@@ -150,7 +150,12 @@ CICLO
 - Diversificação reduz dependência de indicador único
 - Histórico: MVRV errou topos 2021 e 2024
 
+```python
+# NUPL > 0.75 = euforia/topo (score 1-2)
+# NUPL 0.5-0.75 = sobrecomprado (score 3-4)  
+# NUPL 0.25-0.5 = neutro (score 5-6)
+# NUPL 0-0.25 = acumulação (score 7-8)
+# NUPL < 0 = oversold extremo (score 9-10)
+```
 ---
 
-Score NUPL:
-NUPL Score Fase< 09-10 Capitulação 0-0.25 7-8 Acumulação 0.25-0.5 5-6 Neutro 0.5-0.75 3-4 Otimismo > 0.75 0-2 Euforia
