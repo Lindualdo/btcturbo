@@ -1,4 +1,4 @@
-# app/main.py - v5.0.1 com Camada Mercado
+# app/main.py - v5.0.14 com Camada Mercado
 
 from fastapi import FastAPI
 from pathlib import Path
@@ -11,7 +11,7 @@ from app.routers import (
 app = FastAPI(
     title="BTC Turbo API",
     description="Sistema de análise de indicadores BTC",
-    version="5.0.1"
+    version="5.0.14"
 )
 
 # ==========================================

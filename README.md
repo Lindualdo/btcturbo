@@ -1,4 +1,4 @@
-# BTC Turbo - Documentação Técnica de Arquitetura
+# BTC Turbo - Documentação Técnica de Arquitetura - 5.0.14
 
 ## 📋 Visão Geral
 
@@ -6,7 +6,6 @@ Sistema de análise de indicadores Bitcoin construído com **FastAPI + PostgreSQ
 
 ### Stack Tecnológica
 - **Backend**: FastAPI + SQLAlchemy + Psycopg2
-- **Frontend**: Jinja2 Templates + Chart.js + CSS/JS vanilla
 - **Database**: PostgreSQL (Railway)
 - **Deploy**: Docker + Railway
 - **APIs Externas**: TradingView, Notion, BigQuery, Web3
@@ -92,7 +91,9 @@ app/
 # Output: Ação (HOLD/ADD/REDUCE), tamanho, timing
 ```
 ---
-### `/api/v1/alertas` e `/api/v1/alertas/prioritarios-debug` 5.0.8 - feito - 07/06
-- doc: btc-alerts-system.md
-- versão inicial cirada - 5 alertas prioritários
-- estrutura completa mockada pronta para evoluir
+### Alertas prioritário (criticos, urgentes, volatilidade e tático) - 5.0.8 a 5.0.14 - feito 08/06
+`/api/v1/alertas/verificar` - Endpoint principal - retorna alertas disparados
+`/alertas-debug/criticos` - debug da categoria  - retorna alertas + dados para validação
+`/alertas-debug/urgentes` - debug da categoria  - retorna alertas + dados para validação
+`/alertas-debug/bolatilidade` - debug da categoria  - retorna alertas + dados para validação
+`/alertas-debug/taticos` - debug da categoria  - retorna alertas + dados para validação
