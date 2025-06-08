@@ -151,3 +151,6 @@ CICLO
 - Histórico: MVRV errou topos 2021 e 2024
 
 ---
+
+Score NUPL:
+NUPL Score Fase< 09-10 Capitulação 0-0.25 7-8 Acumulação 0.25-0.5 5-6 Neutro 0.5-0.75 3-4 Otimismo > 0.75 0-2 Euforia
