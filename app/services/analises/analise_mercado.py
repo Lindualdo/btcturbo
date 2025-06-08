@@ -4,11 +4,11 @@ from datetime import datetime
 from app.services.scores import ciclos, momentum, tecnico
 import logging
 
-# Pesos conforme especificação v5.0
+# Pesos conforme especificação v5.0 > alterado 5.1
 PESOS_CAMADA_MERCADO = {
-    "ciclos": 50,     # 50%
-    "tecnico": 30,    # 30% 
-    "momentum": 20    # 20%
+    "ciclos": 40,     # 50% > 40
+    "tecnico": 40,    # 30%  > 40
+    "momentum": 20    # 20% > 20
 }
 
 def classificar_mercado(score: float) -> str:
@@ -157,7 +157,7 @@ def calcular_analise_mercado():
             "acao_recomendada": acao,
             
             "composicao": {
-                "formula": "Score = (Ciclos×50%) + (Técnico×30%) + (Momentum×20%)",
+                "formula": "Score = (Ciclos×40%) + (Técnico×40%) + (Momentum×20%)",
                 "calculo": f"Score = {breakdown.get('ciclos', {}).get('score_ponderado', 0)} + {breakdown.get('tecnico', {}).get('score_ponderado', 0)} + {breakdown.get('momentum', {}).get('score_ponderado', 0)} = {score_normalizado:.1f}",
                 "breakdown": breakdown
             },
