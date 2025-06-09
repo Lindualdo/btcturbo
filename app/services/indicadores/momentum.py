@@ -60,8 +60,8 @@ def obter_indicadores():
                     "valor": float(dados_db["rsi_semanal"]) if dados_db["rsi_semanal"] else 0.0,
                     "fonte": dados_db["fonte"] or "PostgreSQL"
                 },
-                "Funding_Rates": {
-                    "valor": f"{float(dados_db['funding_rates']) * 100:.3f}%" if dados_db["funding_rates"] else "0.000%",
+               "Funding_Rates": {
+                    "valor": f"{float(dados_db['funding_rates']):.5f}%" if dados_db["funding_rates"] else "0.00000%",
                     "fonte": dados_db["fonte"] or "PostgreSQL"
                 },
                 "Long_Short_Ratio": {
