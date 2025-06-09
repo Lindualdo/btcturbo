@@ -282,3 +282,11 @@ def calcular_bonus_momentum():
         
     return min(bonus, 10)  # Máximo 10 pontos
 ```
+
+
+## REFACTORE;
+- Simplificar json de retono
+- Cash dos scores calculados
+- obter score (gravar todos os scores no banco)
+- usar redis para cah no lugar do postgre
+- controle de conexões para não locar tabelas durante os processos (obter quando coleta)

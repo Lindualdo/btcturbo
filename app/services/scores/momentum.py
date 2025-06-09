@@ -178,7 +178,7 @@ def calcular_score():
                 "fonte": indicadores["RSI_Semanal"]["fonte"]
             },
             "Funding_Rates": {
-                "valor": funding_valor,
+                "valor": funding_valor / 100,  # ← MANTÉM valor em porcentagem
                 "score": round(funding_score, 1),
                 "score_consolidado": round(funding_score * 0.35, 2),
                 "classificacao": funding_classificacao,
