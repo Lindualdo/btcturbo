@@ -138,7 +138,7 @@ def calcular_score():
     return {
         "bloco": "ciclo",
         "peso_bloco": "40%",  # Peso ajustado na v5.1.1 (era 50%)
-        "score_consolidado": round(score_consolidado, 2),
+        "score_consolidado": round(score_consolidado * 10, 2),
         "classificacao_consolidada": interpretar_classificacao_consolidada(score_consolidado),
         "timestamp": dados_indicadores["timestamp"],
         "versao": "5.1.2",  # ← NOVO: Tracking de versão
@@ -147,7 +147,7 @@ def calcular_score():
         "indicadores": {
             "MVRV_Z": {
                 "valor": mvrv_valor,
-                "score": round(mvrv_score, 1),
+                "score": round(mvrv_score * 10, 1),
                 "score_consolidado": round(mvrv_score * 0.30, 2),  # ← PESO REDUZIDO
                 "classificacao": mvrv_classificacao,
                 "peso": "30%",  # ← REDUZIDO: 50% → 30%
@@ -158,7 +158,7 @@ def calcular_score():
             # NOVO INDICADOR v5.1.2: NUPL
             "NUPL": {
                 "valor": nupl_valor,
-                "score": round(nupl_score, 1),
+                "score": round(nupl_score *10, 1),
                 "score_consolidado": round(nupl_score * 0.20, 2),
                 "classificacao": nupl_classificacao,
                 "peso": "20%",  # ← NOVO: 20%
@@ -170,7 +170,7 @@ def calcular_score():
             
             "Realized_Ratio": {
                 "valor": realized_valor,
-                "score": round(realized_score, 1),
+                "score": round(realized_score * 10, 1),
                 "score_consolidado": round(realized_score * 0.40, 2),
                 "classificacao": realized_classificacao,
                 "peso": "40%",  # ← MANTÉM: 40%
@@ -179,7 +179,7 @@ def calcular_score():
             
             "Puell_Multiple": {
                 "valor": puell_valor,
-                "score": round(puell_score, 1),
+                "score": round(puell_score * 10, 1),
                 "score_consolidado": round(puell_score * 0.10, 2),
                 "classificacao": puell_classificacao,
                 "peso": "10%",  # ← MANTÉM: 10%
