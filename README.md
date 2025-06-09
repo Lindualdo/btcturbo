@@ -227,7 +227,7 @@ def calcular_score_sopr(valor_sopr):
 
 ## 🔔 4. Novos Alertas Prioritários
 
-### 4.1 Alertas de Oportunidade Técnica - 5.1.4
+### 4.1 Alertas de Oportunidade Técnica - 5.1.5
 ```python
 # Setup Técnico Forte
 if consecutive_weekly_ath >= 3:
@@ -240,7 +240,7 @@ if price_test_psychological and held:
     alert("💪 Suporte psicológico defendido - força compradora")
 ```
 
-### 4.2 Alertas de Divergência . 5.1.5
+### 4.2 Alertas de Divergência . 5.1.6
 ```python
 # Técnica vs On-chain
 if technical_score > 80 and cycle_score < 50:
@@ -250,7 +250,7 @@ if ema_alignment_perfect and mvrv > 3:
     alert("⚠️ EMAs perfeitas mas MVRV alto - cautela")
 ```
 
-### 4.3 Alertas de Execução - 5.1.6
+### 4.3 Alertas de Execução - 5.1.7
 ```python
 # Zona neutra com oportunidade
 if ema_distance < 10 and rsi > 70:

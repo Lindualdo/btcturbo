@@ -84,13 +84,13 @@ def calcular_score():
         "bloco": "riscos",
         "peso_bloco": "10%",
         "score_consolidado": round(score_consolidado, 2),
+        "score_consolidado_100": round(score_consolidado * 10, 1),  # ← NOVO: Base 100
         "classificacao_consolidada": interpretar_classificacao_consolidada(score_consolidado),
         "timestamp": dados_indicadores["timestamp"],
         "indicadores": {
             "Dist_Liquidacao": {
                 "valor": dist_valor,
                 "score": round(dist_score, 1),
-                "score_consolidado_100": round(score_consolidado * 10, 1),  # ← NOVO: Base 100
                 "classificacao": dist_classificacao,
                 "peso": "5%",
                 "fonte": indicadores["Dist_Liquidacao"]["fonte"]
