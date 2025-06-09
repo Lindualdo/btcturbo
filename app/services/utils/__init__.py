@@ -8,7 +8,6 @@ __all__ = [
     "get_dados_momentum", "insert_dados_momentum", "get_historico_momentum", 
     "get_dados_risco", "insert_dados_risco_completo", "get_historico_risco",
     "get_dados_tecnico", "insert_dados_tecnico", "get_historico_tecnico",
-    "validate_nupl_value", "get_stats_nupl", "debug_ciclo_nupl",
     "validate_sopr_value", "get_stats_sopr", "debug_momentum_sopr",
     "insert_dados_momentum_legacy",
     "get_score_cache_diario", "save_score_cache_diario", 
