@@ -1,6 +1,7 @@
 # app/main.py - v5.0.14 com Camada Mercado
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pathlib import Path
 from datetime import datetime
 from app.routers import alertas_debug ,alertas # ← ADICIONAR
@@ -13,6 +14,15 @@ app = FastAPI(
     description="Sistema de análise de indicadores BTC",
     version="5.0.14"
 )
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # ou específico: ["https://btcturbo-frontend.vercel.app"]
+    allow_methods=["GET", "POST"],
+    allow_headers=["*"]
+)
+
 
 # ==========================================
 # ROUTERS DE DADOS (APIs)
