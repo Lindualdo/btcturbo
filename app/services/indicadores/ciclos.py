@@ -26,6 +26,7 @@ def obter_indicadores():
                 },
                 "NUPL": {
                     "valor": float(dados_db["nupl"]) if dados_db["nupl"] is not None else None,
+                    "disponivel": dados_db["nupl"] is not None,
                     "fonte": dados_db["fonte"] or "PostgreSQL" if dados_db["nupl"] is not None else None
                 }
             },
@@ -40,7 +41,7 @@ def obter_indicadores():
                 "MVRV_Z": {"valor": None, "fonte": None},
                 "Realized_Ratio": {"valor": None, "fonte": None},
                 "Puell_Multiple": {"valor": None, "fonte": None},
-                "NUPL": {"valor": None, "fonte": None}
+                "NUPL": {"valor": None, "disponivel": False, "fonte": None}
             },
             "status": "no_data",
             "fonte_dados": "PostgreSQL"
