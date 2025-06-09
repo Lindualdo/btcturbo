@@ -9,8 +9,7 @@ from .ciclo_helper import (
     insert_dados_ciclo,  # ← v5.1.2: agora aceita NUPL
     get_historico_ciclo,
     # FUNÇÕES NUPL v5.1.2
-    insert_dados_ciclo_legacy,            
-    debug_ciclo_nupl           
+    insert_dados_ciclo_legacy     
 )
 
 from .momentum_helper import (
@@ -57,7 +56,7 @@ __all__ = [
     "insert_dados_ciclo_legacy",      
       
              
-    "debug_ciclo_nupl",              
+         
     
     # MOMENTUM v5.1.3 - COM SOPR
     "get_dados_momentum", "insert_dados_momentum", "get_historico_momentum",
