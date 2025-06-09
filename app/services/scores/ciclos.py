@@ -138,7 +138,8 @@ def calcular_score():
     return {
         "bloco": "ciclo",
         "peso_bloco": "40%",  # Peso ajustado na v5.1.1 (era 50%)
-        "score_consolidado": round(score_consolidado * 10, 2),
+        "score_consolidado": round(score_consolidado , 2),
+        "score_consolidado_100": round(score_consolidado * 10, 1),  # ← NOVO: Base 100
         "classificacao_consolidada": interpretar_classificacao_consolidada(score_consolidado),
         "timestamp": dados_indicadores["timestamp"],
         "versao": "5.1.2",  # ← NOVO: Tracking de versão

@@ -90,6 +90,7 @@ def calcular_score():
             "Dist_Liquidacao": {
                 "valor": dist_valor,
                 "score": round(dist_score, 1),
+                "score_consolidado_100": round(score_consolidado * 10, 1),  # ← NOVO: Base 100
                 "classificacao": dist_classificacao,
                 "peso": "5%",
                 "fonte": indicadores["Dist_Liquidacao"]["fonte"]

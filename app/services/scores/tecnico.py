@@ -175,6 +175,7 @@ def calcular_score_legado(dados_indicadores):
             "bloco": "tecnico",
             "peso_bloco": "30%",
             "score_consolidado": round(score_consolidado, 2),
+            "score_consolidado_100": round(score_consolidado * 10, 1),  # ← NOVO: Base 100
             "classificacao_consolidada": interpretar_classificacao(score_consolidado),
             "timestamp": dados_indicadores["timestamp"],
             "metodo": "legacy_compatibilidade",

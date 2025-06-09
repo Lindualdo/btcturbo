@@ -190,6 +190,7 @@ def calcular_score():
                 "valor": sopr_valor,
                 "score": round(sopr_score, 1),
                 "score_consolidado": round(sopr_score * 0.15, 2),
+                "score_consolidado_100": round(score_consolidado * 10, 1),  # ← NOVO: Base 100
                 "classificacao": sopr_classificacao,
                 "peso": "15%",  # ← MANTÉM peso de 15% (era Exchange_Netflow)
                 "disponivel": sopr_disponivel,
