@@ -37,7 +37,7 @@ def insert_dados_ciclo(
     mvrv_z: float, 
     realized_ratio: float, 
     puell_multiple: float, 
-    nupl: Optional[float] = None,
+    nupl: float = None,
     fonte: str = "Sistema"
 ) -> bool:
     """Insere novos dados no bloco ciclo"""
