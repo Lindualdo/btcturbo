@@ -29,14 +29,21 @@ def get_risco_data() -> dict:
         composicao = dados_risco.get("composicao", {})
         breakdown = composicao.get("breakdown", {})
         
-        # Health Factor
+        # Health Factor - pode vir como float direto
         hf_data = breakdown.get("health_factor", {})
-        health_factor = float(hf_data.get("valor_display", "0").replace("N/A", "0"))
+        hf_valor = hf_data.get("valor_display", 0)
+        if isinstance(hf_valor, str):
+            health_factor = float(hf_valor.replace("N/A", "0"))
+        else:
+            health_factor = float(hf_valor) if hf_valor else 0.0
         
-        # Distância Liquidação (remover % e converter)
+        # Distância Liquidação - pode vir como float direto
         dl_data = breakdown.get("dist_liquidacao", {})
-        dist_liquidacao_str = dl_data.get("valor_display", "0%")
-        dist_liquidacao = float(dist_liquidacao_str.replace("%", "").replace("N/A", "0"))
+        dl_valor = dl_data.get("valor_display", 0)
+        if isinstance(dl_valor, str):
+            dist_liquidacao = float(dl_valor.replace("%", "").replace("N/A", "0"))
+        else:
+            dist_liquidacao = float(dl_valor) if dl_valor else 0.0
         
         logger.info(f"✅ Risco: Score={score_risco:.1f} ({score_risco_classificacao}), HF={health_factor:.2f}, Dist={dist_liquidacao:.1f}%")
         
