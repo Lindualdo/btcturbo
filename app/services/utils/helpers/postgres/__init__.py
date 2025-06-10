@@ -15,7 +15,6 @@ from .ciclo_helper import (
 from .momentum_helper import (
     get_dados_momentum,  # ← v5.1.3: agora retorna SOPR
     insert_dados_momentum,  # ← v5.1.3: agora aceita SOPR
-    get_historico_momentum,  # ← v5.1.3: inclui SOPR
     # NOVAS FUNÇÕES SOPR v5.1.3
     validate_sopr_value,        # ← NOVO v5.1.3
     get_stats_sopr,            # ← NOVO v5.1.3
@@ -59,7 +58,7 @@ __all__ = [
          
     
     # MOMENTUM v5.1.3 - COM SOPR
-    "get_dados_momentum", "insert_dados_momentum", "get_historico_momentum",
+    "get_dados_momentum", "insert_dados_momentum",
     
     # NOVAS FUNÇÕES SOPR v5.1.3
     "validate_sopr_value",            # ← NOVO: validação SOPR
