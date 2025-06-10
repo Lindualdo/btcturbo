@@ -21,22 +21,37 @@ def get_alavancagem_data() -> dict:
         if dados_alavancagem.get("status") != "success":
             raise Exception(f"Dados de alavancagem indisponíveis: {dados_alavancagem.get('erro')}")
         
-        # Extrair campos da análise alavancagem (CAMPOS REAIS)
-        valor_disponivel = float(dados_alavancagem.get("valor_disponivel", 0))
-        valor_a_reduzir = float(dados_alavancagem.get("valor_a_reduzir", 0))
-        status = dados_alavancagem.get("status", "unknown")
-        alavancagem_atual = float(dados_alavancagem.get("alavancagem_atual", 0))
-        alavancagem_permitida = float(dados_alavancagem.get("alavancagem_permitida", 0))
-        capital_liquido = float(dados_alavancagem.get("capital_liquido", 0))
-        divida_total = float(dados_alavancagem.get("divida_total", 0))
-        posicao_total = float(dados_alavancagem.get("posicao_total", 0))
-        acao_simulacao = dados_alavancagem.get("acao_simulacao", "unknown")
+        # Extrair campos da situacao_atual (ESTRUTURA CORRETA)
+        situacao_atual = dados_alavancagem.get("situacao_atual", {})
+        
+        # Função para limpar valores monetários
+        def limpar_valor_monetario(valor_str):
+            if isinstance(valor_str, str):
+                return float(valor_str.replace("$", "").replace(",", ""))
+            return float(valor_str) if valor_str else 0.0
+        
+        def limpar_alavancagem(valor_str):
+            if isinstance(valor_str, str):
+                return float(valor_str.replace("x", ""))
+            return float(valor_str) if valor_str else 0.0
+        
+        # Extrair e limpar campos
+        valor_disponivel = limpar_valor_monetario(situacao_atual.get("valor_disponivel", "$0.00"))
+        valor_a_reduzir = limpar_valor_monetario(situacao_atual.get("valor_a_reduzir", "$0.00"))
+        status = situacao_atual.get("status", "unknown")
+        alavancagem_atual = limpar_alavancagem(situacao_atual.get("alavancagem_atual", "0x"))
+        alavancagem_permitida = limpar_alavancagem(situacao_atual.get("alavancagem_permitida", "0x"))
+        capital_liquido = limpar_valor_monetario(situacao_atual.get("capital_liquido", "$0.00"))
+        divida_total = limpar_valor_monetario(situacao_atual.get("divida_total", "$0.00"))
+        posicao_total = limpar_valor_monetario(situacao_atual.get("posicao_total", "$0.00"))
+        acao_simulacao = situacao_atual.get("acao_simulacao", "unknown")
+        
+        # Extrair stop loss dos parametros
+        parametros = dados_alavancagem.get("parametros", {})
+        stop_loss_percentual = float(parametros.get("stop_loss_percent", 10))
         
         # Calcular margem percentual (atual vs permitida)
         margem_percentual = (alavancagem_atual / alavancagem_permitida) * 100 if alavancagem_permitida > 0 else 0
-        
-        # Extrair stop loss se existir
-        stop_loss_percentual = float(dados_alavancagem.get("stop_loss", 10))  # fallback 10%
         
         logger.info(f"✅ Alavancagem: Permitida={alavancagem_permitida:.2f}x, Disponível=${valor_disponivel:,.0f}, Status={status}")
         
@@ -62,6 +77,8 @@ def get_alavancagem_data() -> dict:
                 "alavancagem_permitida_formatado": f"{alavancagem_permitida:.2f}x",
                 "margem_percentual": margem_percentual,
                 "margem_percentual_formatado": f"{margem_percentual:.1f}%",
+                "stop_loss_percentual": stop_loss_percentual,
+                "stop_loss_formatado": f"-{stop_loss_percentual:.0f}%",
                 "acao_simulacao": acao_simulacao,
                 "capital_liquido": capital_liquido,
                 "capital_liquido_formatado": f"${capital_liquido:,.2f}",
