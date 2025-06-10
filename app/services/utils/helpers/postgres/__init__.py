@@ -3,23 +3,17 @@
 # Imports da base
 from .base import get_db_connection, execute_query, test_connection
 
-# Imports específicos por bloco - v5.1.3 ATUALIZADO COM SOPR
+# Imports específicos por bloco
 from .ciclo_helper import (
     get_dados_ciclo, 
-    insert_dados_ciclo,  # ← v5.1.2: agora aceita NUPL
+    insert_dados_ciclo,  #
     get_historico_ciclo,
-    # FUNÇÕES NUPL v5.1.2
-    insert_dados_ciclo_legacy     
 )
 
 from .momentum_helper import (
-    get_dados_momentum,  # ← v5.1.3: agora retorna SOPR
-    insert_dados_momentum,  # ← v5.1.3: agora aceita SOPR
+    get_dados_momentum, 
+    insert_dados_momentum, 
     # NOVAS FUNÇÕES SOPR v5.1.3
-
-    get_stats_sopr,            # ← NOVO v5.1.3
-    debug_momentum_sopr,       # ← NOVO v5.1.3
-    insert_dados_momentum_legacy  # ← NOVO v5.1.3: compatibilidade
 )
 
 from .risco_helper import get_dados_risco, insert_dados_risco_completo, get_historico_risco
