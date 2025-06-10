@@ -39,13 +39,14 @@ def collect_all_dashboard_data() -> dict:
         
         # Consolidar JSON para frontend
         json_consolidado = {
-            "fase": "2_cabecalho_score_mercado",
+            "fase": "2_header_mercado",
             "timestamp": datetime.utcnow().isoformat(),
-            "cabecalho": header_data["json"],
-            "score_mercado": mercado_data["json"],
+            "header": header_data["json"],
+            "mercado": mercado_data["json"],
             "metadata": {
                 "fonte_header": header_data["fonte"],
                 "fonte_mercado": mercado_data["fonte"],
+                "modulos": ["header", "mercado"],
                 "versao": "modular_v1"
             }
         }

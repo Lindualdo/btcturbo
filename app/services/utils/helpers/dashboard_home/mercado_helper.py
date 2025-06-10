@@ -53,6 +53,7 @@ def get_mercado_data() -> dict:
                 "nupl": nupl_valor,
                 "nupl_formatado": f"{nupl_valor:.3f}"
             },
+            "modulo": "mercado",
             "fonte": "analise-mercado + obter-indicadores/ciclos"
         }
         

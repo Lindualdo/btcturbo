@@ -54,6 +54,7 @@ def get_header_data() -> dict:
                 "alavancagem_atual": alavancagem_atual,
                 "alavancagem_formatado": f"{alavancagem_atual:.2f}x"
             },
+            "modulo": "header",
             "fonte": "obter-indicadores/riscos"
         }
         
