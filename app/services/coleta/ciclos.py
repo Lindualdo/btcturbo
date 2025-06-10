@@ -17,28 +17,17 @@ def coletar(forcar_coleta: bool):
         if not dados_notion:
             raise Exception("Nenhum dado retornado do Notion Database")
         
-        # 2. Extrair indicadores (NUPL tratado igual aos outros)
+        # 2. Extrair indicadores 
         mvrv_z_score = dados_notion.get("mvrv_z_score") or 0.0
         realized_ratio = dados_notion.get("realized_ratio") or 0.0
         puell_multiple = dados_notion.get("puell_multiple") or 0.0
-        nupl = dados_notion.get("nupl")  # Pode ser None
-        
-        # 3. Converter NUPL para float (sem validações)
-        nupl_final = None
-        if nupl is not None:
-            try:
-                nupl_final = float(nupl)
-                logger.info(f"✅ NUPL coletado: {nupl_final}")
-            except (ValueError, TypeError):
-                logger.warning(f"❌ NUPL inválido: {nupl}")
-                nupl_final = None
-        
+        nupl = dados_notion.get("nupl") or 0.0 
         # 4. Gravar no PostgreSQL
         sucesso = insert_dados_ciclo(
             mvrv_z=float(mvrv_z_score),
             realized_ratio=float(realized_ratio),
             puell_multiple=float(puell_multiple),
-            nupl=nupl_final,
+            nupl=float(nupl),
             fonte="notion"
         )
         
@@ -54,9 +43,9 @@ def coletar(forcar_coleta: bool):
                 "mvrv_z_score": float(mvrv_z_score),
                 "realized_ratio": float(realized_ratio),
                 "puell_multiple": float(puell_multiple),
-                "nupl": nupl_final
-            },
-            "fonte": "notion"
+                "nupl":float(nupl),
+                "fonte": "notion"
+            }
         }
         
     except Exception as e:
