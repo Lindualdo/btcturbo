@@ -18,8 +18,7 @@ from .scores_consolidados_helper import (
 # NOVO: Dashboard Home
 from .dashboard_home_helper import (  # ← NOVO
     insert_dashboard_home_data, 
-    get_latest_dashboard_home,
-    get_dashboard_home_stats
+    get_latest_dashboard_home
 )
 
 # Imports utilitários

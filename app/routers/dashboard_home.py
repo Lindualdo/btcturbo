@@ -12,14 +12,16 @@ router = APIRouter()
 @router.post("/dashboard-home")
 async def calcular_dados_dashboard_home():
     """
-    FASE 1: Calcula e grava dados do dashboard home (apenas cabeçalho)
+    FASE 2: Calcula e grava dados do dashboard home (cabeçalho + score mercado)
     
     Fluxo:
     1. Busca dados de /obter-indicadores/riscos
-    2. Extrai: btc_price, position_dolar, alavancagem_atual
-    3. Calcula: position_btc = position_dolar / btc_price
-    4. Monta JSON do dashboard
-    5. Grava no PostgreSQL
+    2. Busca dados de /analise-mercado
+    3. Busca dados de /obter-indicadores/ciclos
+    4. Extrai: btc_price, position_dolar, alavancagem_atual, score_mercado, mvrv, nupl
+    5. Calcula: position_btc = position_dolar / btc_price
+    6. Monta JSON do dashboard
+    7. Grava no PostgreSQL
     
     Returns:
         JSON com status da operação
@@ -29,10 +31,10 @@ async def calcular_dados_dashboard_home():
 @router.get("/dashboard-home")
 async def obter_dados_dashboard_home():
     """
-    FASE 1: Obtém dados do dashboard home do PostgreSQL
+    FASE 2: Obtém dados do dashboard home do PostgreSQL
     
     Retorna JSON pronto para o frontend consumir.
-    Dados já processados e formatados.
+    Dados já processados e formatados (cabeçalho + score mercado).
     
     Returns:
         JSON do dashboard ou erro se não houver dados
@@ -42,15 +44,13 @@ async def obter_dados_dashboard_home():
 @router.get("/dashboard-home/debug")
 async def debug_dados_dashboard_home():
     """
-    FASE 1: Debug e estatísticas do dashboard home
+    FASE 2: Debug simples do dashboard home
     
     Útil para verificar:
-    - Se tabela existe
-    - Quantos registros tem
+    - Se tem dados
     - Último registro inserido
-    - Médias dos valores
     
     Returns:
-        Estatísticas e informações de debug
+        Informações básicas de debug
     """
     return debug_dashboard_home()
