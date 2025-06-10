@@ -13,33 +13,27 @@ def insert_dashboard_home_data(
     position_dolar: float, 
     position_btc: float,
     alavancagem_atual: float,
+    score_mercado: float,
+    score_mercado_classificacao: str,
+    mvrv_valor: float,
+    nupl_valor: float,
     dashboard_json: dict
 ) -> bool:
-    """
-    Insere dados do dashboard home no PostgreSQL
-    FASE 1: Apenas cabeçalho
-    """
+    """Insere dados do dashboard home no PostgreSQL"""
     try:
-        logger.info(f"💾 Inserindo dashboard home:")
-        logger.info(f"    BTC: ${btc_price:,.2f}")
-        logger.info(f"    Posição: ${position_dolar:,.2f} ({position_btc:.6f} BTC)")
-        logger.info(f"    Alavancagem: {alavancagem_atual:.2f}x")
+        logger.info(f"💾 Inserindo dashboard home: BTC=${btc_price:,.2f}, Posição=${position_dolar:,.2f}")
         
         query = """
             INSERT INTO dashboard_home 
-            (btc_price, position_dolar, position_btc, alavancagem_atual, dashboard_json)
-            VALUES (%s, %s, %s, %s, %s)
+            (btc_price, position_dolar, position_btc, alavancagem_atual,
+             score_mercado, score_mercado_classificacao, mvrv_valor, nupl_valor, dashboard_json)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
         
-        # Converter dict para JSON string
         dashboard_json_str = json.dumps(dashboard_json)
-        
         params = (
-            btc_price,
-            position_dolar,
-            position_btc, 
-            alavancagem_atual,
-            dashboard_json_str
+            btc_price, position_dolar, position_btc, alavancagem_atual,
+            score_mercado, score_mercado_classificacao, mvrv_valor, nupl_valor, dashboard_json_str
         )
         
         execute_query(query, params)
@@ -51,16 +45,14 @@ def insert_dashboard_home_data(
         return False
 
 def get_latest_dashboard_home() -> Optional[Dict]:
-    """
-    Busca dados mais recentes do dashboard home
-    FASE 1: Retorna JSON direto para o frontend
-    """
+    """Busca dados mais recentes do dashboard home"""
     try:
         logger.info("🔍 Buscando dados mais recentes do dashboard home...")
         
         query = """
-            SELECT id, btc_price, position_dolar, position_btc, 
-                   alavancagem_atual, dashboard_json, created_at
+            SELECT id, btc_price, position_dolar, position_btc, alavancagem_atual,
+                   score_mercado, score_mercado_classificacao, mvrv_valor, nupl_valor,
+                   dashboard_json, created_at
             FROM dashboard_home 
             ORDER BY created_at DESC 
             LIMIT 1
@@ -69,7 +61,7 @@ def get_latest_dashboard_home() -> Optional[Dict]:
         result = execute_query(query, fetch_one=True)
         
         if result:
-            logger.info(f"✅ Dashboard home encontrado: ID {result['id']}, timestamp {result['created_at']}")
+            logger.info(f"✅ Dashboard home encontrado: ID {result['id']}")
             return result
         else:
             logger.warning("⚠️ Nenhum dado encontrado na tabela dashboard_home")
@@ -78,70 +70,3 @@ def get_latest_dashboard_home() -> Optional[Dict]:
     except Exception as e:
         logger.error(f"❌ Erro ao buscar dashboard home: {str(e)}")
         return None
-
-def create_dashboard_home_table() -> bool:
-    """
-    Cria tabela dashboard_home se não existir
-    FASE 1: Apenas campos do cabeçalho
-    """
-    try:
-        logger.info("🔧 Criando tabela dashboard_home...")
-        
-        query = """
-            CREATE TABLE IF NOT EXISTS dashboard_home (
-                id SERIAL PRIMARY KEY,
-                -- CABEÇALHO FASE 1
-                btc_price DECIMAL(12,2) NOT NULL,
-                position_dolar DECIMAL(12,2) NOT NULL,
-                position_btc DECIMAL(10,6) NOT NULL,
-                alavancagem_atual DECIMAL(5,2) NOT NULL,
-                -- JSON COMPLETO
-                dashboard_json JSONB NOT NULL,
-                -- METADADOS
-                created_at TIMESTAMP DEFAULT NOW()
-            );
-            
-            -- Index para busca rápida do último registro
-            CREATE INDEX IF NOT EXISTS idx_dashboard_home_created_at 
-            ON dashboard_home (created_at DESC);
-        """
-        
-        execute_query(query)
-        logger.info("✅ Tabela dashboard_home criada/verificada com sucesso")
-        return True
-        
-    except Exception as e:
-        logger.error(f"❌ Erro ao criar tabela dashboard_home: {str(e)}")
-        return False
-
-def get_dashboard_home_stats() -> Dict:
-    """
-    Estatísticas da tabela dashboard_home (debug/admin)
-    """
-    try:
-        query = """
-            SELECT 
-                COUNT(*) as total_registros,
-                MAX(created_at) as ultimo_registro,
-                MIN(created_at) as primeiro_registro,
-                AVG(btc_price) as btc_price_medio,
-                AVG(alavancagem_atual) as alavancagem_media
-            FROM dashboard_home
-        """
-        
-        result = execute_query(query, fetch_one=True)
-        
-        if result:
-            return {
-                "total_registros": result["total_registros"],
-                "ultimo_registro": result["ultimo_registro"],
-                "primeiro_registro": result["primeiro_registro"], 
-                "btc_price_medio": float(result["btc_price_medio"]) if result["btc_price_medio"] else 0,
-                "alavancagem_media": float(result["alavancagem_media"]) if result["alavancagem_media"] else 0
-            }
-        else:
-            return {"total_registros": 0}
-            
-    except Exception as e:
-        logger.error(f"❌ Erro nas estatísticas: {str(e)}")
-        return {"erro": str(e)}
