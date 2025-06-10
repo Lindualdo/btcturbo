@@ -173,9 +173,13 @@ CICLO
 
 ## API Dashboard - Usada pelo Dash externo Vercel
 
-### - home - cabeçalho - 5.1.6 - feito
-
+### - home - header - 5.1.6 - feito
+- campos header
 ### - home - mercado - 5.1.7 - feito
+- campos mercado
+### - home - risco - 5.1.8 - feito
+- campos risco + refactore separação em modulos
+
 
 ## Fase 1 (Imediato):
 1. ✅ Sistema de alertas críticos (já implementado)
