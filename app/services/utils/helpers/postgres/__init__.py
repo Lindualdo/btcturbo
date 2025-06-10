@@ -15,11 +15,8 @@ from .scores_consolidados_helper import (
     get_historico_scores, limpar_cache_antigo
 )
 
-# NOVO: Dashboard Home
-from .dashboard_home_helper import (  # ← NOVO
-    insert_dashboard_home_data, 
-    get_latest_dashboard_home
-)
+# Dashboard Home agora está em dashboard_home/ (modular)
+# Removido: dashboard_home_helper (substituído por arquitetura modular)
 
 # Imports utilitários
 from .utils import (

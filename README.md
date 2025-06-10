@@ -171,9 +171,11 @@ CICLO
 - foi feito refactore, simoplificando os arquivos e causou muitos erros no sistema
 - por fim, a importação de ciclos e momentum está sendo feita no n8n
 
-### - Criar API para o dashboar externo Vercel (home - cabeçalho) - 5.1.6 - feito
+## API Dashboard - Usada pelo Dash externo Vercel
 
-### - incluir demais campos na API para o dashboar externo Vercel (home - cabeçalho) - 5.1.7
+### - home - cabeçalho - 5.1.6 - feito
+
+### - home - mercado - 5.1.7 - feito
 
 ## Fase 1 (Imediato):
 1. ✅ Sistema de alertas críticos (já implementado)
