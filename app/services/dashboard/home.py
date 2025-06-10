@@ -16,7 +16,7 @@ def calcular_dashboard_home():
     2. Grava no PostgreSQL
     """
     try:
-        logger.info("🚀 REFATORADO: Calculando dashboard modular...")
+        logger.info("🚀 REFATORADO: Calculando dashboard modular (FASE 4)...")
         
         # 1. Coletar dados de todos os módulos
         dados_consolidados = collect_all_dashboard_data()
@@ -41,7 +41,7 @@ def calcular_dashboard_home():
             "timestamp": datetime.utcnow().isoformat(),
             "modulos_processados": dados_consolidados["modulos_coletados"],
             "campos_gravados": list(dados_consolidados["campos"].keys()),
-            "message": "Dashboard calculado e gravado (versão modular)"
+            "message": "Dashboard calculado e gravado (FASE 4 - header + mercado + risco + alavancagem)"
         }
         
     except Exception as e:
@@ -116,7 +116,7 @@ def debug_dashboard_home():
                 "tem_dados": ultimo is not None
             },
             "arquitetura": {
-                "helpers": ["header_helper", "mercado_helper"],
+                "helpers": ["header_helper", "mercado_helper", "risco_helper", "alavancagem_helper"],
                 "aggregator": "collect_all_dashboard_data",
                 "database": "insert_dashboard_data"
             }
