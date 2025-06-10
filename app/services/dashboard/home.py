@@ -1,115 +1,192 @@
-
-# app/services/utils/helpers/postgres/dashboard_home_helper.py
+# app/services/dashboard/home.py - CORRIGIDO
 
 import logging
-import json
 from datetime import datetime
-from typing import Dict, Optional
-from .base import execute_query
+from app.services.indicadores import riscos
+from app.services.utils.helpers.postgres.dashboard_home_helper import (
+    insert_dashboard_home_data, get_latest_dashboard_home, get_dashboard_home_stats
+)
 
 logger = logging.getLogger(__name__)
 
-def insert_dashboard_home_data(
-    btc_price: float,
-    position_dolar: float, 
-    position_btc: float,
-    alavancagem_atual: float,
-    dashboard_json: dict
-) -> bool:
+def calcular_dashboard_home():
     """
-    Insere dados do dashboard home no PostgreSQL
-    FASE 1: Apenas cabeçalho
+    FASE 1: Calcula e grava dados do dashboard home (apenas cabeçalho)
+    
+    Fluxo:
+    1. Busca dados da API /obter-indicadores/riscos
+    2. Extrai campos do cabeçalho 
+    3. Calcula position_btc
+    4. Monta JSON
+    5. Grava no PostgreSQL
     """
     try:
-        logger.info(f"💾 Inserindo dashboard home:")
-        logger.info(f"    BTC: ${btc_price:,.2f}")
-        logger.info(f"    Posição: ${position_dolar:,.2f} ({position_btc:.6f} BTC)")
-        logger.info(f"    Alavancagem: {alavancagem_atual:.2f}x")
+        logger.info("🚀 FASE 1: Calculando dashboard home (cabeçalho)...")
         
-        query = """
-            INSERT INTO dashboard_home 
-            (btc_price, position_dolar, position_btc, alavancagem_atual, dashboard_json)
-            VALUES (%s, %s, %s, %s, %s)
-        """
+        # 1. Buscar dados de risco
+        logger.info("📊 Buscando dados de risco...")
+        dados_riscos = riscos.obter_indicadores()
         
-        # Converter dict para JSON string
-        dashboard_json_str = json.dumps(dashboard_json)
+        if dados_riscos.get("status") != "success":
+            raise Exception(f"Dados de risco indisponíveis: {dados_riscos.get('erro', 'status não success')}")
         
-        params = (
-            btc_price,
-            position_dolar,
-            position_btc, 
-            alavancagem_atual,
-            dashboard_json_str
+        # 2. Validar se posicao_atual existe
+        posicao_atual = dados_riscos.get("posicao_atual")
+        if not posicao_atual:
+            raise Exception("Seção 'posicao_atual' não encontrada nos dados de risco")
+        
+        # 3. Extrair campos do cabeçalho
+        try:
+            btc_price = float(posicao_atual["btc_price"]["valor_numerico"])
+            position_dolar = float(posicao_atual["posicao_total"]["valor_numerico"])
+            alavancagem_atual = float(posicao_atual["alavancagem_atual"]["valor_numerico"])
+            
+            # Calcular position_btc
+            position_btc = position_dolar / btc_price
+            
+            logger.info(f"✅ Dados extraídos:")
+            logger.info(f"    BTC Price: ${btc_price:,.2f}")
+            logger.info(f"    Position USD: ${position_dolar:,.2f}")
+            logger.info(f"    Position BTC: {position_btc:.6f}")
+            logger.info(f"    Alavancagem: {alavancagem_atual:.2f}x")
+            
+        except (KeyError, TypeError, ValueError) as e:
+            raise Exception(f"Erro ao extrair campos da posição: {str(e)}")
+        
+        # 4. Montar JSON do dashboard (FASE 1)
+        dashboard_json = {
+            "fase": "1_cabecalho_apenas",
+            "timestamp": datetime.utcnow().isoformat(),
+            "cabecalho": {
+                "btc_price": btc_price,
+                "btc_price_formatado": f"${btc_price:,.0f}",
+                "position_dolar": position_dolar,
+                "position_dolar_formatado": f"${position_dolar:,.2f}",
+                "position_btc": position_btc,
+                "position_btc_formatado": f"{position_btc:.6f} BTC",
+                "alavancagem_atual": alavancagem_atual,
+                "alavancagem_formatado": f"{alavancagem_atual:.2f}x"
+            },
+            "metadata": {
+                "fonte_dados": "obter-indicadores/riscos",
+                "timestamp_fonte": dados_riscos.get("timestamp"),
+                "versao": "fase_1"
+            }
+        }
+        
+        # 5. Gravar no PostgreSQL
+        logger.info("💾 Gravando no PostgreSQL...")
+        sucesso = insert_dashboard_home_data(
+            btc_price=btc_price,
+            position_dolar=position_dolar,
+            position_btc=position_btc,
+            alavancagem_atual=alavancagem_atual,
+            dashboard_json=dashboard_json
         )
         
-        execute_query(query, params)
-        logger.info("✅ Dashboard home inserido com sucesso")
-        return True
+        if not sucesso:
+            raise Exception("Falha ao gravar no PostgreSQL")
+        
+        # 6. Resposta de sucesso
+        return {
+            "status": "success",
+            "fase": "1_cabecalho",
+            "timestamp": datetime.utcnow().isoformat(),
+            "dados_gravados": {
+                "btc_price": btc_price,
+                "position_dolar": position_dolar,
+                "position_btc": position_btc,
+                "alavancagem_atual": alavancagem_atual
+            },
+            "message": "Dashboard home FASE 1 calculado e gravado com sucesso"
+        }
         
     except Exception as e:
-        logger.error(f"❌ Erro ao inserir dashboard home: {str(e)}")
-        return False
+        logger.error(f"❌ Erro no cálculo dashboard home: {str(e)}")
+        return {
+            "status": "error",
+            "fase": "1_cabecalho",
+            "timestamp": datetime.utcnow().isoformat(),
+            "erro": str(e),
+            "message": "Falha no cálculo do dashboard home"
+        }
 
-def get_latest_dashboard_home() -> Optional[Dict]:
+def obter_dashboard_home():
     """
-    Busca dados mais recentes do dashboard home
-    FASE 1: Retorna JSON direto para o frontend
-    """
-    try:
-        logger.info("🔍 Buscando dados mais recentes do dashboard home...")
-        
-        query = """
-            SELECT id, btc_price, position_dolar, position_btc, 
-                   alavancagem_atual, dashboard_json, created_at
-            FROM dashboard_home 
-            ORDER BY created_at DESC 
-            LIMIT 1
-        """
-        
-        result = execute_query(query, fetch_one=True)
-        
-        if result:
-            logger.info(f"✅ Dashboard home encontrado: ID {result['id']}, timestamp {result['created_at']}")
-            return result
-        else:
-            logger.warning("⚠️ Nenhum dado encontrado na tabela dashboard_home")
-            return None
-            
-    except Exception as e:
-        logger.error(f"❌ Erro ao buscar dashboard home: {str(e)}")
-        return None
-
-
-
-def get_dashboard_home_stats() -> Dict:
-    """
-    Estatísticas da tabela dashboard_home (debug/admin)
+    FASE 1: Obtém dados do dashboard home do PostgreSQL
+    
+    Retorna JSON pronto para o frontend
     """
     try:
-        query = """
-            SELECT 
-                COUNT(*) as total_registros,
-                MAX(created_at) as ultimo_registro,
-                MIN(created_at) as primeiro_registro,
-                AVG(btc_price) as btc_price_medio,
-                AVG(alavancagem_atual) as alavancagem_media
-            FROM dashboard_home
-        """
+        logger.info("🔍 FASE 1: Obtendo dashboard home...")
         
-        result = execute_query(query, fetch_one=True)
+        # Buscar último registro
+        dados = get_latest_dashboard_home()
         
-        if result:
+        if not dados:
             return {
-                "total_registros": result["total_registros"],
-                "ultimo_registro": result["ultimo_registro"],
-                "primeiro_registro": result["primeiro_registro"], 
-                "btc_price_medio": float(result["btc_price_medio"]) if result["btc_price_medio"] else 0,
-                "alavancagem_media": float(result["alavancagem_media"]) if result["alavancagem_media"] else 0
+                "status": "error",
+                "erro": "Nenhum dado encontrado",
+                "message": "Execute POST /dashboard-home primeiro"
             }
-        else:
-            return {"total_registros": 0}
-            
+        
+        # Retornar JSON do dashboard
+        dashboard_json = dados["dashboard_json"]
+        
+        # Se dashboard_json é string, converter para dict
+        if isinstance(dashboard_json, str):
+            import json
+            dashboard_json = json.loads(dashboard_json)
+        
+        logger.info(f"✅ Dashboard home obtido: {dados['created_at']}")
+        
+        return {
+            "status": "success",
+            "data": dashboard_json,
+            "metadata": {
+                "id": dados["id"],
+                "created_at": dados["created_at"].isoformat(),
+                "age_minutes": (datetime.utcnow() - dados["created_at"]).total_seconds() / 60
+            }
+        }
+        
     except Exception as e:
-        logger.error(f"❌ Erro nas estatísticas: {str(e)}")
-        return {"erro": str(e)}
+        logger.error(f"❌ Erro ao obter dashboard home: {str(e)}")
+        return {
+            "status": "error",
+            "erro": str(e),
+            "message": "Falha ao obter dashboard home"
+        }
+
+def debug_dashboard_home():
+    """
+    FASE 1: Debug/estatísticas do dashboard home
+    """
+    try:
+        logger.info("🔍 Debug dashboard home...")
+        
+        # Buscar estatísticas
+        stats = get_dashboard_home_stats()
+        
+        # Buscar último registro
+        ultimo = get_latest_dashboard_home()
+        
+        return {
+            "status": "success",
+            "fase": "1_cabecalho",
+            "estatisticas": stats,
+            "ultimo_registro": {
+                "id": ultimo["id"] if ultimo else None,
+                "created_at": ultimo["created_at"].isoformat() if ultimo else None,
+                "btc_price": ultimo["btc_price"] if ultimo else None,
+                "alavancagem": ultimo["alavancagem_atual"] if ultimo else None
+            } if ultimo else None,
+            "tabela_existe": stats.get("total_registros", 0) >= 0
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Erro no debug: {str(e)}")
+        return {
+            "status": "error",
+            "erro": str(e)
+        }
