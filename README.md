@@ -179,8 +179,8 @@ CICLO
 - campos mercado
 ### - home - risco - 5.1.8 - feito
 - campos risco + refactore separação em modulos
-### - home - risco - 5.1.8
-- campos risco + refactore separação em modulos
+### - home - alavancagem - 5.1.9 -feito
+- campos alavancagem
 
 ## Fase 1 (Imediato):
 1. ✅ Sistema de alertas críticos (já implementado)
