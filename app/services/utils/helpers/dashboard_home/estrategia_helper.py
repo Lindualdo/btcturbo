@@ -3,7 +3,7 @@
 import logging
 from app.services.utils.helpers.analise.matriz_cenarios_completos_helper import avaliar_cenario_completo
 from app.services.utils.helpers.analise.matriz_tatica_helper import encontrar_acao_tatica
-from app.services.utils.helpers.ema144_live_helper import obter_ema144_distance_atualizada
+from app.services.utils.helpers.analise.ema144_live_helper import obter_ema144_distance_atualizada
 from app.services.utils.helpers.rsi_helper import obter_rsi_diario
 from app.services.utils.helpers.tradingview_helper import fetch_ohlc_data, calculate_ema
 from tvDatafeed import Interval
