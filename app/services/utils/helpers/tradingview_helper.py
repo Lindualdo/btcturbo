@@ -244,7 +244,7 @@ def get_ema144_distance(symbol: str = "BTCUSDT", exchange: str = "BINANCE") -> f
             symbol=symbol,
             exchange=exchange,
             interval=Interval.in_daily,
-            n_bars=200  # Suficiente para EMA144
+            n_bars=2000  # Suficiente para EMA144
         )
         
         # Calcular EMA144 via função padronizada

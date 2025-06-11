@@ -71,6 +71,7 @@ TÉCNICO
 ---
 
 ### Análise 4: Execução Tática
+
 **Pergunta:** "Quando e quanto adicionar/realizar?"
 
 #### Matriz de Decisão EMA 144 + RSI Diário
