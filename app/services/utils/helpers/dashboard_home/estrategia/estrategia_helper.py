@@ -8,8 +8,12 @@ from app.services.utils.helpers.rsi_helper import obter_rsi_diario
 from .filtros_protecao_helper import aplicar_filtros_protecao
 from .estrategia_formatacao_helper import obter_dados_btc_validados, mapear_decisao_cenario, determinar_urgencia
 from .estrategia_response_helper import criar_resposta_estrategia
+from .fase_mercado_helper import identificar_fase_mercado
 
 logger = logging.getLogger(__name__)
+
+
+
 
 def get_estrategia_data(dados_dashboard: dict = None) -> dict:
     """
@@ -58,6 +62,9 @@ def get_estrategia_data(dados_dashboard: dict = None) -> dict:
         # A PARTIR DAQUI: CÓDIGO ORIGINAL MANTIDO 100% INTACTO
         # ====================================================================
         
+        # Identificar fase do mercado
+        fase_mercado = identificar_fase_mercado(mvrv_valor)
+
         # VALIDAÇÃO: Calcular distância manualmente para conferir
         calculated_distance = ((btc_price - ema_valor) / ema_valor) * 100
         distance_diff = abs(ema_distance - calculated_distance)
@@ -98,7 +105,7 @@ def get_estrategia_data(dados_dashboard: dict = None) -> dict:
             justificativa = cenario["acao"]["justificativa"]
             urgencia = determinar_urgencia(cenario)
             matriz_usada = "cenarios_completos"
-            cenario_nome = cenario["id"]
+            cenario_nome = fase_mercado
             
         else:
             # Fallback: usar matriz básica EMA144 + RSI
@@ -110,7 +117,7 @@ def get_estrategia_data(dados_dashboard: dict = None) -> dict:
             justificativa = regra_tatica["justificativa"]
             urgencia = "baixa"
             matriz_usada = "matriz_basica"
-            cenario_nome = "matriz_tatica_basica"
+            cenario_nome = fase_mercado
         
         # 5. Determinar urgência se não definida
         if cenario.get("override"):
