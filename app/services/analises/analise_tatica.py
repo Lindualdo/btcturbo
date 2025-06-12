@@ -3,7 +3,7 @@
 from datetime import datetime
 import logging
 from app.services.utils.helpers.analise.matriz_tatica_helper import encontrar_acao_tatica, calcular_score_tatico
-from app.services.utils.helpers.rsi_helper import obter_rsi_diario
+from app.services.utils.helpers.tradingview.rsi_helper import obter_rsi_diario
 from app.services.utils.helpers.analise.simulacao_helper import obter_dados_posicao, simular_impacto_posicao
 from app.services.utils.helpers.analise.ema144_live_helper import obter_ema144_distance_atualizada
 

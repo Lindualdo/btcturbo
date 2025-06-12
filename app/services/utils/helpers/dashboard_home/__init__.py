@@ -19,9 +19,9 @@ TOTAL: 26 campos + JSON consolidado com 5 módulos
 """
 
 from .aggregator import collect_all_dashboard_data
-from .database_helper import insert_dashboard_data, get_latest_dashboard
+from ..postgres.dash_home_helper import insert_dashboard_data, get_latest_dashboard
 from .header_helper import get_header_data
 from .mercado_helper import get_mercado_data
 from .risco_helper import get_risco_data
 from .alavancagem_helper import get_alavancagem_data
-from .estrategia.estrategia_helper import get_estrategia_data  # ← NOVO
+from .estrategia_helper import get_estrategia_data  # ← NOVO

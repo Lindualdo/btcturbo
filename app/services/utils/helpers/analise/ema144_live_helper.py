@@ -1,7 +1,7 @@
 # app/services/utils/helpers/analise/ema144_live_helper.py - SIMPLIFICADO
 
 import logging
-from app.services.utils.helpers.tradingview_helper import get_ema144_distance, fetch_ohlc_data
+from app.services.utils.helpers.tradingview.tradingview_helper import get_ema144_distance, fetch_ohlc_data
 from tvDatafeed import Interval
 
 logger = logging.getLogger(__name__)
@@ -40,7 +40,7 @@ def obter_dados_completos_ema144_distance_atualizada():
         )
         
         # Calcular EMA144 via helper unificado
-        from app.services.utils.helpers.tradingview_helper import calculate_ema
+        from app.services.utils.helpers.tradingview.tradingview_helper import calculate_ema
         ema_144 = calculate_ema(df['close'], period=144)
         
         # Valores atuais
@@ -78,7 +78,7 @@ def debug_ema144_calculation():
         df = fetch_ohlc_data("BTCUSDT", "BINANCE", Interval.in_daily, 200)
         
         # Calcular múltiplas EMAs para comparação
-        from app.services.utils.helpers.tradingview_helper import calculate_ema
+        from app.services.utils.helpers.tradingview.tradingview_helper import calculate_ema
         
         ema_17 = calculate_ema(df['close'], 17).iloc[-1]
         ema_34 = calculate_ema(df['close'], 34).iloc[-1]

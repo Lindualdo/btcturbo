@@ -196,7 +196,7 @@ def obter_bbw_com_score() -> dict:
     Usada pela análise tática completa
     """
     try:
-        from app.services.utils.helpers.tradingview_helper import fetch_ohlc_data, calculate_ema
+        from app.services.utils.helpers.tradingview.tradingview_helper import fetch_ohlc_data, calculate_ema
         from tvDatafeed import Interval
         import logging
         

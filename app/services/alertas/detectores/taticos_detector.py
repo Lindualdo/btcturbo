@@ -5,10 +5,10 @@ from typing import List, Optional
 from datetime import datetime
 from ..models import AlertaCreate, TipoAlerta, CategoriaAlerta
 from ...utils.helpers.analise.ema144_live_helper import obter_ema144_distance_atualizada
-from ...utils.helpers.rsi_helper import obter_rsi_diario
+from ...utils.helpers.tradingview.rsi_helper import obter_rsi_diario
 from ...analises.analise_mercado import calcular_analise_mercado
 from ...utils.helpers.postgres import get_dados_risco
-from ...utils.helpers.tradingview_helper import fetch_ohlc_data
+from ...utils.helpers.tradingview.tradingview_helper import fetch_ohlc_data
 from tvDatafeed import Interval
 
 logger = logging.getLogger(__name__)

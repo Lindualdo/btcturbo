@@ -3,7 +3,7 @@
 import logging
 from datetime import datetime
 from app.services.utils.helpers.dashboard_home.aggregator import collect_all_dashboard_data
-from app.services.utils.helpers.dashboard_home.database_helper import insert_dashboard_data, get_latest_dashboard
+from app.services.utils.helpers.postgres.dash_home_helper import insert_dashboard_data, get_latest_dashboard
 
 logger = logging.getLogger(__name__)
 

@@ -4,11 +4,11 @@ import logging
 from app.services.utils.helpers.analise.matriz_cenarios_completos_helper import avaliar_cenario_completo
 from app.services.utils.helpers.analise.matriz_tatica_helper import encontrar_acao_tatica
 from app.services.utils.helpers.analise.ema144_live_helper import obter_ema144_distance_atualizada
-from app.services.utils.helpers.rsi_helper import obter_rsi_diario
-from .filtros_protecao_helper import aplicar_filtros_protecao
-from .estrategia_formatacao_helper import obter_dados_btc_validados, mapear_decisao_cenario, determinar_urgencia
-from .estrategia_response_helper import criar_resposta_estrategia
-from .fase_mercado_helper import identificar_fase_mercado
+from app.services.utils.helpers.tradingview.rsi_helper import obter_rsi_diario
+from .estrategia.filtros_protecao_helper import aplicar_filtros_protecao
+from .estrategia.estrategia_formatacao_helper import obter_dados_btc_validados, mapear_decisao_cenario, determinar_urgencia
+from .estrategia.estrategia_response_helper import criar_resposta_estrategia
+from .estrategia.fase_mercado_helper import identificar_fase_mercado
 
 logger = logging.getLogger(__name__)
 

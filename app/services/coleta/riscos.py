@@ -3,7 +3,7 @@
 from datetime import datetime
 import logging
 from app.services.utils.helpers.web3_helper import get_aave_position
-from app.services.utils.helpers.price_helper import get_btc_price
+from app.services.utils.helpers.tradingview.price_helper import get_btc_price
 from app.services.utils.helpers.postgres.risco_helper import insert_dados_risco_completo
 from app.config import get_settings
 

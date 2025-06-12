@@ -4,8 +4,8 @@ from datetime import datetime
 import logging
 import json
 from tvDatafeed import Interval
-from app.services.utils.helpers.ema_calculator import get_complete_ema_analysis
-from app.services.utils.helpers.bbw_calculator import (
+from app.services.utils.helpers.tradingview.ema_calculator import get_complete_ema_analysis
+from app.services.utils.helpers.tradingview.bbw_calculator import (
     calculate_bollinger_bands, calculate_bbw_percentage, calculate_bbw_score
 )
 from app.services.utils.helpers.postgres.tecnico_helper import insert_dados_tecnico_completo
@@ -141,7 +141,7 @@ def get_bbw_data():
     Busca dados para calcular BBW via TradingView
     """
     try:
-        from app.services.utils.helpers.ema_calculator import EMACalculator
+        from app.services.utils.helpers.tradingview.ema_calculator import EMACalculator
         
         calculator = EMACalculator()
         tv = calculator.get_tv_session()
@@ -168,7 +168,7 @@ def get_bbw_data():
         score_bbw = calculate_bbw_score(bbw_percentage)
         
         # Interpretação
-        from app.services.utils.helpers.bbw_calculator import get_bbw_interpretation
+        from app.services.utils.helpers.tradingview.bbw_calculator import get_bbw_interpretation
         interpretacao = get_bbw_interpretation(bbw_percentage)
         
         return {

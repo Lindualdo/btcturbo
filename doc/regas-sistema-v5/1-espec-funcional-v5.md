@@ -1,4 +1,4 @@
-# Sistema Hold Alavancado BTC v5.0
+# BTCTURBO -  Hold Alavancado BTC v5.0
 *Sistema profissional de gestão para Bitcoin com alavancagem*
 
 ---

@@ -2,10 +2,10 @@
 
 from datetime import datetime
 import logging
-from app.services.utils.helpers.rsi_helper import obter_rsi_diario
+from app.services.utils.helpers.tradingview.rsi_helper import obter_rsi_diario
 from app.services.utils.helpers.analise.ema144_live_helper import obter_ema144_distance_atualizada
 from app.services.utils.helpers.analise.simulacao_helper import obter_dados_posicao
-from app.services.utils.helpers.bbw_calculator import obter_bbw_com_score
+from app.services.utils.helpers.tradingview.bbw_calculator import obter_bbw_com_score
 
 # Importar services das outras camadas
 from app.services.analises.analise_mercado import calcular_analise_mercado

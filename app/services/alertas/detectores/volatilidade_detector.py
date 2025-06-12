@@ -5,10 +5,10 @@ import pandas as pd
 from typing import List, Optional
 from datetime import datetime, timedelta
 from ..models import AlertaCreate, TipoAlerta, CategoriaAlerta
-from ...utils.helpers.bbw_calculator import calculate_bollinger_bands, calculate_bbw_percentage
-from ...utils.helpers.tradingview_helper import fetch_ohlc_data
+from ...utils.helpers.tradingview.bbw_calculator import calculate_bollinger_bands, calculate_bbw_percentage
+from ...utils.helpers.tradingview.tradingview_helper import fetch_ohlc_data
 from ...utils.helpers.analise.ema144_live_helper import obter_ema144_distance_atualizada
-from ...utils.helpers.rsi_helper import obter_rsi_diario
+from ...utils.helpers.tradingview.rsi_helper import obter_rsi_diario
 from tvDatafeed import Interval
 
 logger = logging.getLogger(__name__)

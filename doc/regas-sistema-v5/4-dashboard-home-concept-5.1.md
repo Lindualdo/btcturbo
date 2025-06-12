@@ -1,4 +1,4 @@
-# Dashboard BTC Hold Alavancado - HOME
+# Dashboard BTCTURBO HOLD Alavancado - HOME
 
 ```
 ┌────────────────────────────────────────────────────────────────────────────┐

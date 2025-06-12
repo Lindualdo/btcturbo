@@ -1,7 +1,7 @@
 # app/services/utils/helpers/dashboard_home/estrategia/estrategia_formatacao_helper.py
 
 import logging
-from app.services.utils.helpers.tradingview_helper import fetch_ohlc_data, calculate_ema, get_tv_datafeed
+from app.services.utils.helpers.tradingview.tradingview_helper import fetch_ohlc_data, calculate_ema, get_tv_datafeed
 from tvDatafeed import Interval
 
 logger = logging.getLogger(__name__)

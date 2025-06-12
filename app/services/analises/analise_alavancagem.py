@@ -2,7 +2,7 @@
 
 from datetime import datetime
 from app.services.scores import ciclos
-from app.services.utils.helpers.rsi_helper import obter_rsi_mensal_para_alavancagem  # ← IMPORT ADICIONADO
+from app.services.utils.helpers.tradingview.rsi_helper import obter_rsi_mensal_para_alavancagem  # ← IMPORT ADICIONADO
 import logging
 
 # Tabela MVRV × RSI conforme especificação v5.0

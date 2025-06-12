@@ -1,6 +1,6 @@
 # app/services/utils/helpers/rsi_helper.py - SIMPLIFICADO
 import logging  # ← ADICIONAR ESTA LINHA
-from app.services.utils.helpers.tradingview_helper import get_rsi_current
+from app.services.utils.helpers.tradingview.tradingview_helper import get_rsi_current
 from tvDatafeed import Interval
 
 logger = logging.getLogger(__name__)  # ← ADICIONAR ESTA LINHA
