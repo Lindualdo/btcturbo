@@ -16,7 +16,7 @@ MATRIZ_BASICA = [
     {"id": 3,"ema_min": 10, "ema_max": 15, "rsi_min": 70, "rsi_max": 100, 
      "acao": "REALIZAR", "tamanho": 15, "justificativa": "Início sobrecompra"},
     
-    {"id": 3,"ema_min": 10, "ema_max": 15, "rsi_min": 55, "rsi_max": 65, 
+    {"id": 3,"ema_min": 10, "ema_max": 15, "rsi_min": 46, "rsi_max": 65, 
     "acao": "REALIZAR", "tamanho": 10, "justificativa": "Moderadamente esticado"},
 
     # Compras
