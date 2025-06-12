@@ -36,7 +36,7 @@ MATRIZ_BASICA = [
 
 def encontrar_acao_tatica(ema_distance: float, rsi_diario: float) -> dict:
     """Encontra ação na matriz tática"""
-    for regra in MATRIZ_TATICA:
+    for regra in MATRIZ_BASICA:
         ema_ok = regra["ema_min"] <= ema_distance <= regra["ema_max"]
         rsi_ok = regra["rsi_min"] <= rsi_diario <= regra["rsi_max"]
         
