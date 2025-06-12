@@ -6,7 +6,7 @@ from .header_helper import get_header_data
 from .mercado_helper import get_mercado_data
 from .risco_helper import get_risco_data
 from .alavancagem_helper import get_alavancagem_data
-from .estrategia_helper import get_estrategia_data  # ← NOVO
+from .estrategia.estrategia_helper import get_estrategia_data  # ← NOVO
 
 logger = logging.getLogger(__name__)
 
