@@ -1,4 +1,4 @@
-# app/services/utils/helpers/dashboard_home/estrategia_formatacao_helper.py
+# app/services/utils/helpers/dashboard_home/estrategia/estrategia_formatacao_helper.py
 
 import logging
 from app.services.utils.helpers.tradingview_helper import fetch_ohlc_data, calculate_ema, get_tv_datafeed
@@ -24,8 +24,7 @@ def obter_dados_btc_validados() -> tuple[float, float, str]:
             symbol="BTCUSDT",
             exchange="BINANCE",
             interval=Interval.in_daily,
-            n_bars=150,  # Margem para EMA144
-            tv_instance=tv
+            n_bars=2000  # Margem para EMA144
         )
         
         if data is None or len(data) < 144:
