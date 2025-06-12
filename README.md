@@ -185,7 +185,8 @@ CICLO
 ### - home - estrategia - 5.1.10 e 5.1.11 -feito
 - campos alavancagem
 - refactore
-- PEDENCIA: organizar fazes de mercado
+- padronizado a busca da fase mercado em todos os cenários da analise estrategica
+- PEDENCIA: expandir fução fases do mercado - garantir que cobrirá todas as fases
 
 ## Fase 1 (Imediato):
 1. ✅ Sistema de alertas críticos (já implementado)
