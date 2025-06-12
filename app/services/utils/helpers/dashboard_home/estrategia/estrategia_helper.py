@@ -105,7 +105,8 @@ def get_estrategia_data(dados_dashboard: dict = None) -> dict:
             id = cenario["id"]
             justificativa = cenario["acao"]["justificativa"]
             urgencia = determinar_urgencia(cenario)
-            matriz_usada = "Cenários completos - id:" + str(id)
+            matriz_usada = f"Cenários completos - id:{id}"
+
             cenario_nome = fase_mercado
             
         else:
@@ -118,7 +119,7 @@ def get_estrategia_data(dados_dashboard: dict = None) -> dict:
             tamanho_percent = regra_tatica["tamanho"]
             justificativa = regra_tatica["justificativa"]
             urgencia = "baixa" # todo: deixar dinamico
-            matriz_usada = "EMA144 + RSI - id:" + str(id)
+            matriz_usada = f"EMA144 + RSI - id: {str(id)}"
             cenario_nome = fase_mercado
         
         # 5. Determinar urgência se não definida
