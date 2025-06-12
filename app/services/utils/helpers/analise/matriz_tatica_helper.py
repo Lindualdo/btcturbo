@@ -52,7 +52,7 @@ def encontrar_acao_tatica(ema_distance: float, rsi_diario: float) -> dict:
         "ema_max": ema_distance,
         "rsi_min": rsi_diario,
         "rsi_max": rsi_diario,
-        "id_cenario": 0
+        "id": 0
     }
 
 def calcular_score_tatico(acao: str, tamanho: int, ema_distance: float, rsi_diario: float) -> float:
