@@ -7,26 +7,26 @@ import logging
 
 MATRIZ_BASICA = [
     # Realizações
-    {"id":2,"ema_min": 20, "ema_max": 999, "rsi_min": 70, "rsi_max": 100, 
+    {"id": 2,"ema_min": 20, "ema_max": 999, "rsi_min": 70, "rsi_max": 100, 
      "acao": "REALIZAR", "tamanho": 40, "justificativa": "Extremo sobrecomprado"},
     
-    {"id":2,"ema_min": 15, "ema_max": 20, "rsi_min": 65, "rsi_max": 100, 
+    {"id": 2,"ema_min": 15, "ema_max": 20, "rsi_min": 65, "rsi_max": 100, 
      "acao": "REALIZAR", "tamanho": 25, "justificativa": "Esticado com RSI alto"},
     
-    {"id":3,"ema_min": 10, "ema_max": 15, "rsi_min": 70, "rsi_max": 100, 
+    {"id": 3,"ema_min": 10, "ema_max": 15, "rsi_min": 70, "rsi_max": 100, 
      "acao": "REALIZAR", "tamanho": 15, "justificativa": "Início sobrecompra"},
     
-    {"id":3,"ema_min": 10, "ema_max": 15, "rsi_min": 55, "rsi_max": 65, 
+    {"id": 3,"ema_min": 10, "ema_max": 15, "rsi_min": 55, "rsi_max": 65, 
     "acao": "REALIZAR", "tamanho": 10, "justificativa": "Moderadamente esticado"},
 
     # Compras
-    {"id":4,"ema_min": -999, "ema_max": -10, "rsi_min": 0, "rsi_max": 30, 
+    {"id": 4,"ema_min": -999, "ema_max": -10, "rsi_min": 0, "rsi_max": 30, 
      "acao": "ADICIONAR", "tamanho": 75, "justificativa": "Capitulação"},
     
-    {"id":5,"ema_min": -10, "ema_max": -5, "rsi_min": 0, "rsi_max": 45, 
+    {"id": 5,"ema_min": -10, "ema_max": -5, "rsi_min": 0, "rsi_max": 45, 
      "acao": "ADICIONAR", "tamanho": 35, "justificativa": "Desconto + oversold"},
     
-    {"id":6,"ema_min": -5, "ema_max": 5, "rsi_min": 20, "rsi_max": 40, 
+    {"id": 6,"ema_min": -5, "ema_max": 5, "rsi_min": 20, "rsi_max": 40, 
      "acao": "ADICIONAR", "tamanho": 20, "justificativa": "Pullback saudável"},
     
     # Holds (default)
@@ -51,7 +51,8 @@ def encontrar_acao_tatica(ema_distance: float, rsi_diario: float) -> dict:
         "ema_min": ema_distance,
         "ema_max": ema_distance,
         "rsi_min": rsi_diario,
-        "rsi_max": rsi_diario
+        "rsi_max": rsi_diario,
+        "id_cenario": 0
     }
 
 def calcular_score_tatico(acao: str, tamanho: int, ema_distance: float, rsi_diario: float) -> float:
