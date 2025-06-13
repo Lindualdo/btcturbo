@@ -35,88 +35,85 @@ def identify_cycle(data: Dict) -> Dict:
 
 def _get_cycle_from_mvrv_score(mvrv: float, score: float) -> Dict:
     """
-    Determina ciclo baseado em COMBINAÇÃO Score + MVRV (conforme documentação)
+    Determina ciclo baseado em MVRV (prioritário) com validação de Score
     
-    Tabela oficial:
-    - Score 0-20 + MVRV <0.8: BOTTOM
-    - Score 20-40 + MVRV 0.8-1.2: ACUMULAÇÃO  
-    - Score 40-60 + MVRV 1.2-2.0: BULL INICIAL
-    - Score 60-80 + MVRV 2.0-3.0: BULL MADURO
-    - Score 80-100 + MVRV >3.0: EUFORIA/TOPO
+    Tabela atualizada - MVRV define ciclo, Score valida:
+    - MVRV < 0.8: BOTTOM (Score esperado 0-20)
+    - MVRV 0.8-1.2: ACUMULAÇÃO (Score esperado 20-40)
+    - MVRV 1.2-2.0: BULL INICIAL (Score esperado 40-70)
+    - MVRV 2.0-3.0: BULL MADURO (Score esperado 50-80)
+    - MVRV > 3.0: EUFORIA/TOPO (Score esperado 60-100)
     """
     
-    # Combinação Score + MVRV (ambos devem confluir)
-    if score <= 20 and mvrv < 0.8:
+    # MVRV define o ciclo (prioritário)
+    if mvrv < 0.8:
+        cycle = "BOTTOM"
+        expected_score = (0, 20)
+        interpretation = "Oportunidade histórica" if score > 20 else "Bottom confirmado"
         return {
             "cycle": "BOTTOM",
-            "phase": "acumulacao_agressiva", 
+            "phase": "acumulacao_agressiva",
             "direction": "comprar",
             "max_leverage": 3.0,
             "stop_suggested": 20,
-            "position_size": "40-50%"
+            "position_size": "40-50%",
+            "interpretation": interpretation
         }
-    elif score <= 40 and 0.8 <= mvrv <= 1.2:
+    
+    elif 0.8 <= mvrv <= 1.2:
+        cycle = "ACUMULAÇÃO"
+        expected_score = (20, 40)
+        interpretation = "Aumentar posições" if score > 40 else "Acumulação confirmada"
         return {
-            "cycle": "ACUMULAÇÃO", 
+            "cycle": "ACUMULAÇÃO",
             "phase": "compras_agressivas",
             "direction": "comprar",
             "max_leverage": 2.5,
             "stop_suggested": 15,
-            "position_size": "30-40%"
+            "position_size": "30-40%",
+            "interpretation": interpretation
         }
-    elif score <= 60 and 1.2 <= mvrv <= 2.0:
+    
+    elif 1.2 <= mvrv <= 2.0:
+        cycle = "BULL_INICIAL"
+        expected_score = (40, 70)
+        interpretation = "Comprar pullbacks" if score < 40 else "Bull inicial confirmado"
         return {
             "cycle": "BULL_INICIAL",
-            "phase": "compras_moderadas", 
+            "phase": "compras_moderadas",
             "direction": "comprar_seletivo",
             "max_leverage": 2.5,
             "stop_suggested": 12,
-            "position_size": "20-30%"
+            "position_size": "20-30%",
+            "interpretation": interpretation
         }
-    elif score <= 80 and 2.0 <= mvrv <= 3.0:
+    
+    elif 2.0 <= mvrv <= 3.0:
+        cycle = "BULL_MADURO"
+        expected_score = (50, 80)
+        interpretation = "Manter com stops" if score < 50 else "Bull maduro confirmado"
         return {
             "cycle": "BULL_MADURO",
             "phase": "hold_realizacoes",
             "direction": "hold_realizar",
             "max_leverage": 2.0,
             "stop_suggested": 10,
-            "position_size": "15-25%"
+            "position_size": "15-25%",
+            "interpretation": interpretation
         }
-    elif score > 80 and mvrv > 3.0:
+    
+    else:  # mvrv > 3.0
+        cycle = "EUFORIA_TOPO"
+        expected_score = (60, 100)
+        interpretation = "Realizar gradualmente" if score < 60 else "Euforia confirmada"
         return {
             "cycle": "EUFORIA_TOPO",
             "phase": "realizar_gradual",
-            "direction": "realizar", 
+            "direction": "realizar",
             "max_leverage": 1.5,
             "stop_suggested": 8,
-            "position_size": "realizar_20-40%"
-        }
-    else:
-        # Conflito Score vs MVRV - critério de desempate
-        if mvrv >= 3.0:
-            priority_cycle = "EUFORIA_TOPO"
-            max_lev = 1.5
-        elif mvrv >= 2.0:
-            priority_cycle = "BULL_MADURO" 
-            max_lev = 2.0
-        elif mvrv >= 1.2:
-            priority_cycle = "BULL_INICIAL"
-            max_lev = 2.5
-        elif mvrv >= 0.8:
-            priority_cycle = "ACUMULAÇÃO"
-            max_lev = 2.5
-        else:
-            priority_cycle = "BOTTOM"
-            max_lev = 3.0
-            
-        return {
-            "cycle": f"{priority_cycle}_CONFLITO",
-            "phase": "conflito_indicadores",
-            "direction": "cautela",
-            "max_leverage": max_lev,
-            "stop_suggested": 12,
-            "position_size": "reduzido",
-            "alert": f"Conflito: Score={score:.1f}, MVRV={mvrv:.2f}"
+            "position_size": "realizar_20-40%",
+            "interpretation": interpretation
         }
 
 def get_cycle_permissions(cycle_info: Dict) -> Dict:

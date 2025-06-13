@@ -53,14 +53,18 @@ Baseado exclusivamente no MVRV:
 
 ## 📊 Etapa 1: Identificação do Ciclo de Mercado
 
-### Definição do Ciclo
-| Score Mercado | MVRV | Ciclo | Estratégia Macro |
-|---------------|------|-------|------------------|
-| 0-30 | >3.0 | **BEAR** | Fora do mercado |
-| 30-50 | 2.5-3.0 | **ACUMULAÇÃO** | Compras pequenas |
-| 50-70 | 1.5-2.5 | **BULL INICIAL** | Compras agressivas |
-| 70-85 | 1.0-2.0 | **BULL MADURO** | Hold + Realizações |
-| 85-100 | <1.0 | **EUFORIA/BOTTOM** | Realize ou All-in |
+**MVRV define o ciclo, Score de Mercado confirma condições**
+
+## Tabela de Referência
+
+| MVRV | Ciclo | Score Esperado | Interpretação se Score Diferente | Ação |
+|------|-------|----------------|----------------------------------|------|
+| < 0.8 | **BOTTOM** | 0-20 | Score alto = divergência bullish rara | Oportunidade histórica |
+| 0.8-1.2 | **ACUMULAÇÃO** | 20-40 | Score alto = força interna se formando | Aumentar posições |
+| 1.2-2.0 | **BULL INICIAL** | 40-70 | Score baixo = correção temporária | Comprar pullbacks |
+| 2.0-3.0 | **BULL MADURO** | 50-80 | Score baixo = consolidação saudável | Manter com stops |
+| > 3.0 | **EUFORIA/TOPO** | 60-100 | Score baixo = topo se formando | Realizar gradualment
+
 
 ### Parâmetros por Ciclo
 | Ciclo | Max Alavancagem | Max Exposição | Stop Loss | Tamanho Operação |
