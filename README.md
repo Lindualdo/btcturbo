@@ -188,4 +188,15 @@ CICLO
 - padronizado a busca da fase mercado em todos os cenários da analise estrategica
 - PEDENCIA: expandir fução fases do mercado - garantir que cobrirá todas as fases
 
-# inciar a versão 5.3.1 - Nova API Dashboard
+# inciar a versão 5.3.1 - Dashboard v2 
+
+routers/v2/dashboard_home.py            # 3 endpoints simples
+services/v2/dashboard_home_service.py   # Orquestrador principal  
+services/v2/utils/helpers/v2/dashboard_home/
+├── data_collector.py                   # UMA busca (REUTILIZA tudo)
+├── cycle_analyzer.py                   # Identifica ciclo
+├── setup_detector.py                   # Detecta setup 4H
+├── validation_gates.py                 # Gates proteção  
+├── decision_matrix.py                  # Matriz final
+└── database_v2_helper.py               # Nova tabela
+schemas/v2/dashboard_response.py        # Modelos Pydantic

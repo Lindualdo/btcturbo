@@ -10,6 +10,7 @@ from app.services.v2.dashboard_home_service import (
 )
 
 router = APIRouter()
+
 logger = logging.getLogger(__name__)
 
 @router.post("/dashboard-home")
