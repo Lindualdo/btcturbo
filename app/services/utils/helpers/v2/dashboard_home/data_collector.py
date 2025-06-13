@@ -55,16 +55,17 @@ def _get_mercado_data() -> Dict:
         if mercado["status"] != "success":
             raise Exception(f"Análise mercado falhou: {mercado.get('erro')}")
         
-        logger.info(f"🔍 Estrutura mercado completa: {mercado}")
+        # Buscar indicadores de ciclos (dados brutos)
+        from app.services.indicadores import ciclos
+        dados_ciclos = ciclos.obter_indicadores()
         
-        # Acessar breakdown de ciclos
-        breakdown_ciclos = mercado["composicao"]["breakdown"]["ciclos"]
-        logger.info(f"🔍 Breakdown ciclos: {breakdown_ciclos}")
+        if dados_ciclos.get("status") != "success":
+            raise Exception(f"Indicadores ciclos falhou: {dados_ciclos.get('erro')}")
         
         return {
             "score_mercado": float(mercado["score_consolidado"]),
-            "mvrv": float(breakdown_ciclos["MVRV_Z"]["valor"]),
-            "nupl": float(breakdown_ciclos["NUPL"]["valor"]),
+            "mvrv": float(dados_ciclos["indicadores"]["MVRV_Z"]["valor"]),
+            "nupl": float(dados_ciclos["indicadores"]["NUPL"]["valor"]) if dados_ciclos["indicadores"]["NUPL"]["valor"] is not None else 0.0,
             "classificacao_mercado": mercado["classificacao"]
         }
     except Exception as e:
@@ -78,12 +79,17 @@ def _get_risco_data() -> Dict:
         if risco["status"] != "success":
             raise Exception(f"Análise risco falhou: {risco.get('erro')}")
         
-        logger.info(f"🔍 Estrutura risco: {list(risco.keys())}")
+        # Buscar indicadores de risco (dados brutos)
+        from app.services.indicadores import riscos
+        dados_riscos = riscos.obter_indicadores()
+        
+        if dados_riscos.get("status") != "success":
+            raise Exception(f"Indicadores risco falhou: {dados_riscos.get('erro')}")
         
         return {
             "score_risco": float(risco["score_consolidado"]),
-            "health_factor": float(risco["composicao"]["breakdown"]["health_factor"]["valor_numerico"]),
-            "dist_liquidacao": float(risco["composicao"]["breakdown"]["dist_liquidacao"]["valor_numerico"]),
+            "health_factor": float(dados_riscos["indicadores"]["Health_Factor"]["valor"]),
+            "dist_liquidacao": float(dados_riscos["indicadores"]["Dist_Liquidacao"]["valor"].replace("%", "")),
             "classificacao_risco": risco["classificacao"]
         }
     except Exception as e:
