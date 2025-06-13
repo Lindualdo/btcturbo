@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pathlib import Path
 from datetime import datetime
-from app.routers.v2 import dashboard_home as dashboard_home_v2
+from app.routers.v2 import  dashboard_home as dashboard_home_v2  # ← ADICIONAR
 from app.routers import alertas_debug ,alertas,dashboard_home # ← ADICIONAR
 from app.routers import (
     analise_mercado, analise_risco, coleta, indicadores, score, analise, diagnostico, analise_alavancagem,anallise_tatica
