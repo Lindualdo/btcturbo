@@ -198,12 +198,3 @@ https://github.com/Lindualdo/btcturbo-v5/blob/main/doc/regas-sistema-v5/espc-tec
 Overview - Espc. funcional:
 doc/regas-sistema-v5/0-system-overview-v5.3.md
 https://github.com/Lindualdo/btcturbo-v5/blob/main/doc/regas-sistema-v5/0-system-overview-v5.3.md
-
-# inciar a versão 5.3.2 - Dashboard v2 - concluido - 13/06  -feito
-
-- revisão e ajustes mossetups timegframe 4hs
-- precisar testar a fundo a regas
-
-
-# inciar a versão 5.3.3 - Dashboard v2
-- regras especiais de setup e regras de escape

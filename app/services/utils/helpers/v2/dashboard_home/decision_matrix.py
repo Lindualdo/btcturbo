@@ -7,7 +7,10 @@ logger = logging.getLogger(__name__)
 
 def apply_decision_matrix(cycle_info: Dict, setup_info: Dict, data: Dict) -> Dict:
     """
-    Aplica matriz de decisão final baseada em Ciclo + Setup (tabela oficial)
+    Aplica matriz de decisão final baseada em Ciclo + Setup
+    
+    Tabela de Decisão (da documentação):
+    Ciclo + Setup 4H Detectado → Decisão + Prioridade
     """
     try:
         cycle = cycle_info["cycle"]
@@ -16,15 +19,10 @@ def apply_decision_matrix(cycle_info: Dict, setup_info: Dict, data: Dict) -> Dic
         
         logger.info(f"🎯 Aplicando matriz: {cycle} + {setup} → {action}")
         
-        # 1. VERIFICAR OVERRIDES ESPECIAIS PRIMEIRO
-        override_result = _check_special_overrides(data)
-        if override_result:
-            return override_result
+        # Buscar decisão na matriz
+        decision = _get_matrix_decision(cycle, setup, action, data)
         
-        # 2. APLICAR MATRIZ OFICIAL CICLO × SETUP
-        decision = _get_official_matrix_decision(cycle, setup, action, data)
-        
-        # 3. APLICAR AJUSTES POR CONTEXTO
+        # Aplicar ajustes por contexto
         final_decision = _apply_context_adjustments(decision, data)
         
         logger.info(f"✅ Decisão final: {final_decision['decision']} ({final_decision['size']}%)")
@@ -40,102 +38,70 @@ def apply_decision_matrix(cycle_info: Dict, setup_info: Dict, data: Dict) -> Dic
             "urgencia": "baixa"
         }
 
-def _check_special_overrides(data: Dict) -> Optional[Dict]:
+def _get_matrix_decision(cycle: str, setup: str, action: str, data: Dict) -> Dict:
     """
-    Verifica overrides especiais que ignoram tudo
-    """
-    hf = data["health_factor"]
-    score_risco = data["score_risco"]
-    ema_distance = data["ema_distance"]
-    mvrv = data["mvrv"]
-    rsi = data["rsi_diario"]
-    
-    # PROTEÇÃO ABSOLUTA
-    if hf < 1.3:
-        return {
-            "decision": "REDUZIR_80%",
-            "size": 80,
-            "justificativa": f"Health Factor crítico: {hf:.2f} < 1.3",
-            "urgencia": "critica",
-            "override": "protecao_absoluta"
-        }
-    
-    if score_risco < 30:
-        return {
-            "decision": "FECHAR_TUDO",
-            "size": 100,
-            "justificativa": f"Score risco crítico: {score_risco:.1f} < 30",
-            "urgencia": "critica", 
-            "override": "protecao_absoluta"
-        }
-    
-    if ema_distance < -20:  # Flash crash > 20%
-        return {
-            "decision": "AVALIAR_LIQUIDEZ",
-            "size": 0,
-            "justificativa": f"Flash crash detectado: {ema_distance:.1f}%",
-            "urgencia": "critica",
-            "override": "flash_crash"
-        }
-    
-    # OPORTUNIDADES RARAS
-    if mvrv < 0.5 and rsi < 20:
-        return {
-            "decision": "ALL_IN_HISTORICO", 
-            "size": 100,
-            "justificativa": f"Oportunidade histórica: MVRV {mvrv:.2f} + RSI {rsi:.1f}",
-            "urgencia": "maxima",
-            "override": "oportunidade_rara"
-        }
-    
-    # TODO: Implementar outros overrides raros (ATH + correção, capitulação)
-    
-    return None
-
-def _get_official_matrix_decision(cycle: str, setup: str, action: str, data: Dict) -> Dict:
-    """
-    Matriz oficial Ciclo × Setup conforme documentação
+    Busca decisão na matriz Ciclo x Setup
     """
     
-    # BEAR
-    if cycle == "BEAR":
-        return {"decision": "IGNORAR", "size": 0, "priority": "nenhuma"}
+    # BOTTOM: Máxima agressividade em compras
+    if cycle == "BOTTOM":
+        if action == "COMPRAR":
+            if setup == "OVERSOLD_EXTREMO":
+                return {"decision": "COMPRAR", "size": 50, "priority": "maxima"}
+            else:
+                return {"decision": "COMPRAR", "size": 40, "priority": "maxima"}
+        else:
+            return {"decision": "HOLD", "size": 0, "priority": "baixa"}
     
-    # ACUMULAÇÃO
+    # ACUMULAÇÃO: Compras agressivas
     elif cycle == "ACUMULAÇÃO":
-        if setup == "PULLBACK_TENDENCIA":
-            return {"decision": "COMPRAR", "size": 12, "priority": "baixa"}  # 10-15%
-        elif setup == "OVERSOLD_EXTREMO":
-            return {"decision": "COMPRAR", "size": 20, "priority": "media"}
+        if action == "COMPRAR":
+            if setup == "PULLBACK_TENDENCIA":
+                return {"decision": "COMPRAR", "size": 35, "priority": "alta"}
+            elif setup == "ROMPIMENTO":
+                return {"decision": "COMPRAR", "size": 25, "priority": "alta"}
+            else:
+                return {"decision": "COMPRAR", "size": 30, "priority": "alta"}
         else:
-            return {"decision": "MONITORAR", "size": 0, "priority": "baixa"}
+            return {"decision": "HOLD", "size": 0, "priority": "baixa"}
     
-    # BULL INICIAL
+    # BULL INICIAL: Compras moderadas
     elif cycle == "BULL_INICIAL":
-        if setup == "PULLBACK_TENDENCIA":
-            return {"decision": "COMPRAR", "size": 35, "priority": "alta"}  # 30-40%
-        elif setup == "ROMPIMENTO":
-            return {"decision": "COMPRAR", "size": 25, "priority": "alta"}
+        if action == "COMPRAR":
+            if setup == "PULLBACK_TENDENCIA":
+                return {"decision": "COMPRAR", "size": 25, "priority": "media"}
+            elif setup == "TESTE_SUPORTE":
+                return {"decision": "COMPRAR", "size": 20, "priority": "media"}
+            else:
+                return {"decision": "COMPRAR", "size": 15, "priority": "media"}
+        elif action == "REALIZAR":
+            return {"decision": "REALIZAR", "size": 15, "priority": "baixa"}
         else:
-            return {"decision": "MANTER", "size": 0, "priority": "media"}
+            return {"decision": "HOLD", "size": 0, "priority": "baixa"}
     
-    # BULL MADURO
+    # BULL MADURO: Hold + Realizações seletivas
     elif cycle == "BULL_MADURO":
-        if setup == "PULLBACK_TENDENCIA":
-            return {"decision": "COMPRAR", "size": 20, "priority": "media"}
-        elif setup in ["RESISTENCIA", "EXAUSTAO"]:
-            return {"decision": "REALIZAR", "size": 27, "priority": "alta"}  # 25-30%
+        if action == "COMPRAR":
+            if setup == "PULLBACK_TENDENCIA":
+                return {"decision": "COMPRAR", "size": 15, "priority": "baixa"}
+            else:
+                return {"decision": "HOLD", "size": 0, "priority": "baixa"}
+        elif action == "REALIZAR":
+            if setup in ["RESISTENCIA", "EXAUSTAO"]:
+                return {"decision": "REALIZAR", "size": 30, "priority": "alta"}
+            else:
+                return {"decision": "REALIZAR", "size": 20, "priority": "media"}
         else:
-            return {"decision": "MANTER_STOPS", "size": 0, "priority": "media"}
+            return {"decision": "HOLD", "size": 0, "priority": "media"}
     
-    # EUFORIA/TOPO
+    # EUFORIA/TOPO: Ignorar compras, focar em vendas
     elif cycle == "EUFORIA_TOPO":
         if action == "COMPRAR":
             return {"decision": "IGNORAR", "size": 0, "priority": "nenhuma"}
         elif action == "REALIZAR":
-            return {"decision": "REALIZAR", "size": 35, "priority": "maxima"}  # 30-40%
+            return {"decision": "REALIZAR", "size": 40, "priority": "maxima"}
         else:
-            return {"decision": "REALIZAR_GRADUAL", "size": 20, "priority": "alta"}
+            return {"decision": "REALIZAR", "size": 30, "priority": "alta"}
     
     # Default
     else:

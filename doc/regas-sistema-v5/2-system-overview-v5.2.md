@@ -156,7 +156,7 @@ Baseado exclusivamente no MVRV:
 ## 🚨 Overrides Especiais (Exceções)
 
 ### Proteção Absoluta (Ignora tudo)
-- Health Factor < 1.2 → Reduzir 80%
+- Health Factor < 1.3 → Reduzir 80%
 - Score Risco < 30 → Fechar tudo
 - Flash Crash > 20% → Avaliar liquidez
 
