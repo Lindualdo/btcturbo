@@ -166,7 +166,7 @@ def _build_final_result(all_data: dict, cycle_info: dict, setup_info: dict, fina
         "header": {
             "btc_price": all_data["btc_price"],
             "alavancagem_atual": all_data["alavancagem_atual"],
-            "status": "operacional"
+            "status": all_data["status_alavancagem"]  # REAL, não fixo
         },
         "scores": {
             "mercado": all_data["score_mercado"],

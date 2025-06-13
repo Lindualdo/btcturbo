@@ -55,7 +55,7 @@ def _get_mercado_data() -> Dict:
         if mercado["status"] != "success":
             raise Exception(f"Análise mercado falhou: {mercado.get('erro')}")
         
-        # Verificar estrutura real dos dados
+        # Log estrutura para debug
         logger.info(f"🔍 Estrutura mercado: {list(mercado.keys())}")
         
         return {
@@ -66,13 +66,7 @@ def _get_mercado_data() -> Dict:
         }
     except Exception as e:
         logger.error(f"❌ Erro dados mercado: {str(e)}")
-        # Fallback com valores mínimos
-        return {
-            "score_mercado": 50.0,
-            "mvrv": 1.5,
-            "nupl": 0.5,
-            "classificacao_mercado": "neutro"
-        }
+        raise
 
 def _get_risco_data() -> Dict:
     """Coleta dados de risco"""
@@ -81,6 +75,7 @@ def _get_risco_data() -> Dict:
         if risco["status"] != "success":
             raise Exception(f"Análise risco falhou: {risco.get('erro')}")
         
+        # Log estrutura para debug
         logger.info(f"🔍 Estrutura risco: {list(risco.keys())}")
         
         return {
@@ -91,12 +86,7 @@ def _get_risco_data() -> Dict:
         }
     except Exception as e:
         logger.error(f"❌ Erro dados risco: {str(e)}")
-        return {
-            "score_risco": 50.0,
-            "health_factor": 1.5,
-            "dist_liquidacao": 50.0,
-            "classificacao_risco": "medio"
-        }
+        raise
 
 def _get_alavancagem_data() -> Dict:
     """Coleta dados de alavancagem"""
