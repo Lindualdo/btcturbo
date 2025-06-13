@@ -190,13 +190,11 @@ CICLO
 
 # inciar a versão 5.3.1 - Dashboard v2 - concluido - 13/06
 
-routers/v2/dashboard_home.py            # 3 endpoints simples
-services/v2/dashboard_home_service.py   # Orquestrador principal  
-services/v2/utils/helpers/v2/dashboard_home/
-├── data_collector.py                   # UMA busca (REUTILIZA tudo)
-├── cycle_analyzer.py                   # Identifica ciclo
-├── setup_detector.py                   # Detecta setup 4H
-├── validation_gates.py                 # Gates proteção  
-├── decision_matrix.py                  # Matriz final
-└── database_v2_helper.py               # Nova tabela
-schemas/v2/dashboard_response.py        # Modelos Pydantic
+docs:
+Espc técnica:
+doc/regas-sistema-v5/espc-tecnica_dashboard_v2.md
+https://github.com/Lindualdo/btcturbo-v5/blob/main/doc/regas-sistema-v5/espc-tecnica_dashboard_v2.md
+
+Overview - Espc. funcional:
+doc/regas-sistema-v5/0-system-overview-v5.3.md
+https://github.com/Lindualdo/btcturbo-v5/blob/main/doc/regas-sistema-v5/0-system-overview-v5.3.md
