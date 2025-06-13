@@ -55,12 +55,16 @@ def _get_mercado_data() -> Dict:
         if mercado["status"] != "success":
             raise Exception(f"Análise mercado falhou: {mercado.get('erro')}")
         
-        logger.info(f"🔍 Estrutura mercado: {list(mercado.keys())}")
+        logger.info(f"🔍 Estrutura mercado completa: {mercado}")
+        
+        # Acessar breakdown de ciclos
+        breakdown_ciclos = mercado["composicao"]["breakdown"]["ciclos"]
+        logger.info(f"🔍 Breakdown ciclos: {breakdown_ciclos}")
         
         return {
             "score_mercado": float(mercado["score_consolidado"]),
-            "mvrv": float(mercado["composicao"]["breakdown"]["ciclos"]["indicadores"]["MVRV_Z"]["valor"]),
-            "nupl": float(mercado["composicao"]["breakdown"]["ciclos"]["indicadores"]["NUPL"]["valor"]),
+            "mvrv": float(breakdown_ciclos["MVRV_Z"]["valor"]),
+            "nupl": float(breakdown_ciclos["NUPL"]["valor"]),
             "classificacao_mercado": mercado["classificacao"]
         }
     except Exception as e:
