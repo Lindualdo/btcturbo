@@ -372,3 +372,121 @@ def test_tradingview_connection() -> Dict:
             "status": "error", 
             "message": f"TradingView falhou: {str(e)}"
         }
+    
+# Adicionar ao tradingview_helper.py
+
+def detect_resistance_breakout(
+    symbol: str = "BTCUSDT",
+    exchange: str = "BINANCE", 
+    lookback_period: int = 20
+) -> dict:
+    """
+    Detecta rompimento real de resistência usando pivot points
+    
+    Args:
+        symbol: Par de negociação
+        exchange: Exchange
+        lookback_period: Períodos para buscar resistência
+    
+    Returns:
+        dict: {"breakout": bool, "resistance_level": float, "current_price": float}
+    """
+    try:
+        logger.info(f"🔍 Detectando rompimento de resistência {symbol}...")
+        
+        # Buscar dados OHLC (4H para melhor precisão)
+        df = fetch_ohlc_data(
+            symbol=symbol,
+            exchange=exchange,
+            interval=Interval.in_4_hour,
+            n_bars=lookback_period * 2  # Margem para cálculo
+        )
+        
+        # Calcular pivot points (máximas locais)
+        highs = df['high'].rolling(window=3, center=True).max()
+        pivot_highs = df[df['high'] == highs]['high']
+        
+        # Encontrar última resistência significativa
+        recent_pivots = pivot_highs.tail(5)  # 5 últimos pivots
+        resistance_level = recent_pivots.max()
+        
+        # Preço atual
+        current_price = float(df['close'].iloc[-1])
+        
+        # Detectar rompimento
+        breakout = current_price > resistance_level * 1.002  # 0.2% acima para confirmar
+        
+        logger.info(f"✅ Resistência: ${resistance_level:,.2f}, Atual: ${current_price:,.2f}, Rompimento: {breakout}")
+        
+        return {
+            "breakout": breakout,
+            "resistance_level": float(resistance_level),
+            "current_price": current_price,
+            "breakout_percent": ((current_price - resistance_level) / resistance_level) * 100
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Erro detecção rompimento: {str(e)}")
+        return {
+            "breakout": False,
+            "resistance_level": 0.0,
+            "current_price": 0.0,
+            "error": str(e)
+        }
+
+# Adicionar ao tradingview_helper.py
+
+def get_ema144_distance_by_timeframe(
+    timeframe: Interval = Interval.in_daily,
+    symbol: str = "BTCUSDT",
+    exchange: str = "BINANCE"
+) -> float:
+    """
+    Calcula distância EMA144 para timeframe específico
+    
+    Args:
+        timeframe: Interval (in_daily, in_4_hour, etc)
+        symbol: Par de negociação
+        exchange: Exchange
+        
+    Returns:
+        float: Distância percentual da EMA144
+    """
+    try:
+        tf_name = "4H" if timeframe == Interval.in_4_hour else "1D"
+        logger.info(f"📊 Calculando EMA144 distance {tf_name}...")
+        
+        # Buscar dados
+        df = fetch_ohlc_data(
+            symbol=symbol,
+            exchange=exchange,
+            interval=timeframe,
+            n_bars=2000  # Suficiente para EMA144
+        )
+        
+        # Calcular EMA144
+        ema_144 = calculate_ema(df['close'], period=144)
+        
+        # Preço atual e distância
+        preco_atual = float(df['close'].iloc[-1])
+        ema_144_atual = float(ema_144.iloc[-1])
+        distance_percent = ((preco_atual - ema_144_atual) / ema_144_atual) * 100
+        
+        logger.info(f"✅ EMA144 {tf_name}: ${ema_144_atual:,.2f}, Distância: {distance_percent:+.2f}%")
+        
+        return round(distance_percent, 2)
+        
+    except Exception as e:
+        logger.error(f"❌ Erro EMA144 {tf_name}: {str(e)}")
+        raise Exception(f"EMA144 {tf_name} indisponível: {str(e)}")
+
+# Manter função legacy
+def get_ema144_distance(symbol: str = "BTCUSDT", exchange: str = "BINANCE") -> float:
+    """
+    Legacy: EMA144 distance diário
+    """
+    return get_ema144_distance_by_timeframe(
+        timeframe=Interval.in_daily,
+        symbol=symbol,
+        exchange=exchange
+    )

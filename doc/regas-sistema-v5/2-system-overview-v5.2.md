@@ -66,6 +66,13 @@ Baseado exclusivamente no MVRV:
 | > 3.0 | **EUFORIA/TOPO** | 60-100 | Score baixo = topo se formando | Realizar gradualment
 
 
+### Divergências Notáveis - casos especiais
+
+- **MVRV baixo + Score alto**: Início de novo ciclo bull (raro e poderoso)
+- **MVRV alto + Score baixo**: Exaustão de tendência (sinal de topo)
+- **MVRV médio + Score médio**: Mercado em equilíbrio (mais comum)
+
+
 ### Parâmetros por Ciclo
 | Ciclo | Max Alavancagem | Max Exposição | Stop Loss | Tamanho Operação |
 |-------|-----------------|---------------|-----------|------------------|

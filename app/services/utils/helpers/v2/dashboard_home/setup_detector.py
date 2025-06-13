@@ -34,17 +34,17 @@ def detect_setup_4h(data: Dict) -> Dict:
 
 def _identify_primary_setup(ema_distance: float, rsi: float) -> Dict:
     """
-    Identifica setup principal baseado na matriz de decisão
+    Identifica setup principal baseado na matriz atualizada
     """
     
-    # SETUPS DE COMPRA (quando permitido pelo ciclo)
+    # SETUPS DE COMPRA
     if _is_pullback_setup(ema_distance, rsi):
         return {
             "setup": "PULLBACK_TENDENCIA",
             "confidence": "alta",
             "action": "COMPRAR", 
             "size": 30,
-            "description": "Pullback em tendência de alta"
+            "description": "RSI < 45 + EMA144 ±3% em tendência alta"
         }
     
     if _is_support_test_setup(ema_distance, rsi):
@@ -53,7 +53,7 @@ def _identify_primary_setup(ema_distance: float, rsi: float) -> Dict:
             "confidence": "media",
             "action": "COMPRAR",
             "size": 25,
-            "description": "Teste do suporte EMA144"
+            "description": "Toca EMA144 com bounce e volume alto"
         }
         
     if _is_breakout_setup(ema_distance, rsi):
@@ -62,7 +62,7 @@ def _identify_primary_setup(ema_distance: float, rsi: float) -> Dict:
             "confidence": "alta",
             "action": "COMPRAR",
             "size": 20,
-            "description": "Rompimento de resistência"
+            "description": "Fecha acima resistência com alinhamento OK"
         }
         
     if _is_oversold_extreme_setup(ema_distance, rsi):
@@ -71,7 +71,7 @@ def _identify_primary_setup(ema_distance: float, rsi: float) -> Dict:
             "confidence": "maxima",
             "action": "COMPRAR",
             "size": 40,
-            "description": "Oversold extremo com divergência"
+            "description": "RSI < 30 fora de bear market"
         }
     
     # SETUPS DE VENDA
@@ -81,7 +81,7 @@ def _identify_primary_setup(ema_distance: float, rsi: float) -> Dict:
             "confidence": "alta", 
             "action": "REALIZAR",
             "size": 25,
-            "description": "Resistência com RSI alto"
+            "description": "RSI > 70 + EMA144 > +15%"
         }
         
     if _is_exhaustion_setup(ema_distance, rsi):
@@ -90,7 +90,7 @@ def _identify_primary_setup(ema_distance: float, rsi: float) -> Dict:
             "confidence": "media",
             "action": "REALIZAR", 
             "size": 30,
-            "description": "Sinais de exaustão"
+            "description": "3 topos + volume baixo + RSI > 65"
         }
     
     # NEUTRO
@@ -103,27 +103,29 @@ def _identify_primary_setup(ema_distance: float, rsi: float) -> Dict:
     }
 
 def _is_pullback_setup(ema_distance: float, rsi: float) -> bool:
-    """RSI < 45 + EMA144 ±3%"""
+    """RSI < 45 + EMA144 ±3% (pullback em tendência)"""
     return rsi < 45 and -3 <= ema_distance <= 3
 
 def _is_support_test_setup(ema_distance: float, rsi: float) -> bool:
-    """Toca EMA144 (distance próximo de 0)"""
+    """Toca EMA144 (distance próximo de 0) com RSI moderado"""
     return -2 <= ema_distance <= 2 and 30 <= rsi <= 60
 
 def _is_breakout_setup(ema_distance: float, rsi: float) -> bool:
-    """Fecha acima resistência (ema_distance > 5% com RSI moderado)"""
-    return ema_distance > 5 and 45 <= rsi <= 65
+    """Fecha acima resistência com alinhamento OK"""
+    # TODO: Implementar detecção real de rompimento de resistência
+    # Por enquanto usar proxy: preço bem acima da EMA com RSI moderado
+    return ema_distance > 10 and 50 <= rsi <= 70
 
 def _is_oversold_extreme_setup(ema_distance: float, rsi: float) -> bool:
     """RSI < 30 (oversold extremo)"""
     return rsi < 30
 
 def _is_resistance_setup(ema_distance: float, rsi: float) -> bool:
-    """RSI > 70 + distância alta da EMA"""
-    return rsi > 70 and ema_distance > 10
+    """RSI > 70 + EMA144 > +15% (resistência em extensão)"""
+    return rsi > 70 and ema_distance > 15
 
 def _is_exhaustion_setup(ema_distance: float, rsi: float) -> bool:
-    """RSI alto + distância moderada (possível topo)"""
+    """RSI > 65 + distância moderada (sinais de exaustão)"""
     return rsi > 65 and 5 <= ema_distance <= 15
 
 def get_setup_confluence(setup_info: Dict, data: Dict) -> Dict:

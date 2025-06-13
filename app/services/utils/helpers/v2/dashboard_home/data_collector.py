@@ -119,23 +119,28 @@ def _get_alavancagem_data() -> Dict:
 def _get_technical_data() -> Dict:
     """Coleta dados técnicos do TradingView"""
     try:
-        # EMA144 distance (REUTILIZA função existente)
-        ema_distance = get_ema144_distance()
+        # EMA144 distance 4H (para setups 4H)
+        from app.services.utils.helpers.tradingview.tradingview_helper import get_ema144_distance_by_timeframe
+        from tvDatafeed import Interval
         
-        # RSI diário (REUTILIZA função existente)
-        rsi_diario = get_rsi_current(
+        ema_distance_4h = get_ema144_distance_by_timeframe(
+            timeframe=Interval.in_4_hour
+        )
+        
+        # RSI 4H (alinhado com EMA 4H)
+        rsi_4h = get_rsi_current(
             symbol="BTCUSDT",
             exchange="BINANCE", 
-            timeframe=Interval.in_daily,
+            timeframe=Interval.in_4_hour,
             period=14
         )
         
-        # Preço atual e EMA144 valor
-        price_data = _get_btc_price_and_ema()
+        # Preço atual e EMA144 valor (4H)
+        price_data = _get_btc_price_and_ema_4h()
         
         return {
-            "ema_distance": float(ema_distance),
-            "rsi_diario": float(rsi_diario),
+            "ema_distance": float(ema_distance_4h),
+            "rsi_diario": float(rsi_4h),
             "btc_price": price_data["price"],
             "ema_valor": price_data["ema_144"]
         }
@@ -143,20 +148,21 @@ def _get_technical_data() -> Dict:
         logger.error(f"❌ Erro dados técnicos: {str(e)}")
         raise
 
-def _get_btc_price_and_ema() -> Dict:
-    """Busca preço BTC atual e valor EMA144"""
+def _get_btc_price_and_ema_4h() -> Dict:
+    """Busca preço BTC atual e valor EMA144 4H"""
     try:
-        # REUTILIZA função existente do TradingView
+        from tvDatafeed import Interval
+        
         df = fetch_ohlc_data(
             symbol="BTCUSDT",
             exchange="BINANCE",
-            interval=Interval.in_daily,
+            interval=Interval.in_4_hour,
             n_bars=200  # Suficiente para EMA144
         )
         
         from app.services.utils.helpers.tradingview.tradingview_helper import calculate_ema
         
-        # Calcular EMA144
+        # Calcular EMA144 4H
         ema_144 = calculate_ema(df['close'], period=144)
         
         return {
@@ -164,7 +170,7 @@ def _get_btc_price_and_ema() -> Dict:
             "ema_144": float(ema_144.iloc[-1])
         }
     except Exception as e:
-        logger.error(f"❌ Erro preço/EMA: {str(e)}")
+        logger.error(f"❌ Erro preço/EMA 4H: {str(e)}")
         raise
 
 def _extract_numeric(value_str: str) -> float:
