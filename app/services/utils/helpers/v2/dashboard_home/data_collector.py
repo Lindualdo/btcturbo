@@ -59,8 +59,8 @@ def _get_mercado_data() -> Dict:
         
         return {
             "score_mercado": float(mercado["score_consolidado"]),
-            "mvrv": float(mercado["composicao"]["breakdown"]["ciclos"]["mvrv_z_score"]),
-            "nupl": float(mercado["composicao"]["breakdown"]["ciclos"]["nupl"]),
+            "mvrv": float(mercado["composicao"]["breakdown"]["ciclos"]["indicadores"]["MVRV_Z"]["valor"]),
+            "nupl": float(mercado["composicao"]["breakdown"]["ciclos"]["indicadores"]["NUPL"]["valor"]),
             "classificacao_mercado": mercado["classificacao"]
         }
     except Exception as e:
