@@ -55,13 +55,12 @@ def _get_mercado_data() -> Dict:
         if mercado["status"] != "success":
             raise Exception(f"Análise mercado falhou: {mercado.get('erro')}")
         
-        # Log estrutura para debug
         logger.info(f"🔍 Estrutura mercado: {list(mercado.keys())}")
         
         return {
-            "score_mercado": float(mercado["score_final"]),
-            "mvrv": float(mercado["detalhes"]["ciclos"]["mvrv_z_score"]),
-            "nupl": float(mercado["detalhes"]["ciclos"]["nupl"]),
+            "score_mercado": float(mercado["score_consolidado"]),
+            "mvrv": float(mercado["composicao"]["breakdown"]["ciclos"]["mvrv_z_score"]),
+            "nupl": float(mercado["composicao"]["breakdown"]["ciclos"]["nupl"]),
             "classificacao_mercado": mercado["classificacao"]
         }
     except Exception as e:
@@ -75,13 +74,12 @@ def _get_risco_data() -> Dict:
         if risco["status"] != "success":
             raise Exception(f"Análise risco falhou: {risco.get('erro')}")
         
-        # Log estrutura para debug
         logger.info(f"🔍 Estrutura risco: {list(risco.keys())}")
         
         return {
-            "score_risco": float(risco["score_final"]),
-            "health_factor": float(risco["health_factor"]),
-            "dist_liquidacao": float(risco["distancia_liquidacao"]),
+            "score_risco": float(risco["score_consolidado"]),
+            "health_factor": float(risco["composicao"]["breakdown"]["health_factor"]["valor_numerico"]),
+            "dist_liquidacao": float(risco["composicao"]["breakdown"]["dist_liquidacao"]["valor_numerico"]),
             "classificacao_risco": risco["classificacao"]
         }
     except Exception as e:
