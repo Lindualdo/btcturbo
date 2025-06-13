@@ -188,7 +188,7 @@ CICLO
 - padronizado a busca da fase mercado em todos os cenários da analise estrategica
 - PEDENCIA: expandir fução fases do mercado - garantir que cobrirá todas as fases
 
-# inciar a versão 5.3.1 - Dashboard v2 
+# inciar a versão 5.3.1 - Dashboard v2 - concluido - 13/06
 
 routers/v2/dashboard_home.py            # 3 endpoints simples
 services/v2/dashboard_home_service.py   # Orquestrador principal  
