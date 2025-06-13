@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pathlib import Path
 from datetime import datetime
+from app.routers.v2 import dashboard_home as dashboard_home_v2
 from app.routers import alertas_debug ,alertas,dashboard_home # ← ADICIONAR
 from app.routers import (
     analise_mercado, analise_risco, coleta, indicadores, score, analise, diagnostico, analise_alavancagem,anallise_tatica
@@ -59,6 +60,12 @@ app.include_router(dashboard_home.router, prefix="/api/v1", tags=["DashBoard_Hom
 # ROUTERS ALERTAS - DEBUG (APIs)
 # ==========================================
 app.include_router(alertas_debug.router, prefix="/alertas-debug", tags=["alertas_debug"])  # ← ADICIONAR
+
+
+# ==========================================
+# ROUTERS V2 - DASHBOARDS OTIMIZADOS (APIs)
+# ==========================================
+app.include_router(dashboard_home_v2.router, prefix="/api/v2", tags=["📊 Dashboard V2"])
 
 
 # ==========================================

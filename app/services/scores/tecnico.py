@@ -56,7 +56,7 @@ def calcular_score_com_bbw(dados_indicadores):
         
         return {
             "bloco": "tecnico",
-            "peso_bloco": "30%",
+            "peso_bloco": "40%",
             "score_consolidado": round(score_consolidado, 2),
             "classificacao_consolidada": interpretar_classificacao(score_consolidado),
             "timestamp": dados_indicadores["timestamp"],
@@ -173,7 +173,7 @@ def calcular_score_legado(dados_indicadores):
         
         return {
             "bloco": "tecnico",
-            "peso_bloco": "30%",
+            "peso_bloco": "40%",
             "score_consolidado": round(score_consolidado, 2),
             "score_consolidado_100": round(score_consolidado * 10, 1),  # ← NOVO: Base 100
             "classificacao_consolidada": interpretar_classificacao(score_consolidado),
