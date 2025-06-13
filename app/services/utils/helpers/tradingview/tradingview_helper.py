@@ -103,7 +103,7 @@ def fetch_ohlc_data(
     symbol: str = "BTCUSDT",
     exchange: str = "BINANCE", 
     interval: Interval = Interval.in_daily,
-    n_bars: int = 100,
+    n_bars: int = 2000,
     validate_data: bool = True
 ) -> pd.DataFrame:
     """

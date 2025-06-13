@@ -35,18 +35,18 @@ def identify_cycle(data: Dict) -> Dict:
 
 def _get_cycle_from_mvrv_score(mvrv: float, score: float) -> Dict:
     """
-    Determina ciclo baseado em MVRV Z-Score e Score de Mercado
+    Determina ciclo baseado em COMBINAÇÃO Score + MVRV (conforme documentação)
     
-    Tabela de referência (docs):
-    - Score 0-20: BOTTOM
-    - Score 20-40: ACUMULAÇÃO  
-    - Score 40-60: BULL INICIAL
-    - Score 60-80: BULL MADURO
-    - Score 80-100: EUFORIA/TOPO
+    Tabela oficial:
+    - Score 0-20 + MVRV <0.8: BOTTOM
+    - Score 20-40 + MVRV 0.8-1.2: ACUMULAÇÃO  
+    - Score 40-60 + MVRV 1.2-2.0: BULL INICIAL
+    - Score 60-80 + MVRV 2.0-3.0: BULL MADURO
+    - Score 80-100 + MVRV >3.0: EUFORIA/TOPO
     """
     
-    # Prioridade: Score de Mercado (mais atual)
-    if score <= 20:
+    # Combinação Score + MVRV (ambos devem confluir)
+    if score <= 20 and mvrv < 0.8:
         return {
             "cycle": "BOTTOM",
             "phase": "acumulacao_agressiva", 
@@ -55,7 +55,7 @@ def _get_cycle_from_mvrv_score(mvrv: float, score: float) -> Dict:
             "stop_suggested": 20,
             "position_size": "40-50%"
         }
-    elif score <= 40:
+    elif score <= 40 and 0.8 <= mvrv <= 1.2:
         return {
             "cycle": "ACUMULAÇÃO", 
             "phase": "compras_agressivas",
@@ -64,7 +64,7 @@ def _get_cycle_from_mvrv_score(mvrv: float, score: float) -> Dict:
             "stop_suggested": 15,
             "position_size": "30-40%"
         }
-    elif score <= 60:
+    elif score <= 60 and 1.2 <= mvrv <= 2.0:
         return {
             "cycle": "BULL_INICIAL",
             "phase": "compras_moderadas", 
@@ -73,7 +73,7 @@ def _get_cycle_from_mvrv_score(mvrv: float, score: float) -> Dict:
             "stop_suggested": 12,
             "position_size": "20-30%"
         }
-    elif score <= 80:
+    elif score <= 80 and 2.0 <= mvrv <= 3.0:
         return {
             "cycle": "BULL_MADURO",
             "phase": "hold_realizacoes",
@@ -82,7 +82,7 @@ def _get_cycle_from_mvrv_score(mvrv: float, score: float) -> Dict:
             "stop_suggested": 10,
             "position_size": "15-25%"
         }
-    else:  # score > 80
+    elif score > 80 and mvrv > 3.0:
         return {
             "cycle": "EUFORIA_TOPO",
             "phase": "realizar_gradual",
@@ -90,6 +90,33 @@ def _get_cycle_from_mvrv_score(mvrv: float, score: float) -> Dict:
             "max_leverage": 1.5,
             "stop_suggested": 8,
             "position_size": "realizar_20-40%"
+        }
+    else:
+        # Conflito Score vs MVRV - critério de desempate
+        if mvrv >= 3.0:
+            priority_cycle = "EUFORIA_TOPO"
+            max_lev = 1.5
+        elif mvrv >= 2.0:
+            priority_cycle = "BULL_MADURO" 
+            max_lev = 2.0
+        elif mvrv >= 1.2:
+            priority_cycle = "BULL_INICIAL"
+            max_lev = 2.5
+        elif mvrv >= 0.8:
+            priority_cycle = "ACUMULAÇÃO"
+            max_lev = 2.5
+        else:
+            priority_cycle = "BOTTOM"
+            max_lev = 3.0
+            
+        return {
+            "cycle": f"{priority_cycle}_CONFLITO",
+            "phase": "conflito_indicadores",
+            "direction": "cautela",
+            "max_leverage": max_lev,
+            "stop_suggested": 12,
+            "position_size": "reduzido",
+            "alert": f"Conflito: Score={score:.1f}, MVRV={mvrv:.2f}"
         }
 
 def get_cycle_permissions(cycle_info: Dict) -> Dict:

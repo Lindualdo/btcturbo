@@ -130,6 +130,7 @@ Baseado exclusivamente no MVRV:
 | **EUFORIA** | Qualquer compra | IGNORAR | - |
 | **EUFORIA** | Qualquer venda | Realizar 30-40% | Máxima |
 
+
 ### Sem Setup Detectado
 | Ciclo | Ação Default | Frequência Check |
 |-------|--------------|------------------|
