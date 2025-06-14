@@ -1,0 +1,4 @@
+- rever a quantidde de barras das funções trandview
+- decompor o helper trandiview em arquivos menores cada um para uma finalidade
+- organizar e limpar o código excluindo apis e funções descontinuadas
+- implementar controle de operações e silenciar os alertas / setups

@@ -164,33 +164,39 @@ def _build_final_result(all_data: dict, cycle_info: dict, setup_info: dict, fina
         "timestamp": datetime.utcnow().isoformat(),
         "versao": "v2_dashboard",
         "header": {
+            "status": all_data["status_alavancagem"],
             "btc_price": all_data["btc_price"],
-            "alavancagem_atual": all_data["alavancagem_atual"],
-            "status": all_data["status_alavancagem"]  # REAL, não fixo
+            "position_usd": all_data["position_usd"] # incluir
         },
         "scores": {
             "mercado": all_data["score_mercado"],
             "risco": all_data["score_risco"],
-            "mvrv": all_data["mvrv"],
-            "health_factor": all_data["health_factor"]
+            "classificacao_risco": all_data["classificacao_risco"],
+            "classificacao_mercado": all_data["classificacao_mercado"],
+            "ciclo": cycle_info["cycle"]
         },
         "estrategia": {
             "decisao": final_decision["decision"],
-            "ciclo": cycle_info["cycle"],
             "setup_4h": setup_info["setup"],
             "justificativa": final_decision.get("justificativa", ""),
             "urgencia": final_decision.get("urgencia", "media")
         },
         "tecnicos": {
-            "ema_distance": all_data["ema_distance"],
-            "rsi_diario": all_data["rsi_diario"],
+            "ema_144_distance": all_data["ema_distance"],
+            "rsi": all_data["rsi_diario"],
             "preco_ema144": all_data["ema_valor"]
         },
         "alavancagem": {
             "atual": all_data["alavancagem_atual"],
             "permitida": all_data["alavancagem_permitida"],
             "valor_disponivel": all_data["valor_disponivel"],
-            "dist_liquidacao": all_data["dist_liquidacao"]
+            "divida_total": all_data["divida_total"]        
+        },
+        "indicadores":{
+            "mvrv": all_data["mvrv"],
+            "health_factor": all_data["health_factor"],
+            "dist_liquidacao": all_data["dist_liquidacao"],
+            "nupl": all_data["nupl"] #incluir
         }
     }
     
