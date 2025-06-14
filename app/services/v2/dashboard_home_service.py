@@ -190,7 +190,8 @@ def _build_final_result(all_data: dict, cycle_info: dict, setup_info: dict, fina
             "atual": all_data["alavancagem_atual"],
             "permitida": all_data["alavancagem_permitida"],
             "valor_disponivel": all_data["valor_disponivel"],
-            "divida_total": all_data["divida_total"]        
+            "divida_total": all_data["divida_total"],
+            "valor_a_reduzir": all_data["valor_a_reduzir"]       
         },
         "indicadores":{
             "mvrv": all_data["mvrv"],
