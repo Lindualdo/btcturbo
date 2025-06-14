@@ -91,9 +91,8 @@ def _get_risco_data() -> Dict:
             "health_factor": float(dados_riscos["indicadores"]["Health_Factor"]["valor"]),
             "dist_liquidacao": float(dados_riscos["indicadores"]["Dist_Liquidacao"]["valor"].replace("%", "")),
             "classificacao_risco": risco["classificacao"],
-            "position_usd": _extract_monetary(dados_riscos["posicao_atual"]["posicao_total"]["valor_formatado"]),
-            "divida_total": _extract_monetary(dados_riscos["posicao_atual"]["divida_total"]["valor_formatado"])
-
+            "position_usd": float(dados_riscos["posicao_atual"]["posicao_total"]["valor_numerico"]),
+            "divida_total": float(dados_riscos["posicao_atual"]["divida_total"]["valor_numerico"])
         }
     except Exception as e:
         logger.error(f"❌ Erro dados risco: {str(e)}")
