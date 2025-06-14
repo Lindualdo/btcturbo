@@ -94,11 +94,11 @@ def obter_dashboard_v2() -> dict:
             dashboard_json = json.loads(dashboard_json)
         
         return {
-            "status": "success",
             "data": dashboard_json,
             "metadata": {
+                "status": "success",
                 "id": dados["id"],
-                "created_at": dados["created_at"].isoformat(),
+                "timestamp": dados["created_at"].isoformat(),
                 "age_minutes": (datetime.utcnow() - dados["created_at"]).total_seconds() / 60,
                 "versao": "v2_otimizado"
             }
@@ -161,8 +161,6 @@ def _build_final_result(all_data: dict, cycle_info: dict, setup_info: dict, fina
     
     # JSON para frontend (estruturado)
     json_response = {
-        "timestamp": datetime.utcnow().isoformat(),
-        "versao": "v2_dashboard",
         "header": {
             "btc_price": all_data["btc_price"],
             "position_usd": all_data["position_usd"] # incluir
