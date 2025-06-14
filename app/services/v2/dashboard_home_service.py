@@ -164,7 +164,6 @@ def _build_final_result(all_data: dict, cycle_info: dict, setup_info: dict, fina
         "timestamp": datetime.utcnow().isoformat(),
         "versao": "v2_dashboard",
         "header": {
-            "status": all_data["status_alavancagem"],
             "btc_price": all_data["btc_price"],
             "position_usd": all_data["position_usd"] # incluir
         },
@@ -187,6 +186,7 @@ def _build_final_result(all_data: dict, cycle_info: dict, setup_info: dict, fina
             "preco_ema144": all_data["ema_valor"]
         },
         "alavancagem": {
+            "status": all_data["status_alavancagem"],
             "atual": all_data["alavancagem_atual"],
             "permitida": all_data["alavancagem_permitida"],
             "valor_disponivel": all_data["valor_disponivel"],
