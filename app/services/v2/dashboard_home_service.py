@@ -161,6 +161,9 @@ def _build_final_result(all_data: dict, cycle_info: dict, setup_info: dict, fina
     
     # JSON para frontend (estruturado)
     json_response = {
+        "status": "success",
+        "versao": "v2_otimizado",
+        "timestamp": datetime.utcnow().isoformat(),
         "header": {
             "btc_price": all_data["btc_price"],
             "position_usd": all_data["position_usd"] # incluir
