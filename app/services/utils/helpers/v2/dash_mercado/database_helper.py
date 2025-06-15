@@ -100,13 +100,14 @@ def get_latest_scores_from_db() -> dict:
         logger.error(f"❌ Erro get_latest_scores_from_db: {str(e)}")
         return None
 
-def _build_indicators_json() -> dict:
+def _build_indicators_json() -> str:
     """Constrói JSON completo dos indicadores com scores"""
     try:
         import json
-        from app.services.indicadores import ciclos, momentum, tecnico
+        from app.services.indicadores import ciclos, momentum
         from app.services.scores.ciclos import calcular_mvrv_score, calcular_nupl_score, calcular_realized_score, calcular_puell_score
         from app.services.scores.momentum import calcular_rsi_score, calcular_funding_score, calcular_sopr_score, calcular_ls_ratio_score
+        from app.services.utils.helpers.postgres.tecnico_helper import get_dados_tecnico
         
         # Dados CICLO
         dados_ciclo = ciclos.obter_indicadores()["indicadores"]
@@ -122,42 +123,31 @@ def _build_indicators_json() -> dict:
         sopr_score, _ = calcular_sopr_score(dados_momentum["SOPR"]["valor"])
         ls_score, _ = calcular_ls_ratio_score(dados_momentum["Long_Short_Ratio"]["valor"])
         
-        # Dados TÉCNICO - buscar estrutura correta
-        dados_tecnico = tecnico.obter_indicadores()
-        if dados_tecnico.get("status") == "success":
-            indicadores_tecnico = dados_tecnico["indicadores"]
-            timeframes = dados_tecnico.get("timeframes", {})
-            
-            # Buscar scores do timeframe
-            semanal_score = 0
-            diario_score = 0
-            
-            if timeframes:
-                semanal_data = timeframes.get("semanal", {})
-                diario_data = timeframes.get("diario", {})
-                
-                semanal_score = semanal_data.get("scores", {}).get("consolidado", 0)
-                diario_score = diario_data.get("scores", {}).get("consolidado", 0)
-            else:
-                # Fallback: buscar do Score_Final_Ponderado se timeframes não existe
-                score_final = indicadores_tecnico.get("Score_Final_Ponderado", {}).get("score_numerico", 0)
-                semanal_score = score_final * 0.7  # Proporção semanal
-                diario_score = score_final * 0.3   # Proporção diária
-            
+        # Dados TÉCNICO - buscar direto do banco
+        dados_tecnico_db = get_dados_tecnico()
+        
+        if dados_tecnico_db:
+            score_geral = float(dados_tecnico_db["score_bloco_final"]) if dados_tecnico_db["score_bloco_final"] else 0
             tecnico_json = {
+                "score": score_geral,
+                "classificacao": _get_score_description(score_geral),
                 "semanal": {
-                    "score": round(semanal_score, 2),
-                    "descricao": _get_score_description(semanal_score)
+                    "score": float(dados_tecnico_db["score_consolidado_1w"]) if dados_tecnico_db["score_consolidado_1w"] else 0,
+                    "alinhamento": float(dados_tecnico_db["score_1w_ema"]) if dados_tecnico_db["score_1w_ema"] else 0,
+                    "posicao": float(dados_tecnico_db["score_1w_price"]) if dados_tecnico_db["score_1w_price"] else 0
                 },
                 "diario": {
-                    "score": round(diario_score, 2), 
-                    "descricao": _get_score_description(diario_score)
+                    "score": float(dados_tecnico_db["score_consolidado_1d"]) if dados_tecnico_db["score_consolidado_1d"] else 0,
+                    "alinhamento": float(dados_tecnico_db["score_1d_ema"]) if dados_tecnico_db["score_1d_ema"] else 0,
+                    "posicao": float(dados_tecnico_db["score_1d_price"]) if dados_tecnico_db["score_1d_price"] else 0
                 }
             }
         else:
             tecnico_json = {
-                "semanal": {"score": 0, "descricao": "N/A"},
-                "diario": {"score": 0, "descricao": "N/A"}
+                "score": 0,
+                "classificacao": "N/A",
+                "semanal": {"score": 0, "alinhamento": 0, "posicao": 0},
+                "diario": {"score": 0, "alinhamento": 0, "posicao": 0}
             }
         
         json_completo = {
