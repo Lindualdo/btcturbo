@@ -30,7 +30,6 @@ app.add_middleware(
 
 app.include_router(diagnostico.router, prefix="/api/v1/diagnostico", tags=["🔧 Diagnóstico"]) 
 app.include_router(indicadores.router, prefix="/api/v1", tags=["📊 Indicadores"]) 
-app.include_router(score.router, prefix="/api/v1", tags=["🎯 Scores"])
 app.include_router(analise.router, prefix="/api/v1", tags=["📈 Análise"]) #será descontinuada - foi substituida por analises em camadas
 app.include_router(analise_mercado.router, prefix="/api/v1", tags=["🎯 Analise Mercado"])  # NOVO
 app.include_router(analise_risco.router, prefix="/api/v1", tags=["🛡️ Analise Risco"])
@@ -41,12 +40,13 @@ app.include_router(dashboard_home.router, prefix="/api/v1", tags=["DashBoard_Hom
 # ==========================================
 # APIs QUE ESTÃO SENDO USADOS
 # ==========================================
-
+app.include_router(coleta.router, prefix="/api/v1", tags=["📥 Coleta"]) # coleta indicadores (ciclos, riscos, momentum e tecnico)
+app.include_router(indicadores.router, prefix="/api/v1", tags=["📊 Indicadores"])  # obtem os indicadores (ciclos, riscos, momentum e tecnico)
+app.include_router(score.router, prefix="/api/v1", tags=["🎯 Scores"]) # calcula scores e retona indicadores  (ciclos, riscos, momentum e tecnico)
 app.include_router(dashboard_home_v2.router, prefix="/api/v2", tags=["📊 Dashboard V2"]) # dash principal (post grava e get obtem)
 app.include_router(dash_mercado.router, prefix="/api/v2", tags=["📊 dash mercado "]) # dash mercado - detalhe do mercado home (post grava e get obtem)
-app.include_router(coleta.router, prefix="/api/v1", tags=["📥 Coleta"]) # coleta indicadores
 app.include_router(alertas_debug.router, prefix="/alertas-debug", tags=["alertas_debug"]) # retorna todos os alertas separados em categorias
-app.include_router(alertas.router, prefix="/api/v1", tags=["alertas"])  # ← ADICIONAR
+app.include_router(alertas.router, prefix="/api/v1", tags=["alertas"])  # Busca os alertas por categorias ()
 
 # ==========================================
 # ENDPOINTS BÁSICOS

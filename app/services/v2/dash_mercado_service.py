@@ -94,8 +94,10 @@ def obter_dashboard_mercado() -> dict:
         ultimo = get_latest_dashboard_scores()
         
         if ultimo:
-            # JSON já vem pronto do banco
-            indicadores_json = json.loads(ultimo["indicadores_json"])
+            # JSON pode vir como dict ou string do banco
+            indicadores_json = ultimo["indicadores_json"]
+            if isinstance(indicadores_json, str):
+                indicadores_json = json.loads(indicadores_json)
             
             return {
                 "status": "success",
