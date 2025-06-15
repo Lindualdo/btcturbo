@@ -1,0 +1,36 @@
+-- Script de migração: dashboard_mercado_scores
+-- Execute no PostgreSQL
+
+CREATE TABLE IF NOT EXISTS dashboard_mercado_scores (
+    id SERIAL PRIMARY KEY,
+    
+    -- Scores dos blocos
+    score_ciclo DECIMAL(5,2) NOT NULL,
+    classificacao_ciclo VARCHAR(20) NOT NULL,
+    score_momentum DECIMAL(5,2) NOT NULL,
+    classificacao_momentum VARCHAR(20) NOT NULL,
+    score_tecnico DECIMAL(5,2) NOT NULL,
+    classificacao_tecnico VARCHAR(20) NOT NULL,
+    
+    -- Score consolidado
+    score_consolidado DECIMAL(5,2) NOT NULL,
+    classificacao_consolidada VARCHAR(20) NOT NULL,
+    
+    -- Metadados
+    timestamp TIMESTAMP DEFAULT NOW(),
+    versao VARCHAR(10) DEFAULT 'v1.0'
+);
+
+-- Índice para busca otimizada
+CREATE INDEX IF NOT EXISTS idx_dashboard_mercado_timestamp 
+ON dashboard_mercado_scores(timestamp DESC);
+
+-- Verificar criação
+SELECT 
+    table_name, 
+    column_name, 
+    data_type, 
+    is_nullable
+FROM information_schema.columns 
+WHERE table_name = 'dashboard_mercado_scores'
+ORDER BY ordinal_position;
