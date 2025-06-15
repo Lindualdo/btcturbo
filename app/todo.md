@@ -2,3 +2,15 @@
 - decompor o helper trandiview em arquivos menores cada um para uma finalidade
 - organizar e limpar o código excluindo apis e funções descontinuadas
 - implementar controle de operações e silenciar os alertas / setups
+- Rever funções de setup (Decisões por Ciclo + Setup)
+- Rever os Alertas (criticos, táticos, de oportunidade...)
+- Rever Setups de VENDA (quando ciclo sugere)
+- criar gestão de stops
+- Construir Dash de decisão simplificado
+- criar dash com métricas de performance
+- Trader Jornal
+- Registro de operações
+- criar rotinas de Overrides Especiais (oportunidades raras)
+- confirmar Hierarquia de Decisão (Timeframe Conflito)
+- Testar (Gate System) - REVISADO
+- fazer rotinas de backtest

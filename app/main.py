@@ -17,7 +17,6 @@ app = FastAPI(
     version="5.0.14"
 )
 
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # ou específico: ["https://btcturbo-frontend.vercel.app"]
@@ -25,50 +24,29 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-
 # ==========================================
-# ROUTERS DE DADOS (APIs)
+# (APIs) descontinuadas - Analisar se suas funções estão sendo usadas internamente
 # ==========================================
 
 app.include_router(diagnostico.router, prefix="/api/v1/diagnostico", tags=["🔧 Diagnóstico"]) 
-app.include_router(coleta.router, prefix="/api/v1", tags=["📥 Coleta"]) 
 app.include_router(indicadores.router, prefix="/api/v1", tags=["📊 Indicadores"]) 
 app.include_router(score.router, prefix="/api/v1", tags=["🎯 Scores"])
 app.include_router(analise.router, prefix="/api/v1", tags=["📈 Análise"]) #será descontinuada - foi substituida por analises em camadas
-
-# ==========================================
-# ROUTERS CAMADAS DE ANÁLISE (APIs)
-# ==========================================
 app.include_router(analise_mercado.router, prefix="/api/v1", tags=["🎯 Analise Mercado"])  # NOVO
 app.include_router(analise_risco.router, prefix="/api/v1", tags=["🛡️ Analise Risco"])
 app.include_router(analise_alavancagem.router, prefix="/api/v1", tags=["🎯 Analise Alavancagem"])  # NOVO
 app.include_router(anallise_tatica.router, prefix="/api/v1", tags=["🎯 Analise Tatica"])  # NOVO
-
+app.include_router(dashboard_home.router, prefix="/api/v1", tags=["DashBoard_Home"])  # substituida pela V2
 
 # ==========================================
-# ROUTERS ALERTAS (APIs)
+# APIs QUE ESTÃO SENDO USADOS
 # ==========================================
+
+app.include_router(dashboard_home_v2.router, prefix="/api/v2", tags=["📊 Dashboard V2"]) # dash principal (post grava e get obtem)
+app.include_router(dash_mercado.router, prefix="/api/v2", tags=["📊 dash mercado "]) # dash mercado - detalhe do mercado home (post grava e get obtem)
+app.include_router(coleta.router, prefix="/api/v1", tags=["📥 Coleta"]) # coleta indicadores
+app.include_router(alertas_debug.router, prefix="/alertas-debug", tags=["alertas_debug"]) # retorna todos os alertas separados em categorias
 app.include_router(alertas.router, prefix="/api/v1", tags=["alertas"])  # ← ADICIONAR
-
-
-# ==========================================
-# ROUTERS DASHBOARDS (APIs)
-# ==========================================
-
-app.include_router(dashboard_home.router, prefix="/api/v1", tags=["DashBoard_Home"])  # ← ADICIONAR
-
-# ==========================================
-# ROUTERS ALERTAS - DEBUG (APIs)
-# ==========================================
-app.include_router(alertas_debug.router, prefix="/alertas-debug", tags=["alertas_debug"])  # ← ADICIONAR
-
-
-# ==========================================
-# ROUTERS V2 - DASHBOARDS OTIMIZADOS (APIs)
-# ==========================================
-app.include_router(dashboard_home_v2.router, prefix="/api/v2", tags=["📊 Dashboard V2"])
-app.include_router(dash_mercado.router, prefix="/api/v2", tags=["📊 dash mercado "])
-
 
 # ==========================================
 # ENDPOINTS BÁSICOS

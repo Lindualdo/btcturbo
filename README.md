@@ -188,7 +188,7 @@ CICLO
 - padronizado a busca da fase mercado em todos os cenários da analise estrategica
 - PEDENCIA: expandir fução fases do mercado - garantir que cobrirá todas as fases
 
-# inciar a versão 5.3.1 - Dashboard v2 - concluido - 13/06
+## inciar a versão 5.3.1 - Dashboard home v2 - concluido - 13/06
 
 docs:
 Espc técnica:
@@ -198,3 +198,8 @@ https://github.com/Lindualdo/btcturbo-v5/blob/main/doc/regas-sistema-v5/espc-tec
 Overview - Espc. funcional:
 doc/regas-sistema-v5/0-system-overview-v5.3.md
 https://github.com/Lindualdo/btcturbo-v5/blob/main/doc/regas-sistema-v5/0-system-overview-v5.3.md
+
+## versão 5.3.2 a 5.3.4 - Dashboard home v2 - Ajustes - 14/06 feito
+
+## versão 5.3.5 a  Dash Mercado v2 - 15/06
+- criar o dash mercado - detalhe do bloco mercado da home
