@@ -107,7 +107,6 @@ def _build_indicators_json() -> dict:
         from app.services.indicadores import ciclos, momentum, tecnico
         from app.services.scores.ciclos import calcular_mvrv_score, calcular_nupl_score, calcular_realized_score, calcular_puell_score
         from app.services.scores.momentum import calcular_rsi_score, calcular_funding_score, calcular_sopr_score, calcular_ls_ratio_score
-        from app.services.scores import tecnico as score_tecnico
         
         # Dados CICLO
         dados_ciclo = ciclos.obter_indicadores()["indicadores"]
@@ -124,8 +123,25 @@ def _build_indicators_json() -> dict:
         ls_score, _ = calcular_ls_ratio_score(dados_momentum["Long_Short_Ratio"]["valor"])
         
         # Dados TÉCNICO
-        dados_tecnico = score_tecnico.calcular_score()
-        detalhes = dados_tecnico.get("detalhes", {})
+        dados_tecnico = tecnico.obter_indicadores()
+        if dados_tecnico.get("status") == "success":
+            indicadores_tecnico = dados_tecnico["indicadores"]
+            
+            tecnico_json = {
+                "semanal": {
+                    "score": indicadores_tecnico.get("Sistema_EMAs_Semanal", {}).get("valor", 0),
+                    "descricao": indicadores_tecnico.get("Sistema_EMAs_Semanal", {}).get("classificacao", "N/A")
+                },
+                "diario": {
+                    "score": indicadores_tecnico.get("Sistema_EMAs_Diario", {}).get("valor", 0),
+                    "descricao": indicadores_tecnico.get("Sistema_EMAs_Diario", {}).get("classificacao", "N/A")
+                }
+            }
+        else:
+            tecnico_json = {
+                "semanal": {"score": 0, "descricao": "N/A"},
+                "diario": {"score": 0, "descricao": "N/A"}
+            }
         
         json_completo = {
             "ciclo": {
@@ -140,16 +156,7 @@ def _build_indicators_json() -> dict:
                 "sopr": {"valor": dados_momentum["SOPR"]["valor"], "score": sopr_score},
                 "long_short_ratio": {"valor": dados_momentum["Long_Short_Ratio"]["valor"], "score": ls_score}
             },
-            "tecnico": {
-                "semanal": {
-                    "score": detalhes.get("semanal", {}).get("score_total", 0),
-                    "descricao": detalhes.get("semanal", {}).get("classificacao", "N/A")
-                },
-                "diario": {
-                    "score": detalhes.get("diario", {}).get("score_total", 0),
-                    "descricao": detalhes.get("diario", {}).get("classificacao", "N/A")
-                }
-            }
+            "tecnico": tecnico_json
         }
         
         return json.dumps(json_completo)
@@ -204,6 +211,14 @@ def create_table_if_not_exists():
                 -- Score consolidado
                 score_consolidado DECIMAL(5,2) NOT NULL,
                 classificacao_consolidada VARCHAR(20) NOT NULL,
+                
+                -- JSON pronto para consumo no dashboard
+                indicadores_json JSONB NOT NULL,
+                
+                -- Relacionamentos (FK para auditoria)
+                indicador_ciclo_id INTEGER REFERENCES indicadores_ciclo(id),
+                indicador_momentum_id INTEGER REFERENCES indicadores_momentum(id),
+                indicador_tecnico_id INTEGER REFERENCES indicadores_tecnico(id),
                 
                 -- Metadados
                 timestamp TIMESTAMP DEFAULT NOW(),
