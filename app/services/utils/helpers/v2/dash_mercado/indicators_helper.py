@@ -33,102 +33,97 @@ def get_current_indicators_data() -> dict:
             "tecnico": {}
         }
 
-def _format_ciclo_with_scores() -> dict:
-    """Formata indicadores CICLO com scores individuais"""
+def get_current_indicators_data() -> dict:
+    """
+    Obtém dados dos indicadores do último registro de scores
+    (dados que foram usados no cálculo)
+    """
     try:
-        from app.services.indicadores import ciclos as indicadores_ciclos
+        from app.services.utils.helpers.v2.dash_mercado import get_latest_dashboard_scores
+        
+        ultimo = get_latest_dashboard_scores()
+        
+        if ultimo:
+            return _format_indicators_from_db_record(ultimo)
+        else:
+            return {"ciclo": {}, "momentum": {}, "tecnico": {}}
+        
+    except Exception as e:
+        logger.error(f"❌ Erro get_current_indicators_data: {str(e)}")
+        return {"ciclo": {}, "momentum": {}, "tecnico": {}}
+
+def _format_indicators_from_db_record(record: dict) -> dict:
+    """Formata indicadores a partir do registro do banco com scores"""
+    try:
         from app.services.scores.ciclos import (
-            calcular_mvrv_score, calcular_nupl_score, 
+            calcular_mvrv_score, calcular_nupl_score,
             calcular_realized_score, calcular_puell_score
         )
-        
-        dados = indicadores_ciclos.obter_indicadores()
-        
-        if dados.get("status") == "success":
-            indicadores = dados["indicadores"]
-            
-            # Calcular scores individuais
-            mvrv_score, mvrv_class = calcular_mvrv_score(indicadores["MVRV_Z"]["valor"])
-            nupl_score, nupl_class = calcular_nupl_score(indicadores["NUPL"]["valor"])
-            realized_score, realized_class = calcular_realized_score(indicadores["Realized_Ratio"]["valor"])
-            puell_score, puell_class = calcular_puell_score(indicadores["Puell_Multiple"]["valor"])
-            
-            return {
-                "mvrv": {
-                    "valor": indicadores["MVRV_Z"]["valor"],
-                    "score": mvrv_score
-                },
-                "nupl": {
-                    "valor": indicadores["NUPL"]["valor"],
-                    "score": nupl_score
-                },
-                "realized_price_ratio": {
-                    "valor": indicadores["Realized_Ratio"]["valor"],
-                    "score": realized_score
-                },
-                "puell_multiple": {
-                    "valor": indicadores["Puell_Multiple"]["valor"],
-                    "score": puell_score
-                }
-            }
-        else:
-            return {}
-            
-    except Exception as e:
-        logger.error(f"❌ Erro _format_ciclo_with_scores: {str(e)}")
-        return {}
-
-def _format_momentum_with_scores() -> dict:
-    """Formata indicadores MOMENTUM com scores individuais"""
-    try:
-        from app.services.indicadores import momentum as indicadores_momentum
         from app.services.scores.momentum import (
             calcular_rsi_score, calcular_funding_score,
             calcular_sopr_score, calcular_ls_ratio_score
         )
         
-        dados = indicadores_momentum.obter_indicadores()
+        # Calcular scores individuais dos valores salvos
+        mvrv_score, _ = calcular_mvrv_score(record.get("mvrv_z_score"))
+        nupl_score, _ = calcular_nupl_score(record.get("nupl"))
+        realized_score, _ = calcular_realized_score(record.get("realized_ratio"))
+        puell_score, _ = calcular_puell_score(record.get("puell_multiple"))
         
-        if dados.get("status") == "success":
-            indicadores = dados["indicadores"]
-            
-            # Calcular scores individuais
-            rsi_score, rsi_class = calcular_rsi_score(indicadores["RSI_Semanal"]["valor"])
-            funding_score, funding_class = calcular_funding_score(indicadores["Funding_Rates"]["valor"])
-            sopr_score, sopr_class = calcular_sopr_score(indicadores["SOPR"]["valor"])
-            ls_score, ls_class = calcular_ls_ratio_score(indicadores["Long_Short_Ratio"]["valor"])
-            
-            return {
+        rsi_score, _ = calcular_rsi_score(record.get("rsi_semanal"))
+        funding_score, _ = calcular_funding_score(record.get("funding_rates"))
+        sopr_score, _ = calcular_sopr_score(record.get("sopr"))
+        ls_score, _ = calcular_ls_ratio_score(record.get("long_short_ratio"))
+        
+        return {
+            "ciclo": {
+                "mvrv": {
+                    "valor": record.get("mvrv_z_score"),
+                    "score": mvrv_score
+                },
+                "nupl": {
+                    "valor": record.get("nupl"),
+                    "score": nupl_score
+                },
+                "realized_price_ratio": {
+                    "valor": record.get("realized_ratio"),
+                    "score": realized_score
+                },
+                "puell_multiple": {
+                    "valor": record.get("puell_multiple"),
+                    "score": puell_score
+                }
+            },
+            "momentum": {
                 "rsi_semanal": {
-                    "valor": indicadores["RSI_Semanal"]["valor"],
+                    "valor": record.get("rsi_semanal"),
                     "score": rsi_score
                 },
                 "funding_rate": {
-                    "valor": indicadores["Funding_Rates"]["valor"],
+                    "valor": record.get("funding_rates"),
                     "score": funding_score
                 },
                 "sopr": {
-                    "valor": indicadores["SOPR"]["valor"],
+                    "valor": record.get("sopr"),
                     "score": sopr_score
                 },
                 "long_short_ratio": {
-                    "valor": indicadores["Long_Short_Ratio"]["valor"],
+                    "valor": record.get("long_short_ratio"),
                     "score": ls_score
                 }
-            }
-        else:
-            return {}
-            
+            },
+            "tecnico": _get_tecnico_breakdown()
+        }
+        
     except Exception as e:
-        logger.error(f"❌ Erro _format_momentum_with_scores: {str(e)}")
-        return {}
+        logger.error(f"❌ Erro _format_indicators_from_db_record: {str(e)}")
+        return {"ciclo": {}, "momentum": {}, "tecnico": {}}
 
-def _format_tecnico_with_scores() -> dict:
-    """Formata indicadores TÉCNICO com scores e descrições"""
+def _get_tecnico_breakdown() -> dict:
+    """Obtém breakdown do score técnico atual"""
     try:
         from app.services.scores import tecnico as score_tecnico
         
-        # Obter score técnico completo
         dados = score_tecnico.calcular_score()
         
         if dados.get("status") == "success":
@@ -151,7 +146,7 @@ def _format_tecnico_with_scores() -> dict:
             }
             
     except Exception as e:
-        logger.error(f"❌ Erro _format_tecnico_with_scores: {str(e)}")
+        logger.error(f"❌ Erro _get_tecnico_breakdown: {str(e)}")
         return {
             "semanal": {"score": 0, "descricao": "N/A"},
             "diario": {"score": 0, "descricao": "N/A"}

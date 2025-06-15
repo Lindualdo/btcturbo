@@ -7,25 +7,27 @@ logger = logging.getLogger(__name__)
 
 def save_scores_to_db(dados_scores: dict) -> dict:
     """
-    Salva scores no banco PostgreSQL
-    
-    Args:
-        dados_scores: Dict com scores calculados
-        
-    Returns:
-        dict: {"status": "success/error", "id": registro_id}
+    Salva scores + JSON completo formatado no banco
     """
     try:
         from app.services.utils.helpers.postgres.base import execute_query
         
-        # SQL para inserir scores
+        # Buscar IDs dos últimos registros de indicadores
+        ids_indicadores = _get_latest_indicators_ids()
+        
+        # Montar JSON completo dos indicadores com scores
+        json_indicadores = _build_indicators_json()
+        
+        # SQL para inserir scores + JSON
         query = """
             INSERT INTO dashboard_mercado_scores (
                 score_ciclo, classificacao_ciclo,
                 score_momentum, classificacao_momentum, 
                 score_tecnico, classificacao_tecnico,
-                score_consolidado, classificacao_consolidada
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                score_consolidado, classificacao_consolidada,
+                indicadores_json,
+                indicador_ciclo_id, indicador_momentum_id, indicador_tecnico_id
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             RETURNING id
         """
         
@@ -37,13 +39,17 @@ def save_scores_to_db(dados_scores: dict) -> dict:
             dados_scores["score_tecnico"],
             dados_scores["classificacao_tecnico"],
             dados_scores["score_consolidado"],
-            dados_scores["classificacao_consolidada"]
+            dados_scores["classificacao_consolidada"],
+            json_indicadores,  # JSON pronto
+            ids_indicadores.get("ciclo_id"),
+            ids_indicadores.get("momentum_id"),
+            ids_indicadores.get("tecnico_id")
         )
         
         resultado = execute_query(query, params, fetch_one=True)
         
         if resultado:
-            logger.info(f"✅ Scores salvos - ID: {resultado['id']}")
+            logger.info(f"✅ Scores + JSON salvos - ID: {resultado['id']}")
             return {
                 "status": "success",
                 "id": resultado["id"]
@@ -63,10 +69,7 @@ def save_scores_to_db(dados_scores: dict) -> dict:
 
 def get_latest_scores_from_db() -> dict:
     """
-    Obtém último registro de scores do banco
-    
-    Returns:
-        dict: Dados do último registro ou None
+    Obtém último registro com JSON já formatado
     """
     try:
         from app.services.utils.helpers.postgres.base import execute_query
@@ -77,7 +80,8 @@ def get_latest_scores_from_db() -> dict:
                 score_ciclo, classificacao_ciclo,
                 score_momentum, classificacao_momentum,
                 score_tecnico, classificacao_tecnico, 
-                score_consolidado, classificacao_consolidada
+                score_consolidado, classificacao_consolidada,
+                indicadores_json
             FROM dashboard_mercado_scores
             ORDER BY timestamp DESC
             LIMIT 1
@@ -95,6 +99,87 @@ def get_latest_scores_from_db() -> dict:
     except Exception as e:
         logger.error(f"❌ Erro get_latest_scores_from_db: {str(e)}")
         return None
+
+def _build_indicators_json() -> dict:
+    """Constrói JSON completo dos indicadores com scores"""
+    try:
+        import json
+        from app.services.indicadores import ciclos, momentum, tecnico
+        from app.services.scores.ciclos import calcular_mvrv_score, calcular_nupl_score, calcular_realized_score, calcular_puell_score
+        from app.services.scores.momentum import calcular_rsi_score, calcular_funding_score, calcular_sopr_score, calcular_ls_ratio_score
+        from app.services.scores import tecnico as score_tecnico
+        
+        # Dados CICLO
+        dados_ciclo = ciclos.obter_indicadores()["indicadores"]
+        mvrv_score, _ = calcular_mvrv_score(dados_ciclo["MVRV_Z"]["valor"])
+        nupl_score, _ = calcular_nupl_score(dados_ciclo["NUPL"]["valor"])
+        realized_score, _ = calcular_realized_score(dados_ciclo["Realized_Ratio"]["valor"])
+        puell_score, _ = calcular_puell_score(dados_ciclo["Puell_Multiple"]["valor"])
+        
+        # Dados MOMENTUM
+        dados_momentum = momentum.obter_indicadores()["indicadores"]
+        rsi_score, _ = calcular_rsi_score(dados_momentum["RSI_Semanal"]["valor"])
+        funding_score, _ = calcular_funding_score(dados_momentum["Funding_Rates"]["valor"])
+        sopr_score, _ = calcular_sopr_score(dados_momentum["SOPR"]["valor"])
+        ls_score, _ = calcular_ls_ratio_score(dados_momentum["Long_Short_Ratio"]["valor"])
+        
+        # Dados TÉCNICO
+        dados_tecnico = score_tecnico.calcular_score()
+        detalhes = dados_tecnico.get("detalhes", {})
+        
+        json_completo = {
+            "ciclo": {
+                "mvrv": {"valor": dados_ciclo["MVRV_Z"]["valor"], "score": mvrv_score},
+                "nupl": {"valor": dados_ciclo["NUPL"]["valor"], "score": nupl_score},
+                "realized_price_ratio": {"valor": dados_ciclo["Realized_Ratio"]["valor"], "score": realized_score},
+                "puell_multiple": {"valor": dados_ciclo["Puell_Multiple"]["valor"], "score": puell_score}
+            },
+            "momentum": {
+                "rsi_semanal": {"valor": dados_momentum["RSI_Semanal"]["valor"], "score": rsi_score},
+                "funding_rate": {"valor": dados_momentum["Funding_Rates"]["valor"], "score": funding_score},
+                "sopr": {"valor": dados_momentum["SOPR"]["valor"], "score": sopr_score},
+                "long_short_ratio": {"valor": dados_momentum["Long_Short_Ratio"]["valor"], "score": ls_score}
+            },
+            "tecnico": {
+                "semanal": {
+                    "score": detalhes.get("semanal", {}).get("score_total", 0),
+                    "descricao": detalhes.get("semanal", {}).get("classificacao", "N/A")
+                },
+                "diario": {
+                    "score": detalhes.get("diario", {}).get("score_total", 0),
+                    "descricao": detalhes.get("diario", {}).get("classificacao", "N/A")
+                }
+            }
+        }
+        
+        return json.dumps(json_completo)
+        
+    except Exception as e:
+        logger.error(f"❌ Erro _build_indicators_json: {str(e)}")
+        return "{}"
+
+def _get_latest_indicators_ids() -> dict:
+    """Busca IDs dos últimos registros de indicadores"""
+    try:
+        from app.services.utils.helpers.postgres.base import execute_query
+        
+        # Buscar último ID de cada tabela
+        queries = {
+            "ciclo_id": "SELECT id FROM indicadores_ciclo ORDER BY timestamp DESC LIMIT 1",
+            "momentum_id": "SELECT id FROM indicadores_momentum ORDER BY timestamp DESC LIMIT 1", 
+            "tecnico_id": "SELECT id FROM indicadores_tecnico ORDER BY timestamp DESC LIMIT 1"
+        }
+        
+        ids = {}
+        for key, query in queries.items():
+            resultado = execute_query(query, fetch_one=True)
+            ids[key] = resultado["id"] if resultado else None
+            
+        return ids
+        
+    except Exception as e:
+        logger.error(f"❌ Erro _get_latest_indicators_ids: {str(e)}")
+        return {"ciclo_id": None, "momentum_id": None, "tecnico_id": None}
 
 def create_table_if_not_exists():
     """

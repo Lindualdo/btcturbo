@@ -85,14 +85,18 @@ def calcular_dashboard_mercado() -> dict:
 
 def obter_dashboard_mercado() -> dict:
     """
-    Obtém último dashboard mercado do banco
+    Obtém último dashboard mercado com JSON pronto
     """
     try:
         from app.services.utils.helpers.v2.dash_mercado import get_latest_dashboard_scores
+        import json
         
         ultimo = get_latest_dashboard_scores()
         
         if ultimo:
+            # JSON já vem pronto do banco
+            indicadores_json = json.loads(ultimo["indicadores_json"])
+            
             return {
                 "status": "success",
                 "id": ultimo["id"],
@@ -102,15 +106,18 @@ def obter_dashboard_mercado() -> dict:
                 "blocos": {
                     "ciclo": {
                         "score": float(ultimo["score_ciclo"]),
-                        "classificacao": ultimo["classificacao_ciclo"]
+                        "classificacao": ultimo["classificacao_ciclo"],
+                        "indicadores": indicadores_json["ciclo"]
                     },
                     "momentum": {
                         "score": float(ultimo["score_momentum"]),
-                        "classificacao": ultimo["classificacao_momentum"] 
+                        "classificacao": ultimo["classificacao_momentum"],
+                        "indicadores": indicadores_json["momentum"]
                     },
                     "tecnico": {
                         "score": float(ultimo["score_tecnico"]),
-                        "classificacao": ultimo["classificacao_tecnico"]
+                        "classificacao": ultimo["classificacao_tecnico"],
+                        "indicadores": indicadores_json["tecnico"]
                     }
                 }
             }
