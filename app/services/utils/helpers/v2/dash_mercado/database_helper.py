@@ -122,19 +122,36 @@ def _build_indicators_json() -> dict:
         sopr_score, _ = calcular_sopr_score(dados_momentum["SOPR"]["valor"])
         ls_score, _ = calcular_ls_ratio_score(dados_momentum["Long_Short_Ratio"]["valor"])
         
-        # Dados TÉCNICO
+        # Dados TÉCNICO - buscar estrutura correta
         dados_tecnico = tecnico.obter_indicadores()
         if dados_tecnico.get("status") == "success":
             indicadores_tecnico = dados_tecnico["indicadores"]
+            timeframes = dados_tecnico.get("timeframes", {})
+            
+            # Buscar scores do timeframe
+            semanal_score = 0
+            diario_score = 0
+            
+            if timeframes:
+                semanal_data = timeframes.get("semanal", {})
+                diario_data = timeframes.get("diario", {})
+                
+                semanal_score = semanal_data.get("scores", {}).get("consolidado", 0)
+                diario_score = diario_data.get("scores", {}).get("consolidado", 0)
+            else:
+                # Fallback: buscar do Score_Final_Ponderado se timeframes não existe
+                score_final = indicadores_tecnico.get("Score_Final_Ponderado", {}).get("score_numerico", 0)
+                semanal_score = score_final * 0.7  # Proporção semanal
+                diario_score = score_final * 0.3   # Proporção diária
             
             tecnico_json = {
                 "semanal": {
-                    "score": indicadores_tecnico.get("Sistema_EMAs_Semanal", {}).get("valor", 0),
-                    "descricao": indicadores_tecnico.get("Sistema_EMAs_Semanal", {}).get("classificacao", "N/A")
+                    "score": round(semanal_score, 2),
+                    "descricao": _get_score_description(semanal_score)
                 },
                 "diario": {
-                    "score": indicadores_tecnico.get("Sistema_EMAs_Diario", {}).get("valor", 0),
-                    "descricao": indicadores_tecnico.get("Sistema_EMAs_Diario", {}).get("classificacao", "N/A")
+                    "score": round(diario_score, 2), 
+                    "descricao": _get_score_description(diario_score)
                 }
             }
         else:
@@ -164,6 +181,19 @@ def _build_indicators_json() -> dict:
     except Exception as e:
         logger.error(f"❌ Erro _build_indicators_json: {str(e)}")
         return "{}"
+
+def _get_score_description(score):
+    """Converte score numérico em descrição"""
+    if score >= 8.1:
+        return "Tendência Forte"
+    elif score >= 6.1:
+        return "Correção Saudável"
+    elif score >= 4.1:
+        return "Neutro"
+    elif score >= 2.1:
+        return "Reversão"
+    else:
+        return "Bear Confirmado"
 
 def _get_latest_indicators_ids() -> dict:
     """Busca IDs dos últimos registros de indicadores"""
