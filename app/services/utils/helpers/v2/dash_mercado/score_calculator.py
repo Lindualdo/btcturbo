@@ -63,10 +63,14 @@ def _calculate_ciclo_score(score_ciclos) -> dict:
         resultado = score_ciclos.calcular_score()
         
         if resultado.get("status") == "success":
-            logger.info(f"✅ Score CICLO: {resultado['score']:.1f}")
+            # Ciclos retorna "score_consolidado" e "classificacao_consolidada"
+            score = resultado.get("score_consolidado", resultado.get("score", 0))
+            classificacao = resultado.get("classificacao_consolidada", resultado.get("classificacao", "neutro"))
+            
+            logger.info(f"✅ Score CICLO: {score:.1f}")
             return {
-                "score": resultado["score"],
-                "classificacao": resultado["classificacao"]
+                "score": score,
+                "classificacao": classificacao
             }
         else:
             logger.error("❌ Falha cálculo score CICLO")
@@ -82,10 +86,14 @@ def _calculate_momentum_score(score_momentum) -> dict:
         resultado = score_momentum.calcular_score()
         
         if resultado.get("status") == "success":
-            logger.info(f"✅ Score MOMENTUM: {resultado['score']:.1f}")
+            # Momentum retorna "score_consolidado" e "classificacao_consolidada"
+            score = resultado.get("score_consolidado", resultado.get("score", 0))
+            classificacao = resultado.get("classificacao_consolidada", resultado.get("classificacao", "neutro"))
+            
+            logger.info(f"✅ Score MOMENTUM: {score:.1f}")
             return {
-                "score": resultado["score"],
-                "classificacao": resultado["classificacao"]
+                "score": score,
+                "classificacao": classificacao
             }
         else:
             logger.error("❌ Falha cálculo score MOMENTUM")
@@ -101,10 +109,14 @@ def _calculate_tecnico_score(score_tecnico) -> dict:
         resultado = score_tecnico.calcular_score()
         
         if resultado.get("status") == "success":
-            logger.info(f"✅ Score TÉCNICO: {resultado['score']:.1f}")
+            # Técnico pode retornar "score" ou "score_consolidado"
+            score = resultado.get("score_consolidado", resultado.get("score", 0))
+            classificacao = resultado.get("classificacao_consolidada", resultado.get("classificacao", "neutro"))
+            
+            logger.info(f"✅ Score TÉCNICO: {score:.1f}")
             return {
-                "score": resultado["score"],
-                "classificacao": resultado["classificacao"]
+                "score": score,
+                "classificacao": classificacao
             }
         else:
             logger.error("❌ Falha cálculo score TÉCNICO")
