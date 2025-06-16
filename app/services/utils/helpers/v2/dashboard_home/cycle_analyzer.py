@@ -7,119 +7,159 @@ logger = logging.getLogger(__name__)
 
 def identify_cycle(data: Dict) -> Dict:
     """
-    Identifica ciclo de mercado baseado em MVRV e Score
-    
-    Returns:
-        Dict com ciclo, fase, direção permitida
+    Identifica ciclo de mercado baseado em Score Mercado + MVRV
+    Usa tabela completa de parâmetros por ciclo
     """
     try:
         mvrv = data["mvrv"]
         score_mercado = data["score_mercado"]
         
-        # Tabela de ciclos (baseada na documentação)
-        cycle_info = _get_cycle_from_mvrv_score(mvrv, score_mercado)
+        # Identificar ciclo usando ambos Score e MVRV
+        cycle_info = _get_cycle_from_score_mvrv(score_mercado, mvrv)
         
-        logger.info(f"🔄 Ciclo identificado: {cycle_info['cycle']} (MVRV: {mvrv:.2f}, Score: {score_mercado:.1f})")
+        logger.info(f"🔄 Ciclo: {cycle_info['cycle']} (Score: {score_mercado:.1f}, MVRV: {mvrv:.2f})")
         
         return cycle_info
         
     except Exception as e:
         logger.error(f"❌ Erro identificação ciclo: {str(e)}")
-        return {
-            "cycle": "NEUTRO",
-            "phase": "indefinido",
-            "direction": "hold",
-            "max_leverage": 2.0,
-            "stop_suggested": 12
-        }
+        return _get_default_cycle()
 
-def _get_cycle_from_mvrv_score(mvrv: float, score: float) -> Dict:
+def _get_cycle_from_score_mvrv(score: float, mvrv: float) -> Dict:
     """
-    Determina ciclo baseado em MVRV (prioritário) com validação de Score
-    
-    Tabela atualizada - MVRV define ciclo, Score valida:
-    - MVRV < 0.8: BOTTOM (Score esperado 0-20)
-    - MVRV 0.8-1.2: ACUMULAÇÃO (Score esperado 20-40)
-    - MVRV 1.2-2.0: BULL INICIAL (Score esperado 40-70)
-    - MVRV 2.0-3.0: BULL MADURO (Score esperado 50-80)
-    - MVRV > 3.0: EUFORIA/TOPO (Score esperado 60-100)
+    Determina ciclo baseado em Score Mercado (prioritário) + MVRV (validação)
+    Implementa tabela completa de parâmetros
     """
     
-    # MVRV define o ciclo (prioritário)
-    if mvrv < 0.8:
-        cycle = "BOTTOM"
-        expected_score = (0, 20)
-        interpretation = "Oportunidade histórica" if score > 20 else "Bottom confirmado"
+    # BOTTOM: Score 0-20 ou MVRV < 0.8
+    if score <= 20 or mvrv < 0.8:
         return {
             "cycle": "BOTTOM",
             "phase": "acumulacao_agressiva",
             "direction": "comprar",
             "max_leverage": 3.0,
-            "stop_suggested": 20,
+            "max_exposure": 100,  # % do capital
+            "stop_suggested": -20, # % de perda
             "position_size": "40-50%",
-            "interpretation": interpretation
+            "interpretation": "Oportunidade histórica - máxima agressividade",
+            "stop_type": "MA"  # Moving Average based
         }
     
-    elif 0.8 <= mvrv <= 1.2:
-        cycle = "ACUMULAÇÃO"
-        expected_score = (20, 40)
-        interpretation = "Aumentar posições" if score > 40 else "Acumulação confirmada"
+    # ACUMULAÇÃO: Score 20-40 ou MVRV 0.8-1.2
+    elif 20 < score <= 40 or (0.8 <= mvrv <= 1.2):
         return {
-            "cycle": "ACUMULAÇÃO",
+            "cycle": "ACUMULAÇÃO", 
             "phase": "compras_agressivas",
             "direction": "comprar",
             "max_leverage": 2.5,
-            "stop_suggested": 15,
+            "max_exposure": 90,
+            "stop_suggested": -15,
             "position_size": "30-40%",
-            "interpretation": interpretation
+            "interpretation": "Acumulação ativa - compras agressivas",
+            "stop_type": "MA"
         }
     
-    elif 1.2 <= mvrv <= 2.0:
-        cycle = "BULL_INICIAL"
-        expected_score = (40, 70)
-        interpretation = "Comprar pullbacks" if score < 40 else "Bull inicial confirmado"
+    # BULL INICIAL: Score 40-60 ou MVRV 1.2-2.0
+    elif 40 < score <= 60 or (1.2 <= mvrv <= 2.0):
         return {
             "cycle": "BULL_INICIAL",
-            "phase": "compras_moderadas",
+            "phase": "compras_moderadas", 
             "direction": "comprar_seletivo",
             "max_leverage": 2.5,
-            "stop_suggested": 12,
+            "max_exposure": 100,
+            "stop_suggested": -12,
             "position_size": "20-30%",
-            "interpretation": interpretation
+            "interpretation": "Bull inicial - compras seletivas",
+            "stop_type": "MA"
         }
     
-    elif 2.0 <= mvrv <= 3.0:
-        cycle = "BULL_MADURO"
-        expected_score = (50, 80)
-        interpretation = "Manter com stops" if score < 50 else "Bull maduro confirmado"
+    # BULL MADURO: Score 60-80 ou MVRV 2.0-3.0
+    elif 60 < score <= 80 or (2.0 <= mvrv <= 3.0):
         return {
             "cycle": "BULL_MADURO",
             "phase": "hold_realizacoes",
             "direction": "hold_realizar",
             "max_leverage": 2.0,
-            "stop_suggested": 10,
-            "position_size": "15-25%",
-            "interpretation": interpretation
+            "max_exposure": 80,
+            "stop_suggested": -10,
+            "position_size": "15-25%", 
+            "interpretation": "Bull maduro - manter com stops",
+            "stop_type": "ATR"  # Average True Range based
         }
     
-    else:  # mvrv > 3.0
-        cycle = "EUFORIA_TOPO"
-        expected_score = (60, 100)
-        interpretation = "Realizar gradualmente" if score < 60 else "Euforia confirmada"
+    # EUFORIA/TOPO: Score > 80 ou MVRV > 3.0
+    else:
         return {
             "cycle": "EUFORIA_TOPO",
             "phase": "realizar_gradual",
             "direction": "realizar",
             "max_leverage": 1.5,
-            "stop_suggested": 8,
-            "position_size": "realizar_20-40%",
-            "interpretation": interpretation
+            "max_exposure": 60,
+            "stop_suggested": -8,
+            "position_size": "Realize 20-40%",
+            "interpretation": "Euforia/Topo - realizar gradualmente",
+            "stop_type": "ATR"
         }
 
+def _get_default_cycle() -> Dict:
+    """Ciclo padrão em caso de erro"""
+    return {
+        "cycle": "NEUTRO",
+        "phase": "indefinido",
+        "direction": "hold",
+        "max_leverage": 2.0,
+        "max_exposure": 70,
+        "stop_suggested": -12,
+        "position_size": "0%",
+        "interpretation": "Dados insuficientes",
+        "stop_type": "MA"
+    }
+
+def get_cycle_parameters_table() -> Dict:
+    """
+    Retorna tabela completa de parâmetros por ciclo
+    Para referência e validação
+    """
+    return {
+        "BOTTOM": {
+            "max_leverage": 3.0,
+            "max_exposure": 100,
+            "stop_suggested": -20,
+            "position_size": "40-50%",
+            "stop_type": "MA"
+        },
+        "ACUMULAÇÃO": {
+            "max_leverage": 2.5,
+            "max_exposure": 90, 
+            "stop_suggested": -15,
+            "position_size": "30-40%",
+            "stop_type": "MA"
+        },
+        "BULL_INICIAL": {
+            "max_leverage": 2.5,
+            "max_exposure": 100,
+            "stop_suggested": -12,
+            "position_size": "20-30%", 
+            "stop_type": "MA"
+        },
+        "BULL_MADURO": {
+            "max_leverage": 2.0,
+            "max_exposure": 80,
+            "stop_suggested": -10,
+            "position_size": "15-25%",
+            "stop_type": "ATR"
+        },
+        "EUFORIA_TOPO": {
+            "max_leverage": 1.5,
+            "max_exposure": 60,
+            "stop_suggested": -8,
+            "position_size": "Realize 20-40%",
+            "stop_type": "ATR"
+        }
+    }
+
 def get_cycle_permissions(cycle_info: Dict) -> Dict:
-    """
-    Retorna permissões baseadas no ciclo identificado
-    """
+    """Retorna permissões baseadas no ciclo"""
     cycle = cycle_info["cycle"]
     
     permissions = {
@@ -127,37 +167,91 @@ def get_cycle_permissions(cycle_info: Dict) -> Dict:
             "allow_buy": True,
             "allow_sell": False,
             "priority": "maxima",
-            "bias": "acumular"
+            "bias": "acumular",
+            "urgency": "alta"
         },
         "ACUMULAÇÃO": {
-            "allow_buy": True, 
-            "allow_sell": False,
+            "allow_buy": True,
+            "allow_sell": False, 
             "priority": "alta",
-            "bias": "comprar"
+            "bias": "comprar",
+            "urgency": "alta"
         },
         "BULL_INICIAL": {
             "allow_buy": True,
-            "allow_sell": False, 
+            "allow_sell": False,
             "priority": "media",
-            "bias": "seletivo"
+            "bias": "seletivo",
+            "urgency": "media"
         },
         "BULL_MADURO": {
             "allow_buy": True,
             "allow_sell": True,
             "priority": "baixa_compra",
-            "bias": "realizar_parcial"
+            "bias": "realizar_parcial", 
+            "urgency": "baixa"
         },
         "EUFORIA_TOPO": {
             "allow_buy": False,
             "allow_sell": True,
-            "priority": "maxima_venda", 
-            "bias": "realizar"
+            "priority": "maxima_venda",
+            "bias": "realizar",
+            "urgency": "critica"
         }
     }
     
     return permissions.get(cycle, {
         "allow_buy": True,
-        "allow_sell": True, 
-        "priority": "media",
-        "bias": "neutro"
+        "allow_sell": True,
+        "priority": "media", 
+        "bias": "neutro",
+        "urgency": "baixa"
     })
+
+def validate_cycle_consistency(score: float, mvrv: float) -> Dict:
+    """
+    Valida consistência entre Score e MVRV
+    Detecta divergências importantes
+    """
+    
+    # Faixas esperadas
+    score_ranges = {
+        "BOTTOM": (0, 20),
+        "ACUMULAÇÃO": (20, 40), 
+        "BULL_INICIAL": (40, 60),
+        "BULL_MADURO": (60, 80),
+        "EUFORIA_TOPO": (80, 100)
+    }
+    
+    mvrv_ranges = {
+        "BOTTOM": (0, 0.8),
+        "ACUMULAÇÃO": (0.8, 1.2),
+        "BULL_INICIAL": (1.2, 2.0), 
+        "BULL_MADURO": (2.0, 3.0),
+        "EUFORIA_TOPO": (3.0, 10.0)
+    }
+    
+    # Determinar ciclo por cada métrica
+    score_cycle = None
+    mvrv_cycle = None
+    
+    for cycle, (min_val, max_val) in score_ranges.items():
+        if min_val <= score <= max_val:
+            score_cycle = cycle
+            break
+    
+    for cycle, (min_val, max_val) in mvrv_ranges.items():
+        if min_val <= mvrv <= max_val:
+            mvrv_cycle = cycle
+            break
+    
+    # Verificar consistência
+    consistent = score_cycle == mvrv_cycle
+    
+    return {
+        "consistent": consistent,
+        "score_cycle": score_cycle,
+        "mvrv_cycle": mvrv_cycle,
+        "divergence": None if consistent else f"Score indica {score_cycle}, MVRV indica {mvrv_cycle}",
+        "priority_cycle": score_cycle  # Score tem prioridade
+    }

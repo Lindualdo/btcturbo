@@ -37,13 +37,16 @@ Sistema quantitativo para gestão de posição alavancada em Bitcoin, focado em 
 - **Distância até Liquidação** (50%): Percentual de queda até liquidação forçada
 
 ### 3️⃣ Dimensionamento de Alavancagem
+
 **Pergunta Central:** "Qual alavancagem máxima posso usar?"
 
-Baseado exclusivamente no MVRV:
-- MVRV < 1.0: Máximo 3.0x (bottom/acumulação profunda)
-- MVRV 1.0-2.0: Máximo 2.5x (bull inicial)
-- MVRV 2.0-3.0: Máximo 2.0x (bull maduro)
-- MVRV > 3.0: Máximo 1.5x (zona de topo/euforia)
+| Ciclo | Max Alavancagem | Max Exposição | Stop Sugerido | Tamanho Operação |
+|-------|-----------------|---------------|---------------|------------------|
+| BOTTOM | 3.0x | 100% | -20% ou MA | 40-50% |
+| ACUMULAÇÃO | 2.5x | 90% | -15% ou MA | 30-40% |
+| BULL INICIAL | 2.5x | 100% | -12% ou MA | 20-30% |
+| BULL MADURO | 2.0x | 80% | -10% ou ATR | 15-25% |
+| EUFORIA/TOPO | 1.5x | 60% | -8% ou ATR | Realize 20-40% |
 
 ### 4️⃣ Execução Tática
 
@@ -57,7 +60,7 @@ Baseado exclusivamente no MVRV:
 
 ---
 
-## 📊 Etapa 1: Identificação do Ciclo de Mercado (CORRIGIDA)
+## 📊 Etapa 1: Identificação do Ciclo de Mercado
 
 ### Definição do Ciclo
 | Score Mercado | MVRV | Ciclo | Estratégia Macro |
@@ -68,7 +71,7 @@ Baseado exclusivamente no MVRV:
 | 60-80 | 2.0-3.0 | **BULL MADURO** | Hold + Realizações |
 | 80-100 | >3.0 | **EUFORIA/TOPO** | Realizar gradual |
 
-### Parâmetros por Ciclo
+### Alavancagem e decisões por ciclo
 | Ciclo | Max Alavancagem | Max Exposição | Stop Sugerido | Tamanho Operação |
 |-------|-----------------|---------------|---------------|------------------|
 | BOTTOM | 3.0x | 100% | -20% ou MA | 40-50% |
