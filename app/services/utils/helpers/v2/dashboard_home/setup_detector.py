@@ -5,19 +5,22 @@ from typing import Dict
 
 logger = logging.getLogger(__name__)
 
+
+# ADICIONAR no topo dos imports:
 def detect_setup_4h(data: Dict) -> Dict:
     """
-    Detecta setup baseado em EMA144 distance e RSI (timeframe 4H logic)
-    
-    Returns:
-        Dict com setup detectado e confiança
+    Detecta setup baseado em EMA144 distance, RSI e cruzamentos EMA17/EMA34
     """
     try:
         ema_distance = data["ema_distance"]
         rsi_diario = data["rsi_diario"]
         
-        # Detectar setup principal
-        setup_info = _identify_primary_setup(ema_distance, rsi_diario)
+        # NOVO: Buscar dados de cruzamento EMA17/EMA34
+        from app.services.utils.helpers.tradingview.ema_calculator import detect_ema_crossover
+        ema_cross_data = detect_ema_crossover(lookback_hours=24)
+        
+        # Detectar setup principal (ordem de prioridade)
+        setup_info = _identify_primary_setup(ema_distance, rsi_diario, ema_cross_data)
         
         logger.info(f"🎯 Setup detectado: {setup_info['setup']} (EMA: {ema_distance:+.1f}%, RSI: {rsi_diario:.1f})")
         
@@ -31,6 +34,7 @@ def detect_setup_4h(data: Dict) -> Dict:
             "action": "HOLD",
             "size": 0
         }
+
 
 def _identify_primary_setup(ema_distance: float, rsi: float) -> Dict:
     """
@@ -153,3 +157,123 @@ def get_setup_confluence(setup_info: Dict, data: Dict) -> Dict:
         "strength": len(confluences),
         "validated": len(confluences) >= 1
     }
+def _identify_primary_setup(ema_distance: float, rsi: float, ema_cross_data: Dict) -> Dict:
+    """
+    Identifica setup principal baseado na matriz atualizada + cruzamentos EMA
+    """
+    
+    # PRIORIDADE 1: SETUPS DE CRUZAMENTO EMA (NOVOS)
+    if _is_golden_cross_setup(ema_cross_data):
+        return {
+            "setup": "GOLDEN_CROSS",
+            "confidence": "alta",
+            "action": "COMPRAR",
+            "size": 25,
+            "description": f"EMA17 cruzou acima EMA34 há {ema_cross_data.get('hours_ago', 0)}h",
+            "cross_info": ema_cross_data
+        }
+    
+    if _is_death_cross_setup(ema_cross_data):
+        return {
+            "setup": "DEATH_CROSS",
+            "confidence": "alta", 
+            "action": "REALIZAR",
+            "size": 20,
+            "description": f"EMA17 cruzou abaixo EMA34 há {ema_cross_data.get('hours_ago', 0)}h",
+            "cross_info": ema_cross_data
+        }
+    
+    # PRIORIDADE 2: SETUPS EXISTENTES (ordem mantida)
+    if _is_oversold_extreme_setup(ema_distance, rsi):
+        return {
+            "setup": "OVERSOLD_EXTREMO", 
+            "confidence": "maxima",
+            "action": "COMPRAR",
+            "size": 40,
+            "description": "RSI < 30 fora de bear market"
+        }
+    
+    if _is_pullback_setup(ema_distance, rsi):
+        return {
+            "setup": "PULLBACK_TENDENCIA",
+            "confidence": "alta",
+            "action": "COMPRAR", 
+            "size": 30,
+            "description": "RSI < 45 + EMA144 ±3% em tendência alta"
+        }
+    
+    if _is_support_test_setup(ema_distance, rsi):
+        return {
+            "setup": "TESTE_SUPORTE",
+            "confidence": "media",
+            "action": "COMPRAR",
+            "size": 25,
+            "description": "Toca EMA144 com bounce e volume alto"
+        }
+        
+    if _is_breakout_setup(ema_distance, rsi):
+        return {
+            "setup": "ROMPIMENTO",
+            "confidence": "alta",
+            "action": "COMPRAR",
+            "size": 20,
+            "description": "Fecha acima resistência com alinhamento OK"
+        }
+    
+    # SETUPS DE VENDA
+    if _is_resistance_setup(ema_distance, rsi):
+        return {
+            "setup": "RESISTENCIA",
+            "confidence": "alta", 
+            "action": "REALIZAR",
+            "size": 25,
+            "description": "RSI > 70 + EMA144 > +15%"
+        }
+        
+    if _is_exhaustion_setup(ema_distance, rsi):
+        return {
+            "setup": "EXAUSTAO",
+            "confidence": "media",
+            "action": "REALIZAR", 
+            "size": 30,
+            "description": "3 topos + volume baixo + RSI > 65"
+        }
+    
+    # NEUTRO
+    return {
+        "setup": "NEUTRO",
+        "confidence": "baixa",
+        "action": "HOLD",
+        "size": 0,
+        "description": "Nenhum setup claro detectado"
+    }
+
+# NOVAS FUNÇÕES DE VALIDAÇÃO DOS SETUPS EMA
+
+def _is_golden_cross_setup(ema_cross_data: Dict) -> bool:
+    """
+    Valida GOLDEN CROSS setup
+    
+    Condições:
+    1. Golden cross detectado nas últimas 24h
+    2. EMA17 ainda acima EMA34 (alinhamento bullish)
+    """
+    return (
+        ema_cross_data.get("golden_cross", False) and
+        ema_cross_data.get("current_alignment") == "bullish" and
+        ema_cross_data.get("hours_ago", 25) <= 24  # Dentro da janela de 24h
+    )
+
+def _is_death_cross_setup(ema_cross_data: Dict) -> bool:
+    """
+    Valida DEATH CROSS setup
+    
+    Condições:
+    1. Death cross detectado nas últimas 24h
+    2. EMA17 ainda abaixo EMA34 (alinhamento bearish)
+    """
+    return (
+        ema_cross_data.get("death_cross", False) and
+        ema_cross_data.get("current_alignment") == "bearish" and
+        ema_cross_data.get("hours_ago", 25) <= 24  # Dentro da janela de 24h
+    )

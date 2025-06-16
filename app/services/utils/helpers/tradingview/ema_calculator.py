@@ -299,3 +299,100 @@ def get_complete_ema_analysis() -> Dict:
             "status": "error",
             "error": str(e)
         }
+    
+def detect_ema_crossover(lookback_hours: int = 24) -> Dict:
+    """
+    Detecta cruzamentos EMA17/EMA34 nas últimas 24h (timeframe 4H)
+    
+    Args:
+        lookback_hours: Horas para verificar cruzamento (padrão: 24h)
+    
+    Returns:
+        Dict com informações do cruzamento
+    """
+    try:
+        from tvDatafeed import Interval
+        
+        logger.info(f"🔍 Detectando cruzamentos EMA17/EMA34 nas últimas {lookback_hours}h...")
+        
+        # Calcular quantos períodos 4H verificar
+        lookback_periods = lookback_hours // 4  # 24h = 6 períodos 4H
+        
+        # Buscar dados 4H (precisamos de mais barras para calcular EMAs)
+        df = fetch_ohlc_data(
+            symbol="BTCUSDT",
+            exchange="BINANCE", 
+            interval=Interval.in_4_hour,
+            n_bars=200  # Suficiente para EMA34
+        )
+        
+        if df is None or len(df) < 50:
+            raise Exception("Dados insuficientes para análise")
+        
+        # Calcular EMAs
+        ema_17 = df['close'].ewm(span=17, adjust=False).mean()
+        ema_34 = df['close'].ewm(span=34, adjust=False).mean()
+        
+        # Verificar cruzamentos nos últimos períodos
+        golden_cross_detected = False
+        death_cross_detected = False
+        hours_ago = None
+        
+        for i in range(1, min(lookback_periods + 1, len(df))):
+            current_idx = -i
+            previous_idx = -(i + 1)
+            
+            # Valores atuais e anteriores
+            ema17_current = ema_17.iloc[current_idx]
+            ema34_current = ema_34.iloc[current_idx]
+            ema17_previous = ema_17.iloc[previous_idx]
+            ema34_previous = ema_34.iloc[previous_idx]
+            
+            # Detectar GOLDEN CROSS (EMA17 cruza para cima da EMA34)
+            if (ema17_previous <= ema34_previous and ema17_current > ema34_current):
+                golden_cross_detected = True
+                hours_ago = i * 4
+                logger.info(f"✅ GOLDEN CROSS detectado há {hours_ago}h")
+                break
+                
+            # Detectar DEATH CROSS (EMA17 cruza para baixo da EMA34)
+            if (ema17_previous >= ema34_previous and ema17_current < ema34_current):
+                death_cross_detected = True
+                hours_ago = i * 4
+                logger.info(f"🔴 DEATH CROSS detectado há {hours_ago}h")
+                break
+        
+        # Status atual das EMAs
+        ema17_now = float(ema_17.iloc[-1])
+        ema34_now = float(ema_34.iloc[-1])
+        current_alignment = "bullish" if ema17_now > ema34_now else "bearish"
+        
+        result = {
+            "golden_cross": golden_cross_detected,
+            "death_cross": death_cross_detected,
+            "hours_ago": hours_ago,
+            "current_alignment": current_alignment,
+            "ema17_current": round(ema17_now, 2),
+            "ema34_current": round(ema34_now, 2),
+            "lookback_hours": lookback_hours,
+            "status": "success"
+        }
+        
+        if golden_cross_detected or death_cross_detected:
+            cross_type = "GOLDEN" if golden_cross_detected else "DEATH"
+            logger.info(f"🎯 {cross_type} CROSS detectado há {hours_ago}h - Alinhamento atual: {current_alignment}")
+        else:
+            logger.info("ℹ️ Nenhum cruzamento EMA17/EMA34 nas últimas 24h")
+            
+        return result
+        
+    except Exception as e:
+        logger.error(f"❌ Erro detecção cruzamento: {str(e)}")
+        return {
+            "golden_cross": False,
+            "death_cross": False,
+            "hours_ago": None,
+            "current_alignment": "unknown",
+            "status": "error",
+            "error": str(e)
+        }

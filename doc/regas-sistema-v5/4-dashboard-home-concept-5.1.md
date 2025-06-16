@@ -67,15 +67,15 @@
 ## 🎯 Conceito da HOME
 
 ### Hierarquia Visual:
-1. **Topo**: Status geral (capital, alavancagem, status)
-2. **Scores Principais**: Mercado e Risco lado a lado
-3. **Decisão Central**: Destaque para ação recomendada
-4. **Alertas**: Críticos e Oportunidades visíveis
-5. **Alavancagem**: Visual claro atual vs permitido
-6. **Rodapé**: Indicadores-chave para referência rápida
+1. **Topo**: Status geral (capital, alavancagem, status) - ok
+2. **Scores Principais**: Mercado e Risco lado a lado - ok
+3. **Decisão Central**: Destaque para ação recomendada - ok
+4. **Alertas**: Críticos e Oportunidades visíveis - fazer
+5. **Alavancagem**: Visual claro atual vs permitido - ok
+6. **Rodapé**: Indicadores-chave para referência rápida - fazer
 
 ### Interações:
-- Click "Ver Detalhes" no Score Mercado → Abre breakdown Ciclo/Momentum/Técnico
+- Click "Ver Detalhes" no Score Mercado → Abre breakdown Ciclo/Momentum/Técnico - ok
 - Click "Ver Detalhes" no Score Risco → Abre Health Factor, liquidação, histórico
 - Click "Simular Posição" → Calculadora de impacto
 - Cards de alerta são clicáveis para ações

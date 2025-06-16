@@ -14,3 +14,4 @@
 - confirmar Hierarquia de Decisão (Timeframe Conflito)
 - Testar (Gate System) - REVISADO
 - fazer rotinas de backtest
+- criar detalhe da analise tecnica no dash (detalhe do mercado)
