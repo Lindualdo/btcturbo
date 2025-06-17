@@ -83,6 +83,7 @@ def calcular_dashboard_mercado() -> dict:
             "timestamp": datetime.utcnow().isoformat()
         }
 
+
 def obter_dashboard_mercado() -> dict:
     """
     Obtém último dashboard mercado com JSON pronto

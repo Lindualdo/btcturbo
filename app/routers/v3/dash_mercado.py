@@ -20,7 +20,7 @@ async def calcular_dash_mercado():
     4. Grava no banco
     """
     try:
-        from app.services.v2.dash_mercado_service import calcular_dashboard_mercado
+        from app.services.v3.dash_mercado.dash_mercado_service  import calcular_dashboard_mercado
         
         logger.info("🚀 Calculando Dashboard Mercado...")
         resultado = calcular_dashboard_mercado()
