@@ -22,7 +22,7 @@ def processar_dashboard() -> dict:
         mock_data = _get_mock_dashboard_data()
         
         # Salvar no banco (PostgreSQL)
-        dashboard_id = _save_dashboard_v3(mock_data)
+        dashboard_id = _save_dashboard(mock_data)
         
         # Retornar JSON 100% compatível
         response = {
@@ -94,7 +94,7 @@ def obter_dashboard() -> dict:
         
         # TODO: Implementar busca no PostgreSQL
         # Por ora, retorna mock para compatibilidade
-        return processar_dashboard_v3()
+        return processar_dashboard()
         
     except Exception as e:
         logger.error(f"❌ Erro obter Dashboard V3: {str(e)}")
