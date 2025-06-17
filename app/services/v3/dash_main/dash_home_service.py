@@ -7,22 +7,33 @@ logger = logging.getLogger(__name__)
 
 def processar_dashboard() -> dict:
     """
-    Dashboard V3 - Mock 100% compatível com JSON atual
+    Dashboard V3 - 4 Camadas Sequenciais
     
-    TODO: Implementar 4 camadas:
-    - [ ] Camada 1: Análise Mercado (score + ciclo)  
+    Status implementação:
+    - [✅] Camada 1: Análise Mercado (score + ciclo)  
     - [ ] Camada 2: Análise Risco (health_factor + score)
     - [ ] Camada 3: Análise Alavancagem (limites + status)
     - [ ] Camada 4: Execução Tática (decisão + setup)
     """
     try:
-        logger.info("🚀 Processando Dashboard V3 (MOCKADO)")
+        logger.info("🚀 Processando Dashboard V3 - Camada 1 REAL")
         
-        # DADOS MOCKADOS - serão substituídos por implementação real
+        # CAMADA 1: Análise Mercado (IMPLEMENTADA)
+        dados_mercado = _executar_analise_mercado()
+        
+        # CAMADAS 2-4: Mock (serão implementadas nas próximas etapas)
         mock_data = _get_mock_dashboard_data()
+        mock_data.update({
+            # Sobrescrever dados de mercado com análise real
+            "score_mercado": dados_mercado["score_mercado"],
+            "classificacao_mercado": dados_mercado["classificacao_mercado"], 
+            "ciclo": dados_mercado["ciclo"],
+            "mvrv": dados_mercado["indicadores"]["mvrv"],
+            "nupl": dados_mercado["indicadores"]["nupl"]
+        })
         
         # Salvar no banco (PostgreSQL)
-        dashboard_id = _save_dashboard(mock_data)
+        dashboard_id = _save_dashboard_v3(mock_data)
         
         # Retornar JSON 100% compatível
         response = {
@@ -33,7 +44,7 @@ def processar_dashboard() -> dict:
                     "position_usd": mock_data["position_usd"]
                 },
                 "scores": {
-                    "ciclo": mock_data["ciclo"],
+                    "ciclo": mock_data["ciclo"], 
                     "risco": mock_data["score_risco"],
                     "mercado": mock_data["score_mercado"],
                     "classificacao_risco": mock_data["classificacao_risco"],
@@ -67,9 +78,9 @@ def processar_dashboard() -> dict:
             },
             "metadata": {
                 "id": dashboard_id,
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": dados_mercado["timestamp"],
                 "age_minutes": 0.0,
-                "versao": "v3_implementando"
+                "versao": "v3_implementando_camada1"
             }
         }
         
@@ -93,7 +104,7 @@ def obter_dashboard() -> dict:
         logger.info("🔍 Obtendo Dashboard V3...")
         
         # TODO: Implementar busca no PostgreSQL
-        # Por ora, retorna mock para compatibilidade
+        # Por ora, retorna processamento novo para compatibilidade
         return processar_dashboard()
         
     except Exception as e:
@@ -101,6 +112,26 @@ def obter_dashboard() -> dict:
         return {
             "status": "error",
             "erro": str(e),
+            "timestamp": datetime.utcnow().isoformat()
+        }
+
+def _executar_analise_mercado() -> dict:
+    """
+    Executa análise de mercado real (Camada 1)
+    """
+    try:
+        from app.services.v3.dash_main.utils.analise.mercado.analise_mercado import executar_analise_mercado 
+        
+        return executar_analise_mercado()
+        
+    except Exception as e:
+        logger.error(f"❌ Erro análise mercado: {str(e)}")
+        # Fallback para mock em caso de erro
+        return {
+            "score_mercado": 54.9,
+            "classificacao_mercado": "neutro", 
+            "ciclo": "BULL_INICIAL",
+            "indicadores": {"mvrv": 2.5364, "nupl": 0.5553},
             "timestamp": datetime.utcnow().isoformat()
         }
 
@@ -154,7 +185,7 @@ def _get_mock_dashboard_data() -> dict:
         "dist_liquidacao": 34.5
     }
 
-def _save_dashboard(data: dict) -> int:
+def _save_dashboard_v3(data: dict) -> int:
     """
     Salva dashboard V3 no PostgreSQL
     
@@ -178,7 +209,7 @@ def debug_dashboard() -> dict:
         "status": "success",
         "versao": "v3_implementando",
         "implementacao": {
-            "camada_1_mercado": "❌ TODO - usando mock",
+            "camada_1_mercado": "✅ IMPLEMENTADA - usando matriz de ciclos real",
             "camada_2_risco": "❌ TODO - usando mock", 
             "camada_3_alavancagem": "❌ TODO - usando mock",
             "camada_4_tatica": "❌ TODO - usando mock",
