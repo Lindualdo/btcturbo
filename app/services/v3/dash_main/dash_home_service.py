@@ -5,7 +5,7 @@ from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
-def processar_dashboard_v3() -> dict:
+def processar_dashboard() -> dict:
     """
     Dashboard V3 - Mock 100% compatível com JSON atual
     
@@ -85,7 +85,7 @@ def processar_dashboard_v3() -> dict:
             "versao": "v3_implementando"
         }
 
-def obter_dashboard_v3() -> dict:
+def obter_dashboard() -> dict:
     """
     Obtém último dashboard V3 processado
     """
@@ -154,7 +154,7 @@ def _get_mock_dashboard_data() -> dict:
         "dist_liquidacao": 34.5
     }
 
-def _save_dashboard_v3(data: dict) -> int:
+def _save_dashboard(data: dict) -> int:
     """
     Salva dashboard V3 no PostgreSQL
     
@@ -170,7 +170,7 @@ def _save_dashboard_v3(data: dict) -> int:
         logger.error(f"❌ Erro salvar Dashboard V3: {str(e)}")
         raise Exception(f"Falha ao salvar: {str(e)}")
 
-def debug_dashboard_v3() -> dict:
+def debug_dashboard() -> dict:
     """
     Debug Dashboard V3 - status implementação
     """
