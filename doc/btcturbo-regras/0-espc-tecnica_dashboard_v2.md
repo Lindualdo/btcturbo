@@ -10,7 +10,7 @@ flowchart TD
     A[POST /api/v2/dashboard-home] --> B[dashboard_home_service.py]
     B --> C[data_collector.py]
     
-    C --> D[calcular_analise_mercado]
+    C --> D[calcular_analise_mercado] 
     C --> E[calcular_analise_risco] 
     C --> F[calcular_analise_alavancagem]
     C --> G[TradingView APIs]
@@ -185,3 +185,4 @@ Informações de debug e arquitetura
 5. **Resposta** - Retorna JSON estruturado
 
 **Resultado:** Sistema 85% mais rápido, zero redundância, decisões consistentes.
+

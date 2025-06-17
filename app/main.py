@@ -6,6 +6,7 @@ from pathlib import Path
 from datetime import datetime
 from app.routers.v2 import  dashboard_home as dashboard_home_v2 
 from app.routers.v2 import   dash_mercado as dash_mercado  
+from app.routers.v3 import   dash_mercado as dash_mercado_v3
 from app.routers import alertas_debug ,alertas,dashboard_home
 from app.routers import (
     analise_mercado, analise_risco, coleta, indicadores, score, analise, diagnostico, analise_alavancagem,anallise_tatica
@@ -45,6 +46,7 @@ app.include_router(indicadores.router, prefix="/api/v1", tags=["📊 Indicadores
 app.include_router(score.router, prefix="/api/v1", tags=["🎯 Scores"]) # calcula scores e retona indicadores  (ciclos, riscos, momentum e tecnico)
 app.include_router(dashboard_home_v2.router, prefix="/api/v2", tags=["📊 Dashboard V2"]) # dash principal (post grava e get obtem)
 app.include_router(dash_mercado.router, prefix="/api/v2", tags=["📊 dash mercado "]) # dash mercado - detalhe do mercado home (post grava e get obtem)
+app.include_router(dash_mercado_v3.router, prefix="/api/v3", tags=["📊 dash mercado "]) # dash mercado - detalhe do mercado home (post grava e get obtem)
 app.include_router(alertas_debug.router, prefix="/alertas-debug", tags=["alertas_debug"]) # retorna todos os alertas separados em categorias
 app.include_router(alertas.router, prefix="/api/v1", tags=["alertas"])  # Busca os alertas por categorias ()
 
