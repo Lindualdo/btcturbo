@@ -15,3 +15,4 @@
 - Testar (Gate System) - REVISADO
 - fazer rotinas de backtest
 - criar detalhe da analise tecnica no dash (detalhe do mercado)
+- Problema de layout no dash prinicpal quando alavancagem estoura
