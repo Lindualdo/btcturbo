@@ -1,4 +1,4 @@
-# app/services/v3/dash_main/utils/analise/mercado/analise_mercado.py
+# app/services/v3/dash_main/utils/analise/1-mercado/analise_mercado.py
 
 import logging
 import json
@@ -28,7 +28,9 @@ def executar_analise_mercado() -> dict:
             raise Exception("Dados de mercado indisponíveis")
         
         # 2. Extrair indicadores chave
-        score_mercado = float(dados_mercado["score_consolidado"])
+        score_mercado_raw = float(dados_mercado["score_consolidado"])
+        # CORREÇÃO: Score no banco está base 10, matriz usa base 100
+        score_mercado = score_mercado_raw * 10
         
         # Verificar se indicadores_json é string ou dict
         indicadores_json = dados_mercado["indicadores_json"]
@@ -63,7 +65,7 @@ def executar_analise_mercado() -> dict:
             }
         }
         
-        logger.info(f"✅ Mercado: {ciclo_identificado['nome']} - Score {score_mercado}")
+        logger.info(f"✅ Mercado: {ciclo_identificado['nome']} - Score {score_mercado_raw}→{score_mercado}")
         return resultado
         
     except Exception as e:
