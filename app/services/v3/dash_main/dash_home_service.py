@@ -1,97 +1,195 @@
-# services/v3/dash_home_service.py
+# app/services/v3/dash_main/dash_home_service.py
+
 import logging
 from datetime import datetime
-from .utils.data_collector import collect_all_data_v3
-from .utils.gate_system import apply_gate_system
-from .utils.gera_json import generate_dashboard_json_v3
-from .utils.database_helper import save_dashboard_v3, get_latest_dashboard_v3
 
 logger = logging.getLogger(__name__)
 
-def calcular_dashboard_v3() -> dict:
+def processar_dashboard_v3() -> dict:
     """
-    Orquestrador principal V3 - Fluxo overview completo
-    1. Coleta dados (4 camadas)
-    2. Gate system
-    3. Gera JSON
-    4. Salva banco
+    Dashboard V3 - Mock 100% compatível com JSON atual
+    
+    TODO: Implementar 4 camadas:
+    - [ ] Camada 1: Análise Mercado (score + ciclo)  
+    - [ ] Camada 2: Análise Risco (health_factor + score)
+    - [ ] Camada 3: Análise Alavancagem (limites + status)
+    - [ ] Camada 4: Execução Tática (decisão + setup)
     """
     try:
-        logger.info("🚀 Calculando Dashboard V3...")
+        logger.info("🚀 Processando Dashboard V3 (MOCKADO)")
         
-        # 1. Coleta dados das 4 camadas (sequencial conforme overview)
-        all_data = collect_all_data_v3()
-        logger.info("✅ Dados coletados - 4 camadas")
+        # DADOS MOCKADOS - serão substituídos por implementação real
+        mock_data = _get_mock_dashboard_data()
         
-        # 2. Gate system centralizado
-        gate_result = apply_gate_system(all_data)
-        if gate_result["blocked"]:
-            logger.warning(f"🛡️ Gate acionado: {gate_result['reason']}")
-            return gate_result["response"]
+        # Salvar no banco (PostgreSQL)
+        dashboard_id = _save_dashboard_v3(mock_data)
         
-        # 3. Gera JSON final compatível V2
-        dashboard_json = generate_dashboard_json_v3(all_data)
-        
-        # 4. Salva no banco (tabela dashboard_decisao_v2)
-        saved_id = save_dashboard_v3(dashboard_json, all_data)
-        
-        logger.info(f"✅ Dashboard V3 calculado - ID: {saved_id}")
-        
-        return {
-            "status": "success",
-            "message": "Dashboard V3 calculado",
-            "data": dashboard_json,
+        # Retornar JSON 100% compatível
+        response = {
+            "status": "success", 
+            "data": {
+                "header": {
+                    "btc_price": mock_data["btc_price"],
+                    "position_usd": mock_data["position_usd"]
+                },
+                "scores": {
+                    "ciclo": mock_data["ciclo"],
+                    "risco": mock_data["score_risco"],
+                    "mercado": mock_data["score_mercado"],
+                    "classificacao_risco": mock_data["classificacao_risco"],
+                    "classificacao_mercado": mock_data["classificacao_mercado"]
+                },
+                "tecnicos": {
+                    "rsi": mock_data["rsi_diario"],
+                    "preco_ema144": mock_data["preco_ema144"],
+                    "ema_144_distance": mock_data["ema_distance"]
+                },
+                "estrategia": {
+                    "decisao": mock_data["decisao"],
+                    "setup_4h": mock_data["setup_4h"],
+                    "urgencia": mock_data["urgencia"],
+                    "justificativa": mock_data["justificativa"]
+                },
+                "alavancagem": {
+                    "atual": mock_data["alavancagem_atual"],
+                    "status": mock_data["status_alavancagem"],
+                    "permitida": mock_data["alavancagem_permitida"],
+                    "divida_total": mock_data["divida_total"],
+                    "valor_a_reduzir": mock_data["valor_a_reduzir"],
+                    "valor_disponivel": mock_data["valor_disponivel"]
+                },
+                "indicadores": {
+                    "mvrv": mock_data["mvrv"],
+                    "nupl": mock_data["nupl"],
+                    "health_factor": mock_data["health_factor"],
+                    "dist_liquidacao": mock_data["dist_liquidacao"]
+                }
+            },
             "metadata": {
-                "id": saved_id,
-                "versao": "v3_overview_compliant",
-                "created_at": datetime.utcnow().isoformat()
+                "id": dashboard_id,
+                "timestamp": datetime.utcnow().isoformat(),
+                "age_minutes": 0.0,
+                "versao": "v3_implementando"
             }
         }
         
+        logger.info(f"✅ Dashboard V3 processado - ID: {dashboard_id}")
+        return response
+        
     except Exception as e:
-        logger.error(f"❌ Erro calcular Dashboard V3: {str(e)}")
+        logger.error(f"❌ Erro Dashboard V3: {str(e)}")
         return {
             "status": "error",
             "erro": str(e),
-            "message": "Falha ao calcular Dashboard V3"
+            "timestamp": datetime.utcnow().isoformat(),
+            "versao": "v3_implementando"
         }
 
 def obter_dashboard_v3() -> dict:
-    """GET - Retorna último dashboard calculado"""
+    """
+    Obtém último dashboard V3 processado
+    """
     try:
-        dados = get_latest_dashboard_v3()
-        if not dados:
-            return {
-                "status": "error",
-                "message": "Nenhum dashboard encontrado. Execute POST primeiro."
-            }
+        logger.info("🔍 Obtendo Dashboard V3...")
         
-        return {
-            "status": "success",
-            "data": dados["dashboard_json"],
-            "metadata": {
-                "id": dados["id"],
-                "created_at": dados["created_at"].isoformat(),
-                "age_minutes": (datetime.utcnow() - dados["created_at"]).total_seconds() / 60,
-                "versao": "v3_overview_compliant"
-            }
-        }
+        # TODO: Implementar busca no PostgreSQL
+        # Por ora, retorna mock para compatibilidade
+        return processar_dashboard_v3()
         
     except Exception as e:
+        logger.error(f"❌ Erro obter Dashboard V3: {str(e)}")
         return {
             "status": "error",
-            "erro": str(e)
+            "erro": str(e),
+            "timestamp": datetime.utcnow().isoformat()
         }
 
+def _get_mock_dashboard_data() -> dict:
+    """
+    Dados mockados baseados no JSON real fornecido
+    
+    TODO: Substituir por implementação das 4 camadas:
+    1. Análise Mercado → score_mercado, ciclo, classificacao_mercado
+    2. Análise Risco → score_risco, health_factor, classificacao_risco  
+    3. Análise Alavancagem → limites, status, valores
+    4. Execução Tática → decisao, setup_4h, urgencia
+    """
+    
+    # MOCK baseado no JSON fornecido - IDÊNTICO
+    return {
+        # Header
+        "btc_price": 104350.29,
+        "position_usd": 124987.126836,
+        
+        # Scores (Camadas 1 e 2)
+        "ciclo": "BULL_INICIAL", 
+        "score_risco": 75.0,
+        "score_mercado": 54.9,
+        "classificacao_risco": "seguro",
+        "classificacao_mercado": "neutro",
+        
+        # Técnicos
+        "rsi_diario": 43.8,
+        "preco_ema144": 106080.29630039757,
+        "ema_distance": -1.29,
+        
+        # Estratégia (Camada 4)
+        "decisao": "AJUSTAR_ALAVANCAGEM",
+        "setup_4h": "PULLBACK_TENDENCIA", 
+        "urgencia": "alta",
+        "justificativa": "Alavancagem no limite: 2.0x >= 2.0x",
+        
+        # Alavancagem (Camada 3)
+        "alavancagem_atual": 2.04,
+        "status_alavancagem": "deve_reduzir",
+        "alavancagem_permitida": 2.0,
+        "divida_total": 63836.377046,
+        "valor_a_reduzir": 2685.63,
+        "valor_disponivel": 0.0,
+        
+        # Indicadores
+        "mvrv": 2.5364,
+        "nupl": 0.5553,
+        "health_factor": 1.527185,
+        "dist_liquidacao": 34.5
+    }
+
+def _save_dashboard_v3(data: dict) -> int:
+    """
+    Salva dashboard V3 no PostgreSQL
+    
+    TODO: Implementar tabela dashboard_v3
+    Por ora retorna ID mockado
+    """
+    try:
+        # TODO: Implementar save real no PostgreSQL
+        logger.info("💾 Salvando Dashboard V3 (MOCK)")
+        return 999  # ID mockado
+        
+    except Exception as e:
+        logger.error(f"❌ Erro salvar Dashboard V3: {str(e)}")
+        raise Exception(f"Falha ao salvar: {str(e)}")
+
 def debug_dashboard_v3() -> dict:
-    """Debug sistema V3"""
+    """
+    Debug Dashboard V3 - status implementação
+    """
     return {
         "status": "success",
-        "versao": "v3_overview_compliant",
-        "arquitetura": {
-            "camadas": ["mercado", "risco", "alavancagem", "tatica"],
-            "fluxo": "sequencial_overview",
-            "gate_system": "centralizado",
-            "database": "dashboard_decisao_v2"
-        }
+        "versao": "v3_implementando",
+        "implementacao": {
+            "camada_1_mercado": "❌ TODO - usando mock",
+            "camada_2_risco": "❌ TODO - usando mock", 
+            "camada_3_alavancagem": "❌ TODO - usando mock",
+            "camada_4_tatica": "❌ TODO - usando mock",
+            "database": "❌ TODO - ID mockado",
+            "json_compatibility": "✅ 100% compatível"
+        },
+        "proximos_passos": [
+            "1. Implementar Camada 1: Análise Mercado",
+            "2. Implementar Camada 2: Análise Risco", 
+            "3. Implementar Camada 3: Análise Alavancagem",
+            "4. Implementar Camada 4: Execução Tática",
+            "5. Implementar PostgreSQL dashboard_v3"
+        ]
     }
