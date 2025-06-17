@@ -1,4 +1,4 @@
-# app/services/utils/helpers/v2/dash_mercado/score_calculator.py
+# app/services/v3/dash_mercado/utils/score_calculator.py
 
 import logging
 

@@ -1,4 +1,4 @@
-# app/services/utils/helpers/v2/dash_mercado/main_functions.py
+# app/services/v3/dash_mercado/utils/main_functions.py
 
 import logging
 from datetime import datetime

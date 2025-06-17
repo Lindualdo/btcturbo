@@ -1,4 +1,4 @@
-# app/services/utils/helpers/v2/dash_mercado/database_helper.py
+# app/services/v3/dash_mercado/utils/database_helper.py
 
 import logging
 from datetime import datetime

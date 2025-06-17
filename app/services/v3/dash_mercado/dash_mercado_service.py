@@ -16,8 +16,8 @@ def calcular_dashboard_mercado() -> dict:
     4. Grava no banco
     """
     try:
-        from app.services.utils.helpers.v2.dash_mercado import collect_and_calculate_scores
-        from app.services.utils.helpers.v2.dash_mercado import save_dashboard_scores
+        from app.services.v3.dash_mercado import collect_and_calculate_scores
+        from app.services.v3.dash_mercado import save_dashboard_scores
         
         logger.info("🔄 Coletando e calculando scores...")
         
@@ -89,7 +89,7 @@ def obter_dashboard_mercado() -> dict:
     Obtém último dashboard mercado com JSON pronto
     """
     try:
-        from app.services.utils.helpers.v2.dash_mercado import get_latest_dashboard_scores
+        from app.services.v3.dash_mercado import get_latest_dashboard_scores
         import json
         
         ultimo = get_latest_dashboard_scores()
@@ -142,7 +142,7 @@ def debug_dashboard_mercado() -> dict:
     Debug do sistema dashboard mercado
     """
     try:
-        from app.services.utils.helpers.v2.dash_mercado import get_latest_dashboard_scores
+        from app.services.v3.dash_mercado import get_latest_dashboard_scores
         
         ultimo = get_latest_dashboard_scores()
         

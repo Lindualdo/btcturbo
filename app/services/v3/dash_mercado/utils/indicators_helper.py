@@ -1,4 +1,4 @@
-# app/services/utils/helpers/v2/dash_mercado/indicators_helper.py
+# app/services/v3/dash_mercado/utils/indicators_helper.py
 
 import logging
 
@@ -39,7 +39,7 @@ def get_current_indicators_data() -> dict:
     (dados que foram usados no cálculo)
     """
     try:
-        from app.services.utils.helpers.v2.dash_mercado import get_latest_dashboard_scores
+        from app.services.v3.dash_mercado import get_latest_dashboard_scores
         
         ultimo = get_latest_dashboard_scores()
         
