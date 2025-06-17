@@ -1,4 +1,4 @@
-# app/services/v3/dash_main/utils/analise/1-mercado/analise_mercado.py
+# app/services/v3/dash_main/utils/analise/mercado/analise_mercado.py
 
 import logging
 import json
@@ -29,7 +29,13 @@ def executar_analise_mercado() -> dict:
         
         # 2. Extrair indicadores chave
         score_mercado = float(dados_mercado["score_consolidado"])
-        indicadores = json.loads(dados_mercado["indicadores_json"])
+        
+        # Verificar se indicadores_json é string ou dict
+        indicadores_json = dados_mercado["indicadores_json"]
+        if isinstance(indicadores_json, str):
+            indicadores = json.loads(indicadores_json)
+        else:
+            indicadores = indicadores_json
         
         mvrv = indicadores["ciclo"]["mvrv"]["valor"]
         nupl = indicadores["ciclo"]["nupl"]["valor"]
