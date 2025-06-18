@@ -20,8 +20,8 @@ def build_dashboard_data(dados_mercado: dict, dados_risco: dict, dados_alavancag
         logger.info("🔧 Construindo dados Dashboard V3...")
         
         # Validar inputs obrigatórios
-        if not dados_mercado or dados_mercado.get("status") != "success":
-            raise Exception("Dados mercado inválidos")
+        if not dados_mercado:
+            raise Exception("Dados mercado ausentes")
         if not dados_risco or dados_risco.get("status") != "success":  
             raise Exception("Dados risco inválidos")
         if not dados_alavancagem or dados_alavancagem.get("status") != "success":
