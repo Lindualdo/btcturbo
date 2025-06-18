@@ -6,7 +6,8 @@ from pathlib import Path
 from datetime import datetime
 from app.routers.v2 import dashboard_home as dashboard_home_v2 
 from app.routers.v2 import dash_mercado as dash_mercado  
-from app.routers.v3 import dash_mercado as dash_mercado_v3
+from app.routers.v3 import  dash_mercado as dash_mercado_v3
+from app.routers.v3 import  analise_mercado as analise_mercado_v3
 from app.routers.v3 import dash_main as dash_main
 from app.routers import alertas_debug ,alertas,dashboard_home
 from app.routers import (
@@ -51,6 +52,7 @@ app.include_router(dash_mercado_v3.router, prefix="/api/v3", tags=["📊 dash me
 app.include_router(dash_main.router, prefix="/api/v3", tags=["📊 dash main "]) # dash main)
 app.include_router(alertas_debug.router, prefix="/alertas-debug", tags=["alertas_debug"]) # retorna todos os alertas separados em categorias
 app.include_router(alertas.router, prefix="/api/v1", tags=["alertas"])  # Busca os alertas por categorias ()
+app.include_router(analise_mercado_v3.router, prefix="/api/v3", tags=["analise mercado"])  # Analise de mercado (ciclos, riscos, momentum e tecnico) - Camada 1
 
 # ==========================================
 # ENDPOINTS BÁSICOS

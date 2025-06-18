@@ -1,4 +1,5 @@
 # app/services/v3/dash_main/dash_home_service.py
+from app.services.v3.analise_mercado.utils.analise_mercado import executar_analise_mercado 
 
 import logging
 from datetime import datetime
@@ -9,9 +10,7 @@ def executar_analise_mercado() -> dict:
     """
     Executa análise de mercado real (Camada 1)
     """
-    try:
-        from app.services.v3.dash_main.utils.analise.mercado.analise_mercado import executar_analise_mercado 
-        
+    try:        
         return executar_analise_mercado()
         
     except Exception as e:
