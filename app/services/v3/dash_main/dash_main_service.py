@@ -2,9 +2,8 @@
 
 import logging
 from datetime import datetime
-from app.services.v3.analise_mercado.analise_mercado_service import  executar_analise
-from app.services.scores.riscos import calcular_score_riscos 
-
+from app.services.v3.analise_mercado import analise_mercado_service
+from app.services.scores import riscos
 logger = logging.getLogger(__name__)
 
 def processar_dashboard() -> dict:
@@ -21,7 +20,7 @@ def processar_dashboard() -> dict:
         logger.info("🚀 Processando Dashboard V3 - 2 Camadas")
         
         # CAMADA 1: Análise Mercado
-        dados_mercado = executar_analise()
+        dados_mercado = analise_mercado_service.executar_analise()
         logger.info(f"✅ Camada 1: Score {dados_mercado['score_consolidado']} - {dados_mercado['classificacao']}")
         
         # CAMADA 2: Análise Risco
@@ -73,7 +72,7 @@ def _executar_camada_risco() -> dict:
         logger.info("🛡️ Executando Camada 2: Análise Risco...")
         
         # Usar função existente
-        resultado = calcular_score_riscos()
+        resultado = riscos.calcular_score() 
         
         if resultado.get("status") != "success":
             error_msg = f"Falha calcular_score_risco: {resultado.get('erro', 'erro desconhecido')}"
