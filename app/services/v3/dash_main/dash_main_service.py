@@ -124,7 +124,7 @@ def _executar_camada_risco() -> dict:
         
         # Adaptar formato
         return {
-            "score": resultado["score_consolidado"],
+            "score": resultado["score_consolidado_100"],
             "classificacao": resultado["classificacao_consolidada"],
             "health_factor": resultado["indicadores"]["Health_Factor"]["valor"],
             "dist_liquidacao": resultado["indicadores"]["Dist_Liquidacao"]["valor"], 
@@ -136,21 +136,6 @@ def _executar_camada_risco() -> dict:
         logger.error(f"❌ {error_msg}")
         raise Exception(error_msg)
 
-def _get_mock_alavancagem() -> dict:
-    """Mock Camada 3 - TODO: implementar análise real"""
-    return {
-        "btc_price": 104350.29,
-        "position_usd": 124987.126836,
-        "rsi_diario": 43.8,
-        "preco_ema144": 106080.29630039757,
-        "ema_distance": -1.29,
-        "alavancagem_atual": 2.04,
-        "status_alavancagem": "deve_reduzir",
-        "alavancagem_permitida": 2.0,
-        "divida_total": 63836.377046,
-        "valor_a_reduzir": 2685.63,
-        "valor_disponivel": 0.0
-    }
 
 def _get_mock_estrategia() -> dict:
     """Mock Camada 4 - TODO: implementar decisão real"""
