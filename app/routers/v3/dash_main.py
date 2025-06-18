@@ -27,9 +27,8 @@ async def debug_analise_mercado():
     Retorna dados brutos + ciclo identificado + estratégia
     """
     try:
-        from app.services.v3.dash_main.utils.analise.mercado.analise_mercado import executar_analise_mercado
-        
-        resultado = executar_analise_mercado()
+        from app.services.v3.dash_main.dash_main_service import debug_mercado
+        resultado = debug_mercado()
         
         return {
             "status": "success",

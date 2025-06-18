@@ -6,6 +6,9 @@ import v3.analise_mercado.utils.analise_mercado as analise_mercado
 
 logger = logging.getLogger(__name__)
 
+def debug_mercado() -> dict:
+    return analise_mercado.executar_analise()
+
 def processar_dashboard() -> dict:
     """
     Dashboard V3 - 4 Camadas Sequenciais
