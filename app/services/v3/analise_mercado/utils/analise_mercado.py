@@ -9,7 +9,7 @@ from .database_helper import get_latest_scores_from_db
 
 logger = logging.getLogger(__name__)
 
-def executar_analise_mercado() -> dict:
+def executar_analise() -> dict:
     """
     Executa análise completa de mercado (Camada 1)
     
