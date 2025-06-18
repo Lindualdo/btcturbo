@@ -73,11 +73,11 @@ def build_dashboard_data(dados_mercado: dict, dados_risco: dict, dados_alavancag
             },
             "alavancagem": {
                 "atual": dados_alavancagem.get("alavancagem_atual", 0),
-                "status": _determine_leverage_status(dados_alavancagem),
+                "status": dados_alavancagem.get("posicao_financeira", {}).get("status_posicao", "indefinido"),
                 "permitida": dados_alavancagem.get("alavancagem_permitida", 0),
-                "divida_total": dados_alavancagem.get("divida_total", 0),
-                "valor_a_reduzir": dados_alavancagem.get("valor_a_reduzir", 0),
-                "valor_disponivel": dados_alavancagem.get("valor_disponivel", 0)
+                "divida_total": dados_alavancagem.get("posicao_financeira", {}).get("divida_total", 0),
+                "valor_a_reduzir": dados_alavancagem.get("posicao_financeira", {}).get("valor_a_reduzir", 0),
+                "valor_disponivel": dados_alavancagem.get("posicao_financeira", {}).get("valor_disponivel", 0)
             },
             "indicadores": {
                 "mvrv": dados_mercado["indicadores"]["mvrv"],
