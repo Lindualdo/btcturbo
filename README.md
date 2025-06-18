@@ -201,5 +201,47 @@ https://github.com/Lindualdo/btcturbo-v5/blob/main/doc/regas-sistema-v5/0-system
 
 ## versão 5.3.2 a 5.3.4 - Dashboard home v2 - Ajustes - 14/06 feito
 
-## versão 5.3.5 a  Dash Mercado v2 - 15/06
+## versão 5.3.5 a  Dash Mercado v2 - 15/06 - feito
 - criar o dash mercado - detalhe do bloco mercado da home
+
+
+## versão dash main v3
+### analise mercado v3 - 5.3.6 - 18/06 feito
+`/api/v3/analise-mercado`
+
+- estrutura completa e autonoma para deinição do ciclo, estrategia e tamanaho de posição
+
+```Json
+{
+    "status": "success",
+    "camada": "1-mercado",
+    "dados": {
+        "timestamp": "2025-06-18T08:01:34.472016",
+        "score_mercado": 55.300000000000004,
+        "classificacao_mercado": "neutro",
+        "ciclo": "NEUTRO ALTA",
+        "ciclo_detalhes": {
+            "nome": "NEUTRO ALTA",
+            "caracteristicas": "Indecisão com viés positivo",
+            "estrategia": "Posição base",
+            "confianca": 70
+        },
+        "estrategia": {
+            "posicionamento": "POSICAO_BASE",
+            "tamanho_posicao": "15-25%",
+            "alavancagem_sugerida": "1.8x",
+            "urgencia": "baixa",
+            "descricao": "Manter exposição básica com viés alta",
+            "ciclo_base": "NEUTRO ALTA",
+            "confianca_ciclo": 70
+        },
+        "indicadores": {
+            "mvrv": 2.5364,
+            "nupl": 0.5553,
+            "score_ciclo": 4.3,
+            "score_momentum": 3.98,
+            "score_tecnico": 7.54
+        }
+    }
+}
+```

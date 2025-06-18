@@ -1,7 +1,8 @@
-# app/services/v3/dash_main/dash_home_service.py
+# app/services/v3/dash_main/dash_main_service.py
 
 import logging
 from datetime import datetime
+import v3.analise_mercado.utils.analise_mercado as analise_mercado
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +20,7 @@ def processar_dashboard() -> dict:
         logger.info("🚀 Processando Dashboard V3 - Camada 1 REAL")
         
         # CAMADA 1: Análise Mercado (IMPLEMENTADA)
-        dados_mercado = _executar_analise_mercado()
+        dados_mercado = analise_mercado.executar_analise()
         
         # CAMADAS 2-4: Mock (serão implementadas nas próximas etapas)
         mock_data = _get_mock_dashboard_data()
@@ -112,26 +113,6 @@ def obter_dashboard() -> dict:
         return {
             "status": "error",
             "erro": str(e),
-            "timestamp": datetime.utcnow().isoformat()
-        }
-
-def _executar_analise_mercado() -> dict:
-    """
-    Executa análise de mercado real (Camada 1)
-    """
-    try:
-        from app.services.v3.dash_main.utils.analise.mercado.analise_mercado import executar_analise_mercado 
-        
-        return executar_analise_mercado()
-        
-    except Exception as e:
-        logger.error(f"❌ Erro análise mercado: {str(e)}")
-        # Fallback para mock em caso de erro
-        return {
-            "score_mercado": 54.9,
-            "classificacao_mercado": "neutro", 
-            "ciclo": "BULL_INICIAL",
-            "indicadores": {"mvrv": 2.5364, "nupl": 0.5553},
             "timestamp": datetime.utcnow().isoformat()
         }
 

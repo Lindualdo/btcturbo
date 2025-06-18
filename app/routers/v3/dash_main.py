@@ -1,6 +1,6 @@
 # routers/v3/dash_home.py
 from fastapi import APIRouter
-from app.services.v3.dash_main.dash_home_service import processar_dashboard, obter_dashboard, debug_dashboard 
+from app.services.v3.dash_main.dash_main_service import processar_dashboard, obter_dashboard, debug_dashboard 
 
 router = APIRouter()
 
