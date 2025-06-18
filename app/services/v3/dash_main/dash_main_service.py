@@ -2,8 +2,8 @@
 
 import logging
 from datetime import datetime
-from app.services.v3.analise_mercado import analise_mercado
-from app.services.score.risco import calcular_score_risco
+from app.services.v3.analise_mercado.analise_mercado_service import  executar_analise
+from app.services.scores.riscos import calcular_score_riscos 
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +21,7 @@ def processar_dashboard() -> dict:
         logger.info("🚀 Processando Dashboard V3 - 2 Camadas")
         
         # CAMADA 1: Análise Mercado
-        dados_mercado = analise_mercado.executar_analise()
+        dados_mercado = executar_analise()
         logger.info(f"✅ Camada 1: Score {dados_mercado['score_consolidado']} - {dados_mercado['classificacao']}")
         
         # CAMADA 2: Análise Risco
@@ -73,7 +73,7 @@ def _executar_camada_risco() -> dict:
         logger.info("🛡️ Executando Camada 2: Análise Risco...")
         
         # Usar função existente
-        resultado = calcular_score_risco()
+        resultado = calcular_score_riscos()
         
         if resultado.get("status") != "success":
             error_msg = f"Falha calcular_score_risco: {resultado.get('erro', 'erro desconhecido')}"
@@ -84,8 +84,8 @@ def _executar_camada_risco() -> dict:
         return {
             "score": resultado["score_consolidado"],
             "classificacao": resultado["classificacao"],
-            "health_factor": resultado.get("health_factor", 1.5),
-            "dist_liquidacao": resultado.get("dist_liquidacao", 30.0),
+            "health_factor": resultado.get("health_factor", 0),
+            "dist_liquidacao": resultado.get("dist_liquidacao", 0),
             "status": "success"
         }
         
@@ -140,7 +140,7 @@ def obter_dashboard() -> dict:
 
 def debug_mercado() -> dict:
     """Debug apenas camada mercado"""
-    return analise_mercado.executar_analise()
+    return executar_analise()
 
 def debug_dashboard() -> dict:
     """Debug status implementação"""

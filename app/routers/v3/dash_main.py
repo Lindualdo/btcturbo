@@ -9,12 +9,12 @@ async def post_dashboard():
     """POST - Calcula novo dashboard V3"""
     return processar_dashboard()
 
-@router.get("//dash-main")
+@router.get("/dash-main")
 async def get_dashboard():
     """GET - Retorna último dashboard V3"""
     return obter_dashboard()
 
-@router.get("//dash-main/debug")
+@router.get("/dash-main/debug")
 async def debug_dashboard_endpoint():
     """DEBUG - Info sistema V3"""
     return debug_dashboard()
