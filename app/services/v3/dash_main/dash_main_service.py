@@ -4,82 +4,124 @@ import logging
 from datetime import datetime
 from app.services.v3.analise_mercado import analise_mercado_service as analise_mercado
 from app.services.scores import riscos
+from app.services.v3.dash_main.utils.helpers.database_helper import save_dashboard_v3, get_latest_dashboard_v3
+from app.services.v3.dash_main.utils.helpers.data_builder import build_dashboard_v3_data, build_response_format
+
 logger = logging.getLogger(__name__)
 
 def processar_dashboard() -> dict:
     """
-    Dashboard V3 - 4 Camadas Sequenciais
+    Dashboard V3 - POST: Processa 4 camadas e grava
     
     Status implementação:
     - [✅] Camada 1: Análise Mercado (score + ciclo)  
     - [✅] Camada 2: Análise Risco (health_factor + score)
-    - [ ] Camada 3: Análise Alavancagem (limites + status)
-    - [ ] Camada 4: Execução Tática (decisão + setup)
+    - [🔄] Camada 3: Análise Alavancagem (mock temporário)
+    - [🔄] Camada 4: Execução Tática (mock temporário)
     """
     try:
-        logger.info("🚀 Processando Dashboard V3 - 2 Camadas")
+        logger.info("🚀 Processando Dashboard V3 - POST")
         
-        # CAMADA 1: Análise Mercado
+        # CAMADA 1: Análise Mercado (real)
         dados_mercado = analise_mercado.executar_analise()
         logger.info(f"✅ Camada 1: Score {dados_mercado['score_mercado']} - {dados_mercado['classificacao_mercado']}")
         
-        # CAMADA 2: Análise Risco
+        # CAMADA 2: Análise Risco (real)
         dados_risco = _executar_camada_risco()
-        logger.info(f"✅ Camada 2: Score {dados_risco['score']} - {dados_risco['classificacao_consolidada']}")
+        logger.info(f"✅ Camada 2: Score {dados_risco['score']} - {dados_risco['classificacao']}")
         
-        # CAMADAS 3-4: Mock
-        mock_data = _get_mock_dashboard_data()
+        # CAMADA 3: Análise Alavancagem (mock - TODO)
+        mock_alavancagem = _get_mock_alavancagem()
+        logger.info("🔄 Camada 3: Mock alavancagem")
         
-       # Consolidar dados reais das camadas 1 e 2
-        mock_data.update({
-            # Camada 1
-            "score_mercado": dados_mercado['score_mercado'],
-            "classificacao_mercado": dados_mercado['classificacao_mercado'], 
-            "ciclo": dados_mercado['ciclo'],
-            "mvrv": dados_mercado['indicadores']['mvrv'],
-            "nupl": dados_mercado['indicadores']['nupl'],
-            
-            # Camada 2
-            "score_risco": dados_risco["score_consolidado_100"],
-            "classificacao_risco": dados_risco["classificacao_consolidada"],
-            "health_factor": dados_risco["indicadores"]["health_factor"]["valor"],
-            "dist_liquidacao": dados_risco["indicadores"]["dist_liquidacao"]["valor"]
-        })
+        # CAMADA 4: Execução Tática (mock - TODO) 
+        mock_estrategia = _get_mock_estrategia()
+        logger.info("🔄 Camada 4: Mock estratégia")
         
-        # Salvar no banco
-        #dashboard_id = _save_dashboard_v3(mock_data)
+        # Construir dados formato compatível
+        dashboard_data = build_dashboard_v3_data(
+            dados_mercado, dados_risco, mock_alavancagem, mock_estrategia
+        )
         
-        # Retornar JSON compatível
-        response = {
-            "status": "success", 
-            "id": 1,
+        # Salvar no PostgreSQL
+        success = save_dashboard_v3(dashboard_data)
+        if not success:
+            raise Exception("Falha ao salvar Dashboard V3")
+        
+        return {
+            "status": "success",
+            "versao": "v3_4_camadas",
             "timestamp": datetime.utcnow().isoformat(),
-            "score_consolidado": dados_mercado["score_consolidado"],
-            "classificacao": dados_mercado["classificacao"],
-            "blocos": dados_mercado["blocos"]
+            "message": "Dashboard V3 processado e gravado",
+            "camadas_processadas": {
+                "mercado": "✅ real",
+                "risco": "✅ real", 
+                "alavancagem": "🔄 mock",
+                "estrategia": "🔄 mock"
+            }
         }
-        
-        logger.info(f"✅ Dashboard V3 processado: ID {1}")
-        return response
         
     except Exception as e:
         logger.error(f"❌ Erro processar Dashboard V3: {str(e)}")
-        raise Exception(f"Falha dashboard: {str(e)}")
+        return {
+            "status": "error",
+            "versao": "v3_4_camadas",
+            "timestamp": datetime.utcnow().isoformat(),
+            "erro": str(e),
+            "message": "Falha processar Dashboard V3"
+        }
+
+def obter_dashboard() -> dict:
+    """
+    Dashboard V3 - GET: Recupera último processado
+    """
+    try:
+        logger.info("🔍 Obtendo Dashboard V3 - GET")
+        
+        # Buscar último registro
+        dados = get_latest_dashboard_v3()
+        
+        if not dados:
+            return {
+                "status": "error",
+                "erro": "Nenhum dashboard V3 encontrado",
+                "message": "Execute POST /api/v3/dash-main primeiro"
+            }
+        
+        # Converter JSON se necessário
+        dashboard_json = dados["dashboard_json"]
+        if isinstance(dashboard_json, str):
+            import json
+            dashboard_json = json.loads(dashboard_json)
+        
+        # Retornar formato esperado
+        return build_response_format(
+            {"json": dashboard_json},
+            dados["id"],
+            dados["created_at"]
+        )
+        
+    except Exception as e:
+        logger.error(f"❌ Erro obter Dashboard V3: {str(e)}")
+        return {
+            "status": "error",
+            "erro": str(e),
+            "message": "Falha obter Dashboard V3"
+        }
 
 def _executar_camada_risco() -> dict:
-    """Camada 2: consome função existente calcular_score_risco()"""
+    """Camada 2: Análise Risco - usa função existente"""
     try:
         logger.info("🛡️ Executando Camada 2: Análise Risco...")
         
-        # Usar função existente
-        resultado = riscos.calcular_score() 
+        resultado = riscos.calcular_score()
         
         if resultado.get("status") != "success":
             error_msg = f"Falha calcular_score_risco: {resultado.get('erro', 'erro desconhecido')}"
             logger.error(f"❌ {error_msg}")
             raise Exception(error_msg)
         
-        # Adaptar formato para dashboard
+        # Adaptar formato
         return {
             "score": resultado["score_consolidado"],
             "classificacao": resultado["classificacao"],
@@ -93,18 +135,14 @@ def _executar_camada_risco() -> dict:
         logger.error(f"❌ {error_msg}")
         raise Exception(error_msg)
 
-def _get_mock_dashboard_data() -> dict:
-    """Mock camadas 3-4 baseado no JSON fornecido"""
+def _get_mock_alavancagem() -> dict:
+    """Mock Camada 3 - TODO: implementar análise real"""
     return {
         "btc_price": 104350.29,
         "position_usd": 124987.126836,
         "rsi_diario": 43.8,
         "preco_ema144": 106080.29630039757,
         "ema_distance": -1.29,
-        "decisao": "AJUSTAR_ALAVANCAGEM",
-        "setup_4h": "PULLBACK_TENDENCIA", 
-        "urgencia": "alta",
-        "justificativa": "Alavancagem no limite: 2.0x >= 2.0x",
         "alavancagem_atual": 2.04,
         "status_alavancagem": "deve_reduzir",
         "alavancagem_permitida": 2.0,
@@ -113,43 +151,41 @@ def _get_mock_dashboard_data() -> dict:
         "valor_disponivel": 0.0
     }
 
-def _save_dashboard_v3(data: dict) -> int:
-    """Salva dashboard V3 - TODO: PostgreSQL"""
-    try:
-        logger.info("💾 Salvando Dashboard V3 (MOCK)")
-        return 48
-        
-    except Exception as e:
-        logger.error(f"❌ Erro salvar Dashboard V3: {str(e)}")
-        raise Exception(f"Falha ao salvar: {str(e)}")
-
-def obter_dashboard() -> dict:
-    """Obtém último dashboard V3 processado"""
-    try:
-        logger.info("🔍 Obtendo Dashboard V3...")
-        return processar_dashboard()
-        
-    except Exception as e:
-        logger.error(f"❌ Erro obter Dashboard V3: {str(e)}")
-        return {
-            "status": "error",
-            "erro": str(e),
-            "timestamp": datetime.utcnow().isoformat()
-        }
-
-def debug_mercado() -> dict:
-    """Debug apenas camada mercado"""
-    return analise_mercado.executar_analise()
+def _get_mock_estrategia() -> dict:
+    """Mock Camada 4 - TODO: implementar decisão real"""
+    return {
+        "decisao": "AJUSTAR_ALAVANCAGEM",
+        "setup_4h": "PULLBACK_TENDENCIA",
+        "urgencia": "alta",
+        "justificativa": "Alavancagem no limite: 2.0x >= 2.0x"
+    }
 
 def debug_dashboard() -> dict:
     """Debug status implementação"""
-    return {
-        "status": "success",
-        "versao": "v3_camada_2_implementada",
-        "implementacao": {
-            "camada_1_mercado": "✅ IMPLEMENTADA",
-            "camada_2_risco": "✅ IMPLEMENTADA", 
-            "camada_3_alavancagem": "❌ TODO",
-            "camada_4_tatica": "❌ TODO"
+    try:
+        ultimo = get_latest_dashboard_v3()
+        
+        return {
+            "status": "success",
+            "versao": "v3_4_camadas",
+            "ultimo_registro": {
+                "id": ultimo["id"] if ultimo else None,
+                "created_at": ultimo["created_at"].isoformat() if ultimo else None,
+                "tem_dados": ultimo is not None
+            },
+            "implementacao": {
+                "camada_1_mercado": "✅ REAL",
+                "camada_2_risco": "✅ REAL", 
+                "camada_3_alavancagem": "🔄 MOCK - TODO",
+                "camada_4_tatica": "🔄 MOCK - TODO"
+            },
+            "database": "mesma_base_v2",
+            "formato": "100%_compativel"
         }
-    }
+        
+    except Exception as e:
+        return {
+            "status": "error",
+            "erro": str(e),
+            "versao": "v3_4_camadas"
+        }
