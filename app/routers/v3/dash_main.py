@@ -4,23 +4,23 @@ from app.services.v3.dash_main.dash_main_service import processar_dashboard, obt
 
 router = APIRouter()
 
-@router.post("/dashboard-home")
+@router.post("/dash-main")
 async def post_dashboard():
     """POST - Calcula novo dashboard V3"""
     return processar_dashboard()
 
-@router.get("/dashboard-home")
+@router.get("//dash-main")
 async def get_dashboard():
     """GET - Retorna último dashboard V3"""
     return obter_dashboard()
 
-@router.get("/dashboard-home/debug")
+@router.get("//dash-main/debug")
 async def debug_dashboard_endpoint():
     """DEBUG - Info sistema V3"""
     return debug_dashboard()
 
 # Adicionar ao router dash_main.py
-@router.get("/dashboard/debug/mercado")
+@router.get("/dash-main/debug/mercado")
 async def debug_analise_mercado():
     """
     Debug específico da Camada 1 - Análise de Mercado
