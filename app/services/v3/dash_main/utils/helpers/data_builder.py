@@ -6,7 +6,7 @@ from typing import Dict
 
 logger = logging.getLogger(__name__)
 
-def build_dashboard_v3_data(dados_mercado: dict, dados_risco: dict, mock_alavancagem: dict, mock_estrategia: dict) -> dict:
+def build_dashboard_data(dados_mercado: dict, dados_risco: dict, mock_alavancagem: dict, mock_estrategia: dict) -> dict:
     """
     Constrói dados V3 formato compatível com JSON esperado
     

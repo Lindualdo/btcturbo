@@ -4,7 +4,7 @@ import logging
 from datetime import datetime
 from app.services.v3.analise_mercado import analise_mercado_service as analise_mercado
 from app.services.scores import riscos
-from app.services.v3.dash_main.utils.helpers.data_helper import save_dashboard, get_latest_dashboard
+from app.services.v3.dash_main.utils.helpers.data_helper import  save_dashboard , get_latest_dashboard
 from app.services.v3.dash_main.utils.helpers.data_builder import build_dashboard_data, build_response_format
 
 logger = logging.getLogger(__name__)

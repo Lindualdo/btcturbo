@@ -7,7 +7,7 @@ from app.services.utils.helpers.postgres.base import execute_query
 
 logger = logging.getLogger(__name__)
 
-def save_dashboard_v3(dashboard_data: Dict) -> bool:
+def save_dashboard(dashboard_data: Dict) -> bool:
     """
     Salva dashboard V3 no PostgreSQL (mesma base V2)
     """
@@ -51,7 +51,7 @@ def save_dashboard_v3(dashboard_data: Dict) -> bool:
         logger.error(f"❌ Erro salvando Dashboard V3: {str(e)}")
         return False
 
-def get_latest_dashboard_v3() -> Optional[Dict]:
+def get_latest_dashboard() -> Optional[Dict]:
     """
     Busca último dashboard V3 (mesma base V2)
     """
