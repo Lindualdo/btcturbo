@@ -125,9 +125,9 @@ def _executar_camada_risco() -> dict:
         # Adaptar formato
         return {
             "score": resultado["score_consolidado"],
-            "classificacao": resultado["classificacao_consolidada"],  # ← CORRIGIDO
-            "health_factor": resultado.get("health_factor", 0),
-            "dist_liquidacao": resultado.get("dist_liquidacao", 0),
+            "classificacao": resultado["classificacao_consolidada"],
+            "health_factor": resultado["indicadores"]["Health_Factor"]["valor"],
+            "dist_liquidacao": resultado["indicadores"]["Dist_Liquidacao"]["valor"], 
             "status": "success"
         }
         
