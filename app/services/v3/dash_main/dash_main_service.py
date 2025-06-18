@@ -2,7 +2,7 @@
 
 import logging
 from datetime import datetime
-import v3.analise_mercado.utils.analise_mercado as analise_mercado
+
 
 logger = logging.getLogger(__name__)
 
