@@ -2,7 +2,7 @@
 
 import logging
 from datetime import datetime
-from app.services.v3.analise_mercado import analise_mercado_service
+from app.services.v3.analise_mercado import analise_mercado_service as analise_mercado
 from app.services.scores import riscos
 logger = logging.getLogger(__name__)
 
@@ -139,7 +139,7 @@ def obter_dashboard() -> dict:
 
 def debug_mercado() -> dict:
     """Debug apenas camada mercado"""
-    return analise_mercado_service.executar_analise()
+    return analise_mercado.executar_analise()
 
 def debug_dashboard() -> dict:
     """Debug status implementação"""
