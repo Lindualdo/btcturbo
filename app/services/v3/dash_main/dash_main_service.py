@@ -124,6 +124,20 @@ def _save_dashboard_v3(data: dict) -> int:
         logger.error(f"❌ Erro salvar Dashboard V3: {str(e)}")
         raise Exception(f"Falha ao salvar: {str(e)}")
 
+def obter_dashboard() -> dict:
+    """Obtém último dashboard V3 processado"""
+    try:
+        logger.info("🔍 Obtendo Dashboard V3...")
+        return processar_dashboard()
+        
+    except Exception as e:
+        logger.error(f"❌ Erro obter Dashboard V3: {str(e)}")
+        return {
+            "status": "error",
+            "erro": str(e),
+            "timestamp": datetime.utcnow().isoformat()
+        }
+
 def debug_mercado() -> dict:
     """Debug apenas camada mercado"""
     return analise_mercado.executar_analise()
