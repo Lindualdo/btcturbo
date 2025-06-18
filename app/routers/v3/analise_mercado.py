@@ -3,7 +3,7 @@
 from fastapi import APIRouter, HTTPException
 from datetime import datetime
 import logging
-from app.services.v3.analise_mercado.analise_mercado_service import executar_analise_mercado
+
 
 logger = logging.getLogger(__name__)
 
@@ -16,6 +16,7 @@ async def analise_mercado():
     Retorna dados brutos + ciclo identificado + estratégia
     """
     try:
+        from app.services.v3.analise_mercado.analise_mercado_service import executar_analise_mercado
         resultado = executar_analise_mercado()
         
         return {
