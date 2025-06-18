@@ -40,10 +40,10 @@ def processar_dashboard() -> dict:
             "nupl": dados_mercado['indicadores']['nupl'],
             
             # Camada 2
-            "score_risco": dados_risco["score"],
-            "classificacao_risco": dados_risco["classificacao"],
-            "health_factor": dados_risco["health_factor"],
-            "dist_liquidacao": dados_risco["dist_liquidacao"]
+            "score_risco": dados_risco["score_consolidado_100"],
+            "classificacao_risco": dados_risco["classificacao_consolidada"],
+            "health_factor": dados_risco}["indicadores"]["health_factor"]["valor"],
+            "dist_liquidacao": dados_risco["indicadores"]["dist_liquidacao"]["valor"]
         })
         
         # Salvar no banco
