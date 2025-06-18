@@ -245,3 +245,8 @@ https://github.com/Lindualdo/btcturbo-v5/blob/main/doc/regas-sistema-v5/0-system
     }
 }
 ```
+### dash-main - riscos  v3 - 5.3.7 - 18/06 feito
+- gravação e recuperação da base
+
+### dash-main - alavancagem  v3 - 5.3.8 - 18/06
+- processar dados de alavancagem

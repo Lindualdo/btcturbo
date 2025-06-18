@@ -4,8 +4,9 @@ import logging
 from datetime import datetime
 from app.services.v3.analise_mercado import analise_mercado_service as analise_mercado
 from app.services.scores import riscos
-from app.services.v3.dash_main.utils.helpers.data_helper import  save_dashboard , get_latest_dashboard
+from app.services.v3.dash_main.utils.helpers.data_helper import save_dashboard, get_latest_dashboard
 from app.services.v3.dash_main.utils.helpers.data_builder import build_dashboard_data, build_response_format
+from app.services.v3.dash_main.utils.analise_alavancagem import executar_analise_alavancagem
 
 logger = logging.getLogger(__name__)
 
@@ -30,9 +31,9 @@ def processar_dashboard() -> dict:
         dados_risco = _executar_camada_risco()
         logger.info(f"✅ Camada 2: Score {dados_risco['score']} - {dados_risco['classificacao']}")
         
-        # CAMADA 3: Análise Alavancagem (mock - TODO)
-        mock_alavancagem = _get_mock_alavancagem()
-        logger.info("🔄 Camada 3: Mock alavancagem")
+        # CAMADA 3: Análise Alavancagem (real)
+        dados_alavancagem = executar_analise_alavancagem(dados_mercado, dados_risco)
+        logger.info(f"✅ Camada 3: Alavancagem {dados_alavancagem.get('alavancagem_permitida', 0)}x")
         
         # CAMADA 4: Execução Tática (mock - TODO) 
         mock_estrategia = _get_mock_estrategia()
@@ -40,7 +41,7 @@ def processar_dashboard() -> dict:
         
         # Construir dados formato compatível
         dashboard_data = build_dashboard_data(
-            dados_mercado, dados_risco, mock_alavancagem, mock_estrategia
+            dados_mercado, dados_risco, dados_alavancagem, mock_estrategia
         )
         
         # Salvar no PostgreSQL
@@ -56,7 +57,7 @@ def processar_dashboard() -> dict:
             "camadas_processadas": {
                 "mercado": "✅ real",
                 "risco": "✅ real", 
-                "alavancagem": "🔄 mock",
+                "alavancagem": "✅ real",
                 "estrategia": "🔄 mock"
             }
         }
@@ -176,7 +177,7 @@ def debug_dashboard() -> dict:
             "implementacao": {
                 "camada_1_mercado": "✅ REAL",
                 "camada_2_risco": "✅ REAL", 
-                "camada_3_alavancagem": "🔄 MOCK - TODO",
+                "camada_3_alavancagem": "✅ REAL",
                 "camada_4_tatica": "🔄 MOCK - TODO"
             },
             "database": "mesma_base_v2",
