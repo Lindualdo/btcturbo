@@ -20,8 +20,8 @@ def processar_dashboard() -> dict:
         logger.info("🚀 Processando Dashboard V3 - 2 Camadas")
         
         # CAMADA 1: Análise Mercado
-        dados_mercado = analise_mercado_service.executar_analise()
-        logger.info(f"✅ Camada 1: Score {dados_mercado['score_consolidado']} - {dados_mercado['classificacao']}")
+        dados_mercado = analise_mercado.executar_analise()
+        logger.info(f"✅ Camada 1: Score {dados_mercado['dados']['score_mercado']} - {dados_mercado['dados']['classificacao_mercado']}")
         
         # CAMADA 2: Análise Risco
         dados_risco = _executar_camada_risco()
@@ -30,14 +30,14 @@ def processar_dashboard() -> dict:
         # CAMADAS 3-4: Mock
         mock_data = _get_mock_dashboard_data()
         
-        # Consolidar dados reais das camadas 1 e 2
+       # Consolidar dados reais das camadas 1 e 2
         mock_data.update({
             # Camada 1
-            "score_mercado": dados_mercado["score_consolidado"],
-            "classificacao_mercado": dados_mercado["classificacao"], 
-            "ciclo": dados_mercado["ciclo"],
-            "mvrv": dados_mercado["blocos"]["ciclo"]["indicadores"]["mvrv"]["valor"],
-            "nupl": dados_mercado["blocos"]["ciclo"]["indicadores"]["nupl"]["valor"],
+            "score_mercado": dados_mercado['dados']['score_mercado'],
+            "classificacao_mercado": dados_mercado['dados']['classificacao_mercado'], 
+            "ciclo": dados_mercado['dados']['ciclo'],
+            "mvrv": dados_mercado['dados']['indicadores']['mvrv'],
+            "nupl": dados_mercado['dados']['indicadores']['nupl'],
             
             # Camada 2
             "score_risco": dados_risco["score"],
@@ -139,7 +139,7 @@ def obter_dashboard() -> dict:
 
 def debug_mercado() -> dict:
     """Debug apenas camada mercado"""
-    return executar_analise()
+    return analise_mercado_service.executar_analise()
 
 def debug_dashboard() -> dict:
     """Debug status implementação"""
