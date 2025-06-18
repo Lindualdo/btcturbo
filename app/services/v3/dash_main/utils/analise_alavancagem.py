@@ -136,9 +136,10 @@ def _aplicar_protecoes(score_mercado: float, dados_mercado: dict, dados_risco: d
         protecoes_ativas.append("Health Factor crítico < 1.3")
         bloqueado = True
     
-    # Score risco muito baixo
-    if dados_risco.get("score", 0) < 40:
-        protecoes_ativas.append("Score risco crítico < 40")
+    # Score risco muito baixo (converter para base 100)
+    score_risco = dados_risco.get("score", 0) * 10  # Converter base 10 → 100
+    if score_risco < 40:
+        protecoes_ativas.append(f"Score risco crítico < 40 (atual: {score_risco})")
         bloqueado = True
     
     # Divergência entre componentes mercado (implementar quando tiver dados)
