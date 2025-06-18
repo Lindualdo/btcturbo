@@ -255,5 +255,5 @@ https://github.com/Lindualdo/btcturbo-v5/blob/main/doc/regas-sistema-v5/0-system
 - analise de risco
 - gravação e recuperação do dash na base
 
-### dash-main - alavancagem  v3 - 5.3.8 - 18/06 - feito
+### dash-main - alavancagem  v3 - 5.3.8 e 5.3.9 - 18/06 - feito
 - processar dados de alavancagem
