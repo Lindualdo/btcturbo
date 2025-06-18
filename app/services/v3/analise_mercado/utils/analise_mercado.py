@@ -5,7 +5,7 @@ import json
 from datetime import datetime
 from .matriz_ciclos import identificar_ciclo
 from .estrategia_posicionamento import definir_estrategia
-from app.services.v3.analise_mercado.utils.database_helper import get_latest_scores_from_db
+from .database_helper import get_latest_scores_from_db
 
 logger = logging.getLogger(__name__)
 

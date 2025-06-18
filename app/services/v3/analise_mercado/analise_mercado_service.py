@@ -17,9 +17,6 @@ def executar_analise_mercado() -> dict:
         logger.error(f"❌ Erro análise mercado: {str(e)}")
         # Fallback para mock em caso de erro
         return {
-            "score_mercado": 54.9,
-            "classificacao_mercado": "neutro", 
-            "ciclo": "BULL_INICIAL",
-            "indicadores": {"mvrv": 2.5364, "nupl": 0.5553},
-            "timestamp": datetime.utcnow().isoformat()
+            "status": "error",
+            "log": str(e)
         }
