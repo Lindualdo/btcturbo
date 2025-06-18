@@ -42,7 +42,7 @@ def processar_dashboard() -> dict:
             # Camada 2
             "score_risco": dados_risco["score_consolidado_100"],
             "classificacao_risco": dados_risco["classificacao_consolidada"],
-            "health_factor": dados_risco}["indicadores"]["health_factor"]["valor"],
+            "health_factor": dados_risco["indicadores"]["health_factor"]["valor"],
             "dist_liquidacao": dados_risco["indicadores"]["dist_liquidacao"]["valor"]
         })
         
