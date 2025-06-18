@@ -4,8 +4,8 @@ import logging
 from datetime import datetime
 from app.services.v3.analise_mercado import analise_mercado_service as analise_mercado
 from app.services.scores import riscos
-from app.services.v3.dash_main.utils.helpers.database_helper import save_dashboard_v3, get_latest_dashboard_v3
-from app.services.v3.dash_main.utils.helpers.data_builder import build_dashboard_v3_data, build_response_format
+from app.services.v3.dash_main.utils.helpers.data_helper import save_dashboard, get_latest_dashboard
+from app.services.v3.dash_main.utils.helpers.data_builder import build_dashboard_data, build_response_format
 
 logger = logging.getLogger(__name__)
 
@@ -39,14 +39,14 @@ def processar_dashboard() -> dict:
         logger.info("🔄 Camada 4: Mock estratégia")
         
         # Construir dados formato compatível
-        dashboard_data = build_dashboard_v3_data(
+        dashboard_data = build_dashboard_data(
             dados_mercado, dados_risco, mock_alavancagem, mock_estrategia
         )
         
         # Salvar no PostgreSQL
-        success = save_dashboard_v3(dashboard_data)
+        success = save_dashboard(dashboard_data)
         if not success:
-            raise Exception("Falha ao salvar Dashboard V3")
+            raise Exception("Falha ao salvar Dashboard")
         
         return {
             "status": "success",
@@ -79,7 +79,7 @@ def obter_dashboard() -> dict:
         logger.info("🔍 Obtendo Dashboard V3 - GET")
         
         # Buscar último registro
-        dados = get_latest_dashboard_v3()
+        dados = get_latest_dashboard()
         
         if not dados:
             return {
@@ -124,7 +124,7 @@ def _executar_camada_risco() -> dict:
         # Adaptar formato
         return {
             "score": resultado["score_consolidado"],
-            "classificacao": resultado["classificacao"],
+            "classificacao": resultado["classificacao_consolidada"],  # ← CORRIGIDO
             "health_factor": resultado.get("health_factor", 0),
             "dist_liquidacao": resultado.get("dist_liquidacao", 0),
             "status": "success"
@@ -163,7 +163,7 @@ def _get_mock_estrategia() -> dict:
 def debug_dashboard() -> dict:
     """Debug status implementação"""
     try:
-        ultimo = get_latest_dashboard_v3()
+        ultimo = get_latest_dashboard()
         
         return {
             "status": "success",
