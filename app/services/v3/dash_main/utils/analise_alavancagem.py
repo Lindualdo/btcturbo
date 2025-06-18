@@ -36,12 +36,21 @@ def executar_analise_alavancagem(dados_mercado: dict, dados_risco: dict) -> dict
         if protecoes["bloqueado"]:
             alavancagem_permitida = 0.0
         
+        # 5. Buscar dados posição atual para cálculos financeiros
+        dados_posicao = _obter_dados_posicao()
+        
         # 6. Construir resposta
         return {
             "status": "success",
             "alavancagem_maxima": round(alavancagem_maxima, 1),
             "alavancagem_permitida": round(alavancagem_permitida, 1),
+            "alavancagem_atual": dados_posicao.get("alavancagem_atual", 0),
             "fator_redutor": fator_redutor,
+            "posicao_financeira": {
+                "divida_total": dados_posicao.get("divida_total", 0),
+                "valor_disponivel": dados_posicao.get("valor_disponivel", 0),
+                "valor_a_reduzir": dados_posicao.get("valor_a_reduzir", 0)
+            },
             "inputs": {
                 "mvrv": mvrv,
                 "rsi_mensal": round(rsi_mensal, 1),
@@ -134,3 +143,35 @@ def _aplicar_protecoes(score_mercado: float, dados_mercado: dict, dados_risco: d
         "protecoes_ativas": protecoes_ativas,
         "total_protecoes": len(protecoes_ativas)
     }
+
+def _obter_dados_posicao() -> dict:
+    """Extrai dados financeiros da posição atual"""
+    try:
+        from app.services.indicadores import riscos
+        dados_pos = riscos.obter_indicadores()
+        
+        if dados_pos.get("status") != "success":
+            logger.warning("⚠️ Dados posição indisponíveis")
+            return {}
+        
+        posicao = dados_pos.get("posicao_atual", {})
+        
+        # Extrair valores numéricos
+        alavancagem_atual = posicao.get("alavancagem_atual", {}).get("valor_numerico", 0)
+        divida_total = posicao.get("divida_total", {}).get("valor_numerico", 0)
+        capital_liquido = posicao.get("capital_liquido", {}).get("valor_numerico", 0)
+        
+        # Calcular valor disponível/reduzir seria baseado na diferença vs permitida
+        # Placeholder por enquanto
+        
+        return {
+            "alavancagem_atual": float(alavancagem_atual) if alavancagem_atual else 0,
+            "divida_total": float(divida_total) if divida_total else 0,
+            "capital_liquido": float(capital_liquido) if capital_liquido else 0,
+            "valor_disponivel": 0,  # TODO: calcular baseado na permitida
+            "valor_a_reduzir": 0    # TODO: calcular baseado na permitida
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Erro dados posição: {str(e)}")
+        return {}

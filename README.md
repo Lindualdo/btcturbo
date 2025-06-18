@@ -206,10 +206,16 @@ https://github.com/Lindualdo/btcturbo-v5/blob/main/doc/regas-sistema-v5/0-system
 
 
 ## versão dash main v3
+- essa versão está melhor estruturada
+- foi atualizado a documentação comas regras
+- foi feito siomplificação nas rotinas para evitar erro e duplicidade de objetivos nas camdas
+
 ### analise mercado v3 - 5.3.6 - 18/06 feito
 `/api/v3/analise-mercado`
 
-- estrutura completa e autonoma para deinição do ciclo, estrategia e tamanaho de posição
+- estrutura completa e autonoma para definição do ciclo, estrategia e tamanaho de posição
+- está sendo consumido pelo dash-main
+
 
 ```Json
 {
@@ -246,7 +252,8 @@ https://github.com/Lindualdo/btcturbo-v5/blob/main/doc/regas-sistema-v5/0-system
 }
 ```
 ### dash-main - riscos  v3 - 5.3.7 - 18/06 feito
-- gravação e recuperação da base
+- analise de risco
+- gravação e recuperação do dash na base
 
-### dash-main - alavancagem  v3 - 5.3.8 - 18/06
+### dash-main - alavancagem  v3 - 5.3.8 - 18/06 - feito
 - processar dados de alavancagem

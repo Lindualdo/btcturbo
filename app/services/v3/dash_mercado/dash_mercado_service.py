@@ -1,212 +1,176 @@
-# app/services/v3/dash_mercado/dash_mercado_service.py
+# app/services/v3/dash_main/dash_main_service.py
 
 import logging
 from datetime import datetime
+from app.services.v3.analise_mercado import analise_mercado_service as analise_mercado
+from app.services.scores import riscos
+from app.services.v3.dash_main.utils.helpers.data_helper import save_dashboard, get_latest_dashboard
+from app.services.v3.dash_main.utils.analise_alavancagem import executar_analise_alavancagem
 
 logger = logging.getLogger(__name__)
 
-def calcular_dashboard_mercado() -> dict:
+def processar_dashboard() -> dict:
     """
-    Calcula dashboard mercado com scores consolidados
+    Dashboard V3 - POST: Processa 4 camadas e grava
     
-    Fluxo:
-    1. Coleta dados dos 3 blocos
-    2. Calcula scores individuais  
-    3. Calcula score consolidado
-    4. Grava no banco
+    Status implementação:
+    - [✅] Camada 1: Análise Mercado (score + ciclo)  
+    - [✅] Camada 2: Análise Risco (health_factor + score)
+    - [🔄] Camada 3: Análise Alavancagem (mock temporário)
+    - [🔄] Camada 4: Execução Tática (mock temporário)
     """
     try:
-        from app.services.v3.dash_mercado import collect_and_calculate_scores
-        from app.services.v3.dash_mercado import save_dashboard_scores
+        logger.info("🚀 Processando Dashboard V3 - POST")
         
-        logger.info("🔄 Coletando e calculando scores...")
+        # CAMADA 1: Análise Mercado (real)
+        dados_mercado = analise_mercado.executar_analise()
+        logger.info(f"✅ Camada 1: Score {dados_mercado['score_mercado']} - {dados_mercado['classificacao_mercado']}")
         
-        # 1. Coletar dados e calcular scores
-        scores_data = collect_and_calculate_scores()
+        # CAMADA 2: Análise Risco (real)
+        dados_risco = _executar_camada_risco()
+        logger.info(f"✅ Camada 2: Score {dados_risco['score']} - {dados_risco['classificacao']}")
         
-        if scores_data.get("status") != "success":
-            return {
-                "status": "error",
-                "erro": scores_data.get("erro", "Erro ao calcular scores"),
-                "timestamp": datetime.utcnow().isoformat()
-            }
+        # CAMADA 3: Análise Alavancagem (real)
+        dados_alavancagem = executar_analise_alavancagem(dados_mercado, dados_risco)
+        logger.info(f"✅ Camada 3: Alavancagem {dados_alavancagem.get('alavancagem_permitida', 0)}x")
         
-        # 2. Calcular score consolidado
-        score_consolidado = _calcular_score_consolidado(scores_data["scores"])
+        # CAMADA 4: Execução Tática (mock - TODO) 
+        mock_estrategia = _get_mock_estrategia()
+        logger.info("🔄 Camada 4: Mock estratégia")
         
-        # 3. Preparar dados para banco
-        dados_completos = {
-            **scores_data["scores"],
-            "score_consolidado": score_consolidado["valor"],
-            "classificacao_consolidada": score_consolidado["classificacao"]
-        }
+        # Construir dados formato compatível
+        dashboard_data = build_dashboard_data(
+            dados_mercado, dados_risco, dados_alavancagem, mock_estrategia
+        )
         
-        # 4. Gravar no banco
-        resultado_db = save_dashboard_scores(dados_completos)
-        
-        if resultado_db.get("status") == "success":
-            logger.info(f"✅ Dashboard mercado salvo - Score: {score_consolidado['valor']:.1f}")
-            
-            return {
-                "status": "success",
-                "timestamp": datetime.utcnow().isoformat(),
-                "id_registro": resultado_db["id"],
-                "score_consolidado": score_consolidado["valor"],
-                "classificacao": score_consolidado["classificacao"],
-                "blocos": {
-                    "ciclo": {
-                        "score": scores_data["scores"]["score_ciclo"],
-                        "classificacao": scores_data["scores"]["classificacao_ciclo"]
-                    },
-                    "momentum": {
-                        "score": scores_data["scores"]["score_momentum"], 
-                        "classificacao": scores_data["scores"]["classificacao_momentum"]
-                    },
-                    "tecnico": {
-                        "score": scores_data["scores"]["score_tecnico"],
-                        "classificacao": scores_data["scores"]["classificacao_tecnico"]
-                    }
-                }
-            }
-        else:
-            return {
-                "status": "error",
-                "erro": "Falha ao salvar no banco",
-                "detalhes": resultado_db.get("erro")
-            }
-        
-    except Exception as e:
-        logger.error(f"❌ Erro calcular dashboard mercado: {str(e)}")
-        return {
-            "status": "error",
-            "erro": str(e),
-            "timestamp": datetime.utcnow().isoformat()
-        }
-
-
-def obter_dashboard_mercado() -> dict:
-    """
-    Obtém último dashboard mercado com JSON pronto
-    """
-    try:
-        from app.services.v3.dash_mercado import get_latest_dashboard_scores
-        import json
-        
-        ultimo = get_latest_dashboard_scores()
-        
-        if ultimo:
-            # JSON pode vir como dict ou string do banco
-            indicadores_json = ultimo["indicadores_json"]
-            if isinstance(indicadores_json, str):
-                indicadores_json = json.loads(indicadores_json)
-            
-            return {
-                "status": "success",
-                "id": ultimo["id"],
-                "timestamp": ultimo["timestamp"].isoformat(),
-                "score_consolidado": float(ultimo["score_consolidado"]),
-                "classificacao": ultimo["classificacao_consolidada"],
-                "blocos": {
-                    "ciclo": {
-                        "score": float(ultimo["score_ciclo"]),
-                        "classificacao": ultimo["classificacao_ciclo"],
-                        "indicadores": indicadores_json["ciclo"]
-                    },
-                    "momentum": {
-                        "score": float(ultimo["score_momentum"]),
-                        "classificacao": ultimo["classificacao_momentum"],
-                        "indicadores": indicadores_json["momentum"]
-                    },
-                    "tecnico": {
-                        "score": float(ultimo["score_tecnico"]),
-                        "classificacao": ultimo["classificacao_tecnico"],
-                        "indicadores": indicadores_json["tecnico"]
-                    }
-                }
-            }
-        else:
-            return {
-                "status": "error", 
-                "erro": "Nenhum registro encontrado"
-            }
-            
-    except Exception as e:
-        logger.error(f"❌ Erro obter dashboard mercado: {str(e)}")
-        return {
-            "status": "error",
-            "erro": str(e)
-        }
-
-def debug_dashboard_mercado() -> dict:
-    """
-    Debug do sistema dashboard mercado
-    """
-    try:
-        from app.services.v3.dash_mercado import get_latest_dashboard_scores
-        
-        ultimo = get_latest_dashboard_scores()
+        # Salvar no PostgreSQL
+        success = save_dashboard(dashboard_data)
+        if not success:
+            raise Exception("Falha ao salvar Dashboard")
         
         return {
             "status": "success",
-            "sistema": "dash-mercado",
-            "versao": "v1.0",
-            "ultimo_registro": {
-                "existe": ultimo is not None,
-                "id": ultimo["id"] if ultimo else None,
-                "timestamp": ultimo["timestamp"].isoformat() if ultimo else None
-            },
-            "componentes": {
-                "collectors": ["collect_and_calculate_scores"],
-                "database": ["save_dashboard_scores", "get_latest_dashboard_scores"],
-                "scores": ["ciclo", "momentum", "tecnico", "consolidado"]
+            "versao": "v3_4_camadas",
+            "timestamp": datetime.utcnow().isoformat(),
+            "message": "Dashboard V3 processado e gravado",
+            "camadas_processadas": {
+                "mercado": "✅ real",
+                "risco": "✅ real", 
+                "alavancagem": "✅ real",
+                "estrategia": "🔄 mock"
             }
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Erro processar Dashboard V3: {str(e)}")
+        return {
+            "status": "error",
+            "versao": "v3_4_camadas",
+            "timestamp": datetime.utcnow().isoformat(),
+            "erro": str(e),
+            "message": "Falha processar Dashboard V3"
+        }
+
+def obter_dashboard() -> dict:
+    """
+    Dashboard V3 - GET: Recupera último processado
+    """
+    try:
+        logger.info("🔍 Obtendo Dashboard V3 - GET")
+        
+        # Buscar último registro
+        dados = get_latest_dashboard()
+        
+        if not dados:
+            return {
+                "status": "error",
+                "erro": "Nenhum dashboard V3 encontrado",
+                "message": "Execute POST /api/v3/dash-main primeiro"
+            }
+        
+        # Converter JSON se necessário
+        dashboard_json = dados["dashboard_json"]
+        if isinstance(dashboard_json, str):
+            import json
+            dashboard_json = json.loads(dashboard_json)
+        
+        # Retornar formato esperado
+        return build_response_format(
+            {"json": dashboard_json},
+            dados["id"],
+            dados["created_at"]
+        )
+        
+    except Exception as e:
+        logger.error(f"❌ Erro obter Dashboard V3: {str(e)}")
+        return {
+            "status": "error",
+            "erro": str(e),
+            "message": "Falha obter Dashboard V3"
+        }
+
+def _executar_camada_risco() -> dict:
+    """Camada 2: Análise Risco - usa função existente"""
+    try:
+        logger.info("🛡️ Executando Camada 2: Análise Risco...")
+        
+        resultado = riscos.calcular_score()
+        
+        if resultado.get("status") != "success":
+            error_msg = f"Falha calcular_score_risco: {resultado.get('erro', 'erro desconhecido')}"
+            logger.error(f"❌ {error_msg}")
+            raise Exception(error_msg)
+        
+        # Adaptar formato
+        return {
+            "score": resultado["score_consolidado"],
+            "classificacao": resultado["classificacao_consolidada"],
+            "health_factor": resultado["indicadores"]["Health_Factor"]["valor"],
+            "dist_liquidacao": resultado["indicadores"]["Dist_Liquidacao"]["valor"], 
+            "status": "success"
+        }
+        
+    except Exception as e:
+        error_msg = f"Erro Camada 2 Risco: {str(e)}"
+        logger.error(f"❌ {error_msg}")
+        raise Exception(error_msg)
+
+def _get_mock_estrategia() -> dict:
+    """Mock Camada 4 - TODO: implementar decisão real"""
+    logger.warning("🔄 Usando dados mock para Camada 4 - implementar execução tática")
+    return {
+        "decisao": "AGUARDAR_IMPLEMENTACAO",
+        "setup_4h": "INDEFINIDO",
+        "urgencia": "baixa",
+        "justificativa": "Camada 4 não implementada"
+    }
+
+def debug_dashboard() -> dict:
+    """Debug status implementação"""
+    try:
+        ultimo = get_latest_dashboard()
+        
+        return {
+            "status": "success",
+            "versao": "v3_4_camadas",
+            "ultimo_registro": {
+                "id": ultimo["id"] if ultimo else None,
+                "created_at": ultimo["created_at"].isoformat() if ultimo else None,
+                "tem_dados": ultimo is not None
+            },
+            "implementacao": {
+                "camada_1_mercado": "✅ REAL",
+                "camada_2_risco": "✅ REAL", 
+                "camada_3_alavancagem": "✅ REAL",
+                "camada_4_tatica": "🔄 MOCK - TODO"
+            },
+            "database": "mesma_base_v2",
+            "formato": "100%_compativel"
         }
         
     except Exception as e:
         return {
             "status": "error",
             "erro": str(e),
-            "sistema": "dash-mercado"
-        }
-
-def _calcular_score_consolidado(scores: dict) -> dict:
-    """
-    Calcula score consolidado com pesos definidos
-    
-    Pesos: Ciclo 40% + Momentum 20% + Técnico 40% = 100%
-    """
-    try:
-        score_ciclo = float(scores["score_ciclo"])
-        score_momentum = float(scores["score_momentum"])
-        score_tecnico = float(scores["score_tecnico"])
-        
-        # Aplicar pesos conforme especificação
-        score_consolidado = (
-            (score_ciclo * 0.40) +      # Ciclo: 40%
-            (score_momentum * 0.20) +   # Momentum: 20% 
-            (score_tecnico * 0.40)      # Técnico: 40%
-        )
-        
-        # Determinar classificação
-        if score_consolidado >= 8.0:
-            classificacao = "ótimo"
-        elif score_consolidado >= 6.0:
-            classificacao = "bom"
-        elif score_consolidado >= 4.0:
-            classificacao = "neutro"
-        elif score_consolidado >= 2.0:
-            classificacao = "ruim"
-        else:
-            classificacao = "crítico"
-        
-        return {
-            "valor": round(score_consolidado, 2),
-            "classificacao": classificacao
-        }
-        
-    except Exception as e:
-        logger.error(f"❌ Erro calcular score consolidado: {str(e)}")
-        return {
-            "valor": 5.0,
-            "classificacao": "neutro"
+            "versao": "v3_4_camadas"
         }
