@@ -257,3 +257,5 @@ https://github.com/Lindualdo/btcturbo-v5/blob/main/doc/regas-sistema-v5/0-system
 
 ### dash-main - alavancagem  v3 - 5.3.8 e 5.3.9 - 18/06 - feito
 - processar dados de alavancagem
+- funcionando as 3 camadas do dash 
+- dash está carregando com dados gerados na V3 100% copativel com v2

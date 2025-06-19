@@ -4,7 +4,7 @@
 
 ## Matriz de Setups (Timeframe 4H)
 
-### Setups de COMPRA (quando ciclo permite)
+### Setups de COMPRA
 | Setup | Condições 4H | Confirmação | Ação | Tamanho |
 |-------|--------------|-------------|------|---------|
 | **Pullback Tendência** | RSI < 45 + EMA144 ±3% | Volume médio+ | COMPRAR | 30% |
@@ -12,7 +12,7 @@
 | **Rompimento** | Fecha acima resistência | Volume alto | COMPRAR | 20% |
 | **Oversold Extremo** | RSI < 30 | Divergência+ | COMPRAR | 40% |
 
-### Setups de VENDA (quando ciclo sugere)
+### Setups de VENDA
 | Setup | Condições 4H | Confirmação | Ação | Tamanho |
 |-------|--------------|-------------|------|---------|
 | **Resistência** | RSI > 70 + Topo range | Rejeição | REALIZAR | 25% |
@@ -55,76 +55,3 @@ Stop Distance = ATR(14) × Multiplicador
   - Agressivo: EMA 17 (4H)
   - Moderado: EMA 34 (Diário)
   - Conservador: EMA 144 (Semanal)
-
-### 2. Rotina Operacional Sugerida
-
-#### Check Matinal (5 min)
-1. Verificar Health Factor
-2. Score de Mercado mudou de faixa?
-3. Algum alerta de preço atingido?
-
-#### Análise 4H (10 min)
-1. Setup formando no gráfico?
-2. Confluência com ciclo atual?
-3. Ajustar stops se necessário
-
-#### Revisão Semanal (30 min)
-1. Recalcular todos os scores
-2. Reavaliar ciclo de mercado
-3. Planejar semana (níveis de entrada/saída)
-4. Ajustar tamanho de posição se mudou ciclo
-
-### 3. Sistema de Alertas Recomendados
-
-#### Alertas Críticos
-- Health Factor < 1.3
-- Score Risco < 40
-- Mudança de ciclo
-- Stop loss se aproximando
-
-#### Alertas Táticos
-- RSI 4H < 30 ou > 70
-- Preço nas EMAs chave
-- Setup 4H detectado
-- Target de lucro atingido
-
-### 4. Registro e Melhoria Contínua
-
-#### Trade Journal Mínimo
-- Data/hora entrada
-- Ciclo no momento
-- Setup usado
-- Tamanho posição
-- Stop definido
-- Resultado
-- Observações
-
-#### Métricas de Performance
-- Win rate por ciclo
-- Win rate por setup
-- Risco/retorno médio
-- Drawdown máximo por ciclo
-
----
-
-## 📱 Widget Decisão Simplificada (ATUALIZADO)
-
-```
-┌─────────────────────────────────┐
-│ CICLO: BULL INICIAL             │
-│ MVRV: 1.45                      │
-│ Alavancagem: 1.8x/2.5x ✅       │
-│ Health Factor: 1.85 ✅          │
-│                                 │
-│ 💡 AÇÃO AGORA:                  │
-│ [COMPRAR 25%]                   │
-│ "Pullback na EMA144 4H"         │
-│                                 │
-│ Stop sugerido: $92,500 (-8%)    │
-│ Próxima revisão: 4 horas        │
-└─────────────────────────────────┘
-```
-
----
-
-*Sistema v5.3 - Correções aplicadas + Seção operacional adicionada*
