@@ -31,7 +31,7 @@ def build_dashboard_data(dados_mercado: dict, dados_risco: dict, dados_alavancag
         
         # Extrair dados reais das 4 camadas
         btc_price = _extract_btc_price(dados_mercado, dados_risco)
-        position_usd = _extract_position_value(dados_risco)
+        position_usd = _extract_position_value(dados_alavancagem)
         
         # Dados técnicos da Camada 4
         tecnicos = dados_tatica["tecnicos"]
@@ -118,13 +118,14 @@ def _extract_btc_price(dados_mercado: dict, dados_risco: dict) -> float:
         logger.error(f"❌ Erro extrair BTC price: {str(e)}")
         return 0.0
 
-def _extract_position_value(dados_risco: dict) -> float:
-    """Extrai valor posição USD"""
+def _extract_position_value(dados_alavancagem: dict) -> float:
+    """Extrai valor posição USD dos dados de alavancagem"""
     try:
-        if "position_usd" in dados_risco:
-            return float(dados_risco["position_usd"])
+        # Buscar posicao_total em dados_alavancagem
+        if "posicao_total" in dados_alavancagem:
+            return float(dados_alavancagem["posicao_total"])
         else:
-            logger.error("❌ Position USD não encontrado")
+            logger.error("❌ Position USD (posicao_total) não encontrado em dados_alavancagem")
             return 0.0
             
     except Exception as e:
