@@ -259,18 +259,12 @@ https://github.com/Lindualdo/btcturbo-v5/blob/main/doc/regas-sistema-v5/0-system
 - processar dados de alavancagem
 - funcionando as 3 camadas do dash 
 - dash está carregando com dados gerados na V3 100% copativel com v2
-### dash-main - execução tática - camada 4 - 5.3.10
+
+### dash-main - execução tática - camada 4 - 5.3.10 - feito
 
 ### **1. Estrutura de Arquivos Criada**
-```
-app/services/v3/dash_main/
-├── execucao_tatica_service.py     # 🎯 Orquestrador principal
-├── utils/
-│   ├── gate_system_utils.py       # 🚪 4 validações + overrides
-│   ├── setup_detector_utils.py    # 🔍 Matriz setups 4H
-│   └── tecnicos_utils.py          # 📊 RSI + EMA144 4H
-└── helpers/
-    ├── comprar_helper.py          # 💰 Estratégia compra ✅
-    ├── vender_helper.py           # 💸 Estratégia venda 🔄 mock
-    └── stop_helper.py             # 🛡️ Stop loss 🔄 mock
-```
+- dash funcionando com dados da V3
+- estrutura da execução tática implementada
+- tecnicamente funcionando, precisa validar as informações
+- analise cuidadosamente os stups, estrategia e filtros (gate systems)
+- implementar rotinas de venda e stop
