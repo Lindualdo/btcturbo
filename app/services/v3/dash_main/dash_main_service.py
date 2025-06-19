@@ -119,8 +119,8 @@ def _executar_camada_risco() -> dict:
         resultado = riscos.calcular_score()
         
         return {
-            "score": resultado["scores"]["score_consolidado_100"],
-            "classificacao": resultado["scores"]["classificacao_consolidada"],
+            "score": resultado["score_consolidado_100"],
+            "classificacao": resultado["classificacao_consolidada"],
             "health_factor": resultado["indicadores"]["Health_Factor"]["valor"],
             "dist_liquidacao": float(str(resultado["indicadores"]["Dist_Liquidacao"]["valor"]).replace("%", "")),
             "status": "success"
