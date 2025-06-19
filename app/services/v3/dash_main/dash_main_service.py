@@ -7,19 +7,12 @@ from app.services.scores import riscos
 from app.services.v3.dash_main.utils.helpers.data_helper import save_dashboard, get_latest_dashboard
 from app.services.v3.dash_main.utils.helpers.data_builder import build_dashboard_data, build_response_format
 from app.services.v3.dash_main.utils.analise_alavancagem import executar_analise_alavancagem
-from app.services.v3.dash_main.execucao_tatica_service import executar_execucao_tatica
 
 logger = logging.getLogger(__name__)
 
 def processar_dashboard() -> dict:
     """
     Dashboard V3 - POST: Processa 4 camadas e grava
-    
-    Status implementação:
-    - [✅] Camada 1: Análise Mercado (score + ciclo)  
-    - [✅] Camada 2: Análise Risco (health_factor + score)
-    - [✅] Camada 3: Análise Alavancagem (real)
-    - [✅] Camada 4: Execução Tática (real - NOVO)
     """
     try:
         logger.info("🚀 Processando Dashboard V3 - POST")
@@ -36,17 +29,38 @@ def processar_dashboard() -> dict:
         dados_alavancagem = executar_analise_alavancagem(dados_mercado, dados_risco)
         logger.info(f"✅ Camada 3: Alavancagem {dados_alavancagem.get('alavancagem_permitida', 0)}x")
         
-        # CAMADA 4: Execução Tática (IMPLEMENTADO)
+        # CAMADA 4: Execução Tática (real) - COM DEBUG
+        logger.info("🎯 Executando Camada 4: Execução Tática...")
+        from app.services.v3.dash_main.execucao_tatica_service import executar_execucao_tatica
         dados_tatica = executar_execucao_tatica(dados_mercado, dados_risco, dados_alavancagem)
+        
+        # DEBUG: Verificar estrutura retornada
+        logger.info(f"🔍 DEBUG Camada 4 - Tipo: {type(dados_tatica)}")
+        logger.info(f"🔍 DEBUG Camada 4 - Keys: {list(dados_tatica.keys()) if isinstance(dados_tatica, dict) else 'Não é dict'}")
+        
+        if isinstance(dados_tatica, dict):
+            if 'tecnicos' in dados_tatica:
+                logger.info(f"🔍 DEBUG Técnicos: {dados_tatica['tecnicos']}")
+            else:
+                logger.error("❌ 'tecnicos' ausente em dados_tatica")
+                raise Exception("Camada 4: 'tecnicos' ausente")
+                
+            if 'estrategia' in dados_tatica:
+                logger.info(f"🔍 DEBUG Estratégia: {dados_tatica['estrategia']}")
+            else:
+                logger.error("❌ 'estrategia' ausente em dados_tatica")
+                raise Exception("Camada 4: 'estrategia' ausente")
+        else:
+            logger.error(f"❌ Camada 4 retornou tipo inválido: {type(dados_tatica)}")
+            raise Exception(f"Camada 4: tipo inválido {type(dados_tatica)}")
+        
         logger.info(f"✅ Camada 4: {dados_tatica['estrategia']['decisao']} - {dados_tatica['estrategia']['setup_4h']}")
         
         # Construir dados formato compatível
+        logger.info("🔧 Construindo dashboard data...")
         dashboard_data = build_dashboard_data(
-            dados_mercado, dados_risco, dados_alavancagem, dados_tatica['estrategia']
+            dados_mercado, dados_risco, dados_alavancagem, dados_tatica
         )
-        
-        # Adicionar dados técnicos ao resultado (nova seção)
-        dashboard_data['tecnicos'] = dados_tatica['tecnicos']
         
         # Salvar no PostgreSQL
         success = save_dashboard(dashboard_data)
@@ -62,7 +76,7 @@ def processar_dashboard() -> dict:
                 "mercado": "✅ real",
                 "risco": "✅ real", 
                 "alavancagem": "✅ real",
-                "estrategia": "✅ real - IMPLEMENTADO"
+                "estrategia": "✅ real"
             }
         }
         
@@ -76,28 +90,25 @@ def processar_dashboard() -> dict:
             "message": "Falha processar Dashboard V3"
         }
 
+
+
 def obter_dashboard() -> dict:
-    """
-    Dashboard V3 - GET: Recupera último processado
-    """
+    """Dashboard V3 - GET: Recupera último processado"""
     try:
         logger.info("🔍 Obtendo Dashboard V3 - GET")
         
-        # Buscar último registro
         dados = get_latest_dashboard()
         
         if not dados:
             return {
                 "status": "error",
-                "versao": "v3_4_camadas",
+                "versao": "v3_4_camadas", 
                 "timestamp": datetime.utcnow().isoformat(),
                 "erro": "Nenhum dashboard encontrado",
                 "message": "Execute POST primeiro para gerar dados"
             }
         
-        # Construir resposta
         response = build_response_format(dados)
-        
         logger.info(f"✅ Dashboard obtido: ID {dados['id']}")
         return response
         
@@ -148,18 +159,10 @@ def debug_dashboard() -> dict:
                 "camada_1_mercado": "✅ REAL",
                 "camada_2_risco": "✅ REAL", 
                 "camada_3_alavancagem": "✅ REAL",
-                "camada_4_tatica": "✅ REAL - IMPLEMENTADO"
+                "camada_4_tatica": "✅ REAL"
             },
             "database": "mesma_base_v2",
-            "formato": "100%_compativel",
-            "novas_funcionalidades": {
-                "gate_system": "✅ 4 validações + overrides",
-                "setup_detection": "✅ 4 setups de compra",
-                "tecnicos_4h": "✅ RSI + EMA144",
-                "estrategia_compra": "✅ implementada",
-                "estrategia_venda": "🔄 mock - futura",
-                "stop_loss": "🔄 mock - futura"
-            }
+            "formato": "100%_compativel"
         }
         
     except Exception as e:
