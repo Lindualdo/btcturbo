@@ -5,9 +5,9 @@ from typing import Dict, Any
 from .utils.gate_system_utils import aplicar_gate_system
 from .utils.setup_detector_utils import identificar_setup_4h
 from .utils.tecnicos_utils import obter_dados_tecnicos_4h
-from .helpers.comprar_helper import processar_estrategia_compra
-from .helpers.vender_helper import processar_estrategia_venda
-from .helpers.stop_helper import processar_estrategia_stop
+from .utils.helpers.comprar_helper import processar_estrategia_compra
+from .utils.helpers.vender_helper import processar_estrategia_venda
+from .utils.helpers.stop_helper import processar_estrategia_stop
 
 logger = logging.getLogger(__name__)
 
