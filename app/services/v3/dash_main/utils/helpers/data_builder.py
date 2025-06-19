@@ -134,20 +134,31 @@ def _extract_position_value(dados_risco: dict) -> float:
         logger.error(f"❌ Erro extrair position: {str(e)}")
         return 100000.0
 
-def build_response_format(dashboard_data: dict, record_id: int = None, created_at: datetime = None) -> dict:
+def build_response_format(dados_db: dict) -> dict:
     """
-    Constrói resposta formato API V3
+    Constrói resposta formato API V3 a partir dos dados do banco
     """
     try:
-        json_data = dashboard_data.get("json", {})
+        # Extrair JSON do campo dashboard_json
+        dashboard_json = dados_db.get("dashboard_json")
+        
+        # Se for string, fazer parse
+        if isinstance(dashboard_json, str):
+            import json
+            dashboard_json = json.loads(dashboard_json)
+        
+        # Se não tiver JSON válido, construir a partir dos campos
+        if not dashboard_json:
+            logger.warning("⚠️ JSON vazio - construindo a partir dos campos")
+            dashboard_json = _build_from_fields(dados_db)
         
         return {
             "status": "success",
-            "data": json_data,
+            "data": dashboard_json,
             "metadata": {
-                "id": record_id or 0,
-                "timestamp": created_at.isoformat() if created_at else datetime.utcnow().isoformat(),
-                "age_minutes": _calculate_age_minutes(created_at) if created_at else 0,
+                "id": dados_db.get("id", 0),
+                "timestamp": dados_db["created_at"].isoformat() if dados_db.get("created_at") else datetime.utcnow().isoformat(),
+                "age_minutes": _calculate_age_minutes(dados_db.get("created_at")) if dados_db.get("created_at") else 0,
                 "versao": "v3_4_camadas"
             }
         }
@@ -159,6 +170,51 @@ def build_response_format(dashboard_data: dict, record_id: int = None, created_a
             "erro": str(e),
             "versao": "v3_4_camadas"
         }
+
+def _build_from_fields(dados_db: dict) -> dict:
+    """Constrói JSON a partir dos campos do banco em caso de falha"""
+    try:
+        return {
+            "header": {
+                "btc_price": dados_db.get("btc_price", 0),
+                "position_usd": 100000.0  # Fallback
+            },
+            "scores": {
+                "ciclo": dados_db.get("ciclo_atual", "INDEFINIDO"),
+                "risco": dados_db.get("score_risco", 0),
+                "mercado": dados_db.get("score_mercado", 0),
+                "classificacao_risco": "indefinido",
+                "classificacao_mercado": "indefinido"
+            },
+            "tecnicos": {
+                "rsi": dados_db.get("rsi_diario", 50),
+                "preco_ema144": 0,
+                "ema_144_distance": dados_db.get("ema_distance", 0)
+            },
+            "estrategia": {
+                "decisao": dados_db.get("decisao_final", "INDEFINIDO"),
+                "setup_4h": dados_db.get("setup_4h", "INDEFINIDO"),
+                "urgencia": "baixa",
+                "justificativa": "Dados reconstruídos"
+            },
+            "alavancagem": {
+                "atual": dados_db.get("alavancagem_atual", 0),
+                "status": "indefinido",
+                "permitida": 0,
+                "divida_total": 0,
+                "valor_a_reduzir": 0,
+                "valor_disponivel": 0
+            },
+            "indicadores": {
+                "mvrv": 0,
+                "nupl": 0,
+                "health_factor": dados_db.get("health_factor", 0),
+                "dist_liquidacao": 0
+            }
+        }
+    except Exception as e:
+        logger.error(f"❌ Erro construir fallback: {str(e)}")
+        return {}
 
 def _calculate_age_minutes(created_at: datetime) -> float:
     """Calcula idade em minutos do registro"""
