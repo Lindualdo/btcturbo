@@ -116,13 +116,11 @@ def _executar_camada_risco() -> dict:
     try:
         logger.info("🛡️ Executando Camada 2: Análise Risco...")
         
-        resultado = riscos.obter_scores_risco()
+        resultado = riscos.calcular_score()
         
         return {
-            "score": resultado["scores"]["score_geral"],
-            "classificacao": resultado["scores"]["classificacao_score"],
-            "mvrv": resultado["indicadores"]["MVRV"]["valor"],
-            "nupl": resultado["indicadores"]["NUPL"]["valor"],
+            "score": resultado["scores"]["score_consolidado_100"],
+            "classificacao": resultado["scores"]["classificacao_consolidada"],
             "health_factor": resultado["indicadores"]["Health_Factor"]["valor"],
             "dist_liquidacao": float(str(resultado["indicadores"]["Dist_Liquidacao"]["valor"]).replace("%", "")),
             "status": "success"
