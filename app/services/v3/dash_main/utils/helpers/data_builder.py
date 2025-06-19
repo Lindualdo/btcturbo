@@ -121,12 +121,14 @@ def _extract_btc_price(dados_mercado: dict, dados_risco: dict) -> float:
 def _extract_position_value(dados_alavancagem: dict) -> float:
     """Extrai valor posição USD dos dados de alavancagem"""
     try:
-        # Buscar posicao_total em dados_alavancagem
-        if "posicao_total" in dados_alavancagem:
-            return float(dados_alavancagem["posicao_total"])
-        else:
-            logger.error("❌ Position USD (posicao_total) não encontrado em dados_alavancagem")
-            return 0.0
+        # Buscar posicao_total na estrutura correta
+        if "posicao_financeira" in dados_alavancagem:
+            posicao_financeira = dados_alavancagem["posicao_financeira"]
+            if "posicao_total" in posicao_financeira:
+                return float(posicao_financeira["posicao_total"])
+        
+        logger.error(f"❌ posicao_total não encontrado. Estrutura: {list(dados_alavancagem.keys())}")
+        return 0.0
             
     except Exception as e:
         logger.error(f"❌ Erro extrair position: {str(e)}")
