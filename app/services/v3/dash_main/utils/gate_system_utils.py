@@ -63,7 +63,7 @@ def aplicar_gate_system(dados_mercado: Dict, dados_risco: Dict, dados_alavancage
         
     except Exception as e:
         logger.error(f"❌ Erro Gate System: {str(e)}")
-        return _fallback_gate_system(str(e))
+        raise Exception(f"Gate System falhou: {str(e)}")
 
 def _verificar_overrides_especiais(health_factor: float, score_risco: float) -> Dict[str, Any]:
     """Verifica proteções absolutas que ignoram todas as outras regras"""
@@ -141,20 +141,3 @@ def _gerar_motivo_gate(validacoes: Dict[str, bool]) -> str:
         motivos.append("Margem < 5%")
     
     return " | ".join(motivos)
-
-def _fallback_gate_system(erro: str) -> Dict[str, Any]:
-    """Fallback conservador em caso de erro"""
-    logger.error(f"🚨 FALLBACK Gate System: {erro}")
-    
-    return {
-        "liberado": False,
-        "status": "ERRO_GATE",
-        "motivo": f"Erro Gate System: {erro}",
-        "override_especial": False,
-        "validacoes": {
-            "score_risco_ok": False,
-            "score_mercado_ok": False, 
-            "health_factor_ok": False,
-            "margem_disponivel_ok": False
-        }
-    }

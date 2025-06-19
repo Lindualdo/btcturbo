@@ -5,9 +5,9 @@ from typing import Dict, Any
 from .utils.gate_system_utils import aplicar_gate_system
 from .utils.setup_detector_utils import identificar_setup_4h
 from .utils.tecnicos_utils import obter_dados_tecnicos_4h
-from .utils.helpers.comprar_helper import processar_estrategia_compra
-from .utils.helpers.vender_helper import processar_estrategia_venda
-from .utils.helpers.stop_helper import processar_estrategia_stop
+from .helpers.comprar_helper import processar_estrategia_compra
+from .helpers.vender_helper import processar_estrategia_venda
+from .helpers.stop_helper import processar_estrategia_stop
 
 logger = logging.getLogger(__name__)
 
@@ -53,7 +53,7 @@ def executar_execucao_tatica(dados_mercado: Dict, dados_risco: Dict, dados_alava
         
     except Exception as e:
         logger.error(f"❌ Erro Camada 4 Execução Tática: {str(e)}")
-        return _fallback_execucao_tatica(str(e))
+        raise Exception(f"Execução Tática falhou: {str(e)}")
 
 def _processar_decisao_final(setup_info: Dict, gate_result: Dict, dados_alavancagem: Dict) -> Dict:
     """Processa decisão final baseada em setup, gate e situação alavancagem"""
@@ -95,21 +95,3 @@ def _processar_decisao_final(setup_info: Dict, gate_result: Dict, dados_alavanca
     except Exception as e:
         logger.error(f"❌ Erro decisão final: {str(e)}")
         raise Exception(f"Falha decisão estratégica: {str(e)}")
-
-def _fallback_execucao_tatica(erro: str) -> Dict[str, Any]:
-    """Fallback em caso de erro na execução tática"""
-    logger.error(f"🚨 FALLBACK Execução Tática: {erro}")
-    
-    return {
-        "tecnicos": {
-            "rsi": 50.0,
-            "preco_ema144": 0,
-            "ema_144_distance": 0
-        },
-        "estrategia": {
-            "decisao": "ERRO",
-            "setup_4h": "INDISPONIVEL",
-            "urgencia": "alta",
-            "justificativa": f"Erro sistema: {erro}"
-        }
-    }

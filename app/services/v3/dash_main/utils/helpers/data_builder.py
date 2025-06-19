@@ -48,7 +48,7 @@ def build_dashboard_data(dados_mercado: dict, dados_risco: dict, dados_alavancag
             "alavancagem_atual": dados_alavancagem.get("alavancagem_atual", 0),
             "health_factor": dados_risco["health_factor"],
             "ema_distance": tecnicos.get("ema_144_distance", 0),
-            "rsi_diario": tecnicos.get("rsi", 50)  # RSI 4H (renomear campo futuro)
+            "rsi_diario": tecnicos.get("rsi", 0)
         }
         
         # JSON completo formato esperado
@@ -65,7 +65,7 @@ def build_dashboard_data(dados_mercado: dict, dados_risco: dict, dados_alavancag
                 "classificacao_mercado": dados_mercado["classificacao_mercado"]
             },
             "tecnicos": {
-                "rsi": tecnicos.get("rsi", 50),
+                "rsi": tecnicos.get("rsi", 0),
                 "preco_ema144": tecnicos.get("preco_ema144", 0),
                 "ema_144_distance": tecnicos.get("ema_144_distance", 0)
             },
@@ -103,13 +103,11 @@ def build_dashboard_data(dados_mercado: dict, dados_risco: dict, dados_alavancag
 def _extract_btc_price(dados_mercado: dict, dados_risco: dict) -> float:
     """Extrai preço BTC dos dados disponíveis"""
     try:
-        # Prioridade: dados técnicos > mercado > risco
         if "btc_price" in dados_mercado:
             return float(dados_mercado["btc_price"])
         elif "btc_price" in dados_risco:
             return float(dados_risco["btc_price"])
         else:
-            # Fallback: buscar via helper
             from app.services.utils.helpers.tradingview.tradingview_helper import fetch_ohlc_data
             from tvDatafeed import Interval
             
@@ -118,36 +116,30 @@ def _extract_btc_price(dados_mercado: dict, dados_risco: dict) -> float:
             
     except Exception as e:
         logger.error(f"❌ Erro extrair BTC price: {str(e)}")
-        return 100000.0  # Fallback
+        return 0.0
 
 def _extract_position_value(dados_risco: dict) -> float:
     """Extrai valor posição USD"""
     try:
-        # Buscar nos indicadores de risco
         if "position_usd" in dados_risco:
             return float(dados_risco["position_usd"])
         else:
-            logger.warning("⚠️ Position USD não encontrado - usando fallback")
-            return 100000.0  # Fallback
+            logger.error("❌ Position USD não encontrado")
+            return 0.0
             
     except Exception as e:
         logger.error(f"❌ Erro extrair position: {str(e)}")
-        return 100000.0
+        return 0.0
 
 def build_response_format(dados_db: dict) -> dict:
-    """
-    Constrói resposta formato API V3 a partir dos dados do banco
-    """
+    """Constrói resposta formato API V3 a partir dos dados do banco"""
     try:
-        # Extrair JSON do campo dashboard_json
         dashboard_json = dados_db.get("dashboard_json")
         
-        # Se for string, fazer parse
         if isinstance(dashboard_json, str):
             import json
             dashboard_json = json.loads(dashboard_json)
         
-        # Se não tiver JSON válido, construir a partir dos campos
         if not dashboard_json:
             logger.warning("⚠️ JSON vazio - construindo a partir dos campos")
             dashboard_json = _build_from_fields(dados_db)
@@ -177,7 +169,7 @@ def _build_from_fields(dados_db: dict) -> dict:
         return {
             "header": {
                 "btc_price": dados_db.get("btc_price", 0),
-                "position_usd": 100000.0  # Fallback
+                "position_usd": 0.0
             },
             "scores": {
                 "ciclo": dados_db.get("ciclo_atual", "INDEFINIDO"),
@@ -187,7 +179,7 @@ def _build_from_fields(dados_db: dict) -> dict:
                 "classificacao_mercado": "indefinido"
             },
             "tecnicos": {
-                "rsi": dados_db.get("rsi_diario", 50),
+                "rsi": dados_db.get("rsi_diario", 0),
                 "preco_ema144": 0,
                 "ema_144_distance": dados_db.get("ema_distance", 0)
             },
@@ -214,7 +206,7 @@ def _build_from_fields(dados_db: dict) -> dict:
         }
     except Exception as e:
         logger.error(f"❌ Erro construir fallback: {str(e)}")
-        return {}
+        raise Exception(f"Falha construir fallback: {str(e)}")
 
 def _calculate_age_minutes(created_at: datetime) -> float:
     """Calcula idade em minutos do registro"""

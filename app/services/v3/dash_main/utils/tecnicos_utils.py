@@ -40,7 +40,7 @@ def obter_dados_tecnicos_4h() -> Dict[str, float]:
         
     except Exception as e:
         logger.error(f"❌ Erro dados técnicos 4H: {str(e)}")
-        return _fallback_tecnicos_4h(str(e))
+        raise Exception(f"Dados técnicos 4H indisponíveis: {str(e)}")
 
 def _obter_rsi_4h() -> float:
     """Obtém RSI 4H usando helper TradingView existente"""
@@ -95,16 +95,6 @@ def _obter_ema144_4h_e_distancia() -> Dict[str, float]:
     except Exception as e:
         logger.error(f"❌ Erro EMA144 4H: {str(e)}")
         raise Exception(f"EMA144 4H indisponível: {str(e)}")
-
-def _fallback_tecnicos_4h(erro: str) -> Dict[str, float]:
-    """Fallback conservador para dados técnicos"""
-    logger.error(f"🚨 FALLBACK Técnicos 4H: {erro}")
-    
-    return {
-        "rsi": 50.0,  # Neutro
-        "preco_ema144": 0,  # Indica erro
-        "ema_144_distance": 0  # Neutro
-    }
 
 def obter_dados_tecnicos_complementares() -> Dict[str, float]:
     """
