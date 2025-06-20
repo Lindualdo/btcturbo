@@ -284,4 +284,9 @@ https://github.com/Lindualdo/btcturbo-v5/blob/main/doc/regas-sistema-v5/0-system
 - proximo objetivo será retirar os arquivos e pastas total da v2
 
 ### dash main e dash mercado v3 funcionando - 5.3.16 - fazendo
-excluindo as pastas e arquivos da V2 total
+- excluindo as pastas e arquivos da V2 total
+- encontrei um problema grave na coleta dos indicadores..
+- estava buscando riscos e anal. tecnica no btcturbo antigo e não na v5
+- ao testar descobri que riscos está funcionando bem mas tecnico não
+- vou trazer a versão anterior da analise tecnico do btcturbo que estava funcionando bem
+- só vou retonar para os testes quando resolver esseproblema da analise tecnica

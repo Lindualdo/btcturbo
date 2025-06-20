@@ -1,6 +1,14 @@
-# app/services/scores/tecnico.py - REFATORADO COM BBW
+# app/services/scores/tecnico.py
 
 from app.services.indicadores import tecnico as indicadores_tecnico
+
+def calcular_emas_score(score_numerico):
+    """Score já vem calculado do sistema EMAs - usar direto"""
+    return score_numerico
+
+def calcular_padroes_score(score_numerico):
+    """Score já vem calculado dos padrões gráficos - usar direto"""
+    return score_numerico
 
 def interpretar_classificacao(score):
     """Converte score numérico em classificação"""
@@ -16,10 +24,7 @@ def interpretar_classificacao(score):
         return "Bear Confirmado"
 
 def calcular_score():
-    """
-    Calcula score consolidado do bloco TÉCNICO usando dados já processados
-    REFATORADO: usa estrutura organizada com EMAs + BBW
-    """
+    """Calcula score consolidado do bloco TÉCNICO usando EMAs reais"""
     # 1. Obter dados brutos da API
     dados_indicadores = indicadores_tecnico.obter_indicadores()
     
@@ -32,82 +37,30 @@ def calcular_score():
     
     indicadores = dados_indicadores["indicadores"]
     
-    # 2. Verificar qual estrutura temos
-    if "Sistema_EMAs" in indicadores and "Bollinger_Band_Width" in indicadores:
-        return calcular_score_com_bbw(dados_indicadores)
-    elif "Score_Final_Ponderado" in indicadores:
+    # 2. Verificar se temos dados EMAs detalhados ou legados
+    if "Score_Final_Ponderado" in indicadores:
+        # Novo sistema com EMAs detalhadas
         return calcular_score_emas_detalhadas(dados_indicadores)
     else:
+        # Sistema legado
         return calcular_score_legado(dados_indicadores)
 
-def calcular_score_com_bbw(dados_indicadores):
-    """
-    NOVO: Usa score já calculado na coleta (EMAs + BBW)
-    """
-    try:
-        indicadores = dados_indicadores["indicadores"]
-        
-        # Extrair scores dos componentes
-        score_emas = indicadores["Sistema_EMAs"]["score"]
-        score_bbw = indicadores["Bollinger_Band_Width"]["score"]
-        
-        # Calcular score final do bloco
-        score_consolidado = (score_emas * 0.7) + (score_bbw * 0.3)
-        
-        return {
-            "bloco": "tecnico",
-            "peso_bloco": "40%",
-            "score_consolidado": round(score_consolidado, 2),
-            "classificacao_consolidada": interpretar_classificacao(score_consolidado),
-            "timestamp": dados_indicadores["timestamp"],
-            "metodo": "emas_bbw_completo",
-            
-            # Indicadores principais
-            "indicadores": {
-                "Sistema_EMAs": {
-                    "valor": indicadores["Sistema_EMAs"]["valor"],
-                    "score": score_emas,
-                    "peso": "70%",
-                    "fonte": indicadores["Sistema_EMAs"]["fonte"]
-                },
-                "Bollinger_Band_Width": {
-                    "valor": indicadores["Bollinger_Band_Width"]["valor"],
-                    "score": score_bbw,
-                    "peso": "30%",
-                    "fonte": indicadores["Bollinger_Band_Width"]["fonte"]
-                }
-            },
-            
-            "calculo_final": {
-                "formula": "Score = (EMAs × 0.7) + (BBW × 0.3)",
-                "substituicao": f"Score = ({score_emas} × 0.7) + ({score_bbw} × 0.3)",
-                "resultado": f"Score = {score_emas * 0.7:.3f} + {score_bbw * 0.3:.3f} = {score_consolidado:.2f}"
-            },
-            
-            "status": "success"
-        }
-        
-    except Exception as e:
-        return {
-            "bloco": "tecnico",
-            "status": "error",
-            "erro": f"Erro score BBW: {str(e)}"
-        }
-
 def calcular_score_emas_detalhadas(dados_indicadores):
-    """
-    Sistema EMAs detalhadas (sem BBW - compatibilidade)
-    """
+    """Calcula score usando EMAs detalhadas por timeframe"""
     try:
         indicadores = dados_indicadores["indicadores"]
         timeframes = dados_indicadores.get("timeframes", {})
         
-        # Score final EMAs (sem BBW)
+        # Score final já calculado e ponderado (70% semanal + 30% diário)
         score_final = indicadores["Score_Final_Ponderado"]["score_numerico"]
+        
+        # Extrair scores individuais para detalhamento
+        semanal = timeframes.get("semanal", {})
+        diario = timeframes.get("diario", {})
         
         return {
             "bloco": "tecnico",
-            "peso_bloco": "30%",
+            "peso_bloco": "20%",
             "score_consolidado": round(score_final, 2),
             "classificacao_consolidada": interpretar_classificacao(score_final),
             "timestamp": dados_indicadores["timestamp"],
@@ -115,17 +68,17 @@ def calcular_score_emas_detalhadas(dados_indicadores):
             "timeframes": {
                 "semanal": {
                     "peso": "70%",
-                    "score_total": timeframes.get("semanal", {}).get("scores", {}).get("consolidado", 0),
-                    "alinhamento": timeframes.get("semanal", {}).get("scores", {}).get("alinhamento", 0),
-                    "posicao": timeframes.get("semanal", {}).get("scores", {}).get("posicao", 0),
-                    "emas": timeframes.get("semanal", {}).get("emas", {})
+                    "score_total": semanal.get("scores", {}).get("consolidado", 0),
+                    "alinhamento": semanal.get("scores", {}).get("alinhamento", 0),
+                    "posicao": semanal.get("scores", {}).get("posicao", 0),
+                    "emas": semanal.get("emas", {})
                 },
                 "diario": {
                     "peso": "30%", 
-                    "score_total": timeframes.get("diario", {}).get("scores", {}).get("consolidado", 0),
-                    "alinhamento": timeframes.get("diario", {}).get("scores", {}).get("alinhamento", 0),
-                    "posicao": timeframes.get("diario", {}).get("scores", {}).get("posicao", 0),
-                    "emas": timeframes.get("diario", {}).get("emas", {})
+                    "score_total": diario.get("scores", {}).get("consolidado", 0),
+                    "alinhamento": diario.get("scores", {}).get("alinhamento", 0),
+                    "posicao": diario.get("scores", {}).get("posicao", 0),
+                    "emas": diario.get("emas", {})
                 }
             },
             "indicadores": {
@@ -133,16 +86,17 @@ def calcular_score_emas_detalhadas(dados_indicadores):
                     "valor": indicadores["Score_Final_Ponderado"]["valor"],
                     "score": round(score_final, 1),
                     "classificacao": interpretar_classificacao(score_final),
-                    "peso": "30%",
+                    "peso": "20%",
                     "fonte": indicadores["Score_Final_Ponderado"]["fonte"],
                     "ponderacao": "70% semanal + 30% diário"
                 },
-                "BBW": {
-                    "valor": "Não disponível",
+                "Padroes_Graficos": {
+                    "valor": "Descontinuado",
                     "score": 0.0,
                     "classificacao": "N/A",
                     "peso": "0%",
-                    "observacao": "BBW não coletado neste registro"
+                    "fonte": indicadores.get("Padroes_Graficos", {}).get("fonte", "Sistema"),
+                    "observacao": "Peso zerado - foco em EMAs"
                 }
             },
             "distancias": dados_indicadores.get("distancias", {}),
@@ -158,46 +112,46 @@ def calcular_score_emas_detalhadas(dados_indicadores):
         }
 
 def calcular_score_legado(dados_indicadores):
-    """
-    Sistema legado (compatibilidade total)
-    """
+    """Calcula score usando sistema legado (compatibilidade)"""
     try:
         indicadores = dados_indicadores["indicadores"]
         
         # Extrair scores já calculados
         emas_score_num = indicadores["Sistema_EMAs"]["score_numerico"]
-        padroes_score_num = indicadores.get("Padroes_Graficos", {}).get("score_numerico", 0)
+        padroes_score_num = indicadores["Padroes_Graficos"]["score_numerico"]
         
-        # Score final: 100% EMAs (padrões descontinuados)
-        score_consolidado = emas_score_num
+        emas_score = calcular_emas_score(emas_score_num)
+        padroes_score = calcular_padroes_score(padroes_score_num)
+        
+        # Aplicar pesos: EMAs: 20% do total, Padrões: 0% (descontinuado)
+        score_consolidado = (emas_score * 1.0) + (padroes_score * 0.0)
         
         return {
             "bloco": "tecnico",
-            "peso_bloco": "40%",
+            "peso_bloco": "20%",
             "score_consolidado": round(score_consolidado, 2),
-            "score_consolidado_100": round(score_consolidado * 10, 1),  # ← NOVO: Base 100
             "classificacao_consolidada": interpretar_classificacao(score_consolidado),
             "timestamp": dados_indicadores["timestamp"],
             "metodo": "legacy_compatibilidade",
             "indicadores": {
                 "Sistema_EMAs": {
                     "valor": indicadores["Sistema_EMAs"]["valor"],
-                    "score": round(emas_score_num, 1),
-                    "peso": "30%",
+                    "score": round(emas_score, 1),
+                    "peso": "20%",
                     "fonte": indicadores["Sistema_EMAs"]["fonte"]
                 },
                 "Padroes_Graficos": {
-                    "valor": indicadores.get("Padroes_Graficos", {}).get("valor", "Descontinuado"),
-                    "score": round(padroes_score_num, 1),
+                    "valor": indicadores["Padroes_Graficos"]["valor"],
+                    "score": round(padroes_score, 1),
                     "peso": "0%",
-                    "fonte": indicadores.get("Padroes_Graficos", {}).get("fonte", "Sistema"),
+                    "fonte": indicadores["Padroes_Graficos"]["fonte"],
                     "observacao": "Temporariamente zerado"
                 }
             },
             "observacoes": {
-                "emas_peso_atual": "100% do bloco (30% do total)",
-                "bbw_status": "Não implementado neste registro",
-                "composicao": "Score = 100% EMAs (legado)"
+                "emas_peso_atual": "100% do bloco (20% do total)",
+                "padroes_status": "Zerado - aguardando reimplementação",
+                "composicao": "Score = 100% EMAs + 0% Padrões"
             },
             "status": "success"
         }
@@ -209,58 +163,16 @@ def calcular_score_legado(dados_indicadores):
             "erro": f"Erro sistema legado: {str(e)}"
         }
 
-def get_bbw_interpretation(bbw_percentage: float) -> str:
-    """Interpretação rápida do BBW"""
-    if bbw_percentage < 5:
-        return "Compressão extrema - breakout iminente"
-    elif bbw_percentage < 10:
-        return "Volatilidade baixa - acumulação"
-    elif bbw_percentage < 20:
-        return "Volatilidade normal"
-    elif bbw_percentage < 30:
-        return "Volatilidade alta - cautela"
-    else:
-        return "Volatilidade extrema - evitar posições"
-
-def generate_technical_alerts_bbw(score_final: float, timeframes: dict, bbw_data: dict) -> list:
-    """Gera alertas incluindo BBW"""
-    alerts = []
-    
-    try:
-        # Alertas score baixo
-        if score_final < 4:
-            alerts.append(f"🚨 Score técnico crítico: {score_final:.1f}/10 - Sair da posição")
-        elif score_final < 6:
-            alerts.append(f"⚠️ Score técnico baixo: {score_final:.1f}/10 - Reduzir alavancagem")
-        
-        # Alertas BBW
-        bbw_percentage = bbw_data.get("percentage", 15)
-        if bbw_percentage < 5:
-            alerts.append(f"🎯 BBW comprimido: {bbw_percentage:.1f}% - Preparar para breakout")
-        elif bbw_percentage > 30:
-            alerts.append(f"🌪️ BBW extremo: {bbw_percentage:.1f}% - Volatilidade perigosa")
-        
-        # Divergência componentes
-        score_emas = timeframes.get("semanal", {}).get("scores", {}).get("consolidado", 5)
-        score_bbw = bbw_data.get("score", 5)
-        
-        if abs(score_emas - score_bbw) > 4:
-            alerts.append("🔄 Conflito EMAs vs BBW - analisar contexto")
-        
-        return alerts
-        
-    except Exception as e:
-        return [f"⚠️ Erro alertas BBW: {str(e)}"]
-
 def generate_technical_alerts(score_final: float, timeframes: dict) -> list:
-    """Gera alertas apenas EMAs (compatibilidade)"""
+    """Gera alertas baseados nos scores técnicos"""
     alerts = []
     
     try:
+        # Alertas de score baixo
         if score_final < 4:
-            alerts.append(f"🚨 Score EMAs baixo: {score_final:.1f}/10 - Reduzir alavancagem")
+            alerts.append(f"🚨 Score técnico baixo: {score_final:.1f}/10 - Reduzir alavancagem")
         elif score_final < 6:
-            alerts.append(f"⚠️ Score EMAs neutro: {score_final:.1f}/10 - Cautela recomendada")
+            alerts.append(f"⚠️ Score técnico neutro: {score_final:.1f}/10 - Cautela recomendada")
         
         # Alertas por timeframe
         semanal = timeframes.get("semanal", {})
@@ -270,10 +182,20 @@ def generate_technical_alerts(score_final: float, timeframes: dict) -> list:
         diario_score = diario.get("scores", {}).get("consolidado", 10)
         
         if semanal_score < 6:
-            alerts.append("📉 Estrutura semanal enfraquecendo")
+            alerts.append("📉 Estrutura semanal enfraquecendo - tendência macro em risco")
         
-        if abs(semanal_score - diario_score) > 3:
-            alerts.append(f"🔄 Divergência timeframes: {abs(semanal_score - diario_score):.1f}pts")
+        if diario_score < 4:
+            alerts.append("📊 Momentum diário negativo - aguardar reversão")
+        
+        # Divergência entre timeframes
+        divergence = abs(semanal_score - diario_score)
+        if divergence > 3:
+            alerts.append(f"🔄 Divergência entre timeframes: {divergence:.1f} pontos")
+        
+        # Alinhamento quebrado
+        semanal_alignment = semanal.get("scores", {}).get("alinhamento", 10)
+        if semanal_alignment < 6:
+            alerts.append("💔 Alinhamento EMAs semanal quebrado")
         
         return alerts
         
