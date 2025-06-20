@@ -3,8 +3,8 @@
 from fastapi import APIRouter, HTTPException
 from datetime import datetime
 import logging
-from app.services.v3.dash_mercado.dash_mercado_service  import calcular_dashboard_mercado
-from app.services.v2.dash_mercado_service import obter_dashboard_mercado
+from app.services.v3.dash_mercado.dash_mercado_service  import calcular_dashboard_mercado, obter_dashboard_mercado
+
 
 logger = logging.getLogger(__name__)
 

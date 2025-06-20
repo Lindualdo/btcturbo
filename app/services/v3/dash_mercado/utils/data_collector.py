@@ -2,6 +2,11 @@
 
 import logging
 
+# Importar APIs existentes
+from app.services.indicadores import ciclos as indicadores_ciclos
+from app.services.indicadores import momentum as indicadores_momentum  
+from app.services.indicadores import tecnico as indicadores_tecnico
+
 logger = logging.getLogger(__name__)
 
 def collect_all_blocks_data() -> dict:
@@ -13,12 +18,7 @@ def collect_all_blocks_data() -> dict:
     """
     try:
         logger.info("📥 Coletando dados dos indicadores...")
-        
-        # Importar APIs existentes
-        from app.services.indicadores import ciclos as indicadores_ciclos
-        from app.services.indicadores import momentum as indicadores_momentum  
-        from app.services.indicadores import tecnico as indicadores_tecnico
-        
+
         # Coletar dados de cada bloco
         dados_ciclo = _collect_ciclo_data(indicadores_ciclos)
         dados_momentum = _collect_momentum_data(indicadores_momentum)

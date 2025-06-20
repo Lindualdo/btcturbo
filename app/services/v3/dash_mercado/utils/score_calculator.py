@@ -1,6 +1,10 @@
 # app/services/v3/dash_mercado/utils/score_calculator.py
 
 import logging
+ # Importar funções de score existentes
+from app.services.scores import ciclos as score_ciclos
+from app.services.scores import momentum as score_momentum
+from app.services.scores import tecnico as score_tecnico
 
 logger = logging.getLogger(__name__)
 
@@ -16,12 +20,7 @@ def calculate_all_scores(dados_coletados: dict) -> dict:
     """
     try:
         logger.info("🧮 Calculando scores dos 3 blocos...")
-        
-        # Importar funções de score existentes
-        from app.services.scores import ciclos as score_ciclos
-        from app.services.scores import momentum as score_momentum
-        from app.services.scores import tecnico as score_tecnico
-        
+
         # Calcular scores individuais
         resultado_ciclo = _calculate_ciclo_score(score_ciclos)
         resultado_momentum = _calculate_momentum_score(score_momentum) 

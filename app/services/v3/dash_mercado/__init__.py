@@ -12,9 +12,3 @@ Módulos:
 Fluxo:
 collect_and_calculate_scores() → save_dashboard_scores() → get_latest_dashboard_scores()
 """
-
-from .utils.main_functions import (
-    collect_and_calculate_scores,
-    save_dashboard_scores, 
-    get_latest_dashboard_scores
-)
