@@ -5,8 +5,8 @@ from typing import List, Optional
 from datetime import datetime, timedelta
 from ..models import AlertaCreate, TipoAlerta, CategoriaAlerta
 from ...utils.helpers.postgres import get_dados_risco
-from ...analises.analise_risco import calcular_analise_risco
-from ...analises.analise_alavancagem import calcular_analise_alavancagem
+#from ...analises.analise_risco import calcular_analise_risco
+#from ...analises.analise_alavancagem import calcular_analise_alavancagem
 
 logger = logging.getLogger(__name__)
 
