@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers.v3 import (dash_main as dash_main_v3,analise_mercado as analise_mercado_v3, dash_mercado as dash_mercado_v3)
+from app.routers.v3 import (dash_main as dash_main_v3, dash_mercado as dash_mercado_v3)
 from app.routers import (coleta, indicadores, score)
 
 app = FastAPI(
