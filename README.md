@@ -272,3 +272,11 @@ https://github.com/Lindualdo/btcturbo-v5/blob/main/doc/regas-sistema-v5/0-system
 ## Limpesa e organização dos arquivos
 ### Excluido APIs e imports do main - 5.3.11
 ### Excluido pastas e arquivos descontinuados - 5.3.12
+### fix erro de imports services de alertas - 5.3.13
+- estavam usando funções de analise que foram excluidas
+- foi comentado os imports e compilou - fez deploy
+### excluido services de alertas - 5.3.14
+- nivel de complexidade muito elevado para alertas tãosimples
+- muito complexo para resolver após excluir rotinas de analise
+- será reescrito do zero com rotinas mais simples
+
