@@ -21,7 +21,7 @@ def save_dashboard(dashboard_data: Dict) -> bool:
         dashboard_json = dashboard_data["json"]
         
         query = """
-            INSERT INTO dashboard_decisao_v2 (
+            INSERT INTO dash_main (
                 btc_price, score_mercado, score_risco, ciclo_atual, 
                 setup_4h, decisao_final, alavancagem_atual, health_factor,
                 ema_distance, rsi_diario, dashboard_json, created_at
@@ -60,7 +60,7 @@ def get_latest_dashboard() -> Optional[Dict]:
         logger.info("🔍 Buscando último Dashboard V3...")
         
         query = """
-            SELECT * FROM dashboard_decisao_v2 
+            SELECT * FROM dash_main 
             ORDER BY created_at DESC 
             LIMIT 1
         """
@@ -84,7 +84,7 @@ def _create_table_if_not_exists():
     """
     try:
         query = """
-            CREATE TABLE IF NOT EXISTS dashboard_decisao_v2 (
+            CREATE TABLE IF NOT EXISTS dash_main (
                 id SERIAL PRIMARY KEY,
                 btc_price DECIMAL(12,2),
                 score_mercado DECIMAL(5,2),

@@ -218,7 +218,7 @@ def create_table_if_not_exists():
         
         # SQL para criar tabela
         table_sql = """
-            CREATE TABLE IF NOT EXISTS dashboard_mercado_scores (
+            CREATE TABLE IF NOT EXISTS dash_mercado (
                 id SERIAL PRIMARY KEY,
                 
                 -- Scores dos blocos
