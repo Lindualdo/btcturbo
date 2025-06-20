@@ -3,6 +3,8 @@
 from fastapi import APIRouter, HTTPException
 from datetime import datetime
 import logging
+from app.services.v3.dash_mercado.dash_mercado_service  import calcular_dashboard_mercado
+from app.services.v2.dash_mercado_service import obter_dashboard_mercado
 
 logger = logging.getLogger(__name__)
 
@@ -20,8 +22,6 @@ async def calcular_dash_mercado():
     4. Grava no banco
     """
     try:
-        from app.services.v3.dash_mercado.dash_mercado_service  import calcular_dashboard_mercado
-        
         logger.info("🚀 Calculando Dashboard Mercado...")
         resultado = calcular_dashboard_mercado()
         
@@ -42,8 +42,7 @@ async def obter_dash_mercado():
     Obtém último score consolidado do dashboard mercado
     """
     try:
-        from app.services.v2.dash_mercado_service import obter_dashboard_mercado
-        
+    
         resultado = obter_dashboard_mercado()
         
         if resultado.get("status") == "success":
@@ -55,8 +54,7 @@ async def obter_dash_mercado():
         logger.error(f"❌ Erro endpoint GET dash-mercado: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.get("/dash-mercado/debug")
-async def debug_dash_mercado():
+
     """
     Debug do sistema dashboard mercado
     """
