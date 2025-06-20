@@ -1,4 +1,4 @@
-# BTC Turbo - 5.3.16
+# BTC Turbo - 5.3.18
 
 ## 📋 Visão Geral
 
