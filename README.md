@@ -270,13 +270,18 @@ https://github.com/Lindualdo/btcturbo-v5/blob/main/doc/regas-sistema-v5/0-system
 - implementar rotinas de venda e stop
 
 ## Limpesa e organização dos arquivos
-### Excluido APIs e imports do main - 5.3.11
-### Excluido pastas e arquivos descontinuados - 5.3.12
-### fix erro de imports services de alertas - 5.3.13
+### Excluido APIs e imports do main - 5.3.11 - feito
+### Excluido pastas e arquivos descontinuados - 5.3.12 - feito
+### fix erro de imports services de alertas - 5.3.13 - feito
 - estavam usando funções de analise que foram excluidas
 - foi comentado os imports e compilou - fez deploy
-### excluido services de alertas - 5.3.14
+### excluido services de alertas - 5.3.14 -feito
 - nivel de complexidade muito elevado para alertas tãosimples
 - muito complexo para resolver após excluir rotinas de analise
 - será reescrito do zero com rotinas mais simples
+### dash main e dash mercado v3 funcionando - 5.3.15 -feito
+- dash mercado e dash main usando a v3
+- proximo objetivo será retirar os arquivos e pastas total da v2
 
+### dash main e dash mercado v3 funcionando - 5.3.16 - fazendo
+excluindo as pastas e arquivos da V2 total
