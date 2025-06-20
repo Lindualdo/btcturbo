@@ -23,11 +23,14 @@ def obter_indicadores():
         return format_no_data_response()
 
 def format_emas_response(emas_data: dict):
-    """Formata resposta com EMAs detalhadas"""
+    """Formata resposta com EMAs detalhadas - CORRIGIDO"""
     try:
         semanal = emas_data["semanal"]
         diario = emas_data["diario"]
         geral = emas_data["geral"]
+        
+        # CORREÇÃO: Acessar score do local correto
+        score_final_ponderado = geral.get("score_final_ponderado", 0.0)
         
         return {
             "bloco": "tecnico",
@@ -47,7 +50,7 @@ def format_emas_response(emas_data: dict):
                 },
                 "Sistema_EMAs_Diario": {
                     "valor": get_ema_status_description(diario["scores"]["consolidado"]),
-                    "score_numerico": diario["scores"]["consolidado"], 
+                    "score_numerico": diario["scores"]["consolidado"],
                     "peso": "6%",   # 30% de 20% = 6%
                     "fonte": geral["fonte"],
                     "detalhes": {
@@ -58,22 +61,11 @@ def format_emas_response(emas_data: dict):
                     }
                 },
                 "Score_Final_Ponderado": {
-                    "valor": get_ema_status_description(geral["score_final"]),
-                    "score_numerico": geral["score_final"],
-                    "peso": "20%",  # Peso total do bloco técnico
+                    "valor": get_ema_status_description(score_final_ponderado),
+                    "score_numerico": score_final_ponderado,
+                    "peso": "20%",
                     "fonte": geral["fonte"],
                     "ponderacao": "70% semanal + 30% diário"
-                },
-                "BTC_Price": {
-                    "valor": f"${geral['btc_price']:,.2f}",
-                    "score_numerico": None,
-                    "fonte": geral["fonte"]
-                },
-                # Compatibilidade com sistema legado
-                "Sistema_EMAs": {
-                    "valor": get_ema_status_description(geral["score_final"]),
-                    "score_numerico": geral["score_final"],
-                    "fonte": geral["fonte"]
                 },
                 "Padroes_Graficos": {
                     "valor": "Descontinuado",

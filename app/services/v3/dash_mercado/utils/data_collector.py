@@ -20,9 +20,9 @@ def collect_all_blocks_data() -> dict:
         logger.info("📥 Coletando dados dos indicadores...")
 
         # Coletar dados de cada bloco
-        dados_ciclo = _collect_ciclo_data(indicadores_ciclos)
-        dados_momentum = _collect_momentum_data(indicadores_momentum)
-        dados_tecnico = _collect_tecnico_data(indicadores_tecnico)
+        dados_ciclo = indicadores_ciclos.obter_indicadores()
+        dados_momentum = indicadores_momentum.obter_indicadores()
+        dados_tecnico = indicadores_tecnico.obter_indicadores()
         
         # Verificar se todos os dados foram coletados
         if not dados_ciclo or not dados_momentum or not dados_tecnico:
@@ -46,51 +46,3 @@ def collect_all_blocks_data() -> dict:
             "status": "error",
             "erro": str(e)
         }
-
-def _collect_ciclo_data(indicadores_ciclos) -> dict:
-    """Coleta dados do bloco CICLO"""
-    try:
-        dados = indicadores_ciclos.obter_indicadores()
-        
-        if dados.get("status") == "success":
-            logger.info("✅ Dados CICLO coletados")
-            return dados["indicadores"]
-        else:
-            logger.error("❌ Falha coleta CICLO")
-            return None
-            
-    except Exception as e:
-        logger.error(f"❌ Erro _collect_ciclo_data: {str(e)}")
-        return None
-
-def _collect_momentum_data(indicadores_momentum) -> dict:
-    """Coleta dados do bloco MOMENTUM"""
-    try:
-        dados = indicadores_momentum.obter_indicadores()
-        
-        if dados.get("status") == "success":
-            logger.info("✅ Dados MOMENTUM coletados")
-            return dados["indicadores"]
-        else:
-            logger.error("❌ Falha coleta MOMENTUM")
-            return None
-            
-    except Exception as e:
-        logger.error(f"❌ Erro _collect_momentum_data: {str(e)}")
-        return None
-
-def _collect_tecnico_data(indicadores_tecnico) -> dict:
-    """Coleta dados do bloco TÉCNICO"""
-    try:
-        dados = indicadores_tecnico.obter_indicadores()
-        
-        if dados.get("status") == "success":
-            logger.info("✅ Dados TÉCNICO coletados")
-            return dados["indicadores"]
-        else:
-            logger.error("❌ Falha coleta TÉCNICO")
-            return None
-            
-    except Exception as e:
-        logger.error(f"❌ Erro _collect_tecnico_data: {str(e)}")
-        return None
