@@ -1,16 +1,16 @@
-# app/services/v3/dash_main/dash_main_service.py
+# source: app/services/dashboards/dash_main_service.py
 
 import logging
 from datetime import datetime
-from .utils.analise_mercado.analise_mercado_service import executar_analise 
+from .dash_main.analise_mercado.analise_mercado_service import executar_analise 
 from app.services.scores import riscos
-from .utils.helpers.data_helper import save_dashboard, get_latest_dashboard
-from .utils.helpers.data_builder import build_dashboard_data, build_response_format
-from .utils.analise_alavancagem import executar_analise_alavancagem
+from .dash_main.helpers.data_helper import save_dashboard, get_latest_dashboard
+from .dash_main.helpers.data_builder import build_dashboard_data, build_response_format
+from .dash_main.analise_alavancagem import executar_analise_alavancagem
 
 logger = logging.getLogger(__name__)
 
-def processar_dashboard() -> dict:
+def processar_dash_main() -> dict:
     """
     Dashboard V3 - POST: Processa 4 camadas e grava
     """
@@ -90,9 +90,7 @@ def processar_dashboard() -> dict:
             "message": "Falha processar Dashboard V3"
         }
 
-
-
-def obter_dashboard() -> dict:
+def obter_dash_main() -> dict:
     """Dashboard V3 - GET: Recupera último processado"""
     try:
         logger.info("🔍 Obtendo Dashboard V3 - GET")

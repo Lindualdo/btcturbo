@@ -1,4 +1,4 @@
-# app/services/v3/dash_main/utils/setup_detector_utils.py
+# source: app/services/dashboards/dash_main/setup_detector_utils.py
 
 import logging
 from typing import Dict, Any

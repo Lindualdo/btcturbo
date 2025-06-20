@@ -1,12 +1,12 @@
-# app/services/v3/dash_mercado/dash_mercado_service.py
+# source: app/services/dashboards/dash_mercado_service.py
 
 import logging
 from datetime import datetime
-from .utils.main_functions import save_dashboard_scores, collect_and_calculate_scores, get_latest_dashboard_scores
+from .dash_mercado.main_functions import save_dashboard_scores, collect_and_calculate_scores, get_latest_dashboard_scores
 
 logger = logging.getLogger(__name__)
 
-def calcular_dashboard_mercado() -> dict:
+def processar_dash_mercado() -> dict:
     """
     Calcula dashboard mercado com scores consolidados
     
@@ -82,7 +82,7 @@ def calcular_dashboard_mercado() -> dict:
             "timestamp": datetime.utcnow().isoformat()
         }
 
-def obter_dashboard_mercado() -> dict:
+def obter_dash_mercado() -> dict:
     """
     Obtém último dashboard mercado com JSON pronto
     """

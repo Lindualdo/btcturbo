@@ -1,4 +1,4 @@
-# app/services/v3/dash_mercado/utils/score_calculator.py
+# source: app/services/dashboards/dash_mercado/score_calculator.py
 
 import logging
  # Importar funções de score existentes

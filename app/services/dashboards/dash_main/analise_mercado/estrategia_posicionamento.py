@@ -1,4 +1,4 @@
-# app/services/v3/analise_mercado/utils/estrategia_posicionamento.py
+# source: app/services/dashboards/dash_main/analise_mercado/estrategia_posicionamento.py
 
 import logging
 

@@ -1,4 +1,4 @@
-# app/services/v3/analise_mercado/utils/analise_mercado.py
+# source: app/services/dashboards/dash_main/analise_mercado/analise_mercado_service.py
 
 import logging
 import json
