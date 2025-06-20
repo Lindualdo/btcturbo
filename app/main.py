@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers.v2 import dash_mercado as dash_mercado_v2 
-from app.routers.v3 import (dash_main,analise_mercado as analise_mercado_v3, dash_mercado as dash_mercado_v3)
+from app.routers.v3 import (dash_main as dash_main_v3,analise_mercado as analise_mercado_v3, dash_mercado as dash_mercado_v3)
 from app.routers import (coleta, indicadores, score)
 
 app = FastAPI(
@@ -23,7 +22,8 @@ app.add_middleware(
 app.include_router(coleta.router, prefix="/api/v1", tags=["📥 Coleta"]) # coleta indicadores (ciclos, riscos, momentum e tecnico)
 app.include_router(indicadores.router, prefix="/api/v1", tags=["📊 Indicadores"])  # obtem os indicadores (ciclos, riscos, momentum e tecnico)
 app.include_router(score.router, prefix="/api/v1", tags=["🎯 Scores"]) # calcula scores e retona indicadores  (ciclos, riscos, momentum e tecnico)
-app.include_router(dash_mercado_v2.router, prefix="/api/v2", tags=["📊 dash mercado "]) # dash mercado v2 - Usando apenas o post - reescrever na v3 e descontinuar
-app.include_router(dash_mercado_v3.router, prefix="/api/v3", tags=["📊 dash mercado "]) # dash mercado v3 - usando apenas o GET - implementar o post e descontinuar v2
-app.include_router(dash_main.router, prefix="/api/v3", tags=["📊 dash main "]) # dash main)
-app.include_router(analise_mercado_v3.router, prefix="/api/v3", tags=["analise mercado"])  # Analise de mercado (ciclos, riscos, momentum e tecnico) - Camada 1
+app.include_router(dash_mercado_v3.router, prefix="/api/v3", tags=["📊 dash mercado "]) # (POST e GET) Post carrega indicadores e scores de mercado e Get obtem
+app.include_router(dash_main_v3.router, prefix="/api/v3", tags=["📊 dash main "]) # (POST e GET) Post carrgeda dados gerais do Dash 4 camadas de analise e get obtem
+
+#analisar se tem mesmo a necessidade de expor esse endpoint
+app.include_router(analise_mercado_v3.router, prefix="/api/v3", tags=["analise mercado"]) # GET - Obtem Analise de mercado (ciclos, riscos, momentum e tecnico) - Camada 1
