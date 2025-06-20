@@ -2,6 +2,8 @@
 
 import logging
 from datetime import datetime
+from app.services.utils.helpers.v2.dash_mercado import collect_and_calculate_scores
+from app.services.utils.helpers.v2.dash_mercado import save_dashboard_scores
 
 logger = logging.getLogger(__name__)
 
@@ -16,8 +18,6 @@ def calcular_dashboard_mercado() -> dict:
     4. Grava no banco
     """
     try:
-        from app.services.utils.helpers.v2.dash_mercado import collect_and_calculate_scores
-        from app.services.utils.helpers.v2.dash_mercado import save_dashboard_scores
         
         logger.info("🔄 Coletando e calculando scores...")
         
@@ -81,91 +81,6 @@ def calcular_dashboard_mercado() -> dict:
             "status": "error",
             "erro": str(e),
             "timestamp": datetime.utcnow().isoformat()
-        }
-
-def obter_dashboard_mercado() -> dict:
-    """
-    Obtém último dashboard mercado com JSON pronto
-    """
-    try:
-        from app.services.utils.helpers.v2.dash_mercado import get_latest_dashboard_scores
-        import json
-        
-        ultimo = get_latest_dashboard_scores()
-        
-        if ultimo:
-            # JSON pode vir como dict ou string do banco
-            indicadores_json = ultimo["indicadores_json"]
-            if isinstance(indicadores_json, str):
-                indicadores_json = json.loads(indicadores_json)
-            
-            return {
-                "status": "success",
-                "id": ultimo["id"],
-                "timestamp": ultimo["timestamp"].isoformat(),
-                "score_consolidado": float(ultimo["score_consolidado"]),
-                "classificacao": ultimo["classificacao_consolidada"],
-                "blocos": {
-                    "ciclo": {
-                        "score": float(ultimo["score_ciclo"]),
-                        "classificacao": ultimo["classificacao_ciclo"],
-                        "indicadores": indicadores_json["ciclo"]
-                    },
-                    "momentum": {
-                        "score": float(ultimo["score_momentum"]),
-                        "classificacao": ultimo["classificacao_momentum"],
-                        "indicadores": indicadores_json["momentum"]
-                    },
-                    "tecnico": {
-                        "score": float(ultimo["score_tecnico"]),
-                        "classificacao": ultimo["classificacao_tecnico"],
-                        "indicadores": indicadores_json["tecnico"]
-                    }
-                }
-            }
-        else:
-            return {
-                "status": "error", 
-                "erro": "Nenhum registro encontrado"
-            }
-            
-    except Exception as e:
-        logger.error(f"❌ Erro obter dashboard mercado: {str(e)}")
-        return {
-            "status": "error",
-            "erro": str(e)
-        }
-
-def debug_dashboard_mercado() -> dict:
-    """
-    Debug do sistema dashboard mercado
-    """
-    try:
-        from app.services.utils.helpers.v2.dash_mercado import get_latest_dashboard_scores
-        
-        ultimo = get_latest_dashboard_scores()
-        
-        return {
-            "status": "success",
-            "sistema": "dash-mercado",
-            "versao": "v1.0",
-            "ultimo_registro": {
-                "existe": ultimo is not None,
-                "id": ultimo["id"] if ultimo else None,
-                "timestamp": ultimo["timestamp"].isoformat() if ultimo else None
-            },
-            "componentes": {
-                "collectors": ["collect_and_calculate_scores"],
-                "database": ["save_dashboard_scores", "get_latest_dashboard_scores"],
-                "scores": ["ciclo", "momentum", "tecnico", "consolidado"]
-            }
-        }
-        
-    except Exception as e:
-        return {
-            "status": "error",
-            "erro": str(e),
-            "sistema": "dash-mercado"
         }
 
 def _calcular_score_consolidado(scores: dict) -> dict:
