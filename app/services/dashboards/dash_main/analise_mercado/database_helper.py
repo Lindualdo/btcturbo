@@ -18,7 +18,7 @@ def get_latest_scores_from_db() -> dict:
                 score_tecnico, classificacao_tecnico, 
                 score_consolidado, classificacao_consolidada,
                 indicadores_json
-            FROM dashboard_mercado_scores
+            FROM dash_mercado
             ORDER BY timestamp DESC
             LIMIT 1
         """
