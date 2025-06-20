@@ -271,3 +271,4 @@ https://github.com/Lindualdo/btcturbo-v5/blob/main/doc/regas-sistema-v5/0-system
 
 ## Limpesa e organização dos arquivos
 ### Excluido APIs e imports do main - 5.3.11
+### Excluido pastas e arquivos descontinuados - 5.3.12
