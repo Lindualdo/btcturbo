@@ -268,3 +268,6 @@ https://github.com/Lindualdo/btcturbo-v5/blob/main/doc/regas-sistema-v5/0-system
 - tecnicamente funcionando, precisa validar as informações
 - analise cuidadosamente os stups, estrategia e filtros (gate systems)
 - implementar rotinas de venda e stop
+
+## Limpesa e organização dos arquivos
+### Excluido APIs e imports do main - 5.3.11
