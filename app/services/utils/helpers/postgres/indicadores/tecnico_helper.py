@@ -4,7 +4,7 @@ import logging
 import json
 from datetime import datetime
 from typing import Dict, Optional
-from .base import execute_query
+from ..base import execute_query
 
 logger = logging.getLogger(__name__)
 

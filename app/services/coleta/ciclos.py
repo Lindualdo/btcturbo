@@ -3,7 +3,7 @@
 from datetime import datetime
 import logging
 from app.services.utils.helpers.notion_helper import get_ciclo_data_from_notion
-from app.services.utils.helpers.postgres.ciclo_helper import insert_dados_ciclo
+from app.services.utils.helpers.postgres.indicadores.ciclo_helper import insert_dados_ciclo
 
 logger = logging.getLogger(__name__)
 

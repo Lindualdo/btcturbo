@@ -107,7 +107,7 @@ def _build_indicators_json() -> str:
         from app.services.indicadores import ciclos, momentum
         from app.services.scores.ciclos import calcular_mvrv_score, calcular_nupl_score, calcular_realized_score, calcular_puell_score
         from app.services.scores.momentum import calcular_rsi_score, calcular_funding_score, calcular_sopr_score, calcular_ls_ratio_score
-        from app.services.utils.helpers.postgres.tecnico_helper import get_dados_tecnico
+        from app.services.utils.helpers.postgres.indicadores.tecnico_helper import get_dados_tecnico
         
         # Dados CICLO
         dados_ciclo = ciclos.obter_indicadores()["indicadores"]

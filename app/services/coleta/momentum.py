@@ -3,7 +3,7 @@
 from datetime import datetime
 import logging
 from app.services.utils.helpers.notion_helper import get_momentum_data_from_notion
-from app.services.utils.helpers.postgres.momentum_helper import insert_dados_momentum
+from app.services.utils.helpers.postgres.indicadores.momentum_helper import insert_dados_momentum
 
 logger = logging.getLogger(__name__)
 

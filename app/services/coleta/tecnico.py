@@ -4,7 +4,7 @@ from datetime import datetime
 import logging
 import json
 from app.services.utils.helpers.tradingview.ema_calculator import get_complete_ema_analysis
-from app.services.utils.helpers.postgres.tecnico_helper import insert_dados_tecnico_completo
+from app.services.utils.helpers.postgres.indicadores.tecnico_helper import insert_dados_tecnico_completo
 
 logger = logging.getLogger(__name__)
 

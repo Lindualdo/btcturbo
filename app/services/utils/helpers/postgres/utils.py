@@ -4,10 +4,10 @@ import logging
 from datetime import datetime
 from typing import Dict
 from .base import execute_query
-from .ciclo_helper import get_dados_ciclo
-from .momentum_helper import get_dados_momentum
-from .risco_helper import get_dados_risco
-from .tecnico_helper import get_dados_tecnico
+from .indicadores.ciclo_helper import get_dados_ciclo
+from .indicadores.momentum_helper import get_dados_momentum
+from .indicadores.risco_helper import get_dados_risco
+from .indicadores.tecnico_helper import get_dados_tecnico
 
 logger = logging.getLogger(__name__)
 
