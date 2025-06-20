@@ -21,4 +21,4 @@ app.add_middleware(
 app.include_router(coleta.router, prefix="/api/v1", tags=["📥 Coleta"]) # coleta indicadores (ciclos, riscos, momentum e tecnico)
 app.include_router(indicadores.router, prefix="/api/v1", tags=["📊 Indicadores"])  # obtem os indicadores (ciclos, riscos, momentum e tecnico)
 app.include_router(score.router, prefix="/api/v1", tags=["🎯 Scores"]) # calcula scores e retona indicadores  (ciclos, riscos, momentum e tecnico)
-app.include_router(dashboards.router, prefix="/api/v1/", tags=["📊 dashboards"]) 
+app.include_router(dashboards.router, prefix="/api/v1", tags=["📊 dashboards"]) 
