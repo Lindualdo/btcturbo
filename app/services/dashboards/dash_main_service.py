@@ -7,6 +7,7 @@ from app.services.scores import riscos
 from .dash_main.helpers.data_helper import save_dashboard, get_latest_dashboard
 from .dash_main.helpers.data_builder import build_dashboard_data, build_response_format
 from .dash_main.analise_alavancagem import executar_analise_alavancagem
+from .dash_main.execucao_tatica_service import executar_execucao_tatica
 
 logger = logging.getLogger(__name__)
 
@@ -31,7 +32,7 @@ def processar_dash_main() -> dict:
         
         # CAMADA 4: Execução Tática (real) - COM DEBUG
         logger.info("🎯 Executando Camada 4: Execução Tática...")
-        from app.services.v3.dash_main.execucao_tatica_service import executar_execucao_tatica
+        
         dados_tatica = executar_execucao_tatica(dados_mercado, dados_risco, dados_alavancagem)
         
         # DEBUG: Verificar estrutura retornada
