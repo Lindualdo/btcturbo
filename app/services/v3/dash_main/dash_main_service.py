@@ -2,11 +2,11 @@
 
 import logging
 from datetime import datetime
-from app.services.v3.analise_mercado import analise_mercado_service as analise_mercado
+from .utils.analise_mercado.analise_mercado_service import executar_analise 
 from app.services.scores import riscos
-from app.services.v3.dash_main.utils.helpers.data_helper import save_dashboard, get_latest_dashboard
-from app.services.v3.dash_main.utils.helpers.data_builder import build_dashboard_data, build_response_format
-from app.services.v3.dash_main.utils.analise_alavancagem import executar_analise_alavancagem
+from .utils.helpers.data_helper import save_dashboard, get_latest_dashboard
+from .utils.helpers.data_builder import build_dashboard_data, build_response_format
+from .utils.analise_alavancagem import executar_analise_alavancagem
 
 logger = logging.getLogger(__name__)
 
@@ -18,7 +18,7 @@ def processar_dashboard() -> dict:
         logger.info("🚀 Processando Dashboard V3 - POST")
         
         # CAMADA 1: Análise Mercado (real)
-        dados_mercado = analise_mercado.executar_analise()
+        dados_mercado = executar_analise()
         logger.info(f"✅ Camada 1: Score {dados_mercado['score_mercado']} - {dados_mercado['classificacao_mercado']}")
         
         # CAMADA 2: Análise Risco (real)
