@@ -17,6 +17,8 @@ FASE1 - REFACTORE
 - Analise Mercado v3 está usando utils do dash-main (avaliar deixar idenpendente)
 - Automação das cargas do dash ainda está usando a V2 para carga da analise mercado
 - dash já está usando os 2 APIs GETs V3 (dash-main e analise-mercado)
+- coleta de indicadores (tecnico e riscos) no N8N estão usando versão antiga do btcturbo e não v5
+- analisar com atenção as rotinas de coleta, obter e calcluar score da analise tecnico está uma confusão
 
 FASE2 - ALERTAS
 - Rever os Alertas (criticos, táticos, de oportunidade...)
