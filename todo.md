@@ -13,12 +13,12 @@ FASE1 - Operacional
 8 - criar dash com métricas de performance
 
 FASE1 - REFACTORE
-1 -  *** organizar e limpar o código excluindo apis e funções descontinuadas ***
+1 -  *** organizar e limpar o código excluindo apis e funções descontinuadas *** - feito
 - Analise Mercado v3 está usando utils do dash-main (avaliar deixar idenpendente)
 - Automação das cargas do dash ainda está usando a V2 para carga da analise mercado
 - dash já está usando os 2 APIs GETs V3 (dash-main e analise-mercado)
 - coleta de indicadores (tecnico e riscos) no N8N estão usando versão antiga do btcturbo e não v5
-- analisar com atenção as rotinas de coleta, obter e calcluar score da analise tecnico está uma confusão
+-  *** analisar obter e calcluar score da analise tecnico está uma confusão impossível evoluir ou manter**
 
 FASE2 - ALERTAS
 - Rever os Alertas (criticos, táticos, de oportunidade...)

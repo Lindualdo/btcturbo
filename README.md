@@ -283,7 +283,7 @@ https://github.com/Lindualdo/btcturbo-v5/blob/main/doc/regas-sistema-v5/0-system
 - dash mercado e dash main usando a v3
 - proximo objetivo será retirar os arquivos e pastas total da v2
 
-### dash main e dash mercado v3 funcionando - 5.3.16 - fazendo
+### dash main e dash mercado v3 funcionando - 5.3.16 - feito
 - excluindo as pastas e arquivos da V2 total
 - encontrei um problema grave na coleta dos indicadores..
 - estava buscando riscos e anal. tecnica no btcturbo antigo e não na v5
