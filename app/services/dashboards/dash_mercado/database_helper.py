@@ -20,7 +20,7 @@ def save_scores_to_db(dados_scores: dict) -> dict:
         
         # SQL para inserir scores + JSON
         query = """
-            INSERT INTO dashboard_mercado_scores (
+            INSERT INTO dash_mercado (
                 score_ciclo, classificacao_ciclo,
                 score_momentum, classificacao_momentum, 
                 score_tecnico, classificacao_tecnico,
@@ -82,7 +82,8 @@ def get_latest_scores_from_db() -> dict:
                 score_tecnico, classificacao_tecnico, 
                 score_consolidado, classificacao_consolidada,
                 indicadores_json
-            FROM dashboard_mercado_scores
+            FROM dash_mercado
+            WHERE indicadores_json IS NOT NULL
             ORDER BY timestamp DESC
             LIMIT 1
         """
