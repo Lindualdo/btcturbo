@@ -84,29 +84,7 @@ def coletar(forcar_coleta: bool):
             "bloco": "tecnico",
             "status": "sucesso",
             "timestamp": datetime.utcnow().isoformat(),
-            "detalhes": "Dados EMAs coletados via TradingView",
-            "dados_coletados": {
-                "timeframes": ["1W", "1D"],
-                "emas_calculadas": list(weekly["emas"].keys()),
-                "btc_price": f"${weekly['current_price']:,.2f}",
-                "scores": {
-                    "semanal": {
-                        "alinhamento": weekly["scores"]["alignment"],
-                        "posicao": weekly["scores"]["position"],
-                        "consolidado": weekly["scores"]["consolidated"]
-                    },
-                    "diario": {
-                        "alinhamento": daily["scores"]["alignment"],
-                        "posicao": daily["scores"]["position"],
-                        "consolidado": daily["scores"]["consolidated"]
-                    },
-                    "final_ponderado": final_weighted["final_score"]
-                }
             },
-            "alertas": generate_alerts(weekly, daily, final_weighted),
-            "fonte": "tvdatafeed_emas"
-        }
-        
     except Exception as e:
         logger.error(f"❌ Erro na coleta técnica: {str(e)}")
         return {
@@ -116,44 +94,3 @@ def coletar(forcar_coleta: bool):
             "detalhes": f"Falha na coleta EMAs: {str(e)}",
             "fonte": "tvdatafeed_emas"
         }
-
-def generate_alerts(weekly_data: dict, daily_data: dict, final_weighted: dict) -> list:
-    """Gera alertas baseados nos dados EMAs coletados"""
-    alerts = []
-    
-    try:
-        # Alertas de score baixo
-        final_score = final_weighted.get("final_score", 0)
-        if final_score < 4:
-            alerts.append(f"🚨 Score técnico baixo: {final_score:.1f}/10 - Considerar redução")
-        elif final_score < 6:
-            alerts.append(f"⚠️ Score técnico neutro: {final_score:.1f}/10 - Cautela")
-        
-        # Alertas de divergência entre timeframes
-        weekly_score = weekly_data.get("scores", {}).get("consolidated", 0)
-        daily_score = daily_data.get("scores", {}).get("consolidated", 0)
-        
-        divergence = abs(weekly_score - daily_score)
-        if divergence > 3:
-            alerts.append(f"📊 Divergência entre timeframes: {divergence:.1f} pontos")
-        
-        # Alertas de distância extrema
-        weekly_distances = weekly_data.get("details", {}).get("position", {}).get("distances", {})
-        for ema, dist_str in weekly_distances.items():
-            if "%" in dist_str:
-                dist_pct = float(dist_str.replace("%", "").replace("+", ""))
-                if dist_pct > 10:
-                    alerts.append(f"🔥 Preço muito esticado: {dist_pct:+.1f}% da {ema.upper()}")
-                elif dist_pct < -5:
-                    alerts.append(f"📉 Rompimento potencial: {dist_pct:+.1f}% da {ema.upper()}")
-        
-        # Alerta de alinhamento quebrado
-        weekly_alignment = weekly_data.get("scores", {}).get("alignment", 10)
-        if weekly_alignment < 6:
-            alerts.append("💔 Alinhamento EMAs semanal enfraquecendo")
-        
-        return alerts
-        
-    except Exception as e:
-        logger.error(f"❌ Erro gerando alertas: {str(e)}")
-        return ["⚠️ Erro ao gerar alertas técnicos"]
