@@ -5,7 +5,7 @@ from app.routers import (coleta, indicadores, score, dashboards)
 app = FastAPI(
     title="BTC Turbo API",
     description="Sistema de análise de indicadores BTC",
-    version="5.3.18"
+    version="1.5.0"
 )
 
 app.add_middleware(

@@ -13,7 +13,7 @@ def get_dados_risco() -> Optional[Dict]:
         logger.info("🔍 Buscando dados do bloco RISCO...")
         
         query = """
-            SELECT dist_liquidacao, health_factor, exchange_netflow, stablecoin_ratio,
+            SELECT dist_liquidacao, health_factor,
                    btc_price, total_borrowed, supplied_asset_value, net_asset_value, alavancagem,
                    timestamp, fonte, metadados
             FROM indicadores_risco 

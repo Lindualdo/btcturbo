@@ -85,14 +85,3 @@ def get_historico_ciclo(limit: int = 10) -> list:
     except Exception as e:
         logger.error(f"❌ Erro ao buscar histórico ciclo: {str(e)}")
         return []
-
-def insert_dados_ciclo_legacy(mvrv_z: float, realized_ratio: float, puell_multiple: float, fonte: str = "Sistema") -> bool:
-    """COMPATIBILIDADE: Função legada sem NUPL"""
-    logger.warning("⚠️ Usando função legada insert_dados_ciclo_legacy")
-    return insert_dados_ciclo(
-        mvrv_z=mvrv_z,
-        realized_ratio=realized_ratio, 
-        puell_multiple=puell_multiple,
-        nupl=None,
-        fonte=fonte
-    )

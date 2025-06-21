@@ -1,4 +1,4 @@
-# routers/v3/dash_home.py
+# source: app/routers/dashboards.py
 from fastapi import APIRouter
 from app.services.dashboards.dash_main_service import processar_dash_main, obter_dash_main
 from app.services.dashboards.dash_mercado_service   import processar_dash_mercado, obter_dash_mercado
@@ -15,12 +15,14 @@ async def post_dash_main():
 async def get_dash_main():
     return obter_dash_main()
 
-# processa o dashboard de mercado (ciclo, momentum e tecnico - grava indicadores e scores)
+# processa o dashboard de mercado 
+# analisa os scores de ciclo, momentum e tecnico e gera score ponderado de mercado 
+# grava indicadores e scores de cada bloco + score ponderado de mercado
 @router.post("/dash-mercado")
 async def post_dash_mercado():
     return processar_dash_mercado()
 
-# Obtem o dashboard de mercado (ciclo, momentum e tecnico - retorna indicadores e scores)
+# Obtem os dados para visualização do dashboard de mercado 
 @router.get("/dash-mercado")
 async def get_dash_mercado():
     return obter_dash_mercado()
