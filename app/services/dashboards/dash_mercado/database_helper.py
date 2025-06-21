@@ -29,7 +29,7 @@ def save_scores_to_db(dados_scores: dict) -> dict:
                 score_consolidado, classificacao_consolidada,
                 indicadores_json,
                 indicador_ciclo_id, indicador_momentum_id, indicador_tecnico_id, timestamp
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             RETURNING id
         """
         

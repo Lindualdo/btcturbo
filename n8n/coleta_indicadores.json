@@ -1,0 +1,572 @@
+{
+  "name": "coleta-indicadores",
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://btcturbo-prod.up.railway.app/api/v1/coletar-indicadores/tecnico",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -600,
+        160
+      ],
+      "id": "aa8e78e6-7856-4730-8d07-9fee2fcf4df2",
+      "name": "coletar-analise-tecnica"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 1
+            },
+            {
+              "field": "hours"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -820,
+        160
+      ],
+      "id": "87b192f9-9375-4acc-911b-81e90cfb5c29",
+      "name": "Schedule 8H"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://btcturbo-prod.up.railway.app/api/v1/coletar-indicadores/riscos",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -380,
+        160
+      ],
+      "id": "f789bea0-baac-4888-b239-aa74bbfe158d",
+      "name": "coletar-indicadores-riscos"
+    },
+    {
+      "parameters": {
+        "content": "## Coleta Indicadores - APIs sistema\nTodas as estapas estão consumindo APIs do sistema BTC Turbo",
+        "height": 380,
+        "width": 660,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -840,
+        20
+      ],
+      "id": "079318b6-0cbe-4b14-b9ec-6efda6176e8f",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "operation": "getAll",
+        "databaseId": {
+          "__rl": true,
+          "value": "1e77419d-73ed-81ac-b554-c5d03f2fde4e",
+          "mode": "list",
+          "cachedResultName": "db_Indicadores_semanais",
+          "cachedResultUrl": "https://www.notion.so/1e77419d73ed81acb554c5d03f2fde4e"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        -60,
+        160
+      ],
+      "id": "187a4c99-e086-48ff-9b30-719db5eacd27",
+      "name": "busca-indicadores-notion",
+      "credentials": {
+        "notionApi": {
+          "id": "3T1cFPpTJBIHuQU0",
+          "name": "get-notion"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "let indicadores = {};\n\nitems.forEach(item => {\n  const nome = item.json.property_indicador;\n  const valor = item.json.property_valor;\n  const fonte = item.json.property_fonte_do_indicador;\n  indicadores[nome] = {\n    valor: valor,\n    fonte: fonte\n  };\n});\n\nreturn [{ json: indicadores }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        180,
+        160
+      ],
+      "id": "230562a5-e0a9-4108-8acd-d0196b9e2caa",
+      "name": "mapea-campos-notion"
+    },
+    {
+      "parameters": {
+        "content": "## Coleta Indicadores - Direto do Notion",
+        "height": 380,
+        "width": 760,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -140,
+        20
+      ],
+      "id": "1af2545b-0885-4509-b3e6-2e259710049c",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "value": "public",
+          "mode": "list",
+          "cachedResultName": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "indicadores_momentum",
+          "mode": "list",
+          "cachedResultName": "indicadores_momentum"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "rsi_semanal": "={{ $json.rsi_semanal.valor }}",
+            "funding_rates": "={{ $json.funding_rates.valor }}",
+            "long_short_ratio": "={{ $json.long_short_ratio.valor }}",
+            "fonte": "={{ $json.funding_rates.fonte }}",
+            "timestamp": "={{ DateTime.now() }}",
+            "sopr": "={{ $json.sopr.valor }}",
+            "exchange_netflow": "={{ $json.exchange_netflow.valor }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "rsi_semanal",
+              "displayName": "rsi_semanal",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "funding_rates",
+              "displayName": "funding_rates",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "long_short_ratio",
+              "displayName": "long_short_ratio",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "fonte",
+              "displayName": "fonte",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "metadados",
+              "displayName": "metadados",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "exchange_netflow",
+              "displayName": "exchange_netflow",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "sopr",
+              "displayName": "sopr",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        420,
+        60
+      ],
+      "id": "6a0cbc15-1061-44fe-943b-e98ed5c07691",
+      "name": "insere-momentum",
+      "credentials": {
+        "postgres": {
+          "id": "L8UY7nrAn7PWD9UM",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "value": "public",
+          "mode": "list",
+          "cachedResultName": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "indicadores_ciclo",
+          "mode": "list",
+          "cachedResultName": "indicadores_ciclo"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "mvrv_z_score": "={{ $json.mvrv_z_score.valor }}",
+            "realized_ratio": "={{ $json.realized_ratio.valor }}",
+            "puell_multiple": "={{ $json.puell_multiple.valor }}",
+            "timestamp": "={{ DateTime.now() }}",
+            "fonte": "Notion",
+            "nupl": "={{ $json.nupl.valor }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "mvrv_z_score",
+              "displayName": "mvrv_z_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "realized_ratio",
+              "displayName": "realized_ratio",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "puell_multiple",
+              "displayName": "puell_multiple",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "fonte",
+              "displayName": "fonte",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "metadados",
+              "displayName": "metadados",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "nupl",
+              "displayName": "nupl",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        420,
+        220
+      ],
+      "id": "10049a7a-fa6c-411e-9118-d1ddfb5a962e",
+      "name": "insere-ciclos",
+      "credentials": {
+        "postgres": {
+          "id": "L8UY7nrAn7PWD9UM",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## carrega os dados do dashboard principal e detalhes",
+        "height": 380,
+        "width": 840,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        660,
+        20
+      ],
+      "id": "545d54bb-fa8a-4bd8-83d8-3fdd17191c19",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1280,
+        60
+      ],
+      "id": "12b1abb2-56f8-40c7-9552-83e9fdb4caee",
+      "name": "End"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://btcturbo-prod.up.railway.app/api/v1/dash-main",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1060,
+        220
+      ],
+      "id": "6f00cb9c-ac58-449d-9205-ad2f813c2272",
+      "name": "carrega-dash-main-V3"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://btcturbo-prod.up.railway.app/api/v1/dash-mercado",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        760,
+        220
+      ],
+      "id": "be1037df-0ee4-4c30-8766-b890287c47f8",
+      "name": "carrega-dash-mercado-v3"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "coletar-analise-tecnica": {
+      "main": [
+        [
+          {
+            "node": "coletar-indicadores-riscos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule 8H": {
+      "main": [
+        [
+          {
+            "node": "coletar-analise-tecnica",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "busca-indicadores-notion": {
+      "main": [
+        [
+          {
+            "node": "mapea-campos-notion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "mapea-campos-notion": {
+      "main": [
+        [
+          {
+            "node": "insere-momentum",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "insere-ciclos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "coletar-indicadores-riscos": {
+      "main": [
+        [
+          {
+            "node": "busca-indicadores-notion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "insere-momentum": {
+      "main": [
+        [
+          {
+            "node": "End",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "insere-ciclos": {
+      "main": [
+        [
+          {
+            "node": "carrega-dash-mercado-v3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "carrega-dash-main-V3": {
+      "main": [
+        [
+          {
+            "node": "End",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "carrega-dash-mercado-v3": {
+      "main": [
+        [
+          {
+            "node": "carrega-dash-main-V3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Lisbon",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "fb3e80d8-72e4-4db3-a32a-c4453d242c21",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "df70ff04e1b45ccc1482849dfc7bcfb5dca43eb687554e47ff8dc55a9291bcc5"
+  },
+  "id": "Np2dNpgCadFyctkm",
+  "tags": [
+    {
+      "createdAt": "2025-05-28T08:01:35.423Z",
+      "updatedAt": "2025-05-28T08:01:35.423Z",
+      "id": "bZwkciaprVJSHUBA",
+      "name": "coleta-indicadores"
+    }
+  ]
+}
