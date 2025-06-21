@@ -7,6 +7,8 @@ FASE1 - REFACTORE - feito
 - retirar a v3 do dash e organizar melhor dentro do services - feito
 - retirar o v5 do btcturbo deixando apenas btcturbo - alterar em todos os lugares necessários - feito
 - iremos iniciar as próximas tags como v 1.5.0 
+- https://colintalkscrypto.com/cbbi/ (referencia inspiração para score do ciclo)
+- analisar EMA 200 semanal X topo anterior
 
 FASE1 - Operacional
 

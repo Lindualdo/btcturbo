@@ -1,4 +1,4 @@
-#  BTC TURBO - Hold Alavancado - Visão Geral Executiva v5.3
+#  BTC TURBO - Hold Alavancado - Visão Geral Executiva 1.5.0
 
 ## Objetivo Principal
 Sistema quantitativo para gestão de posição alavancada em Bitcoin, focado em preservação de capital e captura de tendências de médio/longo prazo.
