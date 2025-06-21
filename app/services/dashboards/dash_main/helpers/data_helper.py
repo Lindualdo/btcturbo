@@ -2,7 +2,7 @@
 
 import logging
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Dict, Optional
 from app.services.utils.helpers.postgres.base import execute_query
 import pytz
@@ -20,6 +20,7 @@ def save_dashboard(dashboard_data: Dict) -> bool:
         
         campos = dashboard_data["campos"]
         dashboard_json = dashboard_data["json"]
+        timestamp_lisboa = (datetime.utcnow() + timedelta(hours=1)).strftime('%Y-%m-%d %H:%M:%S')
         
         query = """
             INSERT INTO dash_main (
@@ -42,7 +43,7 @@ def save_dashboard(dashboard_data: Dict) -> bool:
             campos["ema_distance"],
             campos["rsi_diario"],
             json.dumps(dashboard_json),
-            datetime.now(pytz.timezone('Europe/Lisbon'))
+            timestamp_lisboa
         )
         
         execute_query(query, valores)
