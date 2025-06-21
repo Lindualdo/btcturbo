@@ -1,7 +1,7 @@
 # source: app/services/dashboards/dash_mercado/database_helper.py
 
 import logging
-from datetime import datetime
+from datetime import datetime,timedelta
 
 logger = logging.getLogger(__name__)
 
@@ -17,6 +17,8 @@ def save_scores_to_db(dados_scores: dict) -> dict:
         
         # Montar JSON completo dos indicadores com scores
         json_indicadores = _build_indicators_json()
+
+        timestamp_lisboa = (datetime.utcnow() + timedelta(hours=1)).strftime('%Y-%m-%d %H:%M:%S')
         
         # SQL para inserir scores + JSON
         query = """
@@ -26,7 +28,7 @@ def save_scores_to_db(dados_scores: dict) -> dict:
                 score_tecnico, classificacao_tecnico,
                 score_consolidado, classificacao_consolidada,
                 indicadores_json,
-                indicador_ciclo_id, indicador_momentum_id, indicador_tecnico_id
+                indicador_ciclo_id, indicador_momentum_id, indicador_tecnico_id, timestamp
             ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             RETURNING id
         """
@@ -43,7 +45,8 @@ def save_scores_to_db(dados_scores: dict) -> dict:
             json_indicadores,  # JSON pronto
             ids_indicadores.get("ciclo_id"),
             ids_indicadores.get("momentum_id"),
-            ids_indicadores.get("tecnico_id")
+            ids_indicadores.get("tecnico_id"),
+            timestamp_lisboa
         )
         
         resultado = execute_query(query, params, fetch_one=True)
