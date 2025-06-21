@@ -5,6 +5,7 @@ import json
 from datetime import datetime
 from typing import Dict, Optional
 from app.services.utils.helpers.postgres.base import execute_query
+import pytz
 
 logger = logging.getLogger(__name__)
 
@@ -41,7 +42,7 @@ def save_dashboard(dashboard_data: Dict) -> bool:
             campos["ema_distance"],
             campos["rsi_diario"],
             json.dumps(dashboard_json),
-            datetime.utcnow()
+            datetime.now(pytz.timezone('Europe/Lisbon'))
         )
         
         execute_query(query, valores)
