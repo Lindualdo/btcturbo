@@ -17,7 +17,7 @@ def build_dashboard_data(dados_mercado: dict, dados_risco: dict, dados_alavancag
         dados_tatica: Dados reais Camada 4 (tecnicos + estrategia)
     """
     try:
-        logger.info("🔧 Construindo dados Dashboard V3...")
+        logger.info("🔧 Construindo dados Dashboard V1.5...")
         
         # Validar inputs obrigatórios
         if not dados_mercado:
@@ -97,7 +97,7 @@ def build_dashboard_data(dados_mercado: dict, dados_risco: dict, dados_alavancag
         }
         
     except Exception as e:
-        logger.error(f"❌ Erro construir dados V3: {str(e)}")
+        logger.error(f"❌ Erro construir dados V1.5: {str(e)}")
         raise Exception(f"Falha construir dados: {str(e)}")
 
 def _extract_btc_price(dados_mercado: dict, dados_risco: dict) -> float:
@@ -154,7 +154,7 @@ def build_response_format(dados_db: dict) -> dict:
                 "id": dados_db.get("id", 0),
                 "timestamp": dados_db["created_at"].isoformat() if dados_db.get("created_at") else datetime.utcnow().isoformat(),
                 "age_minutes": _calculate_age_minutes(dados_db.get("created_at")) if dados_db.get("created_at") else 0,
-                "versao": "v3_4_camadas"
+                "versao": "v1.5_4_camadas"
             }
         }
         

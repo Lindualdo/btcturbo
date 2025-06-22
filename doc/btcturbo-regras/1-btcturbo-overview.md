@@ -3,9 +3,34 @@
 ## Objetivo Principal
 Sistema quantitativo para gestão de posição alavancada em Bitcoin, focado em preservação de capital e captura de tendências de médio/longo prazo.
 
+## RESUMO DO SISTEMA
+
+Patrimonio total dividido em duas partes:
+- 50% CORE sempre em hold BTC
+- 50% satelite será alocado e alavancado de acordo com o ciclo de mercado
+- A alaocação é feita exclusivamente na plataforma AAVE
+
+
+```
+1 - Analise de mercado 
+- faz analise em 3 blocos (ciclos, momentum e tecncio) e gera um score final
+- com base no score define o ciclo de mercado 
+- o cilco responde se devo estar posicionado, tamanho da posição e alavancagem
+2 - Analise de risco
+- analisa os indicadores financeiros (plataforma AAVE)
+- o score final define a saúde da minha posição
+- responde se minha posição está segura
+3 - Analise de alavancagem
+- Analise o score de mercado, indicadores de ciclo e IFR mensal
+- retorna o limite da margem de alavancagem (max 3X)
+4 - Execução tática
+- aplica regras e validações de proteção (gate system)
+- se liberado para operar, define o setup e estrategia
+```
+
 ## Arquitetura: 4 Camadas de Análise
 
-### 1️⃣ Análise de Mercado (Score 0-100)
+### 1- Análise de Mercado (Score 0-100)
 **Pergunta Central:** "O mercado está favorável para estar posicionado?"
 - Define o ciclo de mercado
 - usar matriz de ciclos
@@ -32,19 +57,19 @@ Sistema quantitativo para gestão de posição alavancada em Bitcoin, focado em 
     - Distância do preço às médias (50% do timeframe diário) - ponderada por período
 - **Bollinger Band Width** (30% dos 40%): Medida de volatilidade/compressão
 
-### 2️⃣ Gestão de Risco (Score 0-100)
+### 2- Gestão de Risco (Score 0-100)
 **Pergunta Central:** "Minha posição atual está segura?"
 
 - **Health Factor AAVE** (50%): Margem de segurança na plataforma
 - **Distância até Liquidação** (50%): Percentual de queda até liquidação forçada
 
-### 3️⃣ Dimensionamento de Alavancagem
+### 3 - Dimensionamento de Alavancagem
 
 **Pergunta Central:** "Qual alavancagem máxima posso usar?"
 
-- usar matriz de alavancagem
+- usar matriz de ciclos / alavancagem
 
+### 4 - Execução Tática:
 
-### 4️⃣ Execução Tática
-
-- usar matriz de setup
+**Pergunta Central:** "O que devo fazer agora?"
+- validações de proteção (gate sistem) + matriz de setup
