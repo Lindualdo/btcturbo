@@ -7,7 +7,6 @@ import logging
 from datetime import datetime
 from typing import Optional, Dict
 from app.services.utils.helpers.postgres.base import execute_query
-import json
 
 logger = logging.getLogger(__name__)
 
@@ -28,8 +27,7 @@ def get_ciclo_mercado() -> dict:
         
         # 2. Extrair indicadores e scores
         score_mercado = float(dados_mercado["score_consolidado"])
-        indicadores = json.loads(dados_mercado["indicadores_json"])
-        
+        indicadores = dados_mercado["indicadores_json"]  # Já é dict
         mvrv = indicadores["ciclo"]["mvrv"]["valor"]
         nupl = indicadores["ciclo"]["nupl"]["valor"]
         
