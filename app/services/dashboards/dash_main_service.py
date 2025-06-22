@@ -7,7 +7,7 @@ from .dash_main.helpers.data_helper import save_dashboard, get_latest_dashboard
 from .dash_main.helpers.data_builder import build_dashboard_data, build_response_format
 from .dash_main.analise_alavancagem import executar_analise_alavancagem
 from .dash_main.execucao_tatica_service import executar_execucao_tatica
-from services.utils.helpers.postgres.mercado.database_helper import get_ciclo_mercado
+from  app.services.utils.helpers.postgres.mercado.database_helper import get_ciclo_mercado
 
 logger = logging.getLogger(__name__)
 
