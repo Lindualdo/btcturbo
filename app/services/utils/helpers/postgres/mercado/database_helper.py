@@ -93,6 +93,7 @@ def _get_scores_indicadores_mercado() -> dict:
         logger.error(f"❌ Erro get_latest_scores_from_db: {str(e)}")
         return None
 
+   
 def _buscar_ciclo_matriz(score: float, mvrv: float, nupl: float) -> Optional[Dict]:
     """
     Busca ciclo na matriz baseado nos indicadores
@@ -110,18 +111,14 @@ def _buscar_ciclo_matriz(score: float, mvrv: float, nupl: float) -> Optional[Dic
             SELECT nome_ciclo, percentual_capital, alavancagem, caracteristicas, prioridade
             FROM matriz_ciclos_mercado 
             WHERE ativo = true
-              AND :score BETWEEN score_min AND score_max
-              AND (:mvrv BETWEEN mvrv_min AND mvrv_max OR (mvrv_min IS NULL AND mvrv_max IS NULL))
-              AND (:nupl BETWEEN nupl_min AND nupl_max OR (nupl_min IS NULL AND nupl_max IS NULL))
+              AND %s BETWEEN score_min AND score_max
+              AND (%s BETWEEN mvrv_min AND mvrv_max OR (mvrv_min IS NULL AND mvrv_max IS NULL))
+              AND (%s BETWEEN nupl_min AND nupl_max OR (nupl_min IS NULL AND nupl_max IS NULL))
             ORDER BY prioridade DESC, id
             LIMIT 1
         """
         
-        resultado = execute_query(query, params={
-            "score": score, 
-            "mvrv": mvrv, 
-            "nupl": nupl
-        }, fetch_one=True)
+        resultado = execute_query(query, params=(score, mvrv, nupl), fetch_one=True)
         
         if resultado:
             return {
