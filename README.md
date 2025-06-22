@@ -2,16 +2,18 @@
 
 Sistema de análise de indicadores Bitcoin para trading alavancado, construído com FastAPI + PostgreSQL.
 
-## resumo da versão - 1.5.1:
+## resumo da versão - 1.5.1: - feito
 - Simplificação das regras de analise  mercado (cilcos de mercado)
 - usando matriz v2.0 no banco de dados
 - criado datahelper mercado que retona o ciclo atual, alavancagem e tamanho máximo da posição
 - simplificação das regras
 - criado endpoint para teste deste fluxo ´/api/v1/analise-mercado/debug`
 
-## Proxima release 1.5.2 - Revisar Processo de alavancagem
+## Proxima versão 1.5.2 - Revisar Processo de alavancagem - feito
 - Analise de alavancagem ainda não reflete essa nova função, está aplicando regra anrtiga MVRV + RSI mensal
 - Próximo passo é integrar processo de alavancagem com essa matriz de ciclo e usar a alavancagem definida
+
+## Proxima versão 1.5.3 - Revisar Processo de execução tática
 
 ## 🏗️ Arquitetura
 

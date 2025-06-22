@@ -81,7 +81,7 @@ def _obter_dados_posicao() -> dict:
         return {}
 
 def _calcular_simulacao_financeira(dados_posicao: dict, alavancagem_permitida: float) -> dict:
-    """FÓRMULA V2 EXATA com max_leverage da V3"""
+
     try:
         capital_liquido = dados_posicao.get("capital_liquido", 0)
         posicao_atual_total = dados_posicao.get("posicao_total", 0)
