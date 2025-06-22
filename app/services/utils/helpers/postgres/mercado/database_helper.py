@@ -26,7 +26,9 @@ def get_ciclo_mercado() -> dict:
             raise Exception("Nenhum dado de mercado encontrado")
         
         # 2. Extrair indicadores e scores
-        score_mercado = float(dados_mercado["score_consolidado"])
+        score_mercado_raw = float(dados_mercado["score_consolidado"])
+        # CORREÇÃO: Score no banco está base 10, matriz usa base 100
+        score_mercado = score_mercado_raw * 10
         indicadores = dados_mercado["indicadores_json"]  # Já é dict
         mvrv = indicadores["ciclo"]["mvrv"]["valor"]
         nupl = indicadores["ciclo"]["nupl"]["valor"]
