@@ -9,6 +9,10 @@ Sistema de análise de indicadores Bitcoin para trading alavancado, construído 
 - simplificação das regras
 - criado endpoint para teste deste fluxo ´/api/v1/analise-mercado/debug`
 
+## Proxima release 1.5.2 - Revisar Processo de alavancagem
+- Analise de alavancagem ainda não reflete essa nova função, está aplicando regra anrtiga MVRV + RSI mensal
+- Próximo passo é integrar processo de alavancagem com essa matriz de ciclo e usar a alavancagem definida
+
 ## 🏗️ Arquitetura
 
 ```
