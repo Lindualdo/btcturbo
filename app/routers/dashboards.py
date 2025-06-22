@@ -2,6 +2,7 @@
 from fastapi import APIRouter
 from app.services.dashboards.dash_main_service import processar_dash_main, obter_dash_main
 from app.services.dashboards.dash_mercado_service   import processar_dash_mercado, obter_dash_mercado
+from app.services.utils.helpers.postgres.mercado.database_helper import get_ciclo_mercado
 
 router = APIRouter()
 
@@ -26,3 +27,7 @@ async def post_dash_mercado():
 @router.get("/dash-mercado")
 async def get_dash_mercado():
     return obter_dash_mercado()
+
+@router.get("/dash-mercado/debug")
+async def get_dash_mercado():
+    return get_ciclo_mercado()
