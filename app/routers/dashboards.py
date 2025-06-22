@@ -35,4 +35,6 @@ async def get_dash_mercado():
 
 @router.get("/dash-main/alavancagem")
 async def get_dash_mercado():
-    return executar_analise_alavancagem(get_ciclo_mercado)
+    dados_mercado = get_ciclo_mercado()
+    alavancagem_permitida = dados_mercado["ciclo_detalhes"]["alavancagem"]
+    return executar_analise_alavancagem(alavancagem_permitida)

@@ -6,7 +6,7 @@ from typing import Dict
 
 logger = logging.getLogger(__name__)
 
-def executar_analise_alavancagem(dados_mercado) -> dict:
+def executar_analise_alavancagem(alavancagem_permitida) -> dict:
     """
     Camada 3: Análise Alavancagem
     
@@ -14,18 +14,18 @@ def executar_analise_alavancagem(dados_mercado) -> dict:
     Output: Limite margem alavancagem (max 3x)
     """
     try:
+        #1. dados alavancagem
         logger.info("⚖️ Executando Camada 3: Análise Alavancagem...")
+        logger.info(f"⚖️ Alavancagem permitida... {alavancagem_permitida}" )
         
-        # 1. Extrair inputs necessários
-        alavancagem_permitida = dados_mercado["ciclo_detalhes"]["alavancagem"]
-        
-        # 5. Buscar dados posição atual para cálculos financeiros
+        # 2. Buscar dados posição atual para cálculos financeiros
         dados_posicao = _obter_dados_posicao()
-        
-        # 6. Calcular simulação financeira usando fórmula V2 exata
+        logger.info(f"⚖️ dados posição obtida" )
+
+        # 3. Calcular simulação financeira 
         simulacao = _calcular_simulacao_financeira(dados_posicao, alavancagem_permitida)
-        
-        # 7. Construir resposta
+        logger.info(f"⚖️ simulação realizada" )
+        # 4. Construir resposta
         return {
             "status": "success",
             "timestamp": datetime.utcnow().isoformat(),

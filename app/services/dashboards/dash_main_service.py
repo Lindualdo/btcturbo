@@ -27,7 +27,8 @@ def processar_dash_main() -> dict:
         logger.info(f"✅ Camada 2: Score {dados_risco['score']} - {dados_risco['classificacao']}")
         
         # CAMADA 3: Análise Alavancagem (real)
-        dados_alavancagem = executar_analise_alavancagem(dados_mercado)
+        alavancagem_permitida = dados_mercado["ciclo_detalhes"]["alavancagem"]
+        dados_alavancagem = executar_analise_alavancagem(alavancagem_permitida)
         logger.info(f"✅ Camada 3: Alavancagem {dados_alavancagem.get('alavancagem_permitida', 0)}x")
         
         # CAMADA 4: Execução Tática (real) - COM DEBUG
