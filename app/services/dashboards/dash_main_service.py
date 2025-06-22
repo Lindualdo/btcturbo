@@ -16,7 +16,7 @@ def processar_dash_main() -> dict:
     Dashboard V3 - POST: Processa 4 camadas e grava
     """
     try:
-        logger.info("🚀 Processando Dashboard V3 - POST")
+        logger.info("🚀 Processando Dash-main - POST")
         
         # CAMADA 1: Análise Mercado (real)
         dados_mercado =  get_ciclo_mercado()
@@ -72,7 +72,7 @@ def processar_dash_main() -> dict:
             "status": "success",
             "versao": "v3_4_camadas",
             "timestamp": datetime.utcnow().isoformat(),
-            "message": "Dashboard V3 processado e gravado",
+            "message": "Dash-main processado e gravado",
             "camadas_processadas": {
                 "mercado": "✅ real",
                 "risco": "✅ real", 
@@ -82,26 +82,26 @@ def processar_dash_main() -> dict:
         }
         
     except Exception as e:
-        logger.error(f"❌ Erro processar Dashboard V3: {str(e)}")
+        logger.error(f"❌ Erro processar Dash-main: {str(e)}")
         return {
             "status": "error",
-            "versao": "v3_4_camadas",
+            "versao": "1.5",
             "timestamp": datetime.utcnow().isoformat(),
             "erro": str(e),
-            "message": "Falha processar Dashboard V3"
+            "message": "Falha processar Dash-main"
         }
 
 def obter_dash_main() -> dict:
-    """Dashboard V3 - GET: Recupera último processado"""
+    """Dashboard - GET: Recupera último processado"""
     try:
-        logger.info("🔍 Obtendo Dashboard V3 - GET")
+        logger.info("🔍 Obtendo Dash-main")
         
         dados = get_latest_dashboard()
         
         if not dados:
             return {
                 "status": "error",
-                "versao": "v3_4_camadas", 
+                "versao": "1.5", 
                 "timestamp": datetime.utcnow().isoformat(),
                 "erro": "Nenhum dashboard encontrado",
                 "message": "Execute POST primeiro para gerar dados"
@@ -115,7 +115,7 @@ def obter_dash_main() -> dict:
         logger.error(f"❌ Erro obter Dashboard V3: {str(e)}")
         return {
             "status": "error",
-            "versao": "v3_4_camadas",
+            "versao": "1.5",
             "timestamp": datetime.utcnow().isoformat(),
             "erro": str(e),
             "message": "Falha obter Dashboard V3"
@@ -148,25 +148,23 @@ def debug_dashboard() -> dict:
         
         return {
             "status": "success",
-            "versao": "v3_4_camadas",
+            "versao": "1.5",
             "ultimo_registro": {
                 "id": ultimo["id"] if ultimo else None,
                 "created_at": ultimo["created_at"].isoformat() if ultimo else None,
                 "tem_dados": ultimo is not None
             },
             "implementacao": {
-                "camada_1_mercado": "✅ REAL",
-                "camada_2_risco": "✅ REAL", 
-                "camada_3_alavancagem": "✅ REAL",
-                "camada_4_tatica": "✅ REAL"
+                "camada_1_mercado": "✅",
+                "camada_2_risco": "✅", 
+                "camada_3_alavancagem": "✅",
+                "camada_4_tatica": "✅"
             },
-            "database": "mesma_base_v2",
-            "formato": "100%_compativel"
         }
         
     except Exception as e:
         return {
             "status": "error",
             "erro": str(e),
-            "versao": "v3_4_camadas"
+            "versao": "1.5"
         }

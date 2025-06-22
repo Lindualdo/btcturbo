@@ -21,7 +21,7 @@ def get_ciclo_mercado() -> dict:
         logger.info("📊 Executando Análise Mercado - Camada 1")
         
         # 1. Buscar indicadore e scores no banco de dados
-        dados_mercado = _get_scores_indicadores_mercado () # score e indicadores
+        dados_mercado = _get_scores_indicadores_mercado() # score e indicadores
         if not dados_mercado:
             raise Exception("Nenhum dado de mercado encontrado")
         
@@ -31,11 +31,20 @@ def get_ciclo_mercado() -> dict:
         mvrv = indicadores["ciclo"]["mvrv"]["valor"]
         nupl = indicadores["ciclo"]["nupl"]["valor"]
         
-        # 3. Determinar ciclo via banco usndo a tabela matriz_ciclos_mercado V2
+        # 3. Determinar ciclo via banco usando a tabela matriz_ciclos_mercado V2
         ciclo_definido = _buscar_ciclo_matriz(score_mercado, mvrv, nupl)
         
-        # 4. Determinar estratégia
-        #estrategia_posicao = definir_estrategia_posicionamento(ciclo_definido)
+        # 4. Fallback se não encontrar ciclo
+        if not ciclo_definido:
+            alert = f"⚠️ Ciclo não encontrado para Score:{score_mercado} MVRV:{mvrv} NUPL:{nupl}"
+            logger.warning(alert)
+            ciclo_definido = {
+                "nome_ciclo": "CICLO INDEFINIDO",
+                "percentual_capital": 0,
+                "alavancagem": 1.0,
+                "caracteristicas": f"Gap na matriz - {alert}",
+                "prioridade": 0
+            }
         
         # 5. Retornar resultado
         resultado = {
@@ -44,7 +53,6 @@ def get_ciclo_mercado() -> dict:
             "classificacao_mercado": dados_mercado["classificacao_consolidada"],
             "ciclo": ciclo_definido["nome_ciclo"],
             "ciclo_detalhes": ciclo_definido,
-            #"estrategia": estrategia_posicao,
             "indicadores": {
                 "mvrv": mvrv,
                 "nupl": nupl,
@@ -54,11 +62,12 @@ def get_ciclo_mercado() -> dict:
             }
         }
         
-        logger.info(f"✅ Mercado: {ciclo_definido['nome']} - Score {score_mercado}")
+        logger.info(f"✅ Mercado: {ciclo_definido['nome_ciclo']} - Score {score_mercado}")
         return resultado
         
     except Exception as e:
         logger.error(f"❌ Erro análise mercado: {str(e)}")
+        logger.error(f"Score: {score_mercado if 'score_mercado' in locals() else 'N/A'}, MVRV: {mvrv if 'mvrv' in locals() else 'N/A'}, NUPL: {nupl if 'nupl' in locals() else 'N/A'}")
         raise Exception(f"Falha na análise de mercado: {str(e)}")
 
 
@@ -107,6 +116,8 @@ def _buscar_ciclo_matriz(score: float, mvrv: float, nupl: float) -> Optional[Dic
         dict: Dados do ciclo encontrado ou None
     """
     try:
+        logger.info(f"🔍 Buscando ciclo para Score:{score} MVRV:{mvrv} NUPL:{nupl}")
+        
         query = """
             SELECT nome_ciclo, percentual_capital, alavancagem, caracteristicas, prioridade
             FROM matriz_ciclos_mercado 
@@ -121,6 +132,7 @@ def _buscar_ciclo_matriz(score: float, mvrv: float, nupl: float) -> Optional[Dic
         resultado = execute_query(query, params=(score, mvrv, nupl), fetch_one=True)
         
         if resultado:
+            logger.info(f"✅ Ciclo encontrado: {resultado['nome_ciclo']}")
             return {
                 "nome_ciclo": resultado["nome_ciclo"],
                 "percentual_capital": resultado["percentual_capital"],
@@ -129,6 +141,7 @@ def _buscar_ciclo_matriz(score: float, mvrv: float, nupl: float) -> Optional[Dic
                 "prioridade": resultado["prioridade"]
             }
         
+        logger.warning(f"⚠️ Nenhum ciclo encontrado na matriz")
         return None
         
     except Exception as e:
