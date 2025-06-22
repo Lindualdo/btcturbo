@@ -2,6 +2,7 @@
 
 import logging
 from datetime import datetime,timedelta
+from app.services.utils.helpers.postgres.base import execute_query
 
 logger = logging.getLogger(__name__)
 
@@ -10,7 +11,6 @@ def save_scores_to_db(dados_scores: dict) -> dict:
     Salva scores + JSON completo formatado no banco
     """
     try:
-        from app.services.utils.helpers.postgres.base import execute_query
         
         # Buscar IDs dos últimos registros de indicadores
         ids_indicadores = _get_latest_indicators_ids()
@@ -75,7 +75,7 @@ def get_latest_scores_from_db() -> dict:
     Obtém último registro com JSON já formatado
     """
     try:
-        from app.services.utils.helpers.postgres.base import execute_query
+        
         
         query = """
             SELECT 

@@ -10,7 +10,6 @@ Patrimonio total dividido em duas partes:
 - 50% satelite será alocado e alavancado de acordo com o ciclo de mercado
 - A alaocação é feita exclusivamente na plataforma AAVE
 
-
 ```
 1 - Analise de mercado 
 - faz analise em 3 blocos (ciclos, momentum e tecncio) e gera um score final
@@ -35,27 +34,25 @@ Patrimonio total dividido em duas partes:
 - Define o ciclo de mercado
 - usar matriz de ciclos
 
-#### Bloco CICLO (40% do peso)
-- **MVRV Z-Score** (30%): Relação entre valor de mercado e valor realizado
-- **NUPL** (20%): Lucro/prejuízo não realizado da rede
-- **Realized Price Ratio** (40%): Preço atual vs preço médio pago
-- **Puell Multiple** (10%): Receita dos mineradores vs média histórica
+- Ciclo 40%
+- Tecnico 40%
+- Momentum 20%
 
-#### Bloco MOMENTUM (20% do peso)
-- **RSI Semanal** (40%): Força relativa de preços
-- **Funding Rates 7D** (30%): Taxa de financiamento média
-- **SOPR** (20%): Razão de lucro/prejuízo nas transações
-- **Long/Short Ratio** (10%): Sentimento do mercado de futuros
+### 📊 Tabela de Indicadores - Análise de Mercado
 
-#### Bloco TÉCNICO (40% do peso)
-- **Sistema EMAs Multi-timeframe** (70% dos 40% do bloco técncio): 
-  - Timeframe Semanal (70% dos 70% do sistema de EMAs)
-    - Alinhamento de médias (50% do timeframe semanal)  - ponderada por período
-    - Distância do preço às médias (50% do timeframe semanal) - ponderada por período
-  - Timeframe Diário (30% dos 70% do sistema de EMAs)
-    - Alinhamento de médias (50% do timeframe diário)  - ponderada por período
-    - Distância do preço às médias (50% do timeframe diário) - ponderada por período
-- **Bollinger Band Width** (30% dos 40%): Medida de volatilidade/compressão
+| Indicador                     | Peso         | Descrição breve |
+|------------------------------|--------------|------------------|
+| **MVRV Z-Score**             | 30% Ciclo    | Mede se o BTC está sobre ou subvalorizado - valor de mercado vs valor realizado |
+| **NUPL**                     | 20% Ciclo    | Lucros/prejuízos não realizados; mostra otimismo ou medo dos investidores |
+| **Realized Price Ratio**     | 40% Ciclo    | Compara o preço atual com o preço médio pago; indica fases do ciclo |
+| **Puell Multiple**           | 10% Ciclo    | Receita diária dos mineradores em relação à média histórica; detecta topos  fundos |
+| **RSI Semanal**              | 40% Momentum | Força relativa dos preços; identifica condições de sobrecompra ou sobrevenda |
+| **Funding Rates 7D**         | 30% Momentum | Taxas de financiamento médias; revela o sentimento de alavancagem dos derivativos |
+| **SOPR**                     | 20% Momentum | Mede o lucro/prejuízo nas transações realizadas on-chain |
+| **Long/Short Ratio**         | 10% Momentum | Relação entre posições compradas e vendidas no mercado futuro |
+| **Sistema de EMAs**          | 70% Técnico  | Alinhamento e distância das médias móveis em múltiplos timeframes (diário e semanal) |
+| **Bollinger Band Width**     | 30% Técnico  | Mede compressão/expansão da volatilidade; detecta momentos de explosão de preço |
+
 
 ### 2- Gestão de Risco (Score 0-100)
 **Pergunta Central:** "Minha posição atual está segura?"

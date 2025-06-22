@@ -2,12 +2,12 @@
 
 import logging
 from datetime import datetime
-from .dash_main.analise_mercado.analise_mercado_service import executar_analise 
 from app.services.scores import riscos
 from .dash_main.helpers.data_helper import save_dashboard, get_latest_dashboard
 from .dash_main.helpers.data_builder import build_dashboard_data, build_response_format
 from .dash_main.analise_alavancagem import executar_analise_alavancagem
 from .dash_main.execucao_tatica_service import executar_execucao_tatica
+from services.utils.helpers.postgres.mercado.database_helper import get_ciclo_mercado
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +19,7 @@ def processar_dash_main() -> dict:
         logger.info("🚀 Processando Dashboard V3 - POST")
         
         # CAMADA 1: Análise Mercado (real)
-        dados_mercado = executar_analise()
+        dados_mercado =  get_ciclo_mercado()
         logger.info(f"✅ Camada 1: Score {dados_mercado['score_mercado']} - {dados_mercado['classificacao_mercado']}")
         
         # CAMADA 2: Análise Risco (real)
