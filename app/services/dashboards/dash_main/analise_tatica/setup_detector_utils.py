@@ -35,7 +35,9 @@ def identificar_setup() -> Dict[str, Any]:
                 result = setup_func()
                 
                 # Captura dados técnicos do primeiro setup com dados reais
-                if not dados_tecnicos_consolidados and result.get('dados_tecnicos'):
+                if (not dados_tecnicos_consolidados and 
+                    result.get('dados_tecnicos') and 
+                    result.get('dados_tecnicos', {}).get('rsi', 0) > 0):
                     dados_tecnicos_consolidados = result['dados_tecnicos']
                 
                 if result.get('encontrado', False):
