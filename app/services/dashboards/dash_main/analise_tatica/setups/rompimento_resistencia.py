@@ -17,7 +17,13 @@ def detectar_rompimento() -> Dict[str, Any]:
     try:
         logger.info("🔄 MOCK: Detectando Rompimento...")
         
-        # MOCK: Sempre retorna não encontrado
+        # MOCK: Simula busca de dados técnicos
+        dados_mock = {
+            "rsi": 0,  # Mock - não coletado
+            "preco_ema144": 0,  # Mock - não coletado
+            "ema_144_distance": 0  # Mock - não coletado
+        }
+        
         logger.info("❌ MOCK: Rompimento não implementado")
         
         return {
@@ -25,7 +31,7 @@ def detectar_rompimento() -> Dict[str, Any]:
             "setup": "ROMPIMENTO",
             "forca": "nenhuma",
             "tamanho_posicao": 20,
-            "dados_tecnicos": {},
+            "dados_tecnicos": dados_mock,
             "detalhes": "MOCK: Implementação futura - rompimento resistência + volume alto"
         }
         

@@ -1,3 +1,5 @@
+# app/services/dashboards/dash_main/analise_tatica/setup/teste_suport.py
+
 import logging
 from typing import Dict, Any
 
@@ -17,7 +19,13 @@ def detectar_teste_suporte() -> Dict[str, Any]:
     try:
         logger.info("🔄 MOCK: Detectando Teste Suporte...")
         
-        # MOCK: Sempre retorna não encontrado
+        # MOCK: Simula busca de dados técnicos
+        dados_mock = {
+            "rsi": 0,  # Mock - não coletado
+            "preco_ema144": 0,  # Mock - não coletado
+            "ema_144_distance": 0  # Mock - não coletado
+        }
+        
         logger.info("❌ MOCK: Teste Suporte não implementado")
         
         return {
@@ -25,7 +33,7 @@ def detectar_teste_suporte() -> Dict[str, Any]:
             "setup": "TESTE_SUPORTE",
             "forca": "nenhuma",
             "tamanho_posicao": 25,
-            "dados_tecnicos": {},
+            "dados_tecnicos": dados_mock,
             "detalhes": "MOCK: Implementação futura - EMA144 ±2% + bounce"
         }
         

@@ -1,3 +1,4 @@
+
 import logging
 from typing import Dict, Any
 from .gate_system_utils import aplicar_gate_system

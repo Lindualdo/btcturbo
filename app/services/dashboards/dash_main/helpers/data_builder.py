@@ -1,5 +1,3 @@
-#source: app/services/dashboards/dash_main/helpers/data_builder.py
-
 import logging
 from datetime import datetime
 from typing import Dict
@@ -26,16 +24,18 @@ def build_dashboard_data(dados_mercado: dict, dados_risco: dict, dados_alavancag
             raise Exception("Dados risco inválidos")
         if not dados_alavancagem or dados_alavancagem.get("status") != "success":
             raise Exception("Dados alavancagem inválidos")
-        if not dados_tatica or not dados_tatica.get("tecnicos") or not dados_tatica.get("estrategia"):
+        
+        # CORRIGIDO: Validar estrutura dados_tatica (aceita tecnicos vazios)
+        if not dados_tatica or "estrategia" not in dados_tatica:
             raise Exception("Dados tática inválidos")
+        
+        # CORRIGIDO: tecnicos pode ser vazio quando setup = NENHUM
+        tecnicos = dados_tatica.get("tecnicos", {})
+        estrategia = dados_tatica["estrategia"]
         
         # Extrair dados reais das 4 camadas
         btc_price = _extract_btc_price(dados_mercado, dados_risco)
         position_usd = _extract_position_value(dados_alavancagem)
-        
-        # Dados técnicos da Camada 4
-        tecnicos = dados_tatica["tecnicos"]
-        estrategia = dados_tatica["estrategia"]
         
         # Campos para PostgreSQL
         campos = {
@@ -69,7 +69,6 @@ def build_dashboard_data(dados_mercado: dict, dados_risco: dict, dados_alavancag
                 "health_factor": campos["health_factor"],
                 "dist_liquidacao": dados_risco["dist_liquidacao"]
             },
-
             "tecnicos": {
                 "rsi": tecnicos.get("rsi", 0),
                 "preco_ema144": tecnicos.get("preco_ema144", 0),
@@ -121,7 +120,6 @@ def _extract_btc_price(dados_mercado: dict, dados_risco: dict) -> float:
 def _extract_position_value(dados_alavancagem: dict) -> float:
     """Extrai valor posição USD dos dados de alavancagem"""
     try:
-        # Buscar posicao_total na estrutura correta
         if "posicao_financeira" in dados_alavancagem:
             posicao_financeira = dados_alavancagem["posicao_financeira"]
             if "posicao_total" in posicao_financeira:
@@ -187,35 +185,23 @@ def _build_from_fields(dados_db: dict) -> dict:
                 "ema_144_distance": dados_db.get("ema_distance", 0)
             },
             "estrategia": {
-                "decisao": dados_db.get("decisao_final", "INDEFINIDO"),
-                "setup": dados_db.get("setup", "INDEFINIDO"),
+                "decisao": dados_db.get("decisao_final", "AGUARDAR"),
+                "setup": dados_db.get("setup", "NENHUM"),
                 "urgencia": "baixa",
-                "justificativa": "Dados reconstruídos"
-            },
-            "alavancagem": {
-                "atual": dados_db.get("alavancagem_atual", 0),
-                "status": "indefinido",
-                "permitida": 0,
-                "divida_total": 0,
-                "valor_a_reduzir": 0,
-                "valor_disponivel": 0
-            },
-            "indicadores": {
-                "mvrv": 0,
-                "nupl": 0,
-                "health_factor": dados_db.get("health_factor", 0),
-                "dist_liquidacao": 0
+                "justificativa": "Dados limitados do banco"
             }
         }
+        
     except Exception as e:
-        logger.error(f"❌ Erro construir fallback: {str(e)}")
-        raise Exception(f"Falha construir fallback: {str(e)}")
+        logger.error(f"❌ Erro build from fields: {str(e)}")
+        return {}
 
-def _calculate_age_minutes(created_at: datetime) -> float:
-    """Calcula idade em minutos do registro"""
+def _calculate_age_minutes(created_at) -> int:
+    """Calcula idade em minutos"""
     try:
-        now = datetime.utcnow()
-        delta = now - created_at
-        return round(delta.total_seconds() / 60, 5)
-    except:
-        return 0.0
+        if created_at:
+            delta = datetime.utcnow() - created_at
+            return int(delta.total_seconds() / 60)
+        return 0
+    except Exception:
+        return 0

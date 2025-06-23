@@ -17,7 +17,13 @@ def detectar_oversold_extremo() -> Dict[str, Any]:
     try:
         logger.info("🔄 MOCK: Detectando Oversold Extremo...")
         
-        # MOCK: Sempre retorna não encontrado
+        # MOCK: Simula busca de dados técnicos
+        dados_mock = {
+            "rsi": 0,  # Mock - não coletado
+            "preco_ema144": 0,  # Mock - não coletado  
+            "ema_144_distance": 0  # Mock - não coletado
+        }
+        
         logger.info("❌ MOCK: Oversold Extremo não implementado")
         
         return {
@@ -25,7 +31,7 @@ def detectar_oversold_extremo() -> Dict[str, Any]:
             "setup": "OVERSOLD_EXTREMO",
             "forca": "nenhuma",
             "tamanho_posicao": 40,
-            "dados_tecnicos": {},
+            "dados_tecnicos": dados_mock,
             "detalhes": "MOCK: Implementação futura - RSI < 30 + divergência"
         }
         
