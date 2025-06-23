@@ -42,7 +42,7 @@ def build_dashboard_data(dados_mercado: dict, dados_risco: dict, dados_alavancag
             "btc_price": btc_price,
             "score_mercado": dados_mercado["score_mercado"],
             "score_risco": dados_risco["score"],
-            "ciclo_atual": dados_mercado["ciclo"],
+            "ciclo_atual": dados_mercado["ciclo_name"],
             "setup_4h": estrategia.get("setup_4h", "NENHUM"),
             "decisao_final": estrategia.get("decisao", "AGUARDAR"),
             "alavancagem_atual": dados_alavancagem.get("alavancagem_atual", 0),
@@ -135,7 +135,7 @@ def _extract_position_value(dados_alavancagem: dict) -> float:
         return 0.0
 
 def build_response_format(dados_db: dict) -> dict:
-    """Constrói resposta formato API V3 a partir dos dados do banco"""
+    """Constrói resposta formato API a partir dos dados do banco"""
     try:
         dashboard_json = dados_db.get("dashboard_json")
         
