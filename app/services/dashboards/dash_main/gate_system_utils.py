@@ -24,11 +24,11 @@ def aplicar_gate_system(dados_mercado: Dict, dados_risco: Dict, dados_alavancage
         logger.info("🚪 Iniciando Gate System...")
         
         # EXTRAIR DADOS
-        score_risco = dados_risco.get('score', 0)
-        score_mercado = dados_mercado.get('score_mercado', 0)
-        health_factor = dados_risco.get('health_factor', 0)
-        margem_disponivel = dados_alavancagem.get('valor_disponivel', 0)
-        posicao_total = dados_alavancagem.get('posicao_total', 1)  # Evitar divisão por zero
+        #score_risco = dados_risco.get('score', 0)
+        #score_mercado = dados_mercado.get('score_mercado', 0)
+        #health_factor = dados_risco.get('health_factor', 0)
+        #margem_disponivel = dados_alavancagem.get('valor_disponivel', 0)
+        #posicao_total = dados_alavancagem.get('posicao_total', 1)  # Evitar divisão por zero
         
         # será implementando depois de forma mais simples
         
@@ -44,7 +44,7 @@ def aplicar_gate_system(dados_mercado: Dict, dados_risco: Dict, dados_alavancage
             "status": "LIBERADO" if liberado else "BLOQUEADO",
             "motivo": motivo,
             "override_especial": False,
-            "validacoes": validacoes
+            "validacoes": "nenhuma"
         }
         
     except Exception as e:
