@@ -33,7 +33,7 @@ def aplicar_gate_system(dados_mercado: Dict, dados_risco: Dict, dados_alavancage
         # será implementando depois de forma mais simples
         
         liberado = True
-
+        motivo  = "Aprovado"
         if liberado:
             logger.info("✅ Gate System: LIBERADO para operação")
         else:
