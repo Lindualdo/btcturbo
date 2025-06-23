@@ -12,7 +12,14 @@ Sistema de análise de indicadores Bitcoin para trading alavancado, construído 
 ## Proxima versão 1.5.2 - Revisar Processo de alavancagem - feito
   
 
-## Proxima versão 1.5.3 - Revisar Processo de execução tática
+## Proxima versão 1.5.3 - Revisar Processo de execução tática - feito
+- recriado a arquitetura
+- organizado melhor os arquiovs
+- setups agora ficam isolados cada setup em um arquivo
+- mais fácil para manter e evoluir
+- retirado as validações complexas desnecessárias
+- analisar melhor depois para usar os critérios de posição definidos na camada 1 (aanalise de mercado)
+- aplicar regras de validações e alertas antes de autorizar o setup
 
 ## 🏗️ Arquitetura
 
