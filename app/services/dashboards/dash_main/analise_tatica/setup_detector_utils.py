@@ -1,9 +1,12 @@
+# app/services/dashboards/dash_main/analise_tatica/setup_detector_utils.py
+
 import logging
 from typing import Dict, Any
 from .setups.oversold_extremo import detectar_oversold_extremo
 from .setups.pullback_tendencia import detectar_pullback_tendencia
 from .setups.teste_suporte import detectar_teste_suporte
 from .setups.rompimento_resistencia import detectar_rompimento
+from .setups.cruzamento_medias import detectar_cruzamento_medias
 
 logger = logging.getLogger(__name__)
 
@@ -24,6 +27,7 @@ def identificar_setup() -> Dict[str, Any]:
         setups = [
             ("OVERSOLD_EXTREMO", detectar_oversold_extremo),
             ("PULLBACK_TENDENCIA", detectar_pullback_tendencia),
+            ("CRUZAMENTO_MEDIAS", detectar_cruzamento_medias),
             ("TESTE_SUPORTE", detectar_teste_suporte),
             ("ROMPIMENTO", detectar_rompimento)
         ]
@@ -38,6 +42,12 @@ def identificar_setup() -> Dict[str, Any]:
                 if (not dados_tecnicos_consolidados and 
                     result.get('dados_tecnicos') and 
                     result.get('dados_tecnicos', {}).get('rsi', 0) > 0):
+                    dados_tecnicos_consolidados = result['dados_tecnicos']
+                
+                # Captura dados EMAs do cruzamento se disponível
+                if (not dados_tecnicos_consolidados and 
+                    result.get('dados_tecnicos') and 
+                    result.get('dados_tecnicos', {}).get('ema_17', 0) > 0):
                     dados_tecnicos_consolidados = result['dados_tecnicos']
                 
                 if result.get('encontrado', False):

@@ -27,6 +27,8 @@ def processar_estrategia_compra(setup_info: Dict, dados_alavancagem: Dict) -> Di
             return _processar_teste_suporte(setup_info)
         elif setup_tipo == "ROMPIMENTO":
             return _processar_rompimento(setup_info)
+        elif setup_tipo == "CRUZAMENTO_MEDIAS":
+            return _processar_cruzamento_medias(setup_info)
         else:
             return _estrategia_erro(f"Setup desconhecido: {setup_tipo}")
         
@@ -122,3 +124,30 @@ def _estrategia_erro(mensagem: str) -> Dict[str, Any]:
         "urgencia": "alta",
         "justificativa": mensagem
     }
+# Adicionar esta função ao comprar_helper.py existente
+
+def _processar_cruzamento_medias(setup_info: Dict) -> Dict[str, Any]:
+    """Processa setup CRUZAMENTO_MEDIAS"""
+    try:
+        dados_tecnicos = setup_info.get('dados_tecnicos', {})
+        ema_17 = dados_tecnicos.get('ema_17', 0)
+        ema_34 = dados_tecnicos.get('ema_34', 0)
+        forca = setup_info.get('forca', 'media')
+        
+        urgencia = "alta" if forca == "muito_alta" else "media"
+        justificativa = f"Cruzamento médias: EMA17 ${ema_17:,.0f} x EMA34 ${ema_34:,.0f}"
+        
+        return {
+            "decisao": "COMPRAR",
+            "setup": "CRUZAMENTO_MEDIAS",
+            "urgencia": urgencia,
+            "justificativa": justificativa
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Erro cruzamento médias: {str(e)}")
+        return _estrategia_erro(f"Erro cruzamento: {str(e)}")
+
+# Adicionar no dispatcher da função processar_estrategia_compra:
+# elif setup_tipo == "CRUZAMENTO_MEDIAS":
+#     return _processar_cruzamento_medias(setup_info)
