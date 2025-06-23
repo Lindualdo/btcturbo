@@ -17,6 +17,9 @@ def identificar_setup() -> Dict[str, Any]:
     try:
         logger.info("🔍 Orquestrando detecção de setups...")
         
+        # Consolidar dados técnicos
+        dados_tecnicos_consolidados = {}
+        
         # Ordem de prioridade (para no primeiro encontrado)
         setups = [
             ("OVERSOLD_EXTREMO", detectar_oversold_extremo),
@@ -31,6 +34,10 @@ def identificar_setup() -> Dict[str, Any]:
             try:
                 result = setup_func()
                 
+                # Captura dados técnicos do primeiro setup com dados reais
+                if not dados_tecnicos_consolidados and result.get('dados_tecnicos'):
+                    dados_tecnicos_consolidados = result['dados_tecnicos']
+                
                 if result.get('encontrado', False):
                     logger.info(f"✅ Setup {setup_nome} IDENTIFICADO - Força: {result.get('forca', 'N/A')}")
                     return result
@@ -43,19 +50,19 @@ def identificar_setup() -> Dict[str, Any]:
         
         # Nenhum setup identificado
         logger.info("❌ Nenhum setup identificado")
-        return _setup_nenhum("Condições não atendidas")
+        return _setup_nenhum("Condições não atendidas", dados_tecnicos_consolidados)
         
     except Exception as e:
         logger.error(f"❌ Erro orquestrador setups: {str(e)}")
-        return _setup_nenhum(f"Erro orquestrador: {str(e)}")
+        return _setup_nenhum(f"Erro orquestrador: {str(e)}", {})
 
-def _setup_nenhum(motivo: str) -> Dict[str, Any]:
-    """Retorna setup NENHUM com motivo"""
+def _setup_nenhum(motivo: str, dados_tecnicos: Dict = None) -> Dict[str, Any]:
+    """Retorna setup NENHUM com motivo e dados técnicos consolidados"""
     return {
         "encontrado": False,
         "setup": "NENHUM",
         "forca": "nenhuma",
         "tamanho_posicao": 0,
-        "dados_tecnicos": {},
+        "dados_tecnicos": dados_tecnicos or {},
         "detalhes": motivo
     }
