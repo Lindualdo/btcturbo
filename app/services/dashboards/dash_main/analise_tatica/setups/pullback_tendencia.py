@@ -1,3 +1,5 @@
+#source: app/services/dashboards/dash_main/analise_tatica/setups/pullback_tendencia.py
+
 import logging
 from typing import Dict, Any
 from app.services.utils.helpers.tradingview.tradingview_helper import get_rsi_current, fetch_ohlc_data, calculate_ema
