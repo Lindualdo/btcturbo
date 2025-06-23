@@ -5,12 +5,14 @@
 ## Matriz de Setups (Timeframe 4H)
 
 ### Setups de COMPRA
-| Setup | Condições 4H | Confirmação | Ação | Tamanho |
-|-------|--------------|-------------|------|---------|
-| **Pullback Tendência** | RSI < 45 + EMA144 ±3% | Volume médio+ | COMPRAR | 30% |
-| **Teste Suporte** | Toca EMA144 + Bounce | Martelo/Doji | COMPRAR | 25% |
-| **Rompimento** | Fecha acima resistência | Volume alto | COMPRAR | 20% |
-| **Oversold Extremo** | RSI < 30 | Divergência+ | COMPRAR | 40% |
+| Setup                   | Condições 4H            | Confirmação | Ação | Tamanho |
+|-------                  |--------------           |-------------|------|---------|
+| **Pullback Tendência**  | RSI < 45 + EMA144 ±3%   | Volume médio+ | COMPRAR | 30% |
+| **Teste Suporte**       | Toca EMA144 + Bounce    | Martelo/Doji | COMPRAR | 25% |
+| **Rompimento**          | Fecha acima resistência | Volume alto | COMPRAR | 20% |
+| **Oversold Extremo**    | RSI < 30 | Divergência+ | COMPRAR | 40% |
+
+
 
 ### Setups de VENDA
 | Setup | Condições 4H | Confirmação | Ação | Tamanho |
@@ -21,8 +23,6 @@
 | **Stop Gain** | Target atingido | Qualquer | REALIZAR | 50% |
 
 ---
-
-
 
 ### Oportunidades Raras (Força entrada)
 - MVRV < 0.7 + RSI < 25 → All-in histórico

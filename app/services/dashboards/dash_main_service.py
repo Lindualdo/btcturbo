@@ -6,7 +6,7 @@ from app.services.scores import riscos
 from .dash_main.helpers.data_helper import save_dashboard, get_latest_dashboard
 from .dash_main.helpers.data_builder import build_dashboard_data, build_response_format
 from .dash_main.analise_alavancagem import executar_analise_alavancagem
-from .dash_main.analise_tatica_service import executar_analise
+from .dash_main.analise_tatica.analise_tatica_service import executar_analise
 from  app.services.utils.helpers.postgres.mercado.database_helper import get_ciclo_mercado
 
 logger = logging.getLogger(__name__)

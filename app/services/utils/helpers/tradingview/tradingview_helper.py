@@ -283,7 +283,7 @@ def get_rsi_current(
             symbol=symbol,
             exchange=exchange,
             interval=timeframe,
-            n_bars=50  # Suficiente para RSI14
+            n_bars=1000  # Suficiente para RSI14
         )
         
         # Calcular RSI via função padronizada
