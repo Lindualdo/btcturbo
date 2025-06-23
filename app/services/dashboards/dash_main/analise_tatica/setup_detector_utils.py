@@ -50,6 +50,7 @@ def identificar_setup() -> Dict[str, Any]:
         
         # Nenhum setup identificado
         logger.info("❌ Nenhum setup identificado")
+        logger.info(f"🔍 Dados consolidados: {dados_tecnicos_consolidados}")
         return _setup_nenhum("Condições não atendidas", dados_tecnicos_consolidados)
         
     except Exception as e:
