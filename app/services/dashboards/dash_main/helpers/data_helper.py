@@ -25,7 +25,7 @@ def save_dashboard(dashboard_data: Dict) -> bool:
         query = """
             INSERT INTO dash_main (
                 btc_price, score_mercado, score_risco, ciclo_atual, 
-                setup_4h, decisao_final, alavancagem_atual, health_factor,
+                setup, decisao_final, alavancagem_atual, health_factor,
                 ema_distance, rsi_diario, dashboard_json, created_at
             )
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
@@ -36,7 +36,7 @@ def save_dashboard(dashboard_data: Dict) -> bool:
             campos["score_mercado"], 
             campos["score_risco"],
             campos["ciclo_atual"],
-            campos["setup_4h"],
+            campos["setup"],
             campos["decisao_final"],
             campos["alavancagem_atual"],
             campos["health_factor"],
@@ -92,7 +92,7 @@ def _create_table_if_not_exists():
                 score_mercado DECIMAL(5,2),
                 score_risco DECIMAL(5,2),
                 ciclo_atual VARCHAR(50),
-                setup_4h VARCHAR(100),
+                setup_ VARCHAR(100),
                 decisao_final VARCHAR(100),
                 alavancagem_atual DECIMAL(5,2),
                 health_factor DECIMAL(8,6),

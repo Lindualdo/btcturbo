@@ -43,7 +43,7 @@ def build_dashboard_data(dados_mercado: dict, dados_risco: dict, dados_alavancag
             "score_mercado": dados_mercado["score_mercado"],
             "score_risco": dados_risco["score"],
             "ciclo_atual": dados_mercado["ciclo_name"],
-            "setup_4h": estrategia.get("setup_4h", "NENHUM"),
+            "setup": estrategia.get("setup", "NENHUM"),
             "decisao_final": estrategia.get("decisao", "AGUARDAR"),
             "alavancagem_atual": dados_alavancagem.get("alavancagem_atual", 0),
             "health_factor": dados_risco["health_factor"],
@@ -77,7 +77,7 @@ def build_dashboard_data(dados_mercado: dict, dados_risco: dict, dados_alavancag
             },
             "estrategia": {
                 "decisao": estrategia.get("decisao", "AGUARDAR"),
-                "setup_4h": estrategia.get("setup_4h", "NENHUM"),
+                "setup": estrategia.get("setup", "NENHUM"),
                 "urgencia": estrategia.get("urgencia", "baixa"),
                 "justificativa": estrategia.get("justificativa", "Dados indisponíveis")
             },
@@ -188,7 +188,7 @@ def _build_from_fields(dados_db: dict) -> dict:
             },
             "estrategia": {
                 "decisao": dados_db.get("decisao_final", "INDEFINIDO"),
-                "setup_4h": dados_db.get("setup_4h", "INDEFINIDO"),
+                "setup": dados_db.get("setup", "INDEFINIDO"),
                 "urgencia": "baixa",
                 "justificativa": "Dados reconstruídos"
             },

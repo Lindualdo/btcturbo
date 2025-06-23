@@ -64,7 +64,7 @@ def _verificar_overrides_especiais(health_factor: float, score_risco: float) -> 
             "override_especial": True,
             "estrategia_override": {
                 "decisao": "REDUZIR_URGENTE",
-                "setup_4h": "PROTECAO_HF",
+                "setup": "PROTECAO_HF",
                 "urgencia": "critica",
                 "justificativa": f"Health Factor crítico ({health_factor:.2f}). Reduzir 50-80% posição imediatamente"
             }
@@ -80,7 +80,7 @@ def _verificar_overrides_especiais(health_factor: float, score_risco: float) -> 
             "override_especial": True,
             "estrategia_override": {
                 "decisao": "REDUZIR_RISCO",
-                "setup_4h": "PROTECAO_RISCO",
+                "setup": "PROTECAO_RISCO",
                 "urgencia": "critica",
                 "justificativa": f"Score Risco crítico ({score_risco}). Reduzir 50% posição por segurança"
             }

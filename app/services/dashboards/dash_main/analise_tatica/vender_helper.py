@@ -77,7 +77,7 @@ def _venda_resistencia_mock() -> Dict[str, Any]:
     """MOCK: Venda por resistência (RSI > 70 + topo)"""
     return {
         "decisao": "REALIZAR",
-        "setup_4h": "RESISTENCIA",
+        "setup": "RESISTENCIA",
         "urgencia": "media",
         "justificativa": "MOCK: RSI > 70 + resistência detectada - realizar 25%"
     }
@@ -86,7 +86,7 @@ def _venda_exaustao_mock() -> Dict[str, Any]:
     """MOCK: Venda por exaustão (3 topos + volume ↓)"""
     return {
         "decisao": "REALIZAR",
-        "setup_4h": "EXAUSTAO", 
+        "setup": "EXAUSTAO", 
         "urgencia": "alta",
         "justificativa": "MOCK: Exaustão detectada - realizar 30%"
     }
@@ -95,7 +95,7 @@ def _venda_take_profit_mock() -> Dict[str, Any]:
     """MOCK: Take profit (lucro > 30%)"""
     return {
         "decisao": "REALIZAR",
-        "setup_4h": "TAKE_PROFIT",
+        "setup": "TAKE_PROFIT",
         "urgencia": "baixa",
         "justificativa": "MOCK: Lucro > 30% - realizar 20%"
     }
@@ -104,7 +104,7 @@ def _venda_stop_gain_mock() -> Dict[str, Any]:
     """MOCK: Stop gain (target atingido)"""
     return {
         "decisao": "REALIZAR",
-        "setup_4h": "STOP_GAIN",
+        "setup": "STOP_GAIN",
         "urgencia": "alta", 
         "justificativa": "MOCK: Target atingido - realizar 50%"
     }
@@ -113,7 +113,7 @@ def _sem_setup_venda() -> Dict[str, Any]:
     """Retorna quando não há setup de venda identificado"""
     return {
         "decisao": "MANTER",
-        "setup_4h": "NENHUM_VENDA",
+        "setup": "NENHUM_VENDA",
         "urgencia": "baixa",
         "justificativa": "Sem setup de venda identificado - manter posição"
     }
@@ -122,7 +122,7 @@ def _erro_venda_mock(erro: str) -> Dict[str, Any]:
     """Fallback em caso de erro na análise de venda"""
     return {
         "decisao": "ERRO_VENDA",
-        "setup_4h": "INDISPONIVEL",
+        "setup_": "INDISPONIVEL",
         "urgencia": "alta",
         "justificativa": f"Erro análise venda: {erro}"
     }

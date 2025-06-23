@@ -56,7 +56,7 @@ def processar_dash_main() -> dict:
             logger.error(f"❌ Camada 4 retornou tipo inválido: {type(dados_tatica)}")
             raise Exception(f"Camada 4: tipo inválido {type(dados_tatica)}")
         
-        logger.info(f"✅ Camada 4: {dados_tatica['estrategia']['decisao']} - {dados_tatica['estrategia']['setup_4h']}")
+        logger.info(f"✅ Camada 4: {dados_tatica['estrategia']['decisao']} - {dados_tatica['estrategia']['setup']}")
         
         # Construir dados formato compatível
         logger.info("🔧 Construindo dashboard data...")
