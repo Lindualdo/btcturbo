@@ -53,7 +53,8 @@ def get_ciclo_mercado() -> dict:
             "timestamp": dados_mercado["timestamp"].isoformat(),
             "score_mercado": score_mercado,
             "classificacao_mercado": dados_mercado["classificacao_consolidada"],
-            "ciclo": ciclo_definido["nome_ciclo"],
+            "ciclo_name": ciclo_definido["nome_ciclo"],
+            "ciclo_detail": ciclo_definido["caracteristicas"],
             "ciclo_detalhes": ciclo_definido,
             "indicadores": {
                 "mvrv": mvrv,

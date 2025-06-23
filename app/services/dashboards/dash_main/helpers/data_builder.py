@@ -57,13 +57,19 @@ def build_dashboard_data(dados_mercado: dict, dados_risco: dict, dados_alavancag
                 "btc_price": campos["btc_price"],
                 "position_usd": position_usd
             },
-            "scores": {
-                "ciclo": campos["ciclo_atual"],
-                "risco": campos["score_risco"],
-                "mercado": campos["score_mercado"],
-                "classificacao_risco": dados_risco["classificacao"],
+            "mercado": {
+                "ciclo_name": dados_mercado["ciclo_name"],   
+                "ciclo_detail": dados_mercado["ciclo_detail"],
+                "score_mercado": dados_mercado["score_mercado"],
                 "classificacao_mercado": dados_mercado["classificacao_mercado"]
             },
+            "risco": {
+                "score_risco": campos["score_risco"],
+                "classificacao_risco": dados_risco["classificacao"],
+                "health_factor": campos["health_factor"],
+                "dist_liquidacao": dados_risco["dist_liquidacao"]
+            },
+
             "tecnicos": {
                 "rsi": tecnicos.get("rsi", 0),
                 "preco_ema144": tecnicos.get("preco_ema144", 0),
@@ -82,12 +88,6 @@ def build_dashboard_data(dados_mercado: dict, dados_risco: dict, dados_alavancag
                 "divida_total": dados_alavancagem.get("posicao_financeira", {}).get("divida_total", 0),
                 "valor_a_reduzir": dados_alavancagem.get("posicao_financeira", {}).get("valor_a_reduzir", 0),
                 "valor_disponivel": dados_alavancagem.get("posicao_financeira", {}).get("valor_disponivel", 0)
-            },
-            "indicadores": {
-                "mvrv": dados_mercado["indicadores"]["mvrv"],
-                "nupl": dados_mercado["indicadores"]["nupl"],
-                "health_factor": campos["health_factor"],
-                "dist_liquidacao": dados_risco["dist_liquidacao"]
             }
         }
         
