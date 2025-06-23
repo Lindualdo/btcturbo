@@ -4,7 +4,7 @@
 
 ### **1. Estrutura de Arquivos Criada**
 ```
-app/services/v3/dash_main/
+app/services/dashboards/dash_main/
 ├── execucao_tatica_service.py     # 🎯 Orquestrador principal
 ├── utils/
 │   ├── gate_system_utils.py       # 🚪 4 validações + overrides

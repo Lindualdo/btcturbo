@@ -30,24 +30,10 @@ def aplicar_gate_system(dados_mercado: Dict, dados_risco: Dict, dados_alavancage
         margem_disponivel = dados_alavancagem.get('valor_disponivel', 0)
         posicao_total = dados_alavancagem.get('posicao_total', 1)  # Evitar divisão por zero
         
-        # Calcular % margem disponível
-        margem_percent = (margem_disponivel / posicao_total * 100) if posicao_total > 0 else 0
+        # será implementando depois de forma mais simples
         
-        logger.info(f"📊 Dados Gate: Risco={score_risco}, Mercado={score_mercado}, HF={health_factor:.2f}, Margem={margem_percent:.1f}%")
-        
-        # VERIFICAR OVERRIDES ESPECIAIS PRIMEIRO
-        override_result = _verificar_overrides_especiais(health_factor, score_risco)
-        if override_result['ativo']:
-            logger.warning(f"🚨 OVERRIDE ESPECIAL: {override_result['motivo']}")
-            return override_result
-        
-        # APLICAR 4 VALIDAÇÕES GATE
-        validacoes = _executar_validacoes_gate(score_risco, score_mercado, health_factor, margem_percent)
-        
-        # RESULTADO FINAL
-        liberado = all(validacoes.values())
-        motivo = _gerar_motivo_gate(validacoes)
-        
+        liberado = True
+
         if liberado:
             logger.info("✅ Gate System: LIBERADO para operação")
         else:

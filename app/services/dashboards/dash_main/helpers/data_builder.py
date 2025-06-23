@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 def build_dashboard_data(dados_mercado: dict, dados_risco: dict, dados_alavancagem: dict, dados_tatica: dict) -> dict:
     """
-    Constrói dados V3 formato compatível com JSON esperado
+    Constrói dados formato compatível com JSON esperado
     
     Args:
         dados_mercado: Dados reais Camada 1
@@ -163,7 +163,7 @@ def build_response_format(dados_db: dict) -> dict:
         return {
             "status": "error",
             "erro": str(e),
-            "versao": "v3_4_camadas"
+            "versao": "v1.5"
         }
 
 def _build_from_fields(dados_db: dict) -> dict:

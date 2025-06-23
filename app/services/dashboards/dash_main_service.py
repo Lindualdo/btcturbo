@@ -6,14 +6,14 @@ from app.services.scores import riscos
 from .dash_main.helpers.data_helper import save_dashboard, get_latest_dashboard
 from .dash_main.helpers.data_builder import build_dashboard_data, build_response_format
 from .dash_main.analise_alavancagem import executar_analise_alavancagem
-from .dash_main.execucao_tatica_service import executar_execucao_tatica
+from .dash_main.analise_tatica_service import executar_analise
 from  app.services.utils.helpers.postgres.mercado.database_helper import get_ciclo_mercado
 
 logger = logging.getLogger(__name__)
 
 def processar_dash_main() -> dict:
     """
-    Dashboard V3 - POST: Processa 4 camadas e grava
+    Dashboard - POST: Processa 4 camadas e grava
     """
     try:
         logger.info("🚀 Processando Dash-main - POST")
@@ -34,7 +34,7 @@ def processar_dash_main() -> dict:
         # CAMADA 4: Execução Tática (real) - COM DEBUG
         logger.info("🎯 Executando Camada 4: Execução Tática...")
         
-        dados_tatica = executar_execucao_tatica(dados_mercado, dados_risco, dados_alavancagem)
+        dados_tatica = executar_analise(dados_mercado, dados_risco, dados_alavancagem)
         
         # DEBUG: Verificar estrutura retornada
         logger.info(f"🔍 DEBUG Camada 4 - Tipo: {type(dados_tatica)}")
@@ -71,7 +71,7 @@ def processar_dash_main() -> dict:
         
         return {
             "status": "success",
-            "versao": "v3_4_camadas",
+            "versao": "v1.5",
             "timestamp": datetime.utcnow().isoformat(),
             "message": "Dash-main processado e gravado",
             "camadas_processadas": {
@@ -113,13 +113,13 @@ def obter_dash_main() -> dict:
         return response
         
     except Exception as e:
-        logger.error(f"❌ Erro obter Dashboard V3: {str(e)}")
+        logger.error(f"❌ Erro obter Dashboard: {str(e)}")
         return {
             "status": "error",
             "versao": "1.5",
             "timestamp": datetime.utcnow().isoformat(),
             "erro": str(e),
-            "message": "Falha obter Dashboard V3"
+            "message": "Falha obter Dashboard"
         }
 
 def _executar_camada_risco() -> dict:

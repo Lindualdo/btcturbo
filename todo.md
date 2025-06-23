@@ -12,8 +12,8 @@ FASE1 - REFACTORE - feito
 
 FASE1 - Operacional
 
-0 - criar  documentação tecnica resumida - todo o projeto - pastas e arquivos + obj
-1 - Revisar funções de setup (Decisões por Ciclo + Setup + Gate System)
+0 - criar  documentação tecnica resumida - todo o projeto - pastas e arquivos + obj - feito
+1 - Revisar funções de setup 
 - confirmar Hierarquia de Decisão (Timeframe Conflito)
 - Testar (Gate System) - REVISADO
 2 - rever a quantidde de barras das funções trandview e integridade / confiabilidade
@@ -24,6 +24,8 @@ FASE1 - Operacional
 7 - criar gestão de stops
 8 - Trader Jornal
 8 - criar dash com métricas de performance
+9 - implementar regras adicionais de proteção alavancagem
+10 - implemenra gate system de forma simplificada
 
 
 FASE2 - ALERTAS

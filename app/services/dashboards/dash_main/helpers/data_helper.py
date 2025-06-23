@@ -11,10 +11,10 @@ logger = logging.getLogger(__name__)
 
 def save_dashboard(dashboard_data: Dict) -> bool:
     """
-    Salva dashboard V3 no PostgreSQL (mesma base V2)
+    Salva dashboard  no PostgreSQL
     """
     try:
-        logger.info("💾 Salvando Dashboard V3...")
+        logger.info("💾 Salvando Dashboard...")
         
         _create_table_if_not_exists()
         
@@ -47,19 +47,19 @@ def save_dashboard(dashboard_data: Dict) -> bool:
         )
         
         execute_query(query, valores)
-        logger.info("✅ Dashboard V3 salvo com sucesso")
+        logger.info("✅ Dashboard salvo com sucesso")
         return True
         
     except Exception as e:
-        logger.error(f"❌ Erro salvando Dashboard V3: {str(e)}")
+        logger.error(f"❌ Erro salvando Dashboard: {str(e)}")
         return False
 
 def get_latest_dashboard() -> Optional[Dict]:
     """
-    Busca último dashboard V3 (mesma base V2)
+    Busca último dashboard
     """
     try:
-        logger.info("🔍 Buscando último Dashboard V3...")
+        logger.info("🔍 Buscando último Dashboard...")
         
         query = """
             SELECT * FROM dash_main 
@@ -70,14 +70,14 @@ def get_latest_dashboard() -> Optional[Dict]:
         result = execute_query(query, fetch_one=True)
         
         if result:
-            logger.info(f"✅ Dashboard V3 encontrado: ID {result['id']}")
+            logger.info(f"✅ Dashboard encontrado: ID {result['id']}")
             return result
         else:
-            logger.warning("⚠️ Nenhum Dashboard V3 encontrado")
+            logger.warning("⚠️ Nenhum Dashboard encontrado")
             return None
             
     except Exception as e:
-        logger.error(f"❌ Erro buscar Dashboard V3: {str(e)}")
+        logger.error(f"❌ Erro buscar Dashboard: {str(e)}")
         return None
 
 def _create_table_if_not_exists():

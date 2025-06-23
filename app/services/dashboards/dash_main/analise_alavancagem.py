@@ -10,8 +10,18 @@ def executar_analise_alavancagem(alavancagem_permitida) -> dict:
     """
     Camada 3: Análise Alavancagem
     
-    Input: Score mercado + indicadores ciclo + RSI mensal
+    Input: Alavancagem permitida (definida a partir da Matriz de Score)
+    A Matriz de Score considera Score de mercado, MVRV e NUPL
+    É composta por 18 cenários
     Output: Limite margem alavancagem (max 3x)
+
+
+    #todo: implemntar essas regras adicionais
+    ## 🚨 Regras de Proteção Adicional
+
+    1. **Acumulação prolongada**: Se Score 45-55 por >8 semanas → Máximo 1.0x
+    2. **Volatilidade extrema**: Se mudança diária >15% → Reduzir 0.5x temporário
+    3. **Divergência componentes**: Se diferença >30 pontos entre ciclo/momentum/técnico → Máximo 1.5x
     """
     try:
         #1. dados alavancagem

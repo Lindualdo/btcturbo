@@ -15,7 +15,7 @@ def get_ciclo_mercado() -> dict:
     Executa análise completa de mercado (Camada 1)
     
     Returns:
-        dict: Dados da análise de mercado para Dashboard V3
+        dict: Dados da análise de mercado para Dashboard
     """
     try:
         logger.info("📊 Executando Análise Mercado - Camada 1")

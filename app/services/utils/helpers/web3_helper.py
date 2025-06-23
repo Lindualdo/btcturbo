@@ -11,7 +11,7 @@ class AAVEHelper:
         settings = get_settings()
         self.alchemy_api_key = getattr(settings, 'ALCHEMY_API_KEY', None)
         self.initialize_web3()
-        self.pool_address = "0x794a61358D6845594F94dc1DB02A252b5b4814aD"  # AAVE V3 Arbitrum
+        self.pool_address = "0x794a61358D6845594F94dc1DB02A252b5b4814aD"  # AAVE Arbitrum
         
         # AAVE Pool ABI (getUserAccountData function)
         self.pool_abi = [

@@ -11,17 +11,10 @@ from .helpers.stop_helper import processar_estrategia_stop
 
 logger = logging.getLogger(__name__)
 
-def executar_execucao_tatica(dados_mercado: Dict, dados_risco: Dict, dados_alavancagem: Dict) -> Dict[str, Any]:
+def executar_analise(dados_mercado: Dict, dados_risco: Dict, dados_alavancagem: Dict) -> Dict[str, Any]:
     """
-    CAMADA 4: Execução Tática - Gate System + Setup Detection + Estratégia
-    
-    Args:
-        dados_mercado: Resultados da camada 1 (scores, ciclo)
-        dados_risco: Resultados da camada 2 (health_factor, score)
-        dados_alavancagem: Resultados da camada 3 (alavancagem, status)
-    
-    Returns:
-        Dict com 'tecnicos' e 'estrategia'
+    CAMADA 4: Executa Analise tática
+    Identifica se tem setups de compra
     """
     try:
         logger.info("🎯 Executando Camada 4: Execução Tática")
@@ -31,7 +24,9 @@ def executar_execucao_tatica(dados_mercado: Dict, dados_risco: Dict, dados_alava
         tecnicos = obter_dados_tecnicos_4h()
         logger.info(f"✅ Técnicos 4H: RSI={tecnicos['rsi']}, EMA_dist={tecnicos['ema_144_distance']}%")
         
-        # 2. GATE SYSTEM (4 validações + overrides especiais)
+
+        # 2. GATE SYSTEM (4 validações + overrides especiais) será implementado depois
+        # está sempre retornando aprovado - será implementado deposi
         logger.info("🚪 Aplicando Gate System...")
         gate_result = aplicar_gate_system(dados_mercado, dados_risco, dados_alavancagem)
         logger.info(f"🚪 Gate: {gate_result['status']} - {gate_result['motivo']}")
