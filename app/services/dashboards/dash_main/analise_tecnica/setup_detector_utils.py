@@ -23,7 +23,7 @@ def identificar_setup() -> Dict[str, Any]:
         
         # buscar todos os dados tencnicos para validar setuups (IMPLEMENTRA)
         # encadear todos os dados tecncicos até o data_buider (IMPLEMENTAR)
-        dados_tecnicos_consolidados = obter_dados_tecnicos
+        dados_tecnicos_consolidados = {}
         
         # Ordem de prioridade (para no primeiro encontrado
         setups = [
