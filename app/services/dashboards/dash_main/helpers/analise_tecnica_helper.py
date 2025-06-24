@@ -85,7 +85,7 @@ def _buscar_emas_17_34_4h() -> Dict[str, float]:
             symbol="BTCUSDT",
             exchange="BINANCE", 
             interval=Interval.in_4_hour,
-            n_bars=100  # Suficiente para EMA34 + buffer
+            n_bars=1000  # Suficiente para EMA34 + buffer
         )
         
         # Calcular EMAs

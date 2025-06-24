@@ -6,18 +6,15 @@ FASE1 - REFACTORE - feito
 - coleta de indicadores (tecnico e riscos) no N8N estão usando versão antiga do btcturbo e não v5 -feito
 - retirar a v3 do dash e organizar melhor dentro do services - feito
 - retirar o v5 do btcturbo deixando apenas btcturbo - alterar em todos os lugares necessários - feito
-- iremos iniciar as próximas tags como v 1.5.0 
+- iremos iniciar as próximas tags como v 1.5.0 - feito
 - https://colintalkscrypto.com/cbbi/ (referencia inspiração para score do ciclo)
 - analisar EMA 200 semanal X topo anterior
 
 FASE1 - Operacional
 
 0 - criar  documentação tecnica resumida - todo o projeto - pastas e arquivos + obj - feito
-1 - Revisar funções de setup 
-- confirmar Hierarquia de Decisão (Timeframe Conflito)
-- Testar (Gate System) - REVISADO
+1 - Revisar funções de setup - feito
 2 - rever a quantidde de barras das funções trandview e integridade / confiabilidade
-3 - decompor o helper trandiview em arquivos menores cada um para uma finalidade
 4 - implementar controle de operações e silenciar os alertas / setups
 5 - Registro de operações
 6 - Rever Setups de VENDA (quando ciclo sugere)
@@ -26,6 +23,7 @@ FASE1 - Operacional
 8 - criar dash com métricas de performance
 9 - implementar regras adicionais de proteção alavancagem
 10 - implemenra gate system de forma simplificada
+11 - confirmar Hierarquia de Decisão (Timeframe Conflito)
 
 
 FASE2 - ALERTAS
@@ -38,5 +36,6 @@ FASE3 - ANALISE TECNICA
 
 FASE4 - BACKTEST
 - fazer rotinas de backtest
+- decompor o helper trandiview em arquivos menores cada um para uma finalidade
 
 
