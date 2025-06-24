@@ -50,7 +50,7 @@ def detectar_teste_suporte(dados_tecnicos: Dict[str, Any]) -> Dict[str, Any]:
                     "decisao": "COMPRAR",
                     "setup": "TESTE_SUPORTE",
                     "urgencia": "media",
-                    "justificativa": f"Teste suporte EMA144: preço ${preco_atual:,.0f} dist {ema_distance:+.1f}% (TradingView real)"
+                    "justificativa": f"Teste suporte EMA144: preço ${preco_atual:,.0f} dist {ema_distance:+.1f}%"
                 }
             }
         else:

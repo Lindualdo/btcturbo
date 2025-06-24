@@ -46,7 +46,7 @@ def detectar_oversold_extremo(dados_tecnicos: Dict[str, Any]) -> Dict[str, Any]:
                     "decisao": "COMPRAR",
                     "setup": "OVERSOLD_EXTREMO",
                     "urgencia": "critica",
-                    "justificativa": f"Oversold extremo: RSI 4H {rsi} < 30 (TradingView real)"
+                    "justificativa": f"Oversold extremo: RSI 4H {rsi} < 30"
                 }
             }
         else:

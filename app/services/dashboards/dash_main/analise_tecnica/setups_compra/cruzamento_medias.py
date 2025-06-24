@@ -55,7 +55,7 @@ def detectar_cruzamento_medias(dados_tecnicos: Dict[str, Any]) -> Dict[str, Any]
                     "decisao": "COMPRAR",
                     "setup": "CRUZAMENTO_MEDIAS",
                     "urgencia": "alta" if forca == "muito_alta" else "media",
-                    "justificativa": f"Cruzamento médias: EMA17 ${ema_17_atual:.0f} x EMA34 ${ema_34_atual:.0f} (TradingView real)"
+                    "justificativa": f"Cruzamento médias: EMA17 ${ema_17_atual:.0f} x EMA34 ${ema_34_atual:.0f}"
                 }
             }
         else:

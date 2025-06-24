@@ -1,4 +1,4 @@
-# BTC Turbo v1.5.1
+# BTC Turbo v1.5.4
 
 Sistema de análise de indicadores Bitcoin para trading alavancado, construído com FastAPI + PostgreSQL.
 
@@ -20,6 +20,12 @@ Sistema de análise de indicadores Bitcoin para trading alavancado, construído 
 - retirado as validações complexas desnecessárias
 - analisar melhor depois para usar os critérios de posição definidos na camada 1 (aanalise de mercado)
 - aplicar regras de validações e alertas antes de autorizar o setup
+
+## Proxima versão 1.5.4 - Revisão geral na analise tatica - feito
+- melhorado lógica e responsabilidade de cada arquivo
+- implementado todos os setups de compra
+- sempre retona os dados tecnicos
+
 
 ## 🏗️ Arquitetura
 
