@@ -69,11 +69,7 @@ def build_dashboard_data(dados_mercado: dict, dados_risco: dict, dados_alavancag
                 "health_factor": campos["health_factor"],
                 "dist_liquidacao": dados_risco["dist_liquidacao"]
             },
-            "tecnicos": {
-                "rsi": tecnicos.get("rsi", 0),
-                "preco_ema144": tecnicos.get("preco_ema144", 0),
-                "ema_144_distance": tecnicos.get("ema_144_distance", 0)
-            },
+            "tecnicos": tecnicos,
             "estrategia": {
                 "decisao": estrategia.get("decisao", "AGUARDAR"),
                 "setup": estrategia.get("setup", "NENHUM"),
