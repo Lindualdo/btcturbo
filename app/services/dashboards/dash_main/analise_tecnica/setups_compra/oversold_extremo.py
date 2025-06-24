@@ -1,45 +1,77 @@
+# app/services/dashboards/dash_main/analise_tecnica/setups_compra/oversold_extremo.py
+
 import logging
 from typing import Dict, Any
 
 logger = logging.getLogger(__name__)
 
-def detectar_oversold_extremo() -> Dict[str, Any]:
+def detectar_oversold_extremo(dados_tecnicos: Dict[str, Any]) -> Dict[str, Any]:
     """
-    MOCK: Detecta setup OVERSOLD EXTREMO 4H
+    Setup OVERSOLD EXTREMO - RSI < 30
     
-    Condições a implementar:
-    - RSI 4H < 30
-    - Divergência positiva (futuro)
-    - Volume médio+ (futuro)
+    Args:
+        dados_tecnicos: Dados técnicos consolidados
     
-    TODO: Implementar quando solicitado
+    Returns:
+        Dict com resultado da detecção
     """
     try:
-        logger.info("🔄 MOCK: Detectando Oversold Extremo...")
+        logger.info("🔍 Detectando Oversold Extremo...")
         
-        # MOCK: Simula busca de dados técnicos
-        dados_mock = {
-            "rsi": 0,  # Mock - não coletado
-            "preco_ema144": 0,  # Mock - não coletado  
-            "ema_144_distance": 0  # Mock - não coletado
-        }
+        # Extrair dados
+        rsi = dados_tecnicos.get('rsi_4h', 0)
         
-        logger.info("❌ MOCK: Oversold Extremo não implementado")
+        # Condição do setup
+        condicao_oversold = rsi < 30
         
-        return {
-            "encontrado": False,
-            "setup": "OVERSOLD_EXTREMO",
-            "forca": "nenhuma",
-            "tamanho_posicao": 40,
-            "dados_tecnicos": dados_mock,
-            "detalhes": "MOCK: Implementação futura - RSI < 30 + divergência"
-        }
+        logger.info(f"🔍 RSI {rsi} < 30: {condicao_oversold}")
         
+        if condicao_oversold:
+            logger.info("✅ OVERSOLD EXTREMO identificado!")
+            
+            # Calcular força baseada na intensidade do oversold
+            forca = _calcular_forca_oversold(rsi)
+            
+            return {
+                "encontrado": True,
+                "setup": "OVERSOLD_EXTREMO",
+                "forca": forca,
+                "tamanho_posicao": 40,  # Mockado v1.5.4
+                "dados_tecnicos": dados_tecnicos,
+                "estrategia": {
+                    "decisao": "COMPRAR",
+                    "setup": "OVERSOLD_EXTREMO",
+                    "urgencia": "critica",
+                    "justificativa": f"Oversold extremo: RSI {rsi} < 30"
+                }
+            }
+        else:
+            logger.info("❌ Oversold Extremo não identificado")
+            return {
+                "encontrado": False,
+                "setup": "OVERSOLD_EXTREMO",
+                "dados_tecnicos": dados_tecnicos,
+                "detalhes": f"RSI {rsi} >= 30"
+            }
+            
     except Exception as e:
-        logger.error(f"❌ Erro MOCK Oversold Extremo: {str(e)}")
+        logger.error(f"❌ Erro detectar oversold: {str(e)}")
         return {
             "encontrado": False,
             "setup": "OVERSOLD_EXTREMO",
-            "dados_tecnicos": {},
-            "detalhes": f"Erro MOCK: {str(e)}"
+            "erro": str(e),
+            "dados_tecnicos": dados_tecnicos
         }
+
+def _calcular_forca_oversold(rsi: float) -> str:
+    """Calcula força baseada na intensidade do oversold"""
+    if rsi < 15:
+        return "muito_alta"
+    elif rsi < 20:
+        return "alta"
+    elif rsi < 25:
+        return "media"
+    elif rsi < 30:
+        return "baixa"
+    else:
+        return "nenhuma"

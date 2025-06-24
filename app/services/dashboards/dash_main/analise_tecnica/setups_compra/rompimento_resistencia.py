@@ -1,45 +1,71 @@
+# app/services/dashboards/dash_main/analise_tecnica/setups_compra/rompimento_resistencia.py
+
 import logging
 from typing import Dict, Any
 
 logger = logging.getLogger(__name__)
 
-def detectar_rompimento() -> Dict[str, Any]:
+def detectar_rompimento(dados_tecnicos: Dict[str, Any]) -> Dict[str, Any]:
     """
-    MOCK: Detecta setup ROMPIMENTO 4H
+    Setup ROMPIMENTO RESISTÊNCIA - Preço rompe resistência
     
-    Condições a implementar:
-    - Fecha acima resistência confirmada
-    - Volume alto (> 150% média)
-    - RSI < 70 (não overbought)
+    Args:
+        dados_tecnicos: Dados técnicos consolidados
     
-    TODO: Implementar quando solicitado
+    Returns:
+        Dict com resultado da detecção
     """
     try:
-        logger.info("🔄 MOCK: Detectando Rompimento...")
+        logger.info("🔍 Detectando Rompimento Resistência...")
         
-        # MOCK: Simula busca de dados técnicos
-        dados_mock = {
-            "rsi": 0,  # Mock - não coletado
-            "preco_ema144": 0,  # Mock - não coletado
-            "ema_144_distance": 0  # Mock - não coletado
-        }
+        # TODO: Implementar lógica real de resistência
+        # - Identificar níveis de resistência
+        # - Validar rompimento com volume
+        # - Confirmar sustentação acima
         
-        logger.info("❌ MOCK: Rompimento não implementado")
+        # MOCKADO v1.5.4 - simulando não encontrado para foco em outros setups
+        encontrado = False
         
-        return {
-            "encontrado": False,
-            "setup": "ROMPIMENTO",
-            "forca": "nenhuma",
-            "tamanho_posicao": 20,
-            "dados_tecnicos": dados_mock,
-            "detalhes": "MOCK: Implementação futura - rompimento resistência + volume alto"
-        }
-        
+        if encontrado:
+            logger.info("✅ ROMPIMENTO identificado!")
+            
+            return {
+                "encontrado": True,
+                "setup": "ROMPIMENTO",
+                "forca": "alta",
+                "tamanho_posicao": 20,  # Mockado v1.5.4
+                "dados_tecnicos": dados_tecnicos,
+                "estrategia": {
+                    "decisao": "COMPRAR",
+                    "setup": "ROMPIMENTO",
+                    "urgencia": "alta",
+                    "justificativa": "Rompimento de resistência confirmado"
+                }
+            }
+        else:
+            logger.info("❌ Rompimento não identificado")
+            return {
+                "encontrado": False,
+                "setup": "ROMPIMENTO",
+                "dados_tecnicos": dados_tecnicos,
+                "detalhes": "Nenhum rompimento identificado (mockado v1.5.4)"
+            }
+            
     except Exception as e:
-        logger.error(f"❌ Erro MOCK Rompimento: {str(e)}")
+        logger.error(f"❌ Erro detectar rompimento: {str(e)}")
         return {
             "encontrado": False,
             "setup": "ROMPIMENTO",
-            "dados_tecnicos": {},
-            "detalhes": f"Erro MOCK: {str(e)}"
+            "erro": str(e),
+            "dados_tecnicos": dados_tecnicos
         }
+
+def _identificar_resistencia(dados_tecnicos: Dict) -> float:
+    """Identifica nível de resistência (implementar depois)"""
+    # TODO: Implementar algoritmo de resistência
+    pass
+
+def _validar_rompimento_volume(preco: float, resistencia: float) -> bool:
+    """Valida rompimento com volume (implementar depois)"""
+    # TODO: Implementar validação de volume
+    pass
