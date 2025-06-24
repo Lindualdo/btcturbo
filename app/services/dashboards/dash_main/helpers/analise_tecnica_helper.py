@@ -20,20 +20,28 @@ def get_todos_dados_tecnicos() -> Dict[str, Any]:
         rsi_4h = _buscar_rsi_4h()
         logger.info(f"📊 RSI 4H real: {rsi_4h}")
         
-        # TODO: EMAs e preços reais (próximos setups)
+        # IMPLEMENTANDO: EMAs para cruzamento real via TradingView  
+        emas_data = _buscar_emas_17_34_4h()
+        
         dados_consolidados = {
             "rsi_4h": rsi_4h,
             "precos": {
-                "atual": 103500.0,  # TODO: buscar real
-                "ema_17": 103200.0,  # TODO: buscar real
+                "atual": emas_data.get('preco_atual', 103500.0),
+                "ema_17": emas_data.get('ema_17_atual', 103200.0),
                 "ema_144": 103000.0  # TODO: buscar real
             },
             "distancias": {
                 "ema_144_distance": 0.48,  # TODO: calcular real
                 "ema_17_distance": 0.29    # TODO: calcular real
             },
+            "emas_cruzamento": {
+                "ema_17_atual": emas_data.get('ema_17_atual'),
+                "ema_34_atual": emas_data.get('ema_34_atual'),
+                "ema_17_anterior": emas_data.get('ema_17_anterior'),
+                "ema_34_anterior": emas_data.get('ema_34_anterior')
+            },
             "timestamp": datetime.utcnow().isoformat(),
-            "source": "tradingview_rsi4h_real"
+            "source": "tradingview_rsi4h_emas_real"
         }
         
         logger.info(f"📊 RSI 4H: {rsi_4h}, Status: Real TradingView")
@@ -66,10 +74,48 @@ def _buscar_rsi_4h() -> float:
         logger.error(f"❌ Erro RSI 4H: {str(e)}")
         raise Exception(f"RSI 4H indisponível: {str(e)}")
 
-def _buscar_precos_emas() -> Dict[str, float]:
-    """Busca preços e EMAs via TradingView (implementar depois)"""
-    # TODO: Implementar tradingview_helper.calculate_ema()
-    pass
+def _buscar_emas_17_34_4h() -> Dict[str, float]:
+    """Busca EMAs 17 e 34 timeframe 4H via TradingView"""
+    try:
+        from app.services.utils.helpers.tradingview.tradingview_helper import fetch_ohlc_data, calculate_ema
+        from tvDatafeed import Interval
+        
+        # Buscar dados 4H com barras suficientes para EMA34
+        df = fetch_ohlc_data(
+            symbol="BTCUSDT",
+            exchange="BINANCE", 
+            interval=Interval.in_4_hour,
+            n_bars=100  # Suficiente para EMA34 + buffer
+        )
+        
+        # Calcular EMAs
+        ema_17 = calculate_ema(df['close'], period=17)
+        ema_34 = calculate_ema(df['close'], period=34)
+        
+        # Valores atuais (última barra)
+        ema_17_atual = float(ema_17.iloc[-1])
+        ema_34_atual = float(ema_34.iloc[-1])
+        preco_atual = float(df['close'].iloc[-1])
+        
+        # Valores anteriores (penúltima barra) para detectar cruzamento
+        ema_17_anterior = float(ema_17.iloc[-2])
+        ema_34_anterior = float(ema_34.iloc[-2])
+        
+        # Validações
+        if any(v <= 0 for v in [ema_17_atual, ema_34_atual, ema_17_anterior, ema_34_anterior]):
+            raise ValueError("EMAs com valores inválidos")
+        
+        return {
+            "ema_17_atual": ema_17_atual,
+            "ema_34_atual": ema_34_atual,
+            "ema_17_anterior": ema_17_anterior,
+            "ema_34_anterior": ema_34_anterior,
+            "preco_atual": preco_atual
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Erro EMAs 4H: {str(e)}")
+        raise Exception(f"EMAs 4H indisponíveis: {str(e)}")
 
 def _calcular_distancias(preco_atual: float, ema_17: float, ema_144: float) -> Dict[str, float]:
     """Calcula distâncias percentuais das EMAs"""

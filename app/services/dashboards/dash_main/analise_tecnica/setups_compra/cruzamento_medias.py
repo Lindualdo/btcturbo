@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 def detectar_cruzamento_medias(dados_tecnicos: Dict[str, Any]) -> Dict[str, Any]:
     """
-    Setup CRUZAMENTO MÉDIAS - EMA17 > EMA144 com distância significativa
+    Setup CRUZAMENTO MÉDIAS - EMA17 cruza EMA34 para cima (dados reais TradingView)
     
     Args:
         dados_tecnicos: Dados técnicos consolidados
@@ -16,53 +16,56 @@ def detectar_cruzamento_medias(dados_tecnicos: Dict[str, Any]) -> Dict[str, Any]
         Dict com resultado da detecção
     """
     try:
-        logger.info("🔍 Detectando Cruzamento Médias...")
+        logger.info("🔍 Detectando Cruzamento Médias (EMAs reais 4H)...")
         
-        # Extrair dados
-        precos = dados_tecnicos.get('precos', {})
-        ema_17 = precos.get('ema_17', 0)
-        ema_144 = precos.get('ema_144', 0)
+        # Extrair dados EMAs reais
+        emas_data = dados_tecnicos.get('emas_cruzamento', {})
+        ema_17_atual = emas_data.get('ema_17_atual', 0)
+        ema_34_atual = emas_data.get('ema_34_atual', 0)
+        ema_17_anterior = emas_data.get('ema_17_anterior', 0)
+        ema_34_anterior = emas_data.get('ema_34_anterior', 0)
         
-        # TODO: Implementar lógica real de cruzamento
-        # - Verificar EMA17 > EMA144
-        # - Calcular distância entre médias
-        # - Validar tendência de alta
-        # - Confirmar momentum
+        # Validar se dados são reais
+        if any(v <= 0 for v in [ema_17_atual, ema_34_atual, ema_17_anterior, ema_34_anterior]):
+            raise ValueError("EMAs não disponíveis nos dados técnicos")
         
-        # MOCKADO v1.5.4 - simulando não encontrado para foco em outros setups
-        encontrado = False
+        logger.info(f"📊 EMA17: atual={ema_17_atual:.2f}, anterior={ema_17_anterior:.2f}")
+        logger.info(f"📊 EMA34: atual={ema_34_atual:.2f}, anterior={ema_34_anterior:.2f}")
         
-        if ema_17 > 0 and ema_144 > 0:
-            distancia_emas = ((ema_17 - ema_144) / ema_144) * 100
-            logger.info(f"🔍 EMA17 vs EMA144: dist {distancia_emas:+.2f}%")
+        # CONDIÇÃO: EMA17 cruza EMA34 de baixo para cima
+        cruzamento_ocorreu = (ema_17_atual > ema_34_atual) and (ema_17_anterior <= ema_34_anterior)
+        
+        logger.info(f"🔍 EMA17 > EMA34 atual: {ema_17_atual > ema_34_atual}")
+        logger.info(f"🔍 EMA17 <= EMA34 anterior: {ema_17_anterior <= ema_34_anterior}")
+        logger.info(f"🔍 Cruzamento detectado: {cruzamento_ocorreu}")
+        
+        if cruzamento_ocorreu:
+            logger.info("✅ CRUZAMENTO MÉDIAS identificado com EMAs reais!")
             
-            # Condição mockada (não ativa)
-            condicao_cruzamento = False  # ema_17 > ema_144 and distancia_emas > 0.5
+            # Calcular força baseada na diferença entre EMAs
+            forca = _calcular_forca_cruzamento(ema_17_atual, ema_34_atual)
             
-            if condicao_cruzamento:
-                logger.info("✅ CRUZAMENTO MÉDIAS identificado!")
-                
-                return {
-                    "encontrado": True,
+            return {
+                "encontrado": True,
+                "setup": "CRUZAMENTO_MEDIAS",
+                "forca": forca,
+                "tamanho_posicao": 25,  # Mockado v1.5.4
+                "dados_tecnicos": dados_tecnicos,
+                "estrategia": {
+                    "decisao": "COMPRAR",
                     "setup": "CRUZAMENTO_MEDIAS",
-                    "forca": "media",
-                    "tamanho_posicao": 25,  # Mockado v1.5.4
-                    "dados_tecnicos": dados_tecnicos,
-                    "estrategia": {
-                        "decisao": "COMPRAR",
-                        "setup": "CRUZAMENTO_MEDIAS",
-                        "urgencia": "media",
-                        "justificativa": f"Cruzamento médias: EMA17 > EMA144 ({distancia_emas:+.2f}%)"
-                    }
+                    "urgencia": "alta" if forca == "muito_alta" else "media",
+                    "justificativa": f"Cruzamento médias: EMA17 ${ema_17_atual:.0f} x EMA34 ${ema_34_atual:.0f} (TradingView real)"
                 }
-        
-        logger.info("❌ Cruzamento Médias não identificado")
-        return {
-            "encontrado": False,
-            "setup": "CRUZAMENTO_MEDIAS",
-            "dados_tecnicos": dados_tecnicos,
-            "detalhes": "Cruzamento não confirmado (mockado v1.5.4)"
-        }
+            }
+        else:
+            logger.info("❌ Cruzamento Médias não identificado")
+            return {
+                "encontrado": False,
+                "setup": "CRUZAMENTO_MEDIAS",
+                "dados_tecnicos": dados_tecnicos,
+                "detalhes": f"Cruzamento não ocorreu: EMA17 atual > EMA34 atual ({ema_17_atual > ema_34_atual}), EMA17 anterior <= EMA34 anterior ({ema_17_anterior <= ema_34_anterior})"
+            }
             
     except Exception as e:
         logger.error(f"❌ Erro detectar cruzamento: {str(e)}")
@@ -73,13 +76,17 @@ def detectar_cruzamento_medias(dados_tecnicos: Dict[str, Any]) -> Dict[str, Any]
             "dados_tecnicos": dados_tecnicos
         }
 
-def _calcular_forca_cruzamento(distancia_emas: float) -> str:
-    """Calcula força baseada na distância entre EMAs"""
-    if distancia_emas > 2.0:
+def _calcular_forca_cruzamento(ema_17: float, ema_34: float) -> str:
+    """Calcula força baseada na diferença percentual entre EMAs após cruzamento"""
+    # Diferença percentual: quanto EMA17 está acima da EMA34
+    diferenca_percent = ((ema_17 - ema_34) / ema_34) * 100
+    
+    # Quanto maior a diferença após cruzamento, mais forte o sinal
+    if diferenca_percent > 1.0:
         return "muito_alta"
-    elif distancia_emas > 1.0:
+    elif diferenca_percent > 0.5:
         return "alta"
-    elif distancia_emas > 0.5:
+    elif diferenca_percent > 0.1:
         return "media"
     else:
         return "baixa"
