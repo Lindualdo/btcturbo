@@ -45,14 +45,14 @@ def identificar_setup() -> Dict[str, Any]:
                     logger.info(f"✅ Setup {setup_nome} IDENTIFICADO - Força: {resultado.get('forca', 'N/A')}")
                     return resultado
                 else:
-                    logger.info(f"❌ Setup {setup_nome} não identificado")
+                    logger.info(f"⚠️ Setup {setup_nome} não identificado")
                     
             except Exception as e:
                 logger.error(f"❌ Erro ao testar setup {setup_nome}: {str(e)}")
                 continue
         
         # 4. NENHUM SETUP ENCONTRADO
-        logger.info("❌ Nenhum setup identificado")
+        logger.info("⚠️ Nenhum setup identificado")
         return _retornar_nenhum_setup(dados_tecnicos)
         
     except Exception as e:
@@ -79,13 +79,13 @@ def _retornar_erro_setup(erro: str) -> Dict[str, Any]:
     """Retorna resultado quando ocorre erro na identificação"""
     return {
         "encontrado": False,
-        "setup": "ERRO",
+        "setup": "NENHUM",
         "forca": "nenhuma",
         "tamanho_posicao": 0,
         "dados_tecnicos": {},
         "estrategia": {
             "decisao": "ERRO",
-            "setup": "ERRO",
+            "setup": "NENHUM",
             "urgencia": "alta",
             "justificativa": f"Erro na identificação: {erro}"
         }

@@ -50,7 +50,7 @@ def detectar_pullback_tendencia(dados_tecnicos: Dict[str, Any]) -> Dict[str, Any
                 }
             }
         else:
-            logger.info("❌ Pullback Tendência não identificado")
+            logger.info("⚠️ Pullback Tendência não identificado")
             return {
                 "encontrado": False,
                 "setup": "PULLBACK_TENDENCIA",

@@ -14,7 +14,7 @@ FASE1 - Operacional
 
 0 - criar  documentação tecnica resumida - todo o projeto - pastas e arquivos + obj - feito
 1 - Revisar funções de setup - feito
-2 - rever a quantidde de barras das funções trandview e integridade / confiabilidade
+2 - rever a quantidde de barras das funções trandview e integridade / confiabilidade - feito
 4 - implementar controle de operações e silenciar os alertas / setups
 5 - Registro de operações
 6 - Rever Setups de VENDA (quando ciclo sugere)

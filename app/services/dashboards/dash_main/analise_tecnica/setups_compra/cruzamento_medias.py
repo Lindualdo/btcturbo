@@ -59,7 +59,7 @@ def detectar_cruzamento_medias(dados_tecnicos: Dict[str, Any]) -> Dict[str, Any]
                 }
             }
         else:
-            logger.info("❌ Cruzamento Médias não identificado")
+            logger.info("⚠️ Cruzamento Médias não identificado")
             return {
                 "encontrado": False,
                 "setup": "CRUZAMENTO_MEDIAS",

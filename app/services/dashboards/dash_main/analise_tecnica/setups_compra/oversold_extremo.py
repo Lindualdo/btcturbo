@@ -50,7 +50,7 @@ def detectar_oversold_extremo(dados_tecnicos: Dict[str, Any]) -> Dict[str, Any]:
                 }
             }
         else:
-            logger.info("❌ Oversold Extremo não identificado")
+            logger.info("⚠️ Oversold Extremo não identificado")
             return {
                 "encontrado": False,
                 "setup": "OVERSOLD_EXTREMO",

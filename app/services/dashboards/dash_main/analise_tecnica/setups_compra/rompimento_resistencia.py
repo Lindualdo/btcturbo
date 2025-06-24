@@ -21,7 +21,7 @@ def detectar_rompimento(dados_tecnicos: Dict[str, Any]) -> Dict[str, Any]:
         # SEMPRE RETORNA FALSE conforme solicitado
         encontrado = False
         
-        logger.info("❌ Rompimento não identificado (mockado sempre false)")
+        logger.info("⚠️ Rompimento não identificado (mockado sempre false)")
         return {
             "encontrado": False,
             "setup": "ROMPIMENTO",

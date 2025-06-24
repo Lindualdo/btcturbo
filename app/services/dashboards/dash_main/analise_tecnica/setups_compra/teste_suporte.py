@@ -54,7 +54,7 @@ def detectar_teste_suporte(dados_tecnicos: Dict[str, Any]) -> Dict[str, Any]:
                 }
             }
         else:
-            logger.info("❌ Teste Suporte não identificado")
+            logger.info("⚠️ Teste Suporte não identificado")
             return {
                 "encontrado": False,
                 "setup": "TESTE_SUPORTE",
