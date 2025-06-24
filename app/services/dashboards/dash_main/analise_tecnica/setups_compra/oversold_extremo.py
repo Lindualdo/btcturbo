@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 def detectar_oversold_extremo(dados_tecnicos: Dict[str, Any]) -> Dict[str, Any]:
     """
-    Setup OVERSOLD EXTREMO - RSI < 30
+    Setup OVERSOLD EXTREMO - RSI 4H < 30 (dados reais TradingView)
     
     Args:
         dados_tecnicos: Dados técnicos consolidados
@@ -16,18 +16,22 @@ def detectar_oversold_extremo(dados_tecnicos: Dict[str, Any]) -> Dict[str, Any]:
         Dict com resultado da detecção
     """
     try:
-        logger.info("🔍 Detectando Oversold Extremo...")
+        logger.info("🔍 Detectando Oversold Extremo (RSI 4H real)...")
         
-        # Extrair dados
+        # Extrair RSI 4H real
         rsi = dados_tecnicos.get('rsi_4h', 0)
+        
+        # Validar se dados são reais
+        if rsi == 0:
+            raise ValueError("RSI 4H não disponível nos dados técnicos")
         
         # Condição do setup
         condicao_oversold = rsi < 30
         
-        logger.info(f"🔍 RSI {rsi} < 30: {condicao_oversold}")
+        logger.info(f"🔍 RSI 4H real: {rsi} < 30: {condicao_oversold}")
         
         if condicao_oversold:
-            logger.info("✅ OVERSOLD EXTREMO identificado!")
+            logger.info("✅ OVERSOLD EXTREMO identificado com RSI real!")
             
             # Calcular força baseada na intensidade do oversold
             forca = _calcular_forca_oversold(rsi)
@@ -42,7 +46,7 @@ def detectar_oversold_extremo(dados_tecnicos: Dict[str, Any]) -> Dict[str, Any]:
                     "decisao": "COMPRAR",
                     "setup": "OVERSOLD_EXTREMO",
                     "urgencia": "critica",
-                    "justificativa": f"Oversold extremo: RSI {rsi} < 30"
+                    "justificativa": f"Oversold extremo: RSI 4H {rsi} < 30 (TradingView real)"
                 }
             }
         else:
@@ -51,7 +55,7 @@ def detectar_oversold_extremo(dados_tecnicos: Dict[str, Any]) -> Dict[str, Any]:
                 "encontrado": False,
                 "setup": "OVERSOLD_EXTREMO",
                 "dados_tecnicos": dados_tecnicos,
-                "detalhes": f"RSI {rsi} >= 30"
+                "detalhes": f"RSI 4H {rsi} >= 30 (condição não atendida)"
             }
             
     except Exception as e:
