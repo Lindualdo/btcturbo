@@ -55,7 +55,7 @@ async def get_alavancagem(periodo: str = Query(default="30d", description="Perí
 
 @router.get("/dash-finance/patrimonio")
 async def get_patrimonio(periodo: str = Query(default="30d", description="Período: 30d, 3m, 6m, 1y, all")):
-    """Histórico Crescimento Patrimônio Líquido (MOCK)"""
+    """Histórico Crescimento Patrimônio Líquido (REAL)"""
     return obter_patrimonio(periodo)
 
 @router.get("/dash-finance/capital-investido")

@@ -5,7 +5,7 @@ from datetime import datetime
 from .dash_finance.queries_helper import (
     get_health_factor_history,
     get_alavancagem_history_mock,
-    get_patrimonio_history_mock,
+    get_patrimonio_history,
     get_capital_history_mock,
     convert_periodo_to_date
 )
@@ -80,16 +80,16 @@ def obter_alavancagem(periodo: str = "30d") -> dict:
         }
 
 def obter_patrimonio(periodo: str = "30d") -> dict:
-    """Retorna evolução patrimônio líquido (MOCK)"""
+    """Retorna evolução patrimônio líquido (REAL)"""
     try:
-        logger.info(f"🔍 Consultando Patrimônio - período: {periodo} [MOCK]")
+        logger.info(f"🔍 Consultando Patrimônio - período: {periodo}")
         
         if not _validar_periodo(periodo):
             periodo = "30d"
         
-        dados = get_patrimonio_history_mock(periodo)
+        dados = get_patrimonio_history(periodo)
         
-        logger.info(f"✅ Patrimônio: {len(dados)} registros mockados")
+        logger.info(f"✅ Patrimônio: {len(dados)} registros encontrados")
         
         return {
             "status": "success",
@@ -97,7 +97,6 @@ def obter_patrimonio(periodo: str = "30d") -> dict:
             "periodo": periodo, 
             "dados": dados,
             "total_registros": len(dados),
-            "mock": True,
             "timestamp": datetime.utcnow().isoformat()
         }
         

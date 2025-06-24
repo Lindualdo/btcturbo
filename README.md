@@ -26,6 +26,13 @@ Sistema de análise de indicadores Bitcoin para trading alavancado, construído 
 - implementado todos os setups de compra
 - sempre retona os dados tecnicos
 
+## Proxima versão 1.5.5 - dash financeiro
+- historico de helth factor
+- histórico de dist. liquidação
+- historico de alavancagem (usada X permitida)
+- histórico de patrimonio (capital liquido)
+- histórico de posição (total investido)
+
 
 ## 🏗️ Arquitetura
 

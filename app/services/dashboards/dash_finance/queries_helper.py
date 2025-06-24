@@ -72,29 +72,49 @@ def get_alavancagem_history_mock(periodo: str) -> list:
         logger.error(f"❌ Erro mock Alavancagem: {str(e)}")
         return []
 
-def get_patrimonio_history_mock(periodo: str) -> list:
-    """Mock para histórico patrimônio líquido"""
+def get_patrimonio_history(periodo: str) -> list:
+    """
+    Consulta histórico Patrimônio Líquido (REAL)
+    Último registro de cada dia
+    """
     try:
-        total_dias = _get_dias_periodo(periodo)
-        dados = []
-        valor_inicial = 75000.0
+        data_inicio = convert_periodo_to_date(periodo)
         
-        for i in range(total_dias):
-            data = datetime.utcnow() - timedelta(days=i)
-            # Simulação crescimento com volatilidade
-            crescimento = (total_dias - i) * 150 + (i % 5) * 500
-            valor = valor_inicial + crescimento
+        query = """
+            SELECT 
+                DATE(timestamp) as data,
+                timestamp,
+                net_asset_value as valor
+            FROM indicadores_risco r1
+            WHERE timestamp >= %s
+              AND net_asset_value IS NOT NULL
+              AND timestamp = (
+                SELECT MAX(timestamp) 
+                FROM indicadores_risco r2 
+                WHERE DATE(r1.timestamp) = DATE(r2.timestamp)
+                  AND net_asset_value IS NOT NULL
+              )
+            ORDER BY timestamp DESC;
+        """
+        
+        resultados = execute_query(query, params=(data_inicio,), fetch_all=True)
+        
+        if resultados:
+            dados = [
+                {
+                    "timestamp": row["timestamp"].isoformat(),
+                    "valor": float(row["valor"]) if row["valor"] else 0.0
+                }
+                for row in resultados
+            ]
+            logger.info(f"✅ Patrimônio: {len(dados)} registros obtidos")
+            return dados
+        else:
+            logger.warning("⚠️ Nenhum registro Patrimônio encontrado")
+            return []
             
-            dados.append({
-                "timestamp": data.isoformat(),
-                "valor": round(valor, 2)
-            })
-        
-        logger.info(f"🔧 Patrimônio mock: {len(dados)} registros gerados")
-        return dados
-        
     except Exception as e:
-        logger.error(f"❌ Erro mock Patrimônio: {str(e)}")
+        logger.error(f"❌ Erro query Patrimônio: {str(e)}")
         return []
 
 def get_capital_history_mock(periodo: str) -> list:
