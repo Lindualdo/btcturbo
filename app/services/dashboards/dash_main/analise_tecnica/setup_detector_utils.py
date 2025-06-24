@@ -7,6 +7,7 @@ from .setups.pullback_tendencia import detectar_pullback_tendencia
 from .setups.teste_suporte import detectar_teste_suporte
 from .setups.rompimento_resistencia import detectar_rompimento
 from .setups.cruzamento_medias import detectar_cruzamento_medias
+from ..helpers.analise_tecnica_helper import obter_dados_tecnicos
 
 logger = logging.getLogger(__name__)
 
@@ -20,10 +21,11 @@ def identificar_setup() -> Dict[str, Any]:
     try:
         logger.info("🔍 Orquestrando detecção de setups...")
         
-        # Consolidar dados técnicos
-        dados_tecnicos_consolidados = {}
+        # buscar todos os dados tencnicos para validar setuups (IMPLEMENTRA)
+        # encadear todos os dados tecncicos até o data_buider (IMPLEMENTAR)
+        dados_tecnicos_consolidados = obter_dados_tecnicos
         
-        # Ordem de prioridade (para no primeiro encontrado)
+        # Ordem de prioridade (para no primeiro encontrado
         setups = [
             ("OVERSOLD_EXTREMO", detectar_oversold_extremo),
             ("PULLBACK_TENDENCIA", detectar_pullback_tendencia),
@@ -37,7 +39,7 @@ def identificar_setup() -> Dict[str, Any]:
             
             try:
                 result = setup_func()
-                
+
                 # Captura dados técnicos do primeiro setup com dados reais
                 if (not dados_tecnicos_consolidados and 
                     result.get('dados_tecnicos') and 

@@ -31,8 +31,7 @@ app/services/dashboards/dash_main/
 - ✅ **OVERSOLD_EXTREMO** (RSI < 30) → 40% posição
 - ✅ **PULLBACK_TENDENCIA** (RSI < 45 + EMA144 ±3%) → 30% posição
 - ✅ **TESTE_SUPORTE** (Toca EMA144 ±2%) → 25% posição
-- ✅ **ROMPIMENTO** (EMA dist > 5% + RSI < 70) → 20% posição
-
+- ✅ **ROMPIMENTO** 
 ### **5. Dados Técnicos 4H**
 - ✅ **RSI 14** (timeframe 4H via TradingView)
 - ✅ **EMA144** (valor e distância % via TradingView)

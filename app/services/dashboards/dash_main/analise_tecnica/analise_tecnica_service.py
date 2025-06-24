@@ -38,7 +38,7 @@ def executar_analise(dados_mercado: Dict, dados_risco: Dict, dados_alavancagem: 
                 }
             }
         
-        # 3. IDENTIFICAR SETUP (cada setup busca próprios dados)
+        # 3. IDENTIFICAR SETUP
         logger.info("🔍 Identificando setup...")
         setup_info = identificar_setup()
         logger.info(f"🎯 Setup: {setup_info['setup']} - Encontrado: {setup_info.get('encontrado', False)}")

@@ -6,7 +6,7 @@ from app.services.scores import riscos
 from .dash_main.helpers.data_helper import save_dashboard, get_latest_dashboard
 from .dash_main.helpers.data_builder import build_dashboard_data, build_response_format
 from .dash_main.analise_alavancagem import executar_analise_alavancagem
-from .dash_main.analise_tatica.analise_tatica_service import executar_analise
+from .dash_main.analise_tecnica.analise_tecnica_service import executar_analise
 from  app.services.utils.helpers.postgres.mercado.database_helper import get_ciclo_mercado
 
 logger = logging.getLogger(__name__)
@@ -18,21 +18,21 @@ def processar_dash_main() -> dict:
     try:
         logger.info("🚀 Processando Dash-main - POST")
         
-        # CAMADA 1: Análise Mercado (real)
+        # CAMADA 1: Análise Mercado
         dados_mercado =  get_ciclo_mercado()
         logger.info(f"✅ Camada 1: Score {dados_mercado['score_mercado']} - {dados_mercado['classificacao_mercado']}")
         
-        # CAMADA 2: Análise Risco (real)
+        # CAMADA 2: Análise Risco
         dados_risco = _executar_camada_risco()
         logger.info(f"✅ Camada 2: Score {dados_risco['score']} - {dados_risco['classificacao']}")
         
-        # CAMADA 3: Análise Alavancagem (real)
+        # CAMADA 3: Análise Alavancagem
         alavancagem_permitida = dados_mercado["ciclo_detalhes"]["alavancagem"]
         dados_alavancagem = executar_analise_alavancagem(alavancagem_permitida)
         logger.info(f"✅ Camada 3: Alavancagem {dados_alavancagem.get('alavancagem_permitida', 0)}x")
         
-        # CAMADA 4: Execução Tática (real) - COM DEBUG
-        logger.info("🎯 Executando Camada 4: Execução Tática...")
+        # CAMADA 4: Execução Tática (analise tecnica e setups)
+        logger.info("🎯 Executando Camada 4: Analise Tática...")
         
         dados_tatica = executar_analise(dados_mercado, dados_risco, dados_alavancagem)
         
