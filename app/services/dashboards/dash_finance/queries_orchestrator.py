@@ -1,4 +1,4 @@
-# app/services/dashboards/dash_finance/queries/queries_orchestrator.py
+# app/services/dashboards/dash_finance/queries_orchestrator.py
 
 import logging
 from datetime import datetime, timedelta
@@ -9,7 +9,7 @@ from .capital_investido_query import get_capital_investido_data
 
 logger = logging.getLogger(__name__)
 
-def execute_health_factor_query(periodo: str) -> list:
+def get_health_factor_history(periodo: str) -> list:
     """Orquestra consulta Health Factor"""
     try:
         data_inicio = convert_periodo_to_date(periodo)
@@ -18,7 +18,7 @@ def execute_health_factor_query(periodo: str) -> list:
         logger.error(f"❌ Erro orquestrador Health Factor: {str(e)}")
         return []
 
-def execute_patrimonio_query(periodo: str) -> list:
+def get_patrimonio_history(periodo: str) -> list:
     """Orquestra consulta Patrimônio"""
     try:
         data_inicio = convert_periodo_to_date(periodo)
@@ -27,7 +27,7 @@ def execute_patrimonio_query(periodo: str) -> list:
         logger.error(f"❌ Erro orquestrador Patrimônio: {str(e)}")
         return []
 
-def execute_alavancagem_query(periodo: str) -> list:
+def get_alavancagem_history(periodo: str) -> list:
     """Orquestra consulta Alavancagem"""
     try:
         data_inicio = convert_periodo_to_date(periodo)
@@ -36,7 +36,7 @@ def execute_alavancagem_query(periodo: str) -> list:
         logger.error(f"❌ Erro orquestrador Alavancagem: {str(e)}")
         return []
 
-def execute_capital_investido_query(periodo: str) -> list:
+def get_capital_history(periodo: str) -> list:
     """Orquestra consulta Capital Investido"""
     try:
         data_inicio = convert_periodo_to_date(periodo)

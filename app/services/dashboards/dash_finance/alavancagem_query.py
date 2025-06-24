@@ -1,4 +1,4 @@
-# app/services/dashboards/dash_finance/queries/alavancagem_query.py
+# app/services/dashboards/dash_finance/alavancagem_query.py
 
 import logging
 from datetime import datetime, timedelta

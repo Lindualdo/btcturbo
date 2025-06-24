@@ -2,11 +2,11 @@
 
 import logging
 from datetime import datetime
-from .dash_finance.queries_helper import (
+from .dash_finance.queries_orchestrator import (
     get_health_factor_history,
-    get_alavancagem_history_mock,
+    get_alavancagem_history,
     get_patrimonio_history,
-    get_capital_history_mock,
+    get_capital_history,
     convert_periodo_to_date
 )
 
@@ -54,7 +54,7 @@ def obter_alavancagem(periodo: str = "30d") -> dict:
         if not _validar_periodo(periodo):
             periodo = "30d"
         
-        dados = get_alavancagem_history_mock(periodo)
+        dados = get_alavancagem_history(periodo)
         
         logger.info(f"✅ Alavancagem: {len(dados)} registros mockados")
         
@@ -119,7 +119,7 @@ def obter_capital_investido(periodo: str = "30d") -> dict:
         if not _validar_periodo(periodo):
             periodo = "30d"
         
-        dados = get_capital_history_mock(periodo)
+        dados = get_capital_history(periodo)
         
         logger.info(f"✅ Capital Investido: {len(dados)} registros mockados")
         

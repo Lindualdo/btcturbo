@@ -1,4 +1,4 @@
-# app/services/dashboards/dash_finance/queries/capital_investido_query.py
+# app/services/dashboards/dash_finance/capital_investido_query.py
 
 import logging
 from datetime import datetime, timedelta

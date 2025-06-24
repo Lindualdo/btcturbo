@@ -1,4 +1,4 @@
-# app/services/dashboards/dash_finance/queries/health_factor_query.py
+# app/services/dashboards/dash_finance/health_factor_query.py
 
 import logging
 from app.services.utils.helpers.postgres.base import execute_query

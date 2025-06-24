@@ -1,4 +1,4 @@
-# app/services/dashboards/dash_finance/queries/patrimonio_query.py
+# app/services/dashboards/dash_finance/patrimonio_query.py
 
 import logging
 from app.services.utils.helpers.postgres.base import execute_query
