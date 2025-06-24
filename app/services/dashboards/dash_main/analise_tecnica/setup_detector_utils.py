@@ -2,11 +2,11 @@
 
 import logging
 from typing import Dict, Any
-from .setups.oversold_extremo import detectar_oversold_extremo
-from .setups.pullback_tendencia import detectar_pullback_tendencia
-from .setups.teste_suporte import detectar_teste_suporte
-from .setups.rompimento_resistencia import detectar_rompimento
-from .setups.cruzamento_medias import detectar_cruzamento_medias
+from .setups_compra.oversold_extremo import detectar_oversold_extremo
+from .setups_compra.pullback_tendencia import detectar_pullback_tendencia
+from .setups_compra.teste_suporte import detectar_teste_suporte
+from .setups_compra.rompimento_resistencia import detectar_rompimento
+from .setups_compra.cruzamento_medias import detectar_cruzamento_medias
 from ..helpers.analise_tecnica_helper import obter_dados_tecnicos
 
 logger = logging.getLogger(__name__)
