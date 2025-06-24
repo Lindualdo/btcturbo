@@ -7,49 +7,27 @@ logger = logging.getLogger(__name__)
 
 def detectar_rompimento(dados_tecnicos: Dict[str, Any]) -> Dict[str, Any]:
     """
-    Setup ROMPIMENTO RESISTÊNCIA - Preço rompe resistência
+    Setup ROMPIMENTO RESISTÊNCIA - Sempre retorna false (mockado v1.5.4)
     
     Args:
         dados_tecnicos: Dados técnicos consolidados
     
     Returns:
-        Dict com resultado da detecção
+        Dict com resultado da detecção (sempre false)
     """
     try:
-        logger.info("🔍 Detectando Rompimento Resistência...")
+        logger.info("🔍 Detectando Rompimento Resistência (sempre false v1.5.4)...")
         
-        # TODO: Implementar lógica real de resistência
-        # - Identificar níveis de resistência
-        # - Validar rompimento com volume
-        # - Confirmar sustentação acima
-        
-        # MOCKADO v1.5.4 - simulando não encontrado para foco em outros setups
+        # SEMPRE RETORNA FALSE conforme solicitado
         encontrado = False
         
-        if encontrado:
-            logger.info("✅ ROMPIMENTO identificado!")
-            
-            return {
-                "encontrado": True,
-                "setup": "ROMPIMENTO",
-                "forca": "alta",
-                "tamanho_posicao": 20,  # Mockado v1.5.4
-                "dados_tecnicos": dados_tecnicos,
-                "estrategia": {
-                    "decisao": "COMPRAR",
-                    "setup": "ROMPIMENTO",
-                    "urgencia": "alta",
-                    "justificativa": "Rompimento de resistência confirmado"
-                }
-            }
-        else:
-            logger.info("❌ Rompimento não identificado")
-            return {
-                "encontrado": False,
-                "setup": "ROMPIMENTO",
-                "dados_tecnicos": dados_tecnicos,
-                "detalhes": "Nenhum rompimento identificado (mockado v1.5.4)"
-            }
+        logger.info("❌ Rompimento não identificado (mockado sempre false)")
+        return {
+            "encontrado": False,
+            "setup": "ROMPIMENTO",
+            "dados_tecnicos": dados_tecnicos,
+            "detalhes": "Setup mockado - sempre retorna false (v1.5.4)"
+        }
             
     except Exception as e:
         logger.error(f"❌ Erro detectar rompimento: {str(e)}")

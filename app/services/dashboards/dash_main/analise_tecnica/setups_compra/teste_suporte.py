@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 def detectar_teste_suporte(dados_tecnicos: Dict[str, Any]) -> Dict[str, Any]:
     """
-    Setup TESTE SUPORTE - Preço próximo EMA144 ±2%
+    Setup TESTE SUPORTE - Preço próximo EMA144 ±2% (dados reais TradingView)
     
     Args:
         dados_tecnicos: Dados técnicos consolidados
@@ -16,19 +16,26 @@ def detectar_teste_suporte(dados_tecnicos: Dict[str, Any]) -> Dict[str, Any]:
         Dict com resultado da detecção
     """
     try:
-        logger.info("🔍 Detectando Teste Suporte...")
+        logger.info("🔍 Detectando Teste Suporte (EMA144 real 4H)...")
         
-        # Extrair dados
+        # Extrair dados reais
         ema_distance = dados_tecnicos.get('distancias', {}).get('ema_144_distance', 0)
         preco_atual = dados_tecnicos.get('precos', {}).get('atual', 0)
+        ema_144 = dados_tecnicos.get('precos', {}).get('ema_144', 0)
         
-        # Condição do setup - preço próximo da EMA144
+        # Validar se dados são reais
+        if ema_distance == 0 or preco_atual <= 0 or ema_144 <= 0:
+            raise ValueError("EMA144 ou preço não disponível nos dados técnicos")
+        
+        # Condição do setup - preço próximo da EMA144 ±2%
         condicao_suporte = -2 <= ema_distance <= 2
         
-        logger.info(f"🔍 EMA144 dist {ema_distance:+.1f}% ±2%: {condicao_suporte}")
+        logger.info(f"📊 Preço atual: ${preco_atual:,.2f}")
+        logger.info(f"📊 EMA144: ${ema_144:,.2f}")
+        logger.info(f"🔍 EMA144 dist {ema_distance:+.2f}% ±2%: {condicao_suporte}")
         
         if condicao_suporte:
-            logger.info("✅ TESTE SUPORTE identificado!")
+            logger.info("✅ TESTE SUPORTE identificado com EMA144 real!")
             
             # Calcular força baseada na proximidade do suporte
             forca = _calcular_forca_suporte(ema_distance)
@@ -43,7 +50,7 @@ def detectar_teste_suporte(dados_tecnicos: Dict[str, Any]) -> Dict[str, Any]:
                     "decisao": "COMPRAR",
                     "setup": "TESTE_SUPORTE",
                     "urgencia": "media",
-                    "justificativa": f"Teste suporte EMA144: preço dist {ema_distance:+.1f}%"
+                    "justificativa": f"Teste suporte EMA144: preço ${preco_atual:,.0f} dist {ema_distance:+.1f}% (TradingView real)"
                 }
             }
         else:
