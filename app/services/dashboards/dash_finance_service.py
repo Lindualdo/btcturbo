@@ -9,6 +9,7 @@ from .dash_finance.queries_orchestrator import (
     get_capital_history,
     convert_periodo_to_date
 )
+from app.services.utils.helpers.tradingview.price_helper import get_btc_price
 
 logger = logging.getLogger(__name__)
 
@@ -95,6 +96,7 @@ def obter_patrimonio(periodo: str = "30d") -> dict:
             "status": "success",
             "indicador": "patrimonio",
             "saldo_btc_core":0.765223,
+            "btc_price":get_btc_price,
             "periodo": periodo, 
             "dados": dados,
             "total_registros": len(dados),
