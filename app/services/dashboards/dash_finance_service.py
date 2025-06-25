@@ -89,6 +89,7 @@ def obter_patrimonio(periodo: str = "30d") -> dict:
             periodo = "30d"
         
         dados = get_patrimonio_history(periodo)
+        btc_price = get_btc_price()
         
         logger.info(f"✅ Patrimônio: {len(dados)} registros encontrados")
         
@@ -96,7 +97,7 @@ def obter_patrimonio(periodo: str = "30d") -> dict:
             "status": "success",
             "indicador": "patrimonio",
             "saldo_btc_core":0.765223,
-            "btc_price":get_btc_price,
+            "btc_price":btc_price,
             "periodo": periodo, 
             "dados": dados,
             "total_registros": len(dados),
