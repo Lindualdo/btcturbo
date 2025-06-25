@@ -19,6 +19,7 @@ def get_patrimonio_data(data_inicio) -> list:
             FROM indicadores_risco r1
             WHERE timestamp >= %s
               AND net_asset_value IS NOT NULL
+              AND id > 16
               AND timestamp = (
                 SELECT MAX(timestamp) 
                 FROM indicadores_risco r2 

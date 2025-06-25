@@ -2,10 +2,10 @@
 
 import logging
 from datetime import datetime, timedelta
-from .health_factor_query import get_health_factor_data
-from .patrimonio_query import get_patrimonio_data
-from .alavancagem_query import get_alavancagem_data
-from .capital_investido_query import get_capital_investido_data
+from .querys.health_factor_query import get_health_factor_data
+from .querys.patrimonio_query import get_patrimonio_data
+from .querys.alavancagem_query import get_alavancagem_data
+from .querys.capital_investido_query import get_capital_investido_data
 
 logger = logging.getLogger(__name__)
 
