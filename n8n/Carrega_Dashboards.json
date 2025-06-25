@@ -1,0 +1,134 @@
+{
+  "name": "Carrega Dashboards",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Carrega os dados do dashboard principal e detalhes de mercado",
+        "height": 380,
+        "width": 960,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -420,
+        20
+      ],
+      "id": "545d54bb-fa8a-4bd8-83d8-3fdd17191c19",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        320,
+        180
+      ],
+      "id": "12b1abb2-56f8-40c7-9552-83e9fdb4caee",
+      "name": "End"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 1
+            },
+            {
+              "field": "hours",
+              "hoursInterval": 4
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -360,
+        180
+      ],
+      "id": "87b192f9-9375-4acc-911b-81e90cfb5c29",
+      "name": "Schedule 4H"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://btcturbo-prod.up.railway.app/api/v1/dash-mercado",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -120,
+        180
+      ],
+      "id": "be1037df-0ee4-4c30-8766-b890287c47f8",
+      "name": "dash-mercado"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://btcturbo-prod.up.railway.app/api/v1/dash-main",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        120,
+        180
+      ],
+      "id": "6f00cb9c-ac58-449d-9205-ad2f813c2272",
+      "name": "dash-main"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule 4H": {
+      "main": [
+        [
+          {
+            "node": "dash-mercado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "dash-mercado": {
+      "main": [
+        [
+          {
+            "node": "dash-main",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "dash-main": {
+      "main": [
+        [
+          {
+            "node": "End",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Lisbon",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "0d6cba09-4a9f-4c9a-b886-14e0a02bce8e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "df70ff04e1b45ccc1482849dfc7bcfb5dca43eb687554e47ff8dc55a9291bcc5"
+  },
+  "id": "Np2dNpgCadFyctkm",
+  "tags": []
+}

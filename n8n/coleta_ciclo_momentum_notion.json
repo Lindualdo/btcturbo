@@ -1,74 +1,6 @@
 {
-  "name": "coleta-indicadores",
+  "name": "Ciclo e Momentum - Notion",
   "nodes": [
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "https://btcturbo-prod.up.railway.app/api/v1/coletar-indicadores/tecnico",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        -600,
-        160
-      ],
-      "id": "aa8e78e6-7856-4730-8d07-9fee2fcf4df2",
-      "name": "coletar-analise-tecnica"
-    },
-    {
-      "parameters": {
-        "rule": {
-          "interval": [
-            {
-              "triggerAtHour": 1
-            },
-            {
-              "field": "hours"
-            }
-          ]
-        }
-      },
-      "type": "n8n-nodes-base.scheduleTrigger",
-      "typeVersion": 1.2,
-      "position": [
-        -820,
-        160
-      ],
-      "id": "87b192f9-9375-4acc-911b-81e90cfb5c29",
-      "name": "Schedule 8H"
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "https://btcturbo-prod.up.railway.app/api/v1/coletar-indicadores/riscos",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        -380,
-        160
-      ],
-      "id": "f789bea0-baac-4888-b239-aa74bbfe158d",
-      "name": "coletar-indicadores-riscos"
-    },
-    {
-      "parameters": {
-        "content": "## Coleta Indicadores - APIs sistema\nTodas as estapas estão consumindo APIs do sistema BTC Turbo",
-        "height": 380,
-        "width": 660,
-        "color": 7
-      },
-      "type": "n8n-nodes-base.stickyNote",
-      "typeVersion": 1,
-      "position": [
-        -840,
-        20
-      ],
-      "id": "079318b6-0cbe-4b14-b9ec-6efda6176e8f",
-      "name": "Sticky Note"
-    },
     {
       "parameters": {
         "resource": "databasePage",
@@ -85,10 +17,10 @@
       "type": "n8n-nodes-base.notion",
       "typeVersion": 2.2,
       "position": [
-        -60,
+        -440,
         160
       ],
-      "id": "187a4c99-e086-48ff-9b30-719db5eacd27",
+      "id": "b6b93e8f-9618-4e1c-8e6e-2781e1239950",
       "name": "busca-indicadores-notion",
       "credentials": {
         "notionApi": {
@@ -104,26 +36,26 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        180,
+        -220,
         160
       ],
-      "id": "230562a5-e0a9-4108-8acd-d0196b9e2caa",
+      "id": "56aea0cf-f13f-4746-b658-c24991090a47",
       "name": "mapea-campos-notion"
     },
     {
       "parameters": {
-        "content": "## Coleta Indicadores - Direto do Notion",
+        "content": "## Coleta Indicadores - Ciclo e Momentum\nUsando API de conexão com Notion\n",
         "height": 380,
-        "width": 760,
+        "width": 1200,
         "color": 7
       },
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -140,
+        -700,
         20
       ],
-      "id": "1af2545b-0885-4509-b3e6-2e259710049c",
+      "id": "43d42d36-2599-44e0-bb38-5ad024cc3aaf",
       "name": "Sticky Note1"
     },
     {
@@ -249,10 +181,10 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        420,
+        20,
         60
       ],
-      "id": "6a0cbc15-1061-44fe-943b-e98ed5c07691",
+      "id": "0d4848cd-a136-4ed4-b7fd-df70b334e920",
       "name": "insere-momentum",
       "credentials": {
         "postgres": {
@@ -372,10 +304,10 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        420,
+        20,
         220
       ],
-      "id": "10049a7a-fa6c-411e-9118-d1ddfb5a962e",
+      "id": "85a96be0-a327-4873-a687-4a9704af5247",
       "name": "insere-ciclos",
       "credentials": {
         "postgres": {
@@ -385,87 +317,38 @@
       }
     },
     {
-      "parameters": {
-        "content": "## carrega os dados do dashboard principal e detalhes",
-        "height": 380,
-        "width": 840,
-        "color": 7
-      },
-      "type": "n8n-nodes-base.stickyNote",
-      "typeVersion": 1,
-      "position": [
-        660,
-        20
-      ],
-      "id": "545d54bb-fa8a-4bd8-83d8-3fdd17191c19",
-      "name": "Sticky Note2"
-    },
-    {
       "parameters": {},
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        1280,
-        60
+        280,
+        140
       ],
-      "id": "12b1abb2-56f8-40c7-9552-83e9fdb4caee",
-      "name": "End"
+      "id": "f2bec795-ac4c-486e-ab0c-2b25e215f73c",
+      "name": "end"
     },
     {
       "parameters": {
-        "method": "POST",
-        "url": "https://btcturbo-prod.up.railway.app/api/v1/dash-main",
-        "options": {}
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 1
+            }
+          ]
+        }
       },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
       "position": [
-        1060,
-        220
+        -660,
+        160
       ],
-      "id": "6f00cb9c-ac58-449d-9205-ad2f813c2272",
-      "name": "carrega-dash-main-V3"
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "https://btcturbo-prod.up.railway.app/api/v1/dash-mercado",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        760,
-        220
-      ],
-      "id": "be1037df-0ee4-4c30-8766-b890287c47f8",
-      "name": "carrega-dash-mercado-v3"
+      "id": "d3dee958-1248-47f5-a970-b4f984f4de1f",
+      "name": "Schedule 1D"
     }
   ],
   "pinData": {},
   "connections": {
-    "coletar-analise-tecnica": {
-      "main": [
-        [
-          {
-            "node": "coletar-indicadores-riscos",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Schedule 8H": {
-      "main": [
-        [
-          {
-            "node": "coletar-analise-tecnica",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "busca-indicadores-notion": {
       "main": [
         [
@@ -493,22 +376,11 @@
         ]
       ]
     },
-    "coletar-indicadores-riscos": {
-      "main": [
-        [
-          {
-            "node": "busca-indicadores-notion",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "insere-momentum": {
       "main": [
         [
           {
-            "node": "End",
+            "node": "end",
             "type": "main",
             "index": 0
           }
@@ -519,29 +391,18 @@
       "main": [
         [
           {
-            "node": "carrega-dash-mercado-v3",
+            "node": "end",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "carrega-dash-main-V3": {
+    "Schedule 1D": {
       "main": [
         [
           {
-            "node": "End",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "carrega-dash-mercado-v3": {
-      "main": [
-        [
-          {
-            "node": "carrega-dash-main-V3",
+            "node": "busca-indicadores-notion",
             "type": "main",
             "index": 0
           }
@@ -555,12 +416,12 @@
     "timezone": "Europe/Lisbon",
     "callerPolicy": "workflowsFromSameOwner"
   },
-  "versionId": "fb3e80d8-72e4-4db3-a32a-c4453d242c21",
+  "versionId": "77d40c01-8ca6-4f01-8736-b2271066c281",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "df70ff04e1b45ccc1482849dfc7bcfb5dca43eb687554e47ff8dc55a9291bcc5"
   },
-  "id": "Np2dNpgCadFyctkm",
+  "id": "DdGirtynyt80J3aH",
   "tags": [
     {
       "createdAt": "2025-05-28T08:01:35.423Z",

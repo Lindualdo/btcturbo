@@ -1,0 +1,141 @@
+{
+  "name": "Tecnico e Riscos - APIs sistema",
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://btcturbo-prod.up.railway.app/api/v1/coletar-indicadores/tecnico",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -380,
+        180
+      ],
+      "id": "d518a231-e3c4-431a-bc7a-62e23be87a8a",
+      "name": "coletar-analise-tecnica"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://btcturbo-prod.up.railway.app/api/v1/coletar-indicadores/riscos",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -160,
+        180
+      ],
+      "id": "722399d6-54ad-4d94-96bb-0711152bfd05",
+      "name": "coletar-indicadores-riscos"
+    },
+    {
+      "parameters": {
+        "content": "## Coleta Indicadores - AAVE e Trandingview\nTodas consumindo APIs do sistema BTC Turbo",
+        "height": 380,
+        "width": 900,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -660,
+        40
+      ],
+      "id": "cb8d3e24-843c-42df-843b-08d99d38ddfb",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        20,
+        180
+      ],
+      "id": "3f4a75c6-bdc1-4cbf-a989-cecbba04e751",
+      "name": "End"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 1
+            },
+            {
+              "field": "hours",
+              "hoursInterval": 4
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -600,
+        180
+      ],
+      "id": "cb851be4-4032-42fb-a495-718e844de4e8",
+      "name": "Schedule 4H"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "coletar-analise-tecnica": {
+      "main": [
+        [
+          {
+            "node": "coletar-indicadores-riscos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "coletar-indicadores-riscos": {
+      "main": [
+        [
+          {
+            "node": "End",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule 4H": {
+      "main": [
+        [
+          {
+            "node": "coletar-analise-tecnica",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Lisbon",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "1f29f8ea-fdc4-4acf-bddd-a3c17da982e9",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "df70ff04e1b45ccc1482849dfc7bcfb5dca43eb687554e47ff8dc55a9291bcc5"
+  },
+  "id": "Vsw8tucitNijubDe",
+  "tags": [
+    {
+      "createdAt": "2025-05-28T08:01:35.423Z",
+      "updatedAt": "2025-05-28T08:01:35.423Z",
+      "id": "bZwkciaprVJSHUBA",
+      "name": "coleta-indicadores"
+    }
+  ]
+}
