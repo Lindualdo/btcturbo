@@ -24,6 +24,7 @@ FASE1 - Operacional
 9 - implementar regras adicionais de proteção alavancagem
 10 - implemenra gate system de forma simplificada
 11 - confirmar Hierarquia de Decisão (Timeframe Conflito)
+12 - BTC Core está hard coded na API financeira patrimonio
 
 
 FASE2 - ALERTAS
