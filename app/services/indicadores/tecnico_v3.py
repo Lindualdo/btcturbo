@@ -18,20 +18,23 @@ def obter_indicadores():
                 "erro": "Nenhum dado v3.0 encontrado"
             }
         
+        # Debug: verificar campos disponíveis
+        logger.info(f"🔍 Campos disponíveis: {list(dados_db.keys())}")
+        
         return {
             "status": "success",
-            "bloco": "tecnico_v3",
-            "timestamp": dados_db["timestamp"],
-            "score_consolidado": dados_db["score_final_ponderado"],
+            "bloco": "tecnico_v3", 
+            "timestamp": dados_db.get("timestamp"),
+            "score_consolidado": dados_db.get("score_final_ponderado"),
             "score_semanal": {
-                "score_total": dados_db["score_consolidado_1w"],
-                "score_alinhamento": dados_db["score_alinhamento_v3_1w"],
-                "score_expansao": dados_db["score_expansao_v3_1w"]
+                "score_total": dados_db.get("score_consolidado_1w"),
+                "score_alinhamento": dados_db.get("score_alinhamento_v3_1w"),
+                "score_expansao": dados_db.get("score_expansao_v3_1w")
             },
             "score_diario": {
-                "score_total": dados_db["score_consolidado_1d"], 
-                "score_alinhamento": dados_db["score_alinhamento_v3_1d"],
-                "score_expansao": dados_db["score_expansao_v3_1d"]
+                "score_total": dados_db.get("score_consolidado_1d"), 
+                "score_alinhamento": dados_db.get("score_alinhamento_v3_1d"),
+                "score_expansao": dados_db.get("score_expansao_v3_1d")
             }
         }
         
