@@ -1,6 +1,6 @@
 # app/services/scores/tecnico.py
 
-from app.services.indicadores import tecnico as indicadores_tecnico
+from app.services.indicadores import tecnico_v3 as indicadores_tecnico
 
 def calcular_score():
     """O calculo do score é feito na hora da coleta, busca do tradingview e grava já calculado
