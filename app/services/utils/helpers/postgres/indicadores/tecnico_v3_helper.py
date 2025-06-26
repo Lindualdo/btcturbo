@@ -90,6 +90,7 @@ def get_dados_tecnico() -> Optional[Dict]:
         query = """
             SELECT 
                 -- Scores v3.0
+                score_final_ponderado,
                 score_alinhamento_v3_1w, score_expansao_v3_1w,
                 score_alinhamento_v3_1d, score_expansao_v3_1d,
                 score_tecnico_v3_final, distancias_emas_json, versao_calculo,
