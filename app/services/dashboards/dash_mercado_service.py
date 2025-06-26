@@ -32,11 +32,11 @@ def processar_dash_mercado() -> dict:
         
         # 2. Calcular score consolidado
         score_consolidado = _calcular_score_consolidado(scores_data["scores"])
-        
+       
         # 3. Preparar dados para banco
         dados_completos = {
             **scores_data["scores"],
-            "score_consolidado": score_consolidado["valor"],
+            "score_consolidado": score_consolidado["valor"] ,
             "classificacao_consolidada": score_consolidado["classificacao"]
         }
         
@@ -138,8 +138,6 @@ def obter_dash_mercado() -> dict:
 def _calcular_score_consolidado(scores: dict) -> dict:
     """
     Calcula score consolidado com pesos definidos
-    
-    Pesos: Ciclo 40% + Momentum 20% + Técnico 40% = 100%
     """
     try:
         score_ciclo = float(scores["score_ciclo"])
@@ -154,11 +152,11 @@ def _calcular_score_consolidado(scores: dict) -> dict:
         )
         
         # Determinar classificação
-        if score_consolidado >= 8.0:
+        if score_consolidado >= 80.0:
             classificacao = "ótimo"
-        elif score_consolidado >= 6.0:
+        elif score_consolidado >= 60.0:
             classificacao = "bom"
-        elif score_consolidado >= 4.0:
+        elif score_consolidado >= 40.0:
             classificacao = "neutro"
         elif score_consolidado >= 2.0:
             classificacao = "ruim"
@@ -166,7 +164,7 @@ def _calcular_score_consolidado(scores: dict) -> dict:
             classificacao = "crítico"
         
         return {
-            "valor": round(score_consolidado, 2),
+            "valor": round(score_consolidado, 2) * 10,
             "classificacao": classificacao
         }
         
