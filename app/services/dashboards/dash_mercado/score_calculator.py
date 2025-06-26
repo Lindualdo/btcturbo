@@ -35,9 +35,9 @@ def calculate_all_scores() -> dict:
         
         # Consolidar todos os scores
         scores_consolidados = {
-            "score_ciclo": resultado_ciclo["score"],
+            "score_ciclo": resultado_ciclo["score"] * 10,
             "classificacao_ciclo": resultado_ciclo["classificacao"],
-            "score_momentum": resultado_momentum["score"],
+            "score_momentum": resultado_momentum["score"] * 10,
             "classificacao_momentum": resultado_momentum["classificacao"],
             "score_tecnico": resultado_tecnico["score_consolidado"], 
             "classificacao_tecnico": resultado_tecnico["classificacao_consolidada"]
