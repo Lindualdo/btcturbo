@@ -2,7 +2,7 @@
 
 from fastapi import APIRouter
 from datetime import datetime
-from app.services.indicadores import ciclos, riscos, momentum, tecnico
+from app.services.indicadores import ciclos, riscos, momentum, tecnico_v3
 
 router = APIRouter()
 
@@ -15,7 +15,7 @@ async def obter_indicadores(bloco: str):
     elif bloco == "momentum":
         return momentum.obter_indicadores()
     elif bloco == "tecnico":
-        return tecnico.obter_indicadores()
+        return tecnico_v3.obter_indicadores()
     else:
         return {"status": "erro", "detalhes": "Bloco inválido"}
 

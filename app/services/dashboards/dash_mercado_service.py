@@ -144,13 +144,13 @@ def _calcular_score_consolidado(scores: dict) -> dict:
     try:
         score_ciclo = float(scores["score_ciclo"])
         score_momentum = float(scores["score_momentum"])
-        score_tecnico = float(scores["score_tecnico"])
+        score_tecnico = float(scores["indicadores"]["score_tecnico"])
         
-        # Aplicar pesos conforme especificação
+        # Aplicar pesos conforme especificação V3
         score_consolidado = (
-            (score_ciclo * 0.40) +      # Ciclo: 40%
+            (score_ciclo * 0.50) +      # Ciclo: 40% > 50
             (score_momentum * 0.20) +   # Momentum: 20% 
-            (score_tecnico * 0.40)      # Técnico: 40%
+            (score_tecnico * 0.30)      # Técnico: 40% > 30
         )
         
         # Determinar classificação
