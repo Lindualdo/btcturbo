@@ -26,6 +26,7 @@ def obter_indicadores():
             "bloco": "tecnico_v3", 
             "timestamp": dados_db.get("timestamp"),
             "score_consolidado": dados_db.get("score_final_ponderado"),
+            "classificacao_consolidada" : get_ema_status_description(dados_db.get("score_final_ponderado")),
             "score_semanal": {
                 "score_total": dados_db.get("score_consolidado_1w"),
                 "score_alinhamento": dados_db.get("score_alinhamento_v3_1w"),
@@ -44,3 +45,15 @@ def obter_indicadores():
             "status": "error",
             "erro": str(e)
         }
+def get_ema_status_description(score: float) -> str:
+    """Converte score numérico EMAs em descrição"""
+    if score >= 8.1:
+        return "Tendência Forte"
+    elif score >= 6.1:
+        return "Correção Saudável"
+    elif score >= 4.1:
+        return "Neutro/Transição"
+    elif score >= 2.1:
+        return "Reversão Iminente"
+    else:
+        return "Bear Confirmado"

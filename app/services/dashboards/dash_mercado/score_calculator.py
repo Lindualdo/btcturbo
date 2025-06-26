@@ -4,11 +4,11 @@ import logging
  # Importar funções de score existentes
 from app.services.scores import ciclos as score_ciclos
 from app.services.scores import momentum as score_momentum
-from app.services.scores import tecnico as score_tecnico
+from app.services.scores.tecnico  import calcular_score as calcular_score_tecnico
 
 logger = logging.getLogger(__name__)
 
-def calculate_all_scores(dados_coletados: dict) -> dict:
+def calculate_all_scores() -> dict:
     """
     Calcula scores de todos os blocos usando funções existentes
     
@@ -24,7 +24,7 @@ def calculate_all_scores(dados_coletados: dict) -> dict:
         # Calcular scores individuais
         resultado_ciclo = _calculate_ciclo_score(score_ciclos)
         resultado_momentum = _calculate_momentum_score(score_momentum) 
-        resultado_tecnico = _calculate_tecnico_score(score_tecnico)
+        resultado_tecnico = calcular_score_tecnico()
         
         # Verificar se todos os scores foram calculados
         if not resultado_ciclo or not resultado_momentum or not resultado_tecnico:
@@ -39,8 +39,8 @@ def calculate_all_scores(dados_coletados: dict) -> dict:
             "classificacao_ciclo": resultado_ciclo["classificacao"],
             "score_momentum": resultado_momentum["score"],
             "classificacao_momentum": resultado_momentum["classificacao"],
-            "score_tecnico": resultado_tecnico["score"], 
-            "classificacao_tecnico": resultado_tecnico["classificacao"]
+            "score_tecnico": resultado_tecnico["score_consolidado"], 
+            "classificacao_tecnico": resultado_tecnico["classificacao_consolidada"]
         }
         
         logger.info("✅ Todos os scores calculados")
@@ -102,10 +102,9 @@ def _calculate_momentum_score(score_momentum) -> dict:
         logger.error(f"❌ Erro _calculate_momentum_score: {str(e)}")
         return None
 
-def _calculate_tecnico_score(score_tecnico) -> dict:
     """Calcula score do bloco TÉCNICO"""
     try:
-        resultado = score_tecnico.calcular_score()
+        resultado = calcular_score_tecnico()
         
         if resultado.get("status") == "success":
             # Técnico pode retornar "score" ou "score_consolidado"

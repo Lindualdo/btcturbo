@@ -21,19 +21,11 @@ def collect_and_calculate_scores() -> dict:
     """
     try:
         logger.info("📊 Coletando dados dos 3 blocos...")
-        
-        # 1. Coletar dados brutos
-        dados_coletados = collect_all_blocks_data()
-        
-        if dados_coletados.get("status") != "success":
-            return {
-                "status": "error",
-                "erro": dados_coletados.get("erro", "Falha na coleta de dados")
-            }
+       
         
         # 2. Calcular scores
         logger.info("🧮 Calculando scores...")
-        scores_calculados = calculate_all_scores(dados_coletados["dados"])
+        scores_calculados = calculate_all_scores()
         
         if scores_calculados.get("status") != "success":
             return {
