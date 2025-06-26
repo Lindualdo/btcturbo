@@ -2,6 +2,7 @@
 
 from fastapi import APIRouter
 from app.services.coleta import ciclos, riscos, momentum, tecnico
+from app.services.coleta.tecnico_v3.tecnico import coletar as coletar_tecnico_v3
 
 from fastapi import APIRouter
 from app.services.coleta import ciclos, riscos, momentum, tecnico
@@ -17,6 +18,6 @@ async def coletar_indicadores(bloco: str, forcar_coleta: bool = False):
     elif bloco == "momentum":
         return {"status": "erro", "detalhes": "Está sendo importado no N8N"}
     elif bloco == "tecnico":
-        return tecnico.coletar(forcar_coleta)
+        return coletar_tecnico_v3(forcar_coleta)
     else:
         return {"status": "erro", "detalhes": "Bloco inválido"}
