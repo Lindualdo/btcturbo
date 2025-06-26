@@ -35,9 +35,9 @@ def calculate_all_scores() -> dict:
         
         # Consolidar todos os scores
         scores_consolidados = {
-            "score_ciclo": resultado_ciclo["score"] * 10,
+            "score_ciclo": resultado_ciclo["score"] ,
             "classificacao_ciclo": resultado_ciclo["classificacao"],
-            "score_momentum": resultado_momentum["score"] * 10,
+            "score_momentum": resultado_momentum["score"],
             "classificacao_momentum": resultado_momentum["classificacao"],
             "score_tecnico": resultado_tecnico["score_consolidado"], 
             "classificacao_tecnico": resultado_tecnico["classificacao_consolidada"]
@@ -68,7 +68,7 @@ def _calculate_ciclo_score(score_ciclos) -> dict:
             
             logger.info(f"✅ Score CICLO: {score:.1f}")
             return {
-                "score": score,
+                "score": score * 10,
                 "classificacao": classificacao
             }
         else:
@@ -91,7 +91,7 @@ def _calculate_momentum_score(score_momentum) -> dict:
             
             logger.info(f"✅ Score MOMENTUM: {score:.1f}")
             return {
-                "score": score,
+                "score": score * 10,
                 "classificacao": classificacao
             }
         else:
