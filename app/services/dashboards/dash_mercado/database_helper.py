@@ -16,7 +16,7 @@ def save_scores_to_db(dados_scores: dict) -> dict:
         ids_indicadores = _get_latest_indicators_ids()
         
         # Montar JSON completo dos indicadores com scores
-        json_indicadores = _build_indicators_json()
+        #json_indicadores = _build_indicators_json()
 
         timestamp_lisboa = (datetime.utcnow() + timedelta(hours=1)).strftime('%Y-%m-%d %H:%M:%S')
         
@@ -60,9 +60,9 @@ def save_scores_to_db(dados_scores: dict) -> dict:
             dados_scores["score_consolidado"],
             dados_scores["classificacao_consolidada"],
             {},  # JSON pronto
-            0,
-            0,
-            0,
+            ids_indicadores.get("ciclo_id"),
+            ids_indicadores.get("momentum_id"),
+            ids_indicadores.get("tecnico_id"),
             timestamp_lisboa
         )
         
