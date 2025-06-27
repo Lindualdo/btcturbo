@@ -21,12 +21,27 @@ def obter_indicadores():
         # Debug: verificar campos disponíveis
         logger.info(f"🔍 Campos disponíveis: {list(dados_db.keys())}")
         
+        # Calcular scores consolidados por componente
+        score_alinhamento_consolidado = (
+            (dados_db.get("score_alinhamento_v3_1w", 0) * 0.7) + 
+            (dados_db.get("score_alinhamento_v3_1d", 0) * 0.3)
+        )
+        
+        score_expansao_consolidado = (
+            (dados_db.get("score_expansao_v3_1w", 0) * 0.7) + 
+            (dados_db.get("score_expansao_v3_1d", 0) * 0.3)
+        )
+        
+        # Score consolidado = média dos componentes
+        score_consolidado_calculado = (score_alinhamento_consolidado + score_expansao_consolidado) / 2
+        
         return {
             "status": "success",
             "bloco": "tecnico_v3", 
             "timestamp": dados_db.get("timestamp"),
-            "score_consolidado": round(float( dados_db.get("score_final_ponderado")),1),
-            "classificacao_consolidada" : get_ema_status_description(dados_db.get("score_final_ponderado")),
+            "score_consolidado": round(score_consolidado_calculado, 1),
+            "score_alinhamento_consolidado": round(score_alinhamento_consolidado, 1),
+            "score_expansao_consolidado": round(score_expansao_consolidado, 1),
             "score_semanal": {
                 "score_total": dados_db.get("score_consolidado_1w"),
                 "score_alinhamento": dados_db.get("score_alinhamento_v3_1w"),
@@ -45,15 +60,3 @@ def obter_indicadores():
             "status": "error",
             "erro": str(e)
         }
-def get_ema_status_description(score: float) -> str:
-    """Converte score numérico EMAs em descrição"""
-    if score >= 8.1:
-        return "Tendência Forte"
-    elif score >= 6.1:
-        return "Correção Saudável"
-    elif score >= 4.1:
-        return "Neutro/Transição"
-    elif score >= 2.1:
-        return "Reversão Iminente"
-    else:
-        return "Bear Confirmado"

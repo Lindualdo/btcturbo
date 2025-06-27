@@ -3,7 +3,7 @@
 from datetime import datetime
 import logging
 from app.services.utils.helpers.tradingview.ema_calculator import get_complete_ema_analysis
-from app.services.coleta.tecnico_v3.utils.score_compositor import calcular_score_tecnico_v3
+from app.services.scores.tecnico_v3.utils.score_compositor import calcular_score_tecnico_v3
 from app.services.utils.helpers.postgres.indicadores.tecnico_v3_helper import insert_dados_tecnico
 
 logger = logging.getLogger(__name__)
@@ -64,14 +64,36 @@ def coletar(forcar_coleta: bool):
             "score_expansao_v3_1d": resultado_v3["timeframes"]["diario"]["expansao"]["score"],
             "score_tecnico_v3_final": resultado_v3["score_final"],
             
-            # Distâncias
+            # JSON gerencial v3.1 (usar campo existente)
             "distancias_emas_json": {
-                "semanal": resultado_v3["timeframes"]["semanal"]["expansao"]["distancias"],
-                "diario": resultado_v3["timeframes"]["diario"]["expansao"]["distancias"],
-                "penalidades": {
-                    "semanal": resultado_v3["timeframes"]["semanal"]["expansao"]["penalidades"],
-                    "diario": resultado_v3["timeframes"]["diario"]["expansao"]["penalidades"]
+                "semanal": {
+                    "score_alinhamento": resultado_v3["timeframes"]["semanal"]["alinhamento"]["score"],
+                    "score_expansao": resultado_v3["timeframes"]["semanal"]["expansao"]["score"],
+                    "expansao_total_pct": _extrair_expansao_total(resultado_v3["timeframes"]["semanal"]["expansao"], emas_semanal),
+                    "expansao_critica_pct": _extrair_expansao_critica(resultado_v3["timeframes"]["semanal"]["expansao"], emas_semanal),
+                    "adjacente_penalidade": _extrair_adjacente_penalidade(resultado_v3["timeframes"]["semanal"]["expansao"])
+                },
+                "diario": {
+                    "score_alinhamento": resultado_v3["timeframes"]["diario"]["alinhamento"]["score"],
+                    "score_expansao": resultado_v3["timeframes"]["diario"]["expansao"]["score"],
+                    "expansao_total_pct": _extrair_expansao_total(resultado_v3["timeframes"]["diario"]["expansao"], emas_diario),
+                    "expansao_critica_pct": _extrair_expansao_critica(resultado_v3["timeframes"]["diario"]["expansao"], emas_diario),
+                    "adjacente_penalidade": _extrair_adjacente_penalidade(resultado_v3["timeframes"]["diario"]["expansao"])
+                },
+                "formulas": {
+                    "score_final": "(Alinhamento × 0.5) + (Expansão × 0.5)",
+                    "pesos_timeframe": "(Semanal × 0.7) + (Diário × 0.3)",
+                    "expansao_total": "(EMA17 / EMA610 - 1) × 100",
+                    "expansao_critica": "(EMA17 / EMA144 - 1) × 100",
+                    "expansao_score": "100 - (Total×0.4 + Crítica×0.4 + Adjacente×0.2)"
                 }
+            },
+            
+            # JSON EMAs (campo legado)
+            "distancias_json": {
+                "weekly": weekly.get("details", {}).get("position", {}).get("distances", {}),
+                "daily": daily.get("details", {}).get("position", {}).get("distances", {}),
+                "weights": {"weekly": 0.7, "daily": 0.3}
             },
             
             "versao_calculo": "v3.0",
@@ -105,3 +127,28 @@ def coletar(forcar_coleta: bool):
             "erro": str(e),
             "timestamp": datetime.utcnow()
         }
+
+def _extrair_expansao_total(expansao_data: dict, emas: dict) -> float:
+    """Extrai percentual expansão total: (EMA17/EMA610 - 1) × 100"""
+    try:
+        if emas[610] == 0:
+            return 0.0
+        return round(((emas[17] / emas[610]) - 1) * 100, 2)
+    except:
+        return 0.0
+
+def _extrair_expansao_critica(expansao_data: dict, emas: dict) -> float:
+    """Extrai percentual expansão crítica: (EMA17/EMA144 - 1) × 100"""
+    try:
+        if emas[144] == 0:
+            return 0.0
+        return round(((emas[17] / emas[144]) - 1) * 100, 2)
+    except:
+        return 0.0
+
+def _extrair_adjacente_penalidade(expansao_data: dict) -> int:
+    """Extrai penalidade total adjacente"""
+    try:
+        return expansao_data.get("componentes", {}).get("expansao_adjacente", {}).get("penalidade", 0)
+    except:
+        return 0
