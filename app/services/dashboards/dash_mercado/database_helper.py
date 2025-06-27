@@ -16,7 +16,7 @@ def save_scores_to_db(dados_scores: dict) -> dict:
         ids_indicadores = _get_latest_indicators_ids()
         
         # Montar JSON completo dos indicadores com scores
-        #json_indicadores = _build_indicators_json()
+        json_indicadores = _build_indicators_json()
 
         timestamp_lisboa = (datetime.utcnow() + timedelta(hours=1)).strftime('%Y-%m-%d %H:%M:%S')
         
@@ -59,7 +59,7 @@ def save_scores_to_db(dados_scores: dict) -> dict:
             dados_scores["tecnico"]["classificacao_consolidada"],
             dados_scores["score_consolidado"],
             dados_scores["classificacao_consolidada"],
-            {},  # JSON pronto
+            json_indicadores,  # JSON pronto
             ids_indicadores.get("ciclo_id"),
             ids_indicadores.get("momentum_id"),
             ids_indicadores.get("tecnico_id"),
@@ -124,6 +124,8 @@ def get_latest_scores_from_db() -> dict:
 def _build_indicators_json() -> str:
     """Constrói JSON completo dos indicadores com scores"""
     try:
+        return "{}"
+
         import json
         from app.services.indicadores import ciclos, momentum
         from app.services.scores.ciclos import calcular_mvrv_score, calcular_nupl_score, calcular_realized_score, calcular_puell_score
