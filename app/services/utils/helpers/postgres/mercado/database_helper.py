@@ -24,8 +24,8 @@ def get_ciclo_mercado() -> dict:
         score_mercado = float(dados_mercado["score_consolidado"])
        
         indicadores = dados_mercado["indicadores_json"]  # Já é dict
-        mvrv = indicadores["ciclo"]["mvrv"]
-        nupl = indicadores["ciclo"]["nupl"]
+        mvrv = indicadores["ciclo"]["indicadores"]["MVRV_Z"]["valor"]
+        nupl = indicadores["ciclo"]["indicadores"]["NUPL"]["valor"]
         
         # 3. Determinar ciclo via banco usando a tabela matriz_ciclos_mercado V2
         ciclo_definido = _buscar_ciclo_matriz(score_mercado, mvrv, nupl)
