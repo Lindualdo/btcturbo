@@ -159,7 +159,7 @@ def _calcular_score_consolidado(scores: dict) -> dict:
         # DEBUG: Ver cálculo
         logger.info(f"🔍 DEBUG consolidado calculado: {score_consolidado}")
         
-        resultado = round(score_consolidado, 2) * 10
+        resultado = round(score_consolidado, 1)
         logger.info(f"🔍 DEBUG resultado final: {resultado}")
     except Exception as e:
         logger.error(f"❌ Erro calcular score consolidado: {str(e)}")
