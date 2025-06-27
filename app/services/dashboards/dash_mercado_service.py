@@ -145,7 +145,7 @@ def _calcular_score_consolidado(scores: dict) -> dict:
         
         score_ciclo = float(scores["score_ciclo"])
         score_momentum = float(scores["score_momentum"])
-        score_tecnico = float(scores["indicadores"]["score_tecnico"])
+        score_tecnico = float(scores["score_tecnico"])
         
         # DEBUG: Ver valores extraídos
         logger.info(f"🔍 DEBUG valores: ciclo={score_ciclo}, momentum={score_momentum}, tecnico={score_tecnico}")
@@ -161,6 +161,7 @@ def _calcular_score_consolidado(scores: dict) -> dict:
         
         resultado = round(score_consolidado, 1)
         logger.info(f"🔍 DEBUG resultado final: {resultado}")
+
     except Exception as e:
         logger.error(f"❌ Erro calcular score consolidado: {str(e)}")
         return {
