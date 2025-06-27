@@ -47,7 +47,13 @@ Sistema de análise de indicadores Bitcoin para trading alavancado, construído 
 - organização
 - integridade com as novas regras da gravação do dash-mercado
 
-## versão 1.6.2 - Revisão nas rotinas de dash-main (gravação)
+## versão 1.6.2 - Revisão nas rotinas de dash-main (gravação) - feito
+- alterações para adequar as novas rotinas e regras da dash-mercado
+- revisão e alteração na get_last_dash mercado_database_helper
+
+## versão 1.6.3 - Revisão nas rotinas de dash-main (gravação) - feito
+- alterações para adequar as novas rotinas e regras da dash-mercado
+- revisão e alteração na get_last_dash mercado_database_helper
 
 ## 🏗️ Arquitetura
 
