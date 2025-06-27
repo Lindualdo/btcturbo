@@ -104,7 +104,7 @@ def obter_dash_mercado() -> dict:
                 "timestamp": dash_mercado["timestamp"].isoformat(),
                 "score_consolidado": float(dash_mercado["score_consolidado"]),
                 "classificacao": dash_mercado["classificacao_consolidada"],
-                "blocos": indicadores_json
+                **indicadores_json
             }
         else:
             return {
