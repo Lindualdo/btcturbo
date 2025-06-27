@@ -14,7 +14,7 @@ def processar_dash_mercado() -> dict:
     try:
 
         # 1 - Busca os scores calculados (todos os blocos)
-        scores = get_scores_data()
+        scores = _get_scores_data()
        
         # 2. Calcula o score consolidado
         logger.info("🔄 Coletando e calculando scores...")
@@ -69,7 +69,7 @@ def processar_dash_mercado() -> dict:
             "timestamp": datetime.utcnow().isoformat()
         }
 
-def get_scores_data() -> dict:
+def _get_scores_data() -> dict:
 
     # 1. Coletar scores
     ciclo = calcular_score_ciclo()
@@ -90,37 +90,21 @@ def obter_dash_mercado() -> dict:
         
         import json
         
-        ultimo = get_latest_dashboard_scores()
+        dash_mercado = get_latest_dashboard_scores()
         
-        if ultimo:
+        if dash_mercado:
             # JSON pode vir como dict ou string do banco
-            indicadores_json = ultimo["indicadores_json"]
+            indicadores_json = dash_mercado["indicadores_json"]
             if isinstance(indicadores_json, str):
                 indicadores_json = json.loads(indicadores_json)
             
             return {
                 "status": "success",
-                "id": ultimo["id"],
-                "timestamp": ultimo["timestamp"].isoformat(),
-                "score_consolidado": float(ultimo["score_consolidado"]),
-                "classificacao": ultimo["classificacao_consolidada"],
-                "blocos": {
-                    "ciclo": {
-                        "score": float(ultimo["score_ciclo"]),
-                        "classificacao": ultimo["classificacao_ciclo"],
-                        "indicadores": indicadores_json["ciclo"]
-                    },
-                    "momentum": {
-                        "score": float(ultimo["score_momentum"]),
-                        "classificacao": ultimo["classificacao_momentum"],
-                        "indicadores": indicadores_json["momentum"]
-                    },
-                    "tecnico": {
-                        "score": float(ultimo["score_tecnico"]),
-                        "classificacao": ultimo["classificacao_tecnico"],
-                        "indicadores": indicadores_json["tecnico"]
-                    }
-                }
+                "id": dash_mercado["id"],
+                "timestamp": dash_mercado["timestamp"].isoformat(),
+                "score_consolidado": float(dash_mercado["score_consolidado"]),
+                "classificacao": dash_mercado["classificacao_consolidada"],
+                "blocos": indicadores_json
             }
         else:
             return {
@@ -153,13 +137,13 @@ def _calcular_score_consolidado(scores: dict) -> dict:
         )
 
         # Determinar classificação
-        if score_consolidado >= 8.0:
+        if score_consolidado >= 80.0:
             classificacao = "ótimo"
-        elif score_consolidado >= 6.0:
+        elif score_consolidado >= 60.0:
             classificacao = "bom"
-        elif score_consolidado >= 4.0:
+        elif score_consolidado >= 40.0:
             classificacao = "neutro"
-        elif score_consolidado >= 2.0:
+        elif score_consolidado >= 20.0:
             classificacao = "ruim"
         else:
             classificacao = "crítico"
