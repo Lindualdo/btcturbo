@@ -13,10 +13,10 @@ def save_scores_to_db(dados_scores: dict) -> dict:
     try:
         
         # Buscar IDs dos últimos registros de indicadores
-        ids_indicadores = _get_latest_indicators_ids(dados_scores)
+        ids_indicadores = _get_latest_indicators_ids()
         
         # Montar JSON completo dos indicadores com scores
-        json_indicadores = _build_indicators_json() 
+        json_indicadores = _build_indicators_json(dados_scores) 
 
         timestamp_lisboa = (datetime.utcnow() + timedelta(hours=1)).strftime('%Y-%m-%d %H:%M:%S')
         
