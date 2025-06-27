@@ -2,22 +2,12 @@
 
 import logging
 from typing import Dict
-from .expansao_total_calculator import calcular_expansao_total
-from .expansao_critica_calculator import calcular_expansao_critica
-from .expansao_adjacente_calculator import calcular_expansao_adjacente
 
 logger = logging.getLogger(__name__)
 
 def calcular_score_expansao(emas: Dict[str, float], timeframe: str = "semanal") -> Dict:
     """
     Calcula Score Expansão v3.1 - Sistema 3 Níveis
-    
-    Composição:
-    - Expansão Total (40%): EMA17/EMA610
-    - Expansão Crítica (40%): EMA17/EMA144  
-    - Expansão Adjacente (20%): EMAs consecutivas
-    
-    Score = 100 - (Total×0.4 + Crítica×0.4 + Adjacente×0.2)
     """
     try:
         logger.info(f"📐 Calculando Score Expansão v3.1 - {timeframe}...")
@@ -27,6 +17,11 @@ def calcular_score_expansao(emas: Dict[str, float], timeframe: str = "semanal") 
         for ema in emas_necessarias:
             if ema not in emas or emas[ema] is None:
                 raise ValueError(f"EMA {ema} não encontrada")
+        
+        # Importar localmente para evitar circular import
+        from .expansao_total_calculator import calcular_expansao_total
+        from .expansao_critica_calculator import calcular_expansao_critica
+        from .expansao_adjacente_calculator import calcular_expansao_adjacente
         
         # Calcular 3 componentes
         total_result = calcular_expansao_total(emas[17], emas[610], timeframe)
