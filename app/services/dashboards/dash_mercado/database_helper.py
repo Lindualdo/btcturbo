@@ -13,10 +13,10 @@ def save_scores_to_db(dados_scores: dict) -> dict:
     try:
         
         # Buscar IDs dos últimos registros de indicadores
-        ids_indicadores = _get_latest_indicators_ids()
+        ids_indicadores = _get_latest_indicators_ids(dados_scores)
         
         # Montar JSON completo dos indicadores com scores
-        json_indicadores = _build_indicators_json()
+        json_indicadores = _build_indicators_json() 
 
         timestamp_lisboa = (datetime.utcnow() + timedelta(hours=1)).strftime('%Y-%m-%d %H:%M:%S')
         
@@ -31,24 +31,6 @@ def save_scores_to_db(dados_scores: dict) -> dict:
                 indicador_ciclo_id, indicador_momentum_id, indicador_tecnico_id, timestamp
             ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             RETURNING id
-        """
-        
-        """ 
-            params = (
-            dados_scores["ciclo"]["score_consolidado"],
-            dados_scores["ciclo"]["classificacao_consolidada"],
-            dados_scores["momentum"]["score_consolidado"], 
-            dados_scores["momentum"]["classificacao_consolidada"],
-            dados_scores["tecnico"]["score_consolidado"],
-            dados_scores["tecnico"]["classificacao_consolidada"],
-            dados_scores["score_consolidado"],
-            dados_scores["classificacao_consolidada"],
-            json_indicadores,  # JSON pronto
-            ids_indicadores.get("ciclo_id"),
-            ids_indicadores.get("momentum_id"),
-            ids_indicadores.get("tecnico_id"),
-            timestamp_lisboa
-        )
         """
         params = (
             dados_scores["ciclo"]["score_consolidado"],
@@ -87,6 +69,24 @@ def save_scores_to_db(dados_scores: dict) -> dict:
             "erro": str(e)
         }
 
+def _build_indicators_json(dados_scores: dict) -> str:
+    """Constrói JSON usando apenas dados_scores (já contém tudo)"""
+    try:
+        import json
+        
+        # Estrutura JSON usando dados que já estão em dados_scores
+        json_completo = {
+            "ciclo": dados_scores.get("ciclo", {}),
+            "momentum": dados_scores.get("momentum", {}),
+            "tecnico": dados_scores.get("tecnico", {}),
+        }
+        
+        return json.dumps(json_completo)
+        
+    except Exception as e:
+        logger.error(f"❌ Erro _build_indicators_json: {str(e)}")
+        return "{}"
+
 def get_latest_scores_from_db() -> dict:
     """
     Obtém último registro com JSON já formatado
@@ -121,92 +121,17 @@ def get_latest_scores_from_db() -> dict:
         logger.error(f"❌ Erro get_latest_scores_from_db: {str(e)}")
         return None
 
-def _build_indicators_json() -> str:
     """Constrói JSON completo dos indicadores com scores"""
     try:
         return "{}"
 
-        import json
-        from app.services.indicadores import ciclos, momentum
-        from app.services.scores.ciclos import calcular_mvrv_score, calcular_nupl_score, calcular_realized_score, calcular_puell_score
-        from app.services.scores.momentum import calcular_rsi_score, calcular_funding_score, calcular_sopr_score, calcular_ls_ratio_score
-        from app.services.utils.helpers.postgres.indicadores.tecnico_helper import get_dados_tecnico
         
-        # Dados CICLO
-        dados_ciclo = ciclos.obter_indicadores()["indicadores"]
-        mvrv_score, _ = calcular_mvrv_score(dados_ciclo["MVRV_Z"]["valor"])
-        nupl_score, _ = calcular_nupl_score(dados_ciclo["NUPL"]["valor"])
-        realized_score, _ = calcular_realized_score(dados_ciclo["Realized_Ratio"]["valor"])
-        puell_score, _ = calcular_puell_score(dados_ciclo["Puell_Multiple"]["valor"])
-        
-        # Dados MOMENTUM
-        dados_momentum = momentum.obter_indicadores()["indicadores"]
-        rsi_score, _ = calcular_rsi_score(dados_momentum["RSI_Semanal"]["valor"])
-        funding_score, _ = calcular_funding_score(dados_momentum["Funding_Rates"]["valor"])
-        sopr_score, _ = calcular_sopr_score(dados_momentum["SOPR"]["valor"])
-        ls_score, _ = calcular_ls_ratio_score(dados_momentum["Long_Short_Ratio"]["valor"])
-        
-        # Dados TÉCNICO - buscar direto do banco
-        dados_tecnico_db = get_dados_tecnico()
-        
-        if dados_tecnico_db:
-            score_geral = float(dados_tecnico_db["score_bloco_final"]) if dados_tecnico_db["score_bloco_final"] else 0
-            tecnico_json = {
-                "score": score_geral,
-                "classificacao": _get_score_description(score_geral),
-                "semanal": {
-                    "score": float(dados_tecnico_db["score_consolidado_1w"]) if dados_tecnico_db["score_consolidado_1w"] else 0,
-                    "alinhamento": float(dados_tecnico_db["score_1w_ema"]) if dados_tecnico_db["score_1w_ema"] else 0,
-                    "posicao": float(dados_tecnico_db["score_1w_price"]) if dados_tecnico_db["score_1w_price"] else 0
-                },
-                "diario": {
-                    "score": float(dados_tecnico_db["score_consolidado_1d"]) if dados_tecnico_db["score_consolidado_1d"] else 0,
-                    "alinhamento": float(dados_tecnico_db["score_1d_ema"]) if dados_tecnico_db["score_1d_ema"] else 0,
-                    "posicao": float(dados_tecnico_db["score_1d_price"]) if dados_tecnico_db["score_1d_price"] else 0
-                }
-            }
-        else:
-            tecnico_json = {
-                "score": 0,
-                "classificacao": "N/A",
-                "semanal": {"score": 0, "alinhamento": 0, "posicao": 0},
-                "diario": {"score": 0, "alinhamento": 0, "posicao": 0}
-            }
-        
-        json_completo = {
-            "ciclo": {
-                "mvrv": {"valor": dados_ciclo["MVRV_Z"]["valor"], "score": mvrv_score},
-                "nupl": {"valor": dados_ciclo["NUPL"]["valor"], "score": nupl_score},
-                "realized_price_ratio": {"valor": dados_ciclo["Realized_Ratio"]["valor"], "score": realized_score},
-                "puell_multiple": {"valor": dados_ciclo["Puell_Multiple"]["valor"], "score": puell_score}
-            },
-            "momentum": {
-                "rsi_semanal": {"valor": dados_momentum["RSI_Semanal"]["valor"], "score": rsi_score},
-                "funding_rate": {"valor": dados_momentum["Funding_Rates"]["valor"], "score": funding_score},
-                "sopr": {"valor": dados_momentum["SOPR"]["valor"], "score": sopr_score},
-                "long_short_ratio": {"valor": dados_momentum["Long_Short_Ratio"]["valor"], "score": ls_score}
-            },
-            "tecnico": tecnico_json
-        }
         
         return json.dumps(json_completo)
         
     except Exception as e:
         logger.error(f"❌ Erro _build_indicators_json: {str(e)}")
         return "{}"
-
-def _get_score_description(score):
-    """Converte score numérico em descrição"""
-    if score >= 8.1:
-        return "Tendência Forte"
-    elif score >= 6.1:
-        return "Correção Saudável"
-    elif score >= 4.1:
-        return "Neutro"
-    elif score >= 2.1:
-        return "Reversão"
-    else:
-        return "Bear Confirmado"
 
 def _get_latest_indicators_ids() -> dict:
     """Busca IDs dos últimos registros de indicadores"""
