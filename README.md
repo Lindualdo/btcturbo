@@ -26,12 +26,24 @@ Sistema de análise de indicadores Bitcoin para trading alavancado, construído 
 - implementado todos os setups de compra
 - sempre retona os dados tecnicos
 
-## Proxima versão 1.5.5 - dash financeiro
+## Proxima versão 1.5.5 - dash financeiro -feito
 - historico de helth factor
 - histórico de dist. liquidação
 - historico de alavancagem (usada X permitida)
 - histórico de patrimonio (capital liquido)
 - histórico de posição (total investido)
+
+## versão 1.6.0 - Novas regras Anal. tecncica, ciclos e matriz mercado - feito
+- Revisão geral nas documentações, atualizado e simplificado
+- mudança nas regras de score (pesos) anal. tecnica e ciclos
+- recriado por completo as regras de Score da analise técnica (alinhamento e distancia entre as médias)
+- sinmplificado e organizado o codigo de calclule de scores (tecnico, ciclos e momentum)
+- revisão geral nas rotinas de dash_mercado (gravação) - estva complexo d+ redundancia de processamentos e calculos de scores
+- ajuste dos indicadores e scores para base 100
+- simplificado as rotinas de gravação de dados na base
+- melhoria de performance de 27 seg. para 12 seg (por consequencia das simplificações)
+
+## versão 1.6.1 - Revisão nas rotinas de dash-mercado (get)
 
 
 ## 🏗️ Arquitetura
