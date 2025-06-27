@@ -1,4 +1,4 @@
-# app/services/scores/tecnico_v3/utils/score_compositor.py
+# app/services/scores/tecnico_v3/utils/score_compositor_v3.py
 
 import logging
 from typing import Dict
@@ -102,8 +102,12 @@ def _calcular_score_timeframe(emas: Dict, timeframe: str) -> Dict:
         if alinhamento_result["status"] != "success":
             raise Exception(f"Erro alinhamento {timeframe}")
         
+        # Mapear timeframe para expansão
+        timeframe_map = {"1W": "semanal", "1D": "diario"}
+        tf_mapped = timeframe_map.get(timeframe, "semanal")
+        
         # Score Expansão  
-        expansao_result = calcular_score_expansao(emas)
+        expansao_result = calcular_score_expansao(emas, tf_mapped)
         if expansao_result["status"] != "success":
             raise Exception(f"Erro expansão {timeframe}")
         
