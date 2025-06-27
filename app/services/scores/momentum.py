@@ -134,10 +134,10 @@ def calcular_score():
     indicadores = dados_indicadores["indicadores"]
     
   
-    rsi_valor = indicadores["RSI_Semanal"]["valor"]
-    funding_valor = indicadores["Funding_Rates"]["valor"]
-    sopr_valor = indicadores["SOPR"]["valor"] 
-    ls_valor = indicadores["Long_Short_Ratio"]["valor"]
+    rsi_valor = indicadores["RSI_Semanal"]
+    funding_valor = indicadores["Funding_Rates"]
+    sopr_valor = indicadores["SOPR"]
+    ls_valor = indicadores["Long_Short_Ratio"]
     
     rsi_score, rsi_classificacao = calcular_rsi_score(rsi_valor)
     funding_score, funding_classificacao = calcular_funding_score(funding_valor)

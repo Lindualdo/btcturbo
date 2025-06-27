@@ -119,10 +119,10 @@ def calcular_score():
     indicadores = dados_indicadores["indicadores"]
     
     # 2. Extrair valores individuais
-    mvrv_valor = indicadores["MVRV_Z"]["valor"]
-    realized_valor = indicadores["Realized_Ratio"]["valor"]
-    nupl_valor = indicadores["NUPL"]["valor"] 
-    reserve_risk_valor = indicadores["Reserve_Risk"]["valor"] 
+    mvrv_valor = indicadores["MVRV_Z"]
+    realized_valor = indicadores["Realized_Ratio"]
+    nupl_valor = indicadores["NUPL"]
+    reserve_risk_valor = indicadores["Reserve_Risk"]
     
     # 3. Calcular scores individuais
     mvrv_score, mvrv_classificacao = calcular_mvrv_score(mvrv_valor)
