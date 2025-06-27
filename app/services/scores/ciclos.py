@@ -141,6 +141,7 @@ def calcular_score():
     # 6. Retornar JSON formatado
     return {
         "bloco": "ciclo",
+        "status": "success",
         "peso_bloco": "50%",  # Peso ajustado na v1.6.0 (era 40%)
         "score_consolidado": round(score_consolidado * 10, 1),
         "classificacao_consolidada": interpretar_classificacao_consolidada(score_consolidado),
@@ -167,6 +168,5 @@ def calcular_score():
                 "valor": reserve_risk_valor,
                 "score": round(reserve_risk * 10, 1),
             }
-        }, 
-        "status": "success"
+        }
     }
