@@ -140,34 +140,27 @@ def _calcular_score_consolidado(scores: dict) -> dict:
     Calcula score consolidado com pesos definidos
     """
     try:
+        # DEBUG: Ver o que está chegando
+        logger.info(f"🔍 DEBUG scores completo: {scores}")
+        
         score_ciclo = float(scores["score_ciclo"])
         score_momentum = float(scores["score_momentum"])
         score_tecnico = float(scores["indicadores"]["score_tecnico"])
         
-        # Aplicar pesos conforme especificação V3
+        # DEBUG: Ver valores extraídos
+        logger.info(f"🔍 DEBUG valores: ciclo={score_ciclo}, momentum={score_momentum}, tecnico={score_tecnico}")
+        
         score_consolidado = (
-            (score_ciclo * 0.50) +      # Ciclo: 40% > 50
-            (score_momentum * 0.20) +   # Momentum: 20% 
-            (score_tecnico * 0.30)      # Técnico: 40% > 30
+            (score_ciclo * 0.50) +
+            (score_momentum * 0.20) +
+            (score_tecnico * 0.30)
         )
         
-        # Determinar classificação
-        if score_consolidado >= 80.0:
-            classificacao = "ótimo"
-        elif score_consolidado >= 60.0:
-            classificacao = "bom"
-        elif score_consolidado >= 40.0:
-            classificacao = "neutro"
-        elif score_consolidado >= 2.0:
-            classificacao = "ruim"
-        else:
-            classificacao = "crítico"
+        # DEBUG: Ver cálculo
+        logger.info(f"🔍 DEBUG consolidado calculado: {score_consolidado}")
         
-        return {
-            "valor": round(score_consolidado, 2) * 10,
-            "classificacao": classificacao
-        }
-        
+        resultado = round(score_consolidado, 2) * 10
+        logger.info(f"🔍 DEBUG resultado final: {resultado}")
     except Exception as e:
         logger.error(f"❌ Erro calcular score consolidado: {str(e)}")
         return {
