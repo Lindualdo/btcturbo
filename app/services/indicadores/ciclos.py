@@ -29,7 +29,7 @@ def obter_indicadores():
                     "disponivel": dados_db["nupl"] is not None,
                     "fonte": dados_db["fonte"] or "PostgreSQL" if dados_db["nupl"] is not None else None
                 },
-                "NUPL": {
+                "Reserve_Risk": {
                     "valor": float(dados_db["reserve_risk"]) if dados_db["reserve_risk"] is not None else None,
                     "disponivel": dados_db["reserve_risk"] is not None,
                     "fonte": dados_db["fonte"] or "PostgreSQL" if dados_db["reserve_risk"] is not None else None
