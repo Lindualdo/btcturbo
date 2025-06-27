@@ -9,20 +9,12 @@ from app.services.scores.tecnico  import calcular_score as calcular_score_tecnic
 logger = logging.getLogger(__name__)
 
 def calculate_all_scores() -> dict:
-    """
-    Calcula scores de todos os blocos usando funções existentes
-    
-    Args:
-        dados_coletados: {"ciclo": {}, "momentum": {}, "tecnico": {}}
-        
-    Returns:
-        dict: {"status": "success/error", "scores": {todos_os_scores}}
-    """
+
     try:
         logger.info("🧮 Calculando scores dos 3 blocos...")
 
         # Calcular scores individuais
-        resultado_ciclo = calcular_score_ciclo
+        resultado_ciclo = calcular_score_ciclo()
         resultado_momentum =  calcular_score_momentum()
         resultado_tecnico = calcular_score_tecnico()
         
@@ -34,6 +26,9 @@ def calculate_all_scores() -> dict:
             }
         
         # Consolidar todos os scores
+
+        logger.info("🧮 Calculando scores dos 3 blocos...")
+
         scores_consolidados = {
             "score_ciclo": resultado_ciclo["score_consolidado"] ,
             "classificacao_ciclo": resultado_ciclo["classificacao_consolidada"],
