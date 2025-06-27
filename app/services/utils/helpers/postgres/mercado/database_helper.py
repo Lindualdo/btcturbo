@@ -11,27 +11,21 @@ from app.services.utils.helpers.postgres.base import execute_query
 logger = logging.getLogger(__name__)
 
 def get_ciclo_mercado() -> dict:
-    """
-    Executa análise completa de mercado (Camada 1)
-    
-    Returns:
-        dict: Dados da análise de mercado para Dashboard
-    """
     try:
         logger.info("📊 Executando Análise Mercado - Camada 1")
         
-        # 1. Buscar indicadore e scores no banco de dados
+        # 1. Buscar dados de mercado
         dados_mercado = _get_scores_indicadores_mercado() # score e indicadores
+
         if not dados_mercado:
             raise Exception("Nenhum dado de mercado encontrado")
         
         # 2. Extrair indicadores e scores
-        score_mercado_raw = float(dados_mercado["score_consolidado"])
-        # CORREÇÃO: Score no banco está base 10, matriz usa base 100
-        score_mercado = score_mercado_raw * 10
+        score_mercado = float(dados_mercado["score_consolidado"])
+       
         indicadores = dados_mercado["indicadores_json"]  # Já é dict
-        mvrv = indicadores["ciclo"]["mvrv"]["valor"]
-        nupl = indicadores["ciclo"]["nupl"]["valor"]
+        mvrv = indicadores["ciclo"]["mvrv"]
+        nupl = indicadores["ciclo"]["nupl"]
         
         # 3. Determinar ciclo via banco usando a tabela matriz_ciclos_mercado V2
         ciclo_definido = _buscar_ciclo_matriz(score_mercado, mvrv, nupl)
@@ -107,17 +101,7 @@ def _get_scores_indicadores_mercado() -> dict:
 
    
 def _buscar_ciclo_matriz(score: float, mvrv: float, nupl: float) -> Optional[Dict]:
-    """
-    Busca ciclo na matriz baseado nos indicadores
     
-    Args:
-        score: Score de mercado (0-100)
-        mvrv: Market Value to Realized Value  
-        nupl: Net Unrealized Profit/Loss
-        
-    Returns:
-        dict: Dados do ciclo encontrado ou None
-    """
     try:
         logger.info(f"🔍 Buscando ciclo para Score:{score} MVRV:{mvrv} NUPL:{nupl}")
         

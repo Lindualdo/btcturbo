@@ -9,6 +9,7 @@ from .dash_main.analise_alavancagem import executar_analise_alavancagem
 from .dash_main.analise_tecnica.analise_tecnica_service import executar_analise
 from  app.services.utils.helpers.postgres.mercado.database_helper import get_ciclo_mercado
 
+
 logger = logging.getLogger(__name__)
 
 def processar_dash_main() -> dict:

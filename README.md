@@ -11,7 +11,6 @@ Sistema de análise de indicadores Bitcoin para trading alavancado, construído 
 
 ## Proxima versão 1.5.2 - Revisar Processo de alavancagem - feito
   
-
 ## Proxima versão 1.5.3 - Revisar Processo de execução tática - feito
 - recriado a arquitetura
 - organizado melhor os arquiovs
@@ -46,7 +45,9 @@ Sistema de análise de indicadores Bitcoin para trading alavancado, construído 
 ## versão 1.6.1 - Revisão nas rotinas de dash-mercado (get) - feito
 - simplificação das rotinas
 - organização
+- integridade com as novas regras da gravação do dash-mercado
 
+## versão 1.6.2 - Revisão nas rotinas de dash-main (gravação)
 
 ## 🏗️ Arquitetura
 
