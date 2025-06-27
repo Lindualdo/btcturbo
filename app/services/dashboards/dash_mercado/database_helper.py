@@ -73,12 +73,24 @@ def _build_indicators_json(dados_scores: dict) -> str:
     """Constrói JSON usando apenas dados_scores (já contém tudo)"""
     try:
         import json
+        from datetime import datetime
+        
+        def serialize_datetime(obj):
+            """Serializa datetime para string"""
+            if isinstance(obj, datetime):
+                return obj.isoformat()
+            elif isinstance(obj, dict):
+                return {k: serialize_datetime(v) for k, v in obj.items()}
+            elif isinstance(obj, list):
+                return [serialize_datetime(item) for item in obj]
+            else:
+                return obj
         
         # Estrutura JSON usando dados que já estão em dados_scores
         json_completo = {
-            "ciclo": dados_scores.get("ciclo", {}),
-            "momentum": dados_scores.get("momentum", {}),
-            "tecnico": dados_scores.get("tecnico", {}),
+            "ciclo": serialize_datetime(dados_scores.get("ciclo", {})),
+            "momentum": serialize_datetime(dados_scores.get("momentum", {})),
+            "tecnico": serialize_datetime(dados_scores.get("tecnico", {}))
         }
         
         return json.dumps(json_completo)
