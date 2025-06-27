@@ -12,15 +12,16 @@ logger = logging.getLogger(__name__)
 def processar_dash_mercado() -> dict:
     try:
 
-        # 1 - Busca os scores calculados
-        scores_data = get_scores_data()
+        # 1 - Busca os scores calculados (todos os blocos)
+        scores = get_scores_data()
        
+        # 2. Calcula o score consolidado
         logger.info("🔄 Coletando e calculando scores...")
-        score_consolidado = _calcular_score_consolidado(scores_data)
+        score_consolidado = _calcular_score_consolidado(scores)
 
-        # 2. Preparar dados para banco
+        # 3. Preparar dados para banco
         dados_completos = {
-            **scores_data["scores"],
+            **scores,
             "score_consolidado": score_consolidado["valor"] ,
             "classificacao_consolidada": score_consolidado["classificacao"]
         }
@@ -39,16 +40,16 @@ def processar_dash_mercado() -> dict:
                 "classificacao": score_consolidado["classificacao"],
                 "blocos": {
                     "ciclo": {
-                        "score": scores_data["score"]["ciclo"]["score_consolidado"],
-                        "classificacao": scores_data["score"]["ciclo"]["classificacao_consolidada"]
+                        "score": scores["ciclo"]["score_consolidado"],
+                        "classificacao": scores["ciclo"]["classificacao_consolidada"]
                     },
                     "momentum": {
-                        "score": scores_data["score"]["momentum"]["score_consolidado"], 
-                        "classificacao": scores_data["score"]["momentum"]["classificacao_consolidada"]
+                        "score": scores["momentum"]["score_consolidado"], 
+                        "classificacao": scores["momentum"]["classificacao_consolidada"]
                     },
                     "tecnico": {
-                        "score": scores_data["score"]["tecnico"]["score_consolidado"],
-                        "classificacao": scores_data["score"]["tecnico"]["classificacao_consolidada"]
+                        "score": scores["tecnico"]["score_consolidado"],
+                        "classificacao": scores["tecnico"]["classificacao_consolidada"]
                     }
                 }
             }
@@ -70,17 +71,14 @@ def processar_dash_mercado() -> dict:
 def get_scores_data() -> dict:
 
     # 1. Coletar scores
-    score_ciclo = calcular_score_ciclo()
-    score_tecnico = calcular_score_tecnico()
-    score_momentum = calcular_score_momentum()
+    ciclo = calcular_score_ciclo()
+    tecnico = calcular_score_tecnico()
+    momentum = calcular_score_momentum()
 
     return {
-        "status": "success",
-        "scores": {
-            "ciclo": score_ciclo,
-            "momentum": score_momentum, 
-            "tecnico": score_tecnico
-        }
+        "ciclo": ciclo,
+        "momentum": momentum, 
+        "tecnico": tecnico
     }
 
 def obter_dash_mercado() -> dict:
@@ -140,9 +138,9 @@ def _calcular_score_consolidado(scores: dict) -> dict:
   
     try:
         
-        score_ciclo = float(scores["ciclo"])
-        score_momentum = float(scores["momentum"])
-        score_tecnico = float(scores["tecnico"])
+        score_ciclo = float(scores["ciclo"]["score_consolidado"])
+        score_momentum = float(scores["momentum"]["score_consolidado"])
+        score_tecnico = float(scores["tecnico"]["score_consolidado"])
 
         # DEBUG: Ver valores extraídos
         logger.info(f"🔍 DEBUG valores: ciclo={score_ciclo}, momentum={score_momentum}, tecnico={score_tecnico}")
@@ -173,6 +171,6 @@ def _calcular_score_consolidado(scores: dict) -> dict:
     except Exception as e:
         logger.error(f"❌ Erro calcular score consolidado: {str(e)}")
         return {
-            "valor": 5.0,
+            "valor": 0,
             "classificacao": "neutro"
         }

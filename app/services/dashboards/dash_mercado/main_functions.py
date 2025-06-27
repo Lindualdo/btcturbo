@@ -7,15 +7,7 @@ from .database_helper import save_scores_to_db, get_latest_scores_from_db
 logger = logging.getLogger(__name__)
 
 def save_dashboard_scores(dados_scores: dict) -> dict:
-    """
-    Salva scores consolidados no banco
-    
-    Args:
-        dados_scores: Dict com todos os scores calculados
-        
-    Returns:
-        dict: {"status": "success/error", "id": id_registro}
-    """
+   
     try:
         logger.info("💾 Salvando scores no banco...")
         
@@ -38,12 +30,7 @@ def save_dashboard_scores(dados_scores: dict) -> dict:
         }
 
 def get_latest_dashboard_scores() -> dict:
-    """
-    Obtém último registro de scores do banco
     
-    Returns:
-        dict: Dados do último registro ou None
-    """
     try:
         return get_latest_scores_from_db()
         
