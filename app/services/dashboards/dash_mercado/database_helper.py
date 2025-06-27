@@ -74,23 +74,26 @@ def _build_indicators_json(dados_scores: dict) -> str:
     try:
         import json
         from datetime import datetime
+        from decimal import Decimal
         
-        def serialize_datetime(obj):
-            """Serializa datetime para string"""
+        def serialize_json(obj):
+            """Serializa datetime e Decimal para JSON"""
             if isinstance(obj, datetime):
                 return obj.isoformat()
+            elif isinstance(obj, Decimal):
+                return float(obj)
             elif isinstance(obj, dict):
-                return {k: serialize_datetime(v) for k, v in obj.items()}
+                return {k: serialize_json(v) for k, v in obj.items()}
             elif isinstance(obj, list):
-                return [serialize_datetime(item) for item in obj]
+                return [serialize_json(item) for item in obj]
             else:
                 return obj
         
         # Estrutura JSON usando dados que já estão em dados_scores
         json_completo = {
-            "ciclo": serialize_datetime(dados_scores.get("ciclo", {})),
-            "momentum": serialize_datetime(dados_scores.get("momentum", {})),
-            "tecnico": serialize_datetime(dados_scores.get("tecnico", {}))
+            "ciclo": serialize_json(dados_scores.get("ciclo", {})),
+            "momentum": serialize_json(dados_scores.get("momentum", {})),
+            "tecnico": serialize_json(dados_scores.get("tecnico", {}))
         }
         
         return json.dumps(json_completo)
