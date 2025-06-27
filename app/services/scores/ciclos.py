@@ -105,10 +105,7 @@ def interpretar_classificacao_consolidada(score):
         return "crítico"
 
 def calcular_score():
-    """
-    Calcula score consolidado do bloco CICLO v5.1.2
-    PESOS REBALANCEADOS: MVRV 30% + NUPL 20% + Realized 40% + Puell 10% = 100%
-    """
+
     # 1. Obter dados brutos da API
     dados_indicadores = indicadores_ciclos.obter_indicadores()
     
@@ -124,16 +121,14 @@ def calcular_score():
     # 2. Extrair valores individuais
     mvrv_valor = indicadores["MVRV_Z"]["valor"]
     realized_valor = indicadores["Realized_Ratio"]["valor"]
-    puell_valor = indicadores["Puell_Multiple"]["valor"]
     nupl_valor = indicadores["NUPL"]["valor"] 
-    reserve_risk = indicadores["Reserve_Risk"]["valor"] 
+    reserve_risk_valor = indicadores["Reserve_Risk"]["valor"] 
     
     # 3. Calcular scores individuais
     mvrv_score, mvrv_classificacao = calcular_mvrv_score(mvrv_valor)
     realized_score, realized_classificacao = calcular_realized_score(realized_valor)
-    puell_score, puell_classificacao = calcular_puell_score(puell_valor)
     nupl_score, nupl_classificacao = calcular_nupl_score(nupl_valor)  
-    reserve_risk, nupl_classificacao = calcular_reserve_risk(reserve_risk)  
+    reserve_risk, nupl_classificacao = calcular_reserve_risk(reserve_risk_valor)  
     
     # 4. APLICAR PESOS REBALANCEADOS v1.6.0
     
@@ -141,7 +136,6 @@ def calcular_score():
         (mvrv_score * 0.40) +      # ← AUMENTADO: 50% → 30%  → 40
         (nupl_score * 0.20) +      # ← AUMENTADO: 20% → 30%
         (realized_score * 0.20) +  # ← REDUZIDO: 40% → 20%
-        (puell_score * 0.0) +     # ← SUBSTITUIDO POR reserve_risk : 10%  → 0%
         (reserve_risk * 0.10))    #  - NOVO
     
     # 6. Retornar JSON formatado
@@ -157,36 +151,21 @@ def calcular_score():
             "MVRV_Z": {
                 "valor": mvrv_valor,
                 "score": round(mvrv_score * 10, 1),
-                #"score_consolidado": round(mvrv_score * 0.30, 2),  # ← PESO REDUZIDO
-                #"classificacao": mvrv_classificacao
             },
             
             "NUPL": {
                 "valor": nupl_valor,
                 "score": round(nupl_score *10, 1),
-                #"score_consolidado": round(nupl_score * 0.20, 2),
-                #"classificacao": nupl_classificacao
             },
             
             "Realized_Ratio": {
                 "valor": realized_valor,
                 "score": round(realized_score * 10, 1),
-                #"score_consolidado": round(realized_score * 0.40, 2),
-                #"classificacao": realized_classificacao
-            },
-            
-            "Puell_Multiple": {
-                "valor": puell_valor,
-                "score": round(puell_score * 10, 1),
-                #"score_consolidado": round(puell_score * 0.10, 2),
-                #"classificacao": puell_classificacao
             },
                         
             "Reserve_Risk": {
-                "valor": reserve_risk,
+                "valor": reserve_risk_valor,
                 "score": round(reserve_risk * 10, 1),
-                #"score_consolidado": round(puell_score * 0.10, 2),
-                #"classificacao": puell_classificacao
             }
         }, 
         "status": "success"
