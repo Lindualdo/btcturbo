@@ -3,7 +3,7 @@
 from datetime import datetime
 import logging
 from app.services.utils.helpers.tradingview.ema_calculator import get_complete_ema_analysis
-from app.services.scores.tecnico_v3.utils.score_compositor import calcular_score_tecnico_v3
+from .utils.score_compositor import calcular_score_tecnico_v3
 from app.services.utils.helpers.postgres.indicadores.tecnico_v3_helper import insert_dados_tecnico
 
 logger = logging.getLogger(__name__)
