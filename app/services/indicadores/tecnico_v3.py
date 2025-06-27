@@ -21,15 +21,15 @@ def obter_indicadores():
         # Debug: verificar campos disponíveis
         logger.info(f"🔍 Campos disponíveis: {list(dados_db.keys())}")
         
-        # Calcular scores consolidados por componente
+        # Calcular scores consolidados por componente (converter Decimal para float)
         score_alinhamento_consolidado = (
-            (dados_db.get("score_alinhamento_v3_1w", 0) * 0.7) + 
-            (dados_db.get("score_alinhamento_v3_1d", 0) * 0.3)
+            (float(dados_db.get("score_alinhamento_v3_1w", 0)) * 0.7) + 
+            (float(dados_db.get("score_alinhamento_v3_1d", 0)) * 0.3)
         )
         
         score_expansao_consolidado = (
-            (dados_db.get("score_expansao_v3_1w", 0) * 0.7) + 
-            (dados_db.get("score_expansao_v3_1d", 0) * 0.3)
+            (float(dados_db.get("score_expansao_v3_1w", 0)) * 0.7) + 
+            (float(dados_db.get("score_expansao_v3_1d", 0)) * 0.3)
         )
         
         # Score consolidado = média dos componentes
