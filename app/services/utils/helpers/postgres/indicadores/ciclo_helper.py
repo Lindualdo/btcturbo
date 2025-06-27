@@ -14,7 +14,7 @@ def get_dados_ciclo() -> Optional[Dict]:
         
         query = """
             SELECT mvrv_z_score, realized_ratio, puell_multiple, nupl,
-                   timestamp, fonte, metadados
+                   timestamp, fonte,reserve_risk, metadados
             FROM indicadores_ciclo 
             ORDER BY timestamp DESC 
             LIMIT 1

@@ -25,7 +25,7 @@ def obter_indicadores():
             "status": "success",
             "bloco": "tecnico_v3", 
             "timestamp": dados_db.get("timestamp"),
-            "score_consolidado": dados_db.get("score_final_ponderado"),
+            "score_consolidado": round(float( dados_db.get("score_final_ponderado")),1),
             "classificacao_consolidada" : get_ema_status_description(dados_db.get("score_final_ponderado")),
             "score_semanal": {
                 "score_total": dados_db.get("score_consolidado_1w"),

@@ -28,6 +28,11 @@ def obter_indicadores():
                     "valor": float(dados_db["nupl"]) if dados_db["nupl"] is not None else None,
                     "disponivel": dados_db["nupl"] is not None,
                     "fonte": dados_db["fonte"] or "PostgreSQL" if dados_db["nupl"] is not None else None
+                },
+                "NUPL": {
+                    "valor": float(dados_db["reserve_risk"]) if dados_db["reserve_risk"] is not None else None,
+                    "disponivel": dados_db["reserve_risk"] is not None,
+                    "fonte": dados_db["fonte"] or "PostgreSQL" if dados_db["reserve_risk"] is not None else None
                 }
             },
             "status": "success",
