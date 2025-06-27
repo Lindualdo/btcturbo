@@ -43,7 +43,9 @@ Sistema de análise de indicadores Bitcoin para trading alavancado, construído 
 - simplificado as rotinas de gravação de dados na base
 - melhoria de performance de 27 seg. para 12 seg (por consequencia das simplificações)
 
-## versão 1.6.1 - Revisão nas rotinas de dash-mercado (get)
+## versão 1.6.1 - Revisão nas rotinas de dash-mercado (get) - feito
+- simplificação das rotinas
+- organização
 
 
 ## 🏗️ Arquitetura
