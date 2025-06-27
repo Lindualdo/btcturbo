@@ -33,19 +33,36 @@ def save_scores_to_db(dados_scores: dict) -> dict:
             RETURNING id
         """
         
-        params = (
-            dados_scores["score_ciclo"],
-            dados_scores["classificacao_ciclo"],
-            dados_scores["score_momentum"], 
-            dados_scores["classificacao_momentum"],
-            dados_scores["score_tecnico"],
-            dados_scores["classificacao_tecnico"],
+        """ 
+            params = (
+            dados_scores["ciclo"]["score_consolidado"],
+            dados_scores["ciclo"]["classificacao_consolidada"],
+            dados_scores["momentum"]["score_consolidado"], 
+            dados_scores["momentum"]["classificacao_consolidada"],
+            dados_scores["tecnico"]["score_consolidado"],
+            dados_scores["tecnico"]["classificacao_consolidada"],
             dados_scores["score_consolidado"],
             dados_scores["classificacao_consolidada"],
             json_indicadores,  # JSON pronto
             ids_indicadores.get("ciclo_id"),
             ids_indicadores.get("momentum_id"),
             ids_indicadores.get("tecnico_id"),
+            timestamp_lisboa
+        )
+        """
+        params = (
+            dados_scores["ciclo"]["score_consolidado"],
+            dados_scores["ciclo"]["classificacao_consolidada"],
+            dados_scores["momentum"]["score_consolidado"], 
+            dados_scores["momentum"]["classificacao_consolidada"],
+            dados_scores["tecnico"]["score_consolidado"],
+            dados_scores["tecnico"]["classificacao_consolidada"],
+            dados_scores["score_consolidado"],
+            dados_scores["classificacao_consolidada"],
+            {},  # JSON pronto
+            0,
+            0,
+            0,
             timestamp_lisboa
         )
         
@@ -206,6 +223,7 @@ def _get_latest_indicators_ids() -> dict:
             resultado = execute_query(query, fetch_one=True)
             ids[key] = resultado["id"] if resultado else None
             
+       
         return ids
         
     except Exception as e:

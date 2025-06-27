@@ -7,6 +7,7 @@ from app.services.scores.ciclos import calcular_score as calcular_score_ciclo
 from app.services.scores.momentum import calcular_score as calcular_score_momentum
 from app.services.scores.tecnico  import calcular_score as calcular_score_tecnico
 
+
 logger = logging.getLogger(__name__)
 
 def processar_dash_mercado() -> dict:
