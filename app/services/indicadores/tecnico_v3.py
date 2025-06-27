@@ -8,40 +8,18 @@ logger = logging.getLogger(__name__)
 def obter_indicadores():
     """Obter indicadores técnicos v3.0 do banco"""
     try:
-        logger.info("🔍 Buscando indicadores técnico v3.0...")
-        
         dados_db = get_dados_tecnico()
         
         if not dados_db:
-            return {
-                "status": "error",
-                "erro": "Nenhum dado v3.0 encontrado"
-            }
-        
-        # Debug: verificar campos disponíveis
-        logger.info(f"🔍 Campos disponíveis: {list(dados_db.keys())}")
-        
-        # Calcular scores consolidados por componente (converter Decimal para float)
-        score_alinhamento_consolidado = (
-            (float(dados_db.get("score_alinhamento_v3_1w", 0)) * 0.7) + 
-            (float(dados_db.get("score_alinhamento_v3_1d", 0)) * 0.3)
-        )
-        
-        score_expansao_consolidado = (
-            (float(dados_db.get("score_expansao_v3_1w", 0)) * 0.7) + 
-            (float(dados_db.get("score_expansao_v3_1d", 0)) * 0.3)
-        )
-        
-        # Score consolidado = média dos componentes
-        score_consolidado_calculado = (score_alinhamento_consolidado + score_expansao_consolidado) / 2
+            return {"status": "error", "erro": "Nenhum dado v3.0 encontrado"}
         
         return {
             "status": "success",
             "bloco": "tecnico_v3", 
             "timestamp": dados_db.get("timestamp"),
-            "score_consolidado": round(score_consolidado_calculado, 1),
-            "score_alinhamento_consolidado": round(score_alinhamento_consolidado, 1),
-            "score_expansao_consolidado": round(score_expansao_consolidado, 1),
+            "score_consolidado": dados_db.get("score_final_ponderado"),
+            "score_alinhamento_consolidado": dados_db.get("score_alinhamento_v3_1w"),  # Campo gravado
+            "score_expansao_consolidado": dados_db.get("score_expansao_v3_1w"),      # Campo gravado
             "score_semanal": {
                 "score_total": dados_db.get("score_consolidado_1w"),
                 "score_alinhamento": dados_db.get("score_alinhamento_v3_1w"),

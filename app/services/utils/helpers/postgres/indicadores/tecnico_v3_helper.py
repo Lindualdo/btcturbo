@@ -23,15 +23,15 @@ def insert_dados_tecnico(dados: Dict) -> bool:
                 score_consolidado_1w, score_consolidado_1d, score_final_ponderado,
                 score_alinhamento_v3_1w, score_expansao_v3_1w,
                 score_alinhamento_v3_1d, score_expansao_v3_1d,
-                score_tecnico_v3_final, distancias_emas_json, versao_calculo,
-                fonte, timestamp
+                score_tecnico_v3_final, score_alinhamento_consolidado, score_expansao_consolidado,
+                distancias_emas_json, versao_calculo, fonte, timestamp
             ) VALUES (
                 %s, %s, %s, %s, %s,
                 %s, %s, %s, %s, %s,
                 %s,
                 %s, %s, %s,
                 %s, %s, %s, %s, %s, %s, %s,
-                %s, %s
+                %s, %s, %s, %s
             )
         """
         
@@ -49,6 +49,8 @@ def insert_dados_tecnico(dados: Dict) -> bool:
             dados.get("score_alinhamento_v3_1d"),
             dados.get("score_expansao_v3_1d"),
             dados.get("score_tecnico_v3_final"),
+            dados.get("score_alinhamento_consolidado"),
+            dados.get("score_expansao_consolidado"),
             distancias_json_str,
             dados.get("versao_calculo", "v3.0"),
             dados.get("fonte", "tecnico_v3"),
@@ -76,8 +78,8 @@ def get_dados_tecnico() -> Optional[Dict]:
                 score_consolidado_1w, score_consolidado_1d, score_final_ponderado,
                 score_alinhamento_v3_1w, score_expansao_v3_1w,
                 score_alinhamento_v3_1d, score_expansao_v3_1d,
-                score_tecnico_v3_final, distancias_emas_json,
-                timestamp, fonte
+                score_tecnico_v3_final, score_alinhamento_consolidado, score_expansao_consolidado,
+                distancias_emas_json, timestamp, fonte
             FROM indicadores_tecnico 
             ORDER BY timestamp DESC 
             LIMIT 1
