@@ -24,7 +24,7 @@ def insert_dados_tecnico(dados: Dict) -> bool:
                 score_alinhamento_v3_1w, score_expansao_v3_1w,
                 score_alinhamento_v3_1d, score_expansao_v3_1d,
                 score_tecnico_v3_final, score_alinhamento_consolidado, score_expansao_consolidado,
-                distancias_emas_json, versao_calculo, fonte, timestamp
+                scores_validation_json, versao_calculo, fonte, timestamp
             ) VALUES (
                 %s, %s, %s, %s, %s,
                 %s, %s, %s, %s, %s,
@@ -79,7 +79,7 @@ def get_dados_tecnico() -> Optional[Dict]:
                 score_alinhamento_v3_1w, score_expansao_v3_1w,
                 score_alinhamento_v3_1d, score_expansao_v3_1d,
                 score_tecnico_v3_final, score_alinhamento_consolidado, score_expansao_consolidado,
-                distancias_emas_json, timestamp, fonte
+                scores_validation_json, timestamp, fonte
             FROM indicadores_tecnico 
             ORDER BY timestamp DESC 
             LIMIT 1

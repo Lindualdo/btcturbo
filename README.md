@@ -82,7 +82,7 @@ app/
 
 | Método | Endpoint | Descrição |
 |--------|----------|-----------|
-| POST | `/api/v1/coletar-indicadores/{bloco}` | Coleta dados externos |
+| GET | `/api/v1/coletar-indicadores/{bloco}` | Coleta dados externos |
 | GET | `/api/v1/obter-indicadores/{bloco}` | Obter dados brutos |
 | GET | `/api/v1/calcular-score/{bloco}` | Calcular scores (0-10) |
 | POST/GET | `/api/v1/dash-mercado` | Dashboard mercado |
@@ -205,7 +205,7 @@ def buscar_tradingview():
 - **0-20**: Bear Confirmado
 
 ### **Blocos de Indicadores**
-- **Ciclos**: MVRV, NUPL, Realized Ratio, Puell Multiple
+- **Ciclos**: MVRV, NUPL, Realized Ratio, Reserve Risk
 - **Momentum**: RSI Semanal, Funding Rates, SOPR, Long/Short Ratio
 - **Riscos**: Health Factor, Distance Liquidação
 - **Técnico**: Sistema EMAs, RSI, Padrões Gráficos
@@ -262,10 +262,11 @@ curl http://localhost:8000/api/v1/obter-indicadores/ciclos
 
 ## 📝 Próximas Fases
 
-- **1.6.0**: Controle de operações + alertas
-- **1.7.0**: Sistema de stops + gestão de risco
-- **1.8.0**: Backtest + métricas de performance
-- **1.9.0**: Interface web completa
+- **1.5.0**: refactore + simplificações + organização do código + Dash financeiro
+- **1.6.0**: refactore + revisão anal. tecnica, revisão analise mercado, revisão analise tática
+- **1.7.0**: Controle de operações + alertas
+- **1.8.0**: Sistema de stops + gestão de risco
+- **1.9.0**: Backtest + métricas de performance
 
 ---
 
