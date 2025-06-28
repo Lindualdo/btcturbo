@@ -17,6 +17,7 @@ def obter_indicadores():
             "status": "success",
             "bloco": "tecnico_v3", 
             "timestamp": dados_db.get("timestamp"),
+            "classificacao_consolidada": "forte",
             "score_consolidado": dados_db.get("score_final_ponderado"),
             "score_alinhamento_consolidado": dados_db.get("score_alinhamento_v3_1w"),  # Campo gravado
             "score_expansao_consolidado": dados_db.get("score_expansao_v3_1w"),      # Campo gravado
