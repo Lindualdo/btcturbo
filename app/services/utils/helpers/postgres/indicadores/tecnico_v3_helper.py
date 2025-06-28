@@ -1,74 +1,80 @@
-# app/services/utils/helpers/postgres/indicadores/tecnico_v3_helper.py
+# app/services/utils/helpers/postgres/indicadores/tecnico_v3_helper.py - VERSÃO SIMPLIFICADA
 
-import json
 import logging
 from datetime import datetime
-from typing import Dict, Optional
+from typing import Dict
 from app.services.utils.helpers.postgres.base import execute_query
 
 logger = logging.getLogger(__name__)
 
 def insert_dados_tecnico(dados: Dict) -> bool:
-    """Insere dados técnico v3.0"""
+    """
+    Insere dados técnico v3.0 - VERSÃO SIMPLIFICADA
+    Apenas EMAs + Scores principais + Metadados básicos
+    """
     try:
-        logger.info("💾 Inserindo dados técnico...")
+        logger.info("💾 Inserindo dados técnico SIMPLIFICADO...")
         
-        distancias_json_str = json.dumps(dados.get("distancias_emas_json", {}))
-        
+        # Query simplificada - apenas campos essenciais
         query = """
             INSERT INTO indicadores_tecnico (
                 ema_17_1w, ema_34_1w, ema_144_1w, ema_305_1w, ema_610_1w,
                 ema_17_1d, ema_34_1d, ema_144_1d, ema_305_1d, ema_610_1d,
                 btc_price_current,
                 score_consolidado_1w, score_consolidado_1d, score_final_ponderado,
-                score_alinhamento_v3_1w, score_expansao_v3_1w,
-                score_alinhamento_v3_1d, score_expansao_v3_1d,
-                score_tecnico_v3_final, score_alinhamento_consolidado, score_expansao_consolidado,
-                distancias_emas_json, versao_calculo, fonte, timestamp
+                fonte, timestamp
             ) VALUES (
                 %s, %s, %s, %s, %s,
                 %s, %s, %s, %s, %s,
                 %s,
                 %s, %s, %s,
-                %s, %s, %s, %s, %s, %s, %s,
-                %s, %s, %s, %s
+                %s, %s
             )
         """
         
+        # Params organizados - apenas campos essenciais
         params = (
-            dados.get("ema_17_1w"), dados.get("ema_34_1w"), dados.get("ema_144_1w"),
-            dados.get("ema_305_1w"), dados.get("ema_610_1w"),
-            dados.get("ema_17_1d"), dados.get("ema_34_1d"), dados.get("ema_144_1d"),
-            dados.get("ema_305_1d"), dados.get("ema_610_1d"),
+            # EMAs Semanal (5)
+            dados.get("ema_17_1w"),
+            dados.get("ema_34_1w"),
+            dados.get("ema_144_1w"),
+            dados.get("ema_305_1w"),
+            dados.get("ema_610_1w"),
+            
+            # EMAs Diário (5)
+            dados.get("ema_17_1d"),
+            dados.get("ema_34_1d"),
+            dados.get("ema_144_1d"),
+            dados.get("ema_305_1d"),
+            dados.get("ema_610_1d"),
+            
+            # Preço atual (1)
             dados.get("btc_price_current"),
+            
+            # Scores principais (3)
             dados.get("score_consolidado_1w"),
             dados.get("score_consolidado_1d"),
             dados.get("score_final_ponderado"),
-            dados.get("score_alinhamento_v3_1w"),
-            dados.get("score_expansao_v3_1w"), 
-            dados.get("score_alinhamento_v3_1d"),
-            dados.get("score_expansao_v3_1d"),
-            dados.get("score_tecnico_v3_final"),
-            dados.get("score_alinhamento_consolidado"),
-            dados.get("score_expansao_consolidado"),
-            distancias_json_str,
-            dados.get("versao_calculo", "v3.0"),
+            
+            # Metadados (2)
             dados.get("fonte", "tecnico_v3"),
             dados.get("timestamp", datetime.utcnow())
         )
         
         execute_query(query, params)
-        logger.info("✅ Dados técnico inseridos com sucesso")
+        logger.info("✅ Dados técnico SIMPLIFICADO inseridos com sucesso")
         return True
         
     except Exception as e:
-        logger.error(f"❌ Erro ao inserir dados técnico: {str(e)}")
+        logger.error(f"❌ Erro ao inserir dados técnico SIMPLIFICADO: {str(e)}")
         return False
 
-def get_dados_tecnico() -> Optional[Dict]:
-    """Busca dados técnicos mais recentes"""
+def get_dados_tecnico() -> dict:
+    """
+    Busca dados técnico v3.0 - VERSÃO SIMPLIFICADA
+    """
     try:
-        logger.info("🔍 Buscando dados técnico...")
+        logger.info("🔍 Buscando dados técnico SIMPLIFICADO...")
         
         query = """
             SELECT 
@@ -76,10 +82,7 @@ def get_dados_tecnico() -> Optional[Dict]:
                 ema_17_1d, ema_34_1d, ema_144_1d, ema_305_1d, ema_610_1d,
                 btc_price_current,
                 score_consolidado_1w, score_consolidado_1d, score_final_ponderado,
-                score_alinhamento_v3_1w, score_expansao_v3_1w,
-                score_alinhamento_v3_1d, score_expansao_v3_1d,
-                score_tecnico_v3_final, score_alinhamento_consolidado, score_expansao_consolidado,
-                distancias_emas_json, timestamp, fonte
+                fonte, timestamp
             FROM indicadores_tecnico 
             ORDER BY timestamp DESC 
             LIMIT 1
@@ -88,12 +91,12 @@ def get_dados_tecnico() -> Optional[Dict]:
         result = execute_query(query, fetch_one=True)
         
         if result:
-            logger.info(f"✅ Dados encontrados: score={result.get('score_final_ponderado')}")
+            logger.info(f"✅ Dados técnico encontrados: score_final={result.get('score_final_ponderado')}")
             return result
         else:
-            logger.warning("⚠️ Nenhum dado encontrado")
+            logger.warning("⚠️ Nenhum dado técnico encontrado")
             return None
             
     except Exception as e:
-        logger.error(f"❌ Erro ao buscar dados: {str(e)}")
+        logger.error(f"❌ Erro ao buscar dados técnico: {str(e)}")
         return None
