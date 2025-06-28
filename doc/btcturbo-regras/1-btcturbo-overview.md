@@ -1,4 +1,4 @@
-#  BTC TURBO - Hold Alavancado - Visão Geral Executiva 1.6.0
+#  BTC TURBO - Hold Alavancado - Visão Geral Executiva 1.6.1
 - revisões nos pesos do ciclos (ciclos de 40% > 50%, tecnico de 40% > 30%)
 - camada 4 agora focada exclusivamente nas ações definidas pela matriz de ciclo do mercado ( camada 1)
 - analise técnica: trocado posição do preço por expnasão das EMAs (distancia entre as EMAs)
@@ -50,8 +50,8 @@ Patrimonio total dividido em duas partes:
 |------------------------------|--------------|------------------|
 | **MVRV Z-Score**             | 40% Ciclo    | Mede se o BTC está sobre ou subvalorizado - valor de mercado vs valor realizado |
 | **NUPL**                     | 30% Ciclo    | Lucros/prejuízos não realizados; mostra otimismo ou medo dos investidores |
-| **Realized Price Ratio**     | 20% Ciclo    | Compara o preço atual com o preço médio pago (todas as moedas em circulação)
-| **Reserve Risk**             | 10% Ciclo    | Relação entre a confiança dos holders de longo prazo (HODLers) e o preço atual|
+| **Realized Price Ratio**     | 15% Ciclo    | Compara o preço atual com o preço médio pago (todas as moedas em circulação)
+| **Reserve Risk**             | 15% Ciclo    | Relação entre a confiança dos holders de longo prazo (HODLers) e o preço atual|
 | **RSI Semanal**              | 40% Momentum | Força relativa dos preços; identifica condições de sobrecompra ou sobrevenda |
 | **Funding Rates 7D**         | 30% Momentum | Taxas de financiamento médias; revela o sentimento de alavancagem dos derivativos |
 | **SOPR**                     | 20% Momentum | Mede o lucro/prejuízo nas transações realizadas on-chain |

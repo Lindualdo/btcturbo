@@ -3,7 +3,6 @@
   "nodes": [
     {
       "parameters": {
-        "method": "POST",
         "url": "https://btcturbo-prod.up.railway.app/api/v1/coletar-indicadores/tecnico",
         "options": {}
       },
@@ -18,7 +17,6 @@
     },
     {
       "parameters": {
-        "method": "POST",
         "url": "https://btcturbo-prod.up.railway.app/api/v1/coletar-indicadores/riscos",
         "options": {}
       },
@@ -66,8 +64,7 @@
               "triggerAtHour": 1
             },
             {
-              "field": "hours",
-              "hoursInterval": 4
+              "field": "hours"
             }
           ]
         }
@@ -79,7 +76,7 @@
         180
       ],
       "id": "cb851be4-4032-42fb-a495-718e844de4e8",
-      "name": "Schedule 4H"
+      "name": "Schedule 1H"
     }
   ],
   "pinData": {},
@@ -106,7 +103,7 @@
         ]
       ]
     },
-    "Schedule 4H": {
+    "Schedule 1H": {
       "main": [
         [
           {
@@ -124,7 +121,7 @@
     "timezone": "Europe/Lisbon",
     "callerPolicy": "workflowsFromSameOwner"
   },
-  "versionId": "1f29f8ea-fdc4-4acf-bddd-a3c17da982e9",
+  "versionId": "ce4584df-5a48-4ffb-bd83-c2788f543d45",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "df70ff04e1b45ccc1482849dfc7bcfb5dca43eb687554e47ff8dc55a9291bcc5"

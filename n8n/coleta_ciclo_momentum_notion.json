@@ -215,7 +215,8 @@
             "puell_multiple": "={{ $json.puell_multiple.valor }}",
             "timestamp": "={{ DateTime.now() }}",
             "fonte": "Notion",
-            "nupl": "={{ $json.nupl.valor }}"
+            "nupl": "={{ $json.nupl.valor }}",
+            "reserve_risk": "={{ $json.reserve_risk.valor }}"
           },
           "matchingColumns": [
             "id"
@@ -294,6 +295,16 @@
               "display": true,
               "type": "number",
               "canBeUsedToMatch": true
+            },
+            {
+              "id": "reserve_risk",
+              "displayName": "reserve_risk",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": false
             }
           ],
           "attemptToConvertTypes": false,
@@ -416,7 +427,7 @@
     "timezone": "Europe/Lisbon",
     "callerPolicy": "workflowsFromSameOwner"
   },
-  "versionId": "77d40c01-8ca6-4f01-8736-b2271066c281",
+  "versionId": "603a5a4f-6428-40dd-90e9-15338e1c24c7",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "df70ff04e1b45ccc1482849dfc7bcfb5dca43eb687554e47ff8dc55a9291bcc5"
