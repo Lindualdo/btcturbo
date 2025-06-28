@@ -9,7 +9,7 @@ from app.services.coleta import ciclos, riscos, momentum, tecnico
 
 router = APIRouter()
 
-@router.post("/coletar-indicadores/{bloco}")
+@router.get("/coletar-indicadores/{bloco}")
 async def coletar_indicadores(bloco: str, forcar_coleta: bool = False):
     if bloco == "ciclos":
        return {"status": "erro", "detalhes": "Está sendo importado no N8N"}
