@@ -139,6 +139,12 @@ def calcular_score():
         (reserve_risk * 0.10))    #  - NOVO
     
     # 6. Retornar JSON formatado
+
+    """
+        NUNCA ALTERAR ESSA ESTRUTURA NEM NOME DOS CAMPOS
+        SE PRECISAR ALTERAR, ANALISAR GRAVÇÃO DOS DADOS (DASH-MERCADO E DASH-MAIN)
+    """
+
     return {
         "bloco": "ciclo",
         "status": "success",

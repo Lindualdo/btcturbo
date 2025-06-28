@@ -79,6 +79,11 @@ def calcular_score():
         (hf_score * 0.50)
     )
     
+    """
+        NUNCA ALTERAR ESSA ESTRUTURA NEM NOME DOS CAMPOS
+        SE PRECISAR ALTERAR, ANALISAR GRAVÇÃO DOS DADOS (DASH-MERCADO E DASH-MAIN)
+    """
+
     # 4. Retornar JSON formatado
     return {
         "bloco": "riscos",

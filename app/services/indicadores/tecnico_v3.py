@@ -13,12 +13,17 @@ def obter_indicadores():
         if not dados_db:
             return {"status": "error", "erro": "Nenhum dado v3.0 encontrado"}
         
+
+        """
+            NUNCA ALTERAR ESSA ESTRUTURA NEM NOME DOS CAMPOS
+            SE PRECISAR ALTERAR ANALISAR OS POSTS DASH-MERCADO E
+        """
         return {
             "status": "success",
             "bloco": "tecnico_v3", 
             "timestamp": dados_db.get("timestamp"),
-            "classificacao_consolidada": "forte",
             "score_consolidado": dados_db.get("score_final_ponderado"),
+            "classificacao_consolidada": _get_ema_status_description(dados_db.get("score_final_ponderado")),
             "score_alinhamento_consolidado": dados_db.get("score_alinhamento_v3_1w"),  # Campo gravado
             "score_expansao_consolidado": dados_db.get("score_expansao_v3_1w"),      # Campo gravado
             "score_semanal": {
@@ -39,3 +44,15 @@ def obter_indicadores():
             "status": "error",
             "erro": str(e)
         }
+def _get_ema_status_description(score: float) -> str:
+    """Converte score numérico EMAs em descrição"""
+    if score >= 8.1:
+        return "Tendência Forte"
+    elif score >= 6.1:
+        return "Correção Saudável"
+    elif score >= 4.1:
+        return "Neutro/Transição"
+    elif score >= 2.1:
+        return "Reversão Iminente"
+    else:
+        return "Bear Confirmado"

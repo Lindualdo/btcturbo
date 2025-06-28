@@ -152,6 +152,11 @@ def calcular_score():
     )
     
     # 6. Retornar JSON formatado v5.1.3
+    """
+        NUNCA ALTERAR ESSA ESTRUTURA NEM NOME DOS CAMPOS
+        SE PRECISAR ALTERAR, ANALISAR GRAVÇÃO DOS DADOS (DASH-MERCADO E DASH-MAIN)
+    """
+
     return {
         "status": "success",
         "bloco": "momentum",
