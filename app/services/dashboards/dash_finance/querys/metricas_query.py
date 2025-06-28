@@ -24,10 +24,10 @@ def get_metricas_atual() -> list:
         result = execute_query(query, fetch_one=True)
         
         if result:
-            logger.info(f"✅ Dados ciclo encontrados: timestamp={result['timestamp']}")
+            logger.info(f"✅ Dados Metricas encontrados:")
             return result
         else:
-            logger.warning("⚠️ Nenhum dado encontrado na tabela indicadores_ciclo")
+            logger.warning("⚠️ Nenhum dado encontrado dash-main")
             return None
             
     except Exception as e:
