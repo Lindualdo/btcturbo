@@ -1,4 +1,4 @@
-# app/services/scores/tecnico_v3/utils/score_compositor_v3.py
+# app/services/coleta/tecnico_v3/utils/score_compositor.py - CORRIGIDO
 
 import logging
 from typing import Dict
@@ -8,25 +8,7 @@ from .ema_expansao_calculator import calcular_score_expansao
 logger = logging.getLogger(__name__)
 
 def calcular_score_tecnico_v3(emas_semanal: Dict, emas_diario: Dict) -> Dict:
-    """
-    Compõe score técnico final v3.0
-    
-    Fórmula:
-    Score_TF = (Score Alinhamento × 0.5) + (Score Expansão × 0.5)
-    Score_Final = (Score_1W × 0.7) + (Score_1D × 0.3)
-    
-    Args:
-        emas_semanal: EMAs do timeframe semanal
-        emas_diario: EMAs do timeframe diário
-        
-    Returns:
-        {
-            "score_final": float,
-            "timeframes": dict,
-            "componentes": dict,
-            "status": str
-        }
-    """
+    """Compõe score técnico final v3.0"""
     try:
         logger.info("🔄 Compondo Score Técnico v3.0...")
         
@@ -123,14 +105,14 @@ def _calcular_score_timeframe(emas: Dict, timeframe: str) -> Dict:
             "score_consolidado": round(score_consolidado, 1),
             "alinhamento": {
                 "score": score_alinhamento,
-                "detalhes": alinhamento_result["detalhes"],
-                "interpretacao": alinhamento_result["interpretacao"]
+                "detalhes": alinhamento_result.get("detalhes", {}),
+                "interpretacao": alinhamento_result.get("interpretacao", {})
             },
             "expansao": {
                 "score": score_expansao,
-                "penalidades": expansao_result["penalidades"],
-                "distancias": expansao_result["distancias"],
-                "interpretacao": expansao_result["interpretacao"]
+                "penalidade_total": expansao_result.get("penalidade_total", 0),  # ✅ CORRIGIDO
+                "componentes": expansao_result.get("componentes", {}),           # ✅ CORRIGIDO
+                "interpretacao": expansao_result.get("interpretacao", {})
             },
             "detalhes": {
                 "timeframe": timeframe,
