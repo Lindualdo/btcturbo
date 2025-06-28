@@ -7,6 +7,7 @@ from .dash_finance.queries_orchestrator import (
     get_alavancagem_history,
     get_patrimonio_history,
     get_capital_history,
+    get_metricas,
     convert_periodo_to_date
 )
 from app.services.utils.helpers.tradingview.price_helper import get_btc_price
@@ -30,6 +31,7 @@ def obter_health_factor(periodo: str = "30d") -> dict:
         return {
             "status": "success",
             "indicador": "health_factor", 
+            "Metricas": get_metricas(),
             "periodo": periodo,
             "dados": dados,
             "total_registros": len(dados),

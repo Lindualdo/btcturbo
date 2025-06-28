@@ -6,8 +6,18 @@ from .querys.health_factor_query import get_health_factor_data
 from .querys.patrimonio_query import get_patrimonio_data
 from .querys.alavancagem_query import get_alavancagem_data
 from .querys.capital_investido_query import get_capital_investido_data
+from .querys.metricas_query import get_metricas_atual
 
 logger = logging.getLogger(__name__)
+
+
+def get_metricas():
+    """metricas atuais"""
+    try:
+        return get_metricas_atual()
+    except Exception as e:
+        logger.error(f"❌ Erro orquestrador get_metricas: {str(e)}")
+        return []
 
 def get_health_factor_history(periodo: str) -> list:
     """Orquestra consulta Health Factor"""
