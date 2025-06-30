@@ -16,7 +16,6 @@ Sistema quantitativo para gestão de posição alavancada em Bitcoin, focado em 
 - **Satélite**: 50% (Gestão ativa)
 - **Alavancagem**: Até 3x sobre satélite
 
-
 ## RESUMO DO SISTEMA - DECISÃO EM 4 CAMADAS
 
 ```
@@ -36,6 +35,14 @@ Sistema quantitativo para gestão de posição alavancada em Bitcoin, focado em 
 - aplica regras e validações de proteção (gate system)
 - executa as ações definidas conforme score de mercado
 ```
+
+## RESUMO OPERACIONAL:
+- Usar alinhamento de médias semanais como principal direcionador de tendencia
+- enquanto EMAs alinhadas, manter capital satélite
+- usar momentum e técnico para ajustes de alavancagem (stop e RP)
+- usar indicadores de ciclo para reduzir posição em risco de topo
+- usar indicadores de ciclo para se posicionar em fundos, mesmo com emas desalinhadas
+- Gatilhos de mercado ajsutam score e redefine alavancagem
 
 ## Arquitetura: 4 Camadas de Análise
 

@@ -52,52 +52,10 @@ def coletar(forcar_coleta: bool):
             "ema_610_1d": emas_diario[610],
             "btc_price_current": weekly["current_price"],
             
-            # Scores v3.0 (compatibilidade)
+            # Scores Alinhamento
             "score_consolidado_1w": resultado_v3["timeframes"]["semanal"]["score_consolidado"],
             "score_consolidado_1d": resultado_v3["timeframes"]["diario"]["score_consolidado"],
             "score_final_ponderado": resultado_v3["score_final"],
-            
-            # Campos v3.0 auditoria
-            "score_alinhamento_v3_1w": resultado_v3["timeframes"]["semanal"]["alinhamento"]["score"],
-            "score_expansao_v3_1w": resultado_v3["timeframes"]["semanal"]["expansao"]["score"],
-            "score_alinhamento_v3_1d": resultado_v3["timeframes"]["diario"]["alinhamento"]["score"],
-            "score_expansao_v3_1d": resultado_v3["timeframes"]["diario"]["expansao"]["score"],
-            "score_tecnico_v3_final": resultado_v3["score_final"],
-            
-            # JSON gerencial v3.1 (usar campo existente)
-            "distancias_emas_json": {
-                "semanal": {
-                    "score_alinhamento": resultado_v3["timeframes"]["semanal"]["alinhamento"]["score"],
-                    "score_expansao": resultado_v3["timeframes"]["semanal"]["expansao"]["score"],
-                    "expansao_total_pct": _extrair_expansao_total(resultado_v3["timeframes"]["semanal"]["expansao"], emas_semanal),
-                    "expansao_critica_pct": _extrair_expansao_critica(resultado_v3["timeframes"]["semanal"]["expansao"], emas_semanal),
-                    "adjacente_penalidade": _extrair_adjacente_penalidade(resultado_v3["timeframes"]["semanal"]["expansao"])
-                },
-                "diario": {
-                    "score_alinhamento": resultado_v3["timeframes"]["diario"]["alinhamento"]["score"],
-                    "score_expansao": resultado_v3["timeframes"]["diario"]["expansao"]["score"],
-                    "expansao_total_pct": _extrair_expansao_total(resultado_v3["timeframes"]["diario"]["expansao"], emas_diario),
-                    "expansao_critica_pct": _extrair_expansao_critica(resultado_v3["timeframes"]["diario"]["expansao"], emas_diario),
-                    "adjacente_penalidade": _extrair_adjacente_penalidade(resultado_v3["timeframes"]["diario"]["expansao"])
-                },
-                "formulas": {
-                    "score_final": "(Alinhamento × 0.5) + (Expansão × 0.5)",
-                    "pesos_timeframe": "(Semanal × 0.7) + (Diário × 0.3)",
-                    "expansao_total": "(EMA17 / EMA610 - 1) × 100",
-                    "expansao_critica": "(EMA17 / EMA144 - 1) × 100",
-                    "expansao_score": "100 - (Total×0.4 + Crítica×0.4 + Adjacente×0.2)"
-                }
-            },
-            
-            # JSON EMAs (campo legado)
-            "distancias_json": {
-                "weekly": weekly.get("details", {}).get("position", {}).get("distances", {}),
-                "daily": daily.get("details", {}).get("position", {}).get("distances", {}),
-                "weights": {"weekly": 0.7, "daily": 0.3}
-            },
-            
-            "versao_calculo": "v3.0",
-            "fonte": "tradingview_v3",
             "timestamp": datetime.utcnow()
         }
         

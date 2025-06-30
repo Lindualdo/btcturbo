@@ -19,42 +19,18 @@ def insert_dados_tecnico(dados: Dict) -> bool:
             INSERT INTO indicadores_tecnico (
                 ema_17_1w, ema_34_1w, ema_144_1w, ema_305_1w, ema_610_1w,
                 ema_17_1d, ema_34_1d, ema_144_1d, ema_305_1d, ema_610_1d,
-                btc_price_current,
-                score_consolidado_1w, score_consolidado_1d, score_final_ponderado,
-                score_alinhamento_v3_1w, score_expansao_v3_1w,
-                score_alinhamento_v3_1d, score_expansao_v3_1d,
-                score_tecnico_v3_final, score_alinhamento_consolidado, score_expansao_consolidado,
-                scores_validation_json, versao_calculo, fonte, timestamp
+                btc_price_current, score_consolidado_1w, score_consolidado_1d, score_final_ponderado, timestamp
             ) VALUES (
                 %s, %s, %s, %s, %s,
                 %s, %s, %s, %s, %s,
-                %s,
-                %s, %s, %s,
-                %s, %s, %s, %s, %s, %s, %s,
-                %s, %s, %s, %s
+                %s, %s, %s, %s, %s, 
             )
         """
         
         params = (
-            dados.get("ema_17_1w"), dados.get("ema_34_1w"), dados.get("ema_144_1w"),
-            dados.get("ema_305_1w"), dados.get("ema_610_1w"),
-            dados.get("ema_17_1d"), dados.get("ema_34_1d"), dados.get("ema_144_1d"),
-            dados.get("ema_305_1d"), dados.get("ema_610_1d"),
-            dados.get("btc_price_current"),
-            dados.get("score_consolidado_1w"),
-            dados.get("score_consolidado_1d"),
-            dados.get("score_final_ponderado"),
-            dados.get("score_alinhamento_v3_1w"),
-            dados.get("score_expansao_v3_1w"), 
-            dados.get("score_alinhamento_v3_1d"),
-            dados.get("score_expansao_v3_1d"),
-            dados.get("score_tecnico_v3_final"),
-            dados.get("score_alinhamento_consolidado"),
-            dados.get("score_expansao_consolidado"),
-            distancias_json_str,
-            dados.get("versao_calculo", "v3.0"),
-            dados.get("fonte", "tecnico_v3"),
-            dados.get("timestamp", datetime.utcnow())
+            dados.get("ema_17_1w"), dados.get("ema_34_1w"), dados.get("ema_144_1w"),dados.get("ema_305_1w"), dados.get("ema_610_1w"),
+            dados.get("ema_17_1d"), dados.get("ema_34_1d"), dados.get("ema_144_1d"),dados.get("ema_305_1d"), dados.get("ema_610_1d"),
+            dados.get("btc_price_current"), dados.get("score_consolidado_1w"), dados.get("score_consolidado_1d"), dados.get("score_final_ponderado"), dados.get("timestamp", datetime.utcnow())
         )
         
         execute_query(query, params)

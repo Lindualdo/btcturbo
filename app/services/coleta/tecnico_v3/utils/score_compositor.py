@@ -40,22 +40,14 @@ def calcular_score_tecnico_v3(emas_semanal: Dict, emas_diario: Dict) -> Dict:
                     "peso": peso_semanal,
                     "score_consolidado": semanal_scores["score_consolidado"],
                     "alinhamento": semanal_scores["alinhamento"],
-                    "expansao": semanal_scores["expansao"],
                     "detalhes": semanal_scores["detalhes"]
                 },
                 "diario": {
                     "peso": peso_diario,
                     "score_consolidado": diario_scores["score_consolidado"], 
                     "alinhamento": diario_scores["alinhamento"],
-                    "expansao": diario_scores["expansao"],
                     "detalhes": diario_scores["detalhes"]
                 }
-            },
-            "componentes": {
-                "alinhamento_peso": 0.5,
-                "expansao_peso": 0.5,
-                "timeframe_semanal_peso": peso_semanal,
-                "timeframe_diario_peso": peso_diario
             },
             "interpretacao": _interpretar_score_final(score_final),
             "versao": "v3.0",
@@ -84,22 +76,10 @@ def _calcular_score_timeframe(emas: Dict, timeframe: str) -> Dict:
         if alinhamento_result["status"] != "success":
             raise Exception(f"Erro alinhamento {timeframe}")
         
-        # Mapear timeframe para expansão
-        timeframe_map = {"1W": "semanal", "1D": "diario"}
-        tf_mapped = timeframe_map.get(timeframe, "semanal")
-        
-        # Score Expansão  
-        expansao_result = calcular_score_expansao(emas, tf_mapped)
-        if expansao_result["status"] != "success":
-            raise Exception(f"Erro expansão {timeframe}")
-        
-        # Compor score consolidado: 50% Alinhamento + 50% Expansão
         score_alinhamento = alinhamento_result["score"]
-        score_expansao = expansao_result["score"]
+        score_consolidado = score_alinhamento * 0.5
         
-        score_consolidado = (score_alinhamento * 0.5) + (score_expansao * 0.5)
-        
-        logger.info(f"✅ Score {timeframe}: {score_consolidado:.1f} (Alin:{score_alinhamento} + Exp:{score_expansao})")
+        logger.info(f"✅ Score {timeframe}: {score_consolidado:.1f} (Alin:{score_alinhamento}")
         
         return {
             "score_consolidado": round(score_consolidado, 1),
@@ -107,17 +87,6 @@ def _calcular_score_timeframe(emas: Dict, timeframe: str) -> Dict:
                 "score": score_alinhamento,
                 "detalhes": alinhamento_result.get("detalhes", {}),
                 "interpretacao": alinhamento_result.get("interpretacao", {})
-            },
-            "expansao": {
-                "score": score_expansao,
-                "penalidade_total": expansao_result.get("penalidade_total", 0),  # ✅ CORRIGIDO
-                "componentes": expansao_result.get("componentes", {}),           # ✅ CORRIGIDO
-                "interpretacao": expansao_result.get("interpretacao", {})
-            },
-            "detalhes": {
-                "timeframe": timeframe,
-                "composicao": "50% Alinhamento + 50% Expansão",
-                "emas_utilizadas": list(emas.keys())
             },
             "status": "success"
         }
@@ -127,7 +96,6 @@ def _calcular_score_timeframe(emas: Dict, timeframe: str) -> Dict:
         return {
             "score_consolidado": 0.0,
             "alinhamento": {},
-            "expansao": {},
             "detalhes": {},
             "status": "error",
             "erro": str(e)

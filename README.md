@@ -2,14 +2,17 @@
 
 Sistema de análise de indicadores Bitcoin para trading alavancado, construído com FastAPI + PostgreSQL.
 
-## 1.7.0 - Aplicação de gatilhos de ajuste score
+## 1.7.0 - Aplicação de gatilhos de ajuste score -feito
 - Gatilho pode ser ativado ou não na hora de gerar os dados para o dash mercado via paramentro
-- Ajustar o dash-main para considerar o novo score calculado
-- decidir sobre score de expansão das medias (manter ou retirar)
 
-## 1.7.1 - Aplicar a nova matriz de ciclos no dash-main
+## 1.7.1 - Rebalancemaneto de Scores indicadores cilco - feito
+- Gatilho pode ser ativado ou não na hora de gerar os dados para o dash mercado via paramentro
+
+## 1.7.1 - Ajustes analise tecnica EMAs sem expansão
+- sistema agora prioriza tendencia (ignorar qualquer outro fator que não seja as EMAs)
 
 ## 1.7.2 - Criar a camada 4 - ações estratégicas com base na nova matriz
+
 
 
 ## 🏗️ Arquitetura
