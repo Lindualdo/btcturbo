@@ -115,8 +115,8 @@ def _extrair_valor_indicador(bloco_data: dict, indicador_nome: str) -> float:
 def _extrair_score_alinhamento_semanal(tecnico_data: dict) -> int:
     """Extrai score de alinhamento semanal dos dados técnicos v3"""
     try:
-        score_semanal = tecnico_data.get("score_semanal", {})
-        score_alinhamento = score_semanal.get("score_alinhamento", 0)
+        # CORRIGIDO: usar score_consolidado_1w diretamente
+        score_alinhamento = tecnico_data.get("score_consolidado_1w", 0)
         return int(float(score_alinhamento)) if score_alinhamento else 0
     except (ValueError, TypeError):
         return 0
