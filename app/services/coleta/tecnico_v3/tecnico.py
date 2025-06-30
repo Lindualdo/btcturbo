@@ -55,7 +55,7 @@ def coletar(forcar_coleta: bool):
             # Scores Alinhamento
             "score_consolidado_1w": resultado_v3["score_consolidado_1w"],
             "score_consolidado_1d": resultado_v3["score_consolidado_1d"],
-            "score_consolidado": resultado_v3["score_consolidado"],
+            "score_final_ponderado": resultado_v3["score_consolidado"],
             "classificacao_consolidada": resultado_v3["classificacao_consolidada"],
             "timestamp": datetime.utcnow()
         }

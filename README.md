@@ -13,6 +13,7 @@ Sistema de análise de indicadores Bitcoin para trading alavancado, construído 
 
 ## 1.7.2 - Criar a camada 4 - ações estratégicas com base na nova matriz
 
+## 1.7.3 - Refatorar ema calculator (simplificar - não deve calcular score)
 
 
 ## 🏗️ Arquitetura
