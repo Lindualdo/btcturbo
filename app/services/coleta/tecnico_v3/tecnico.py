@@ -67,7 +67,7 @@ def coletar(forcar_coleta: bool):
         if not sucesso:
             raise Exception("Falha ao gravar no banco")
         
-        logger.info(f"✅ Coleta v3.0 concluída: score={resultado_v3['score_final']}")
+        logger.info(f"✅ Coleta v3.0 concluída: score={resultado_v3['score_consolidado']}")
         
         return {
             "status": "success",
