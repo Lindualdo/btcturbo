@@ -1,71 +1,6 @@
-# BTC Turbo v1.5.4
+# BTC Turbo v1.7.0
 
 Sistema de análise de indicadores Bitcoin para trading alavancado, construído com FastAPI + PostgreSQL.
-
-## resumo da versão - 1.5.1: - feito
-- Simplificação das regras de analise  mercado (cilcos de mercado)
-- usando matriz v2.0 no banco de dados
-- criado datahelper mercado que retona o ciclo atual, alavancagem e tamanho máximo da posição
-- simplificação das regras
-- criado endpoint para teste deste fluxo ´/api/v1/analise-mercado/debug`
-
-## Proxima versão 1.5.2 - Revisar Processo de alavancagem - feito
-  
-## Proxima versão 1.5.3 - Revisar Processo de execução tática - feito
-- recriado a arquitetura
-- organizado melhor os arquiovs
-- setups agora ficam isolados cada setup em um arquivo
-- mais fácil para manter e evoluir
-- retirado as validações complexas desnecessárias
-- analisar melhor depois para usar os critérios de posição definidos na camada 1 (aanalise de mercado)
-- aplicar regras de validações e alertas antes de autorizar o setup
-
-## Proxima versão 1.5.4 - Revisão geral na analise tatica - feito
-- melhorado lógica e responsabilidade de cada arquivo
-- implementado todos os setups de compra
-- sempre retona os dados tecnicos
-
-## Proxima versão 1.5.5 - dash financeiro -feito
-- historico de helth factor
-- histórico de dist. liquidação
-- historico de alavancagem (usada X permitida)
-- histórico de patrimonio (capital liquido)
-- histórico de posição (total investido)
-
-## versão 1.6.0 - Novas regras Anal. tecncica, ciclos e matriz mercado - feito
-- Revisão geral nas documentações, atualizado e simplificado
-- mudança nas regras de score (pesos) anal. tecnica e ciclos
-- recriado por completo as regras de Score da analise técnica (alinhamento e distancia entre as médias)
-- sinmplificado e organizado o codigo de calclule de scores (tecnico, ciclos e momentum)
-- revisão geral nas rotinas de dash_mercado (gravação) - estva complexo d+ redundancia de processamentos e calculos de scores
-- ajuste dos indicadores e scores para base 100
-- simplificado as rotinas de gravação de dados na base
-- melhoria de performance de 27 seg. para 12 seg (por consequencia das simplificações)
-
-## versão 1.6.1 - Revisão nas rotinas de dash-mercado (get) - feito
-- simplificação das rotinas
-- organização
-- integridade com as novas regras da gravação do dash-mercado
-
-## versão 1.6.2 - Revisão nas rotinas de dash-main (gravação) - feito
-- alterações para adequar as novas rotinas e regras da dash-mercado
-- revisão e alteração na get_last_dash mercado_database_helper
-
-## versão 1.6.3 - Revisão nas rotinas de dash-main (get) - feito
-- alterações para adequar as novas rotinas e regras da dash-mercado
-- revisão e alteração na get_last_dash mercado_database_helper
-
-## versão 1.6.4 - dash mercado (gravação) - feito
-- alterações para adequar as novas rotinas e regras da dash-mercado
-- revisão geral nas rotinas
-- Alterado dash finance - heath factore para gerar metricas (score)
-
-## versão 1.6.5 - revisar rotinas e regras ciclo de mercado (nova matriz)
-- toda inteligencia operacional dependerá das regras desta nova matriz
-- assumir perfil de Hold alavancado de verdade
-- sem traders e sem monitaorar ruidos de curto prazo
-- priorizar ciclo e operações de longo prazo
-
 
 ## 🏗️ Arquitetura
 
@@ -99,6 +34,7 @@ app/
 | GET | `/api/v1/calcular-score/{bloco}` | Calcular scores (0-10) |
 | POST/GET | `/api/v1/dash-mercado` | Dashboard mercado |
 | POST/GET | `/api/v1/dash-main` | Dashboard principal (4 camadas) |
+|GET | `/api/v1/dash-finance` | /health-factor, /alavancagem, /patrimonio , /capital-investido (fazer) |
 
 **Blocos disponíveis**: `ciclos`, `riscos`, `momentum`, `tecnico`
 
@@ -207,29 +143,6 @@ def buscar_tradingview():
 - ✅ Logs nas etapas críticas para rastreio
 - ✅ Reutilizar funções existentes antes de criar novas
 
-## 🎯 Regras de Negócio
-
-### **Scores (0-100)**
-- **80-100**: Tendência Forte
-- **60-80**: Correção Saudável  
-- **40-60**: Neutro
-- **20-40**: Reversão
-- **0-20**: Bear Confirmado
-
-### **Blocos de Indicadores**
-- **Ciclos**: MVRV, NUPL, Realized Ratio, Reserve Risk
-- **Momentum**: RSI Semanal, Funding Rates, SOPR, Long/Short Ratio
-- **Riscos**: Health Factor, Distance Liquidação
-- **Técnico**: Sistema EMAs, RSI, Padrões Gráficos
-
-### **Dashboard 4 Camadas**
-1. **Mercado**: Score consolidado + ciclo atual
-2. **Risco**: Health Factor + análise de proteção
-3. **Alavancagem**: Limites permitidos por ciclo
-4. **Execução Tática**: Setups 4H + gate system
-
-## 🔄 Fluxo de Desenvolvimento
-
 **Ambiente Atual**: Mac + VS Code + GitHub + Railway
 
 1. **Desenvolvimento**: VS Code local
@@ -237,32 +150,13 @@ def buscar_tradingview():
 3. **Deploy**: Automático na Railway a cada commit
 4. **Validação**: Frontend funcionando + endpoints manuais
 
-## 📊 Setup Local
-
-```bash
-# Clonar repo
-git clone https://github.com/seu-repo/btc-turbo.git
-cd btc-turbo
-
-# Setup ambiente
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-
-# Executar local
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
-
-# Validar endpoints
-curl http://localhost:8000/api/v1/obter-indicadores/ciclos
-```
-
 ## 🚀 Status Atual
 
 - ✅ **Backend**: 80% completo
-- ✅ **Frontend**: Funcionando (dash-main + dash-mercado)  Vercel + Vite
+- ✅ **Frontend**: Funcionando (dash-main + dash-mercado + dash-finance)  Vercel + Vite
 - ✅ **Deploy**: Automático Railway
 - ✅ **APIs**: TradingView + Notion + Web3 integradas
-- 🔄 **Próximo**: Controle de operações + alertas
+- 🔄 **Próximo**: Gatilhos (peso de score) + Controle de operações + alertas
 
 ## 🔗 Integrações Externas
 
@@ -274,12 +168,10 @@ curl http://localhost:8000/api/v1/obter-indicadores/ciclos
 
 ## 📝 Próximas Fases
 
-- **1.5.0**: refactore + simplificações + organização do código + Dash financeiro
-- **1.6.0**: refactore + revisão anal. tecnica, revisão analise mercado, revisão analise tática
-- **1.7.0**: Controle de operações + alertas
-- **1.8.0**: Sistema de stops + gestão de risco
+- **1.7.0**: gatilhos score + score emas sem expansão + controle de operações (stop, RP, compras)
+- **1.8.0**: alertas
 - **1.9.0**: Backtest + métricas de performance
 
 ---
 
-**Desenvolvido para precisão, confiabilidade e escalabilidade no trading BTC alavancado.**
+**Desenvolvido para: Hold alavancado - gestão ativa do capital satelite - otimização dos resultados com gestão de risco**

@@ -1,28 +1,24 @@
-#  BTC TURBO - Hold Alavancado - Visão Geral Executiva 1.6.1
-- revisões nos pesos do ciclos (ciclos de 40% > 50%, tecnico de 40% > 30%)
-- camada 4 agora focada exclusivamente nas ações definidas pela matriz de ciclo do mercado ( camada 1)
-- analise técnica: trocado posição do preço por expnasão das EMAs (distancia entre as EMAs)
-- retirado indicador de Pull Multiple (muito volátio) do bloco ciclo
-- incluido indicador Reserve Risk no bloco ciclo (mais eficiente que pull Multiple para identificar fndos)
-- alterado pesos dos indicadores de ciclo (mvrv 30 > 40, nupl 20 > 30, realized price ratio 40 > 20)
-- camada 1 principal, define ciclo, alavancagem, tamanho da posição, ações a serem executadas
-- as demais camadas  operacionaliza (valida alavancagem, confere o risco e financeiro, destaca e alerta as ações)
+#  BTC TURBO - Hold Alavancado - Visão Geral Executiva 1.7.0
+- Criação de camada adicional após camada 1
+- nesta camada adicional
 
 ## Objetivo Principal
 Sistema quantitativo para gestão de posição alavancada em Bitcoin, focado em preservação de capital e captura de tendências de médio/longo prazo.
 
-## RESUMO DO SISTEMA
+## 1. ESTRUTURA DE CAPITAL
+- **Core**: 50% (Buy & Hold permanente)
+- **Satélite**: 50% (Gestão ativa)
+- **Alavancagem**: Até 3x sobre satélite
 
-Patrimonio total dividido em duas partes:
-- 50% CORE sempre em hold BTC
-- 50% satelite será alocado e alavancado de acordo com o ciclo de mercado
-- A alaocação é feita exclusivamente na plataforma AAVE
+
+## RESUMO DO SISTEMA - DECISÃO EM 4 CAMADAS
 
 ```
 1 - Analise de mercado 
 - faz analise em 3 blocos (ciclos, momentum e tecncio) e gera um score final
 - com base no score define o ciclo de mercado 
 - o cilco responde se devo estar posicionado, tamanho da posição, alavancagem e ação
+- gatilhos objetivos ajustam o score para melhor responsividade ao mercado (novo)
 2 - Analise de risco
 - analisa os indicadores financeiros (plataforma AAVE)
 - o score final define a saúde da minha posição
@@ -41,7 +37,7 @@ Patrimonio total dividido em duas partes:
 - Define o ciclo de mercado
 - Define o tamanho da posição
 - Define o limire de alavancagem
-- usar matriz de ciclos (matriz_ciclo-v3.1.md)
+- realiza as ações táticas (manual operacional)
 
 ### 📊 Tabela de Indicadores - Análise de Mercado
 **Pergunta:** "O mercado está favorável para estar posicionado?"
@@ -56,18 +52,15 @@ Patrimonio total dividido em duas partes:
 | **Funding Rates 7D**         | 30% Momentum | Taxas de financiamento médias; revela o sentimento de alavancagem dos derivativos |
 | **SOPR**                     | 20% Momentum | Mede o lucro/prejuízo nas transações realizadas on-chain |
 | **Long/Short Ratio**         | 10% Momentum | Relação entre posições compradas e vendidas no mercado futuro |
-| **Sistema de EMAs**          | 50% Técnico  | Alinhamento entre as médias - 70% semanal 30% diário - score-emas-v3.md|
-| **Sistema de EMAs**          | 50% Técnico  | Expansão das EMAs - distancias entre si - 70% semanal 30% diário - score-emas-v3.md|
+| **Sistema de EMAs**          | 100% Técnico  | Alinhamento entre as médias - 70% semanal 30% diário |
 
 ### Análise de Mercado (Score 0-100)
 - Calcular o Score de cada indicdor aplicando o peso conforme tabela acima (dentro de cada bloco)
 - depois aplicar os pesos de cada blocos para calcular o score de mercado
 - Score mercado = 50% do score de ciclo, 20% do score de momentum e 30% do score técnico
+- Aplicar gatilhos de ajuste de score (manual operacional)
 
-```
-
-Receita diária dos mineradores em relação à média histórica; detecta topos  fundos 
-
+### Calculo dos scores
 CICLO (50%)
 ├── MVRV Z-Score
 │   └── < 0: Score 9-10 | 0-1: Score 7-8 | 1-2.5: Score 5-6 | 2.5-3.7: Score 3-4 | > 3.7: Score 0-2
@@ -88,14 +81,21 @@ MOMENTUM (20%)
 └── Long/Short Ratio (10%)
     └── < 0.8: Score 9-10 | 0.8-0.95: Score 7-8 | 0.95-1.05: Score 5-6 | 1.05-1.3: Score 3-4 | > 1.3: Score 0-2
 
-TÉCNICO (30%) - (score usar: score-emas-v3.md)
+TÉCNICO (30%)
 ├── Sistema EMAs
 │   ├── Alinhamento: EMA17>34>144>305>610
-│   └── Expasão: distancia entre as medias
 
-```
-Para o score das EMAs usar matriz de score
-score-emas-v3.md
+
+| Condição | Pontos |
+|----------|--------|
+| EMA 17 > EMA 34 | 10 |
+| EMA 34 > EMA 144 | 20 |
+| EMA 144 > EMA 305 | 30 |
+| EMA 305 > EMA 610 | 40 |
+| **Total Máximo** | **100** |
+
+**Timeframe**: 70% Semanal + 30% Diário
+
 
 ### 2- Gestão de Risco (Score 0-100)
 **Pergunta Central:** "Minha posição atual está segura?"
@@ -107,10 +107,10 @@ score-emas-v3.md
 
 **Pergunta Central:** "Qual alavancagem máxima posso usar?"
 
-- usar matriz de ciclos / alavancagem
+- usar matriz de ciclos no manual operacional
 
 ### 4 - Execução Tática:
 
 **Pergunta Central:** "O que devo fazer agora?"
 - validações de proteção (gate sistem) 
-- usar matriz de ciclo v3 para identificar ação (matriz-ciclos-v3.md)
+- usar manual operacional
