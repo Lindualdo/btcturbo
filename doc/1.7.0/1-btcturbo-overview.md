@@ -1,9 +1,15 @@
 #  BTC TURBO - Hold Alavancado - Visão Geral Executiva 1.7.0
-- Criação de camada adicional após camada 1
-- nesta camada adicional
 
-## Objetivo Principal
+## Objetivo Principal do Sitema BtcTurbo
 Sistema quantitativo para gestão de posição alavancada em Bitcoin, focado em preservação de capital e captura de tendências de médio/longo prazo.
+
+## Principais melhorias desta versão:
+
+- Criação de gatilhos para ajuste de escore (penalisa ou bonifica bloco específico conforme mercado)
+- Ajuste nos pesos dos indicadores de ciclo: (indicadores-ciclos-update)
+- Exclusão do score de expansão das emas (foco total no alinhamento)
+- Criação de nova matriz de mercado, mais simples e objetiva
+- definição clara das ações (compra, venda, stop, RP e alavancagem) com base nos score de mercado
 
 ## 1. ESTRUTURA DE CAPITAL
 - **Core**: 50% (Buy & Hold permanente)
@@ -21,14 +27,14 @@ Sistema quantitativo para gestão de posição alavancada em Bitcoin, focado em 
 - gatilhos objetivos ajustam o score para melhor responsividade ao mercado (novo)
 2 - Analise de risco
 - analisa os indicadores financeiros (plataforma AAVE)
-- o score final define a saúde da minha posição
-- responde se minha posição está segura
+- o score final define a saúde da posição
+- responde se  posição está segura
 3 - Analise de alavancagem
-- Analise o ciclo de mercado (definido na camada 1), calcula os limites permitidos X utilizados
-- retorna o limite liberado para operar (max 3X)
+- score de mercado define limites
+- camada calcula percentual já utilizado e orienta reduzir ou auemntar
 4 - Execução tática
 - aplica regras e validações de proteção (gate system)
-- se liberado para operar, executa e estrategia definida na matriz de ciclos
+- executa as ações definidas conforme score de mercado
 ```
 
 ## Arquitetura: 4 Camadas de Análise
@@ -37,17 +43,18 @@ Sistema quantitativo para gestão de posição alavancada em Bitcoin, focado em 
 - Define o ciclo de mercado
 - Define o tamanho da posição
 - Define o limire de alavancagem
-- realiza as ações táticas (manual operacional)
+- define as ações táticas (manual operacional)
 
 ### 📊 Tabela de Indicadores - Análise de Mercado
 **Pergunta:** "O mercado está favorável para estar posicionado?"
 
 | Indicador                     | Peso         | Descrição breve |
 |------------------------------|--------------|------------------|
-| **MVRV Z-Score**             | 40% Ciclo    | Mede se o BTC está sobre ou subvalorizado - valor de mercado vs valor realizado |
-| **NUPL**                     | 30% Ciclo    | Lucros/prejuízos não realizados; mostra otimismo ou medo dos investidores |
-| **Realized Price Ratio**     | 15% Ciclo    | Compara o preço atual com o preço médio pago (todas as moedas em circulação)
+| **MVRV Z-Score**             | 25% Ciclo    | Mede se o BTC está sobre ou subvalorizado - valor de mercado vs valor realizado |
+| **NUPL**                     | 25% Ciclo    | Lucros/prejuízos não realizados; mostra otimismo ou medo dos investidores |
+| **Realized Price Ratio**     | 20% Ciclo    | Compara o preço atual com o preço médio pago (todas as moedas em circulação)
 | **Reserve Risk**             | 15% Ciclo    | Relação entre a confiança dos holders de longo prazo (HODLers) e o preço atual|
+| **Puel Multiple**            | 15% Ciclo    | Rentabilidade dos mineradores em relação à média histórica, dinâmica de oferta.|
 | **RSI Semanal**              | 40% Momentum | Força relativa dos preços; identifica condições de sobrecompra ou sobrevenda |
 | **Funding Rates 7D**         | 30% Momentum | Taxas de financiamento médias; revela o sentimento de alavancagem dos derivativos |
 | **SOPR**                     | 20% Momentum | Mede o lucro/prejuízo nas transações realizadas on-chain |
@@ -70,6 +77,9 @@ CICLO (50%)
 │   └── < 0.8: Score 9-10 | 0.8-1.2: Score 7-8 | 1.2-2: Score 5-6 | 2-3: Score 3-4 | > 3: Score 0-2
 ├── Reserve Risk
 │   └── < 0.002: Score 9-10 | 0.002-0.005: Score 7-8 | 0.005-0.01: Score 5-6 | 0.01-0.02: Score 3-4 | > 0.02: Score 0-2
+├── Puel Multiple
+    └── < 0.5: Score 9-10 | 0.5-1: Score 7-8 | 1-2: Score 5-6 | 2-4: Score 3-4 | > 4: Score 0-2
+
 
 MOMENTUM (20%)
 ├── RSI Semanal

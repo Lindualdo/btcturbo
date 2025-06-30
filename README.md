@@ -2,6 +2,16 @@
 
 Sistema de análise de indicadores Bitcoin para trading alavancado, construído com FastAPI + PostgreSQL.
 
+## 1.7.0 - Aplicação de gatilhos de ajuste score
+- Gatilho pode ser ativado ou não na hora de gerar os dados para o dash mercado via paramentro
+- Ajustar o dash-main para considerar o novo score calculado
+- decidir sobre score de expansão das medias (manter ou retirar)
+
+## 1.7.1 - Aplicar a nova matriz de ciclos no dash-main
+
+## 1.7.2 - Criar a camada 4 - ações estratégicas com base na nova matriz
+
+
 ## 🏗️ Arquitetura
 
 ```
@@ -32,7 +42,7 @@ app/
 | GET | `/api/v1/coletar-indicadores/{bloco}` | Coleta dados externos |
 | GET | `/api/v1/obter-indicadores/{bloco}` | Obter dados brutos |
 | GET | `/api/v1/calcular-score/{bloco}` | Calcular scores (0-10) |
-| POST/GET | `/api/v1/dash-mercado` | Dashboard mercado |
+| POST/GET | `/api/v1/dash-mercado` | Dashboard mercado | aplicar_gatilho: bool = True (gatilhos para ajuste de score)
 | POST/GET | `/api/v1/dash-main` | Dashboard principal (4 camadas) |
 |GET | `/api/v1/dash-finance` | /health-factor, /alavancagem, /patrimonio , /capital-investido (fazer) |
 

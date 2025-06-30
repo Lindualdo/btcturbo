@@ -123,20 +123,23 @@ def calcular_score():
     realized_valor = indicadores["Realized_Ratio"]
     nupl_valor = indicadores["NUPL"]
     reserve_risk_valor = indicadores["Reserve_Risk"]
+    puell_valor = indicadores["Puell_Multiple"]
     
     # 3. Calcular scores individuais
     mvrv_score, mvrv_classificacao = calcular_mvrv_score(mvrv_valor)
     realized_score, realized_classificacao = calcular_realized_score(realized_valor)
     nupl_score, nupl_classificacao = calcular_nupl_score(nupl_valor)  
     reserve_risk, nupl_classificacao = calcular_reserve_risk(reserve_risk_valor)  
+    puell_score, nupl_classificacao = calcular_puell_score(puell_valor)  
     
-    # 4. APLICAR PESOS REBALANCEADOS v1.6.1
+    # 4.PESOS REBALANCEADOS v1.7.1
     
     score_consolidado = (
-        (mvrv_score * 0.40) +      # ← AUMENTADO: 50% → 30%  → 40
-        (nupl_score * 0.30) +      # ← AUMENTADO: 20% → 30%
-        (realized_score * 0.15) +  # ← REDUZIDO: 40% → 20% → 15 - 28/06 - 1.6.1
-        (reserve_risk * 0.15))    #  - de 10 > 15 - 28/06 - 1.6.1
+        (mvrv_score * 0.25) +     
+        (nupl_score * 0.25) +   
+        (realized_score * 0.20) +  
+        (reserve_risk * 0.15) +   
+        (puell_score * 0.15))      
     
     # 6. Retornar JSON formatado
 
@@ -173,6 +176,11 @@ def calcular_score():
             "Reserve_Risk": {
                 "valor": reserve_risk_valor,
                 "score": round(reserve_risk * 10, 1),
+            },
+
+             "puell_multiple": {
+                "valor": puell_valor,
+                "score": round(puell_score * 10, 1),
             }
         }
     }
