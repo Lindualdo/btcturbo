@@ -34,34 +34,18 @@ def calcular_score_tecnico_v3(emas_semanal: Dict, emas_diario: Dict) -> Dict:
         logger.info(f"✅ Score Final v3.0: {score_final:.1f}/100")
         
         return {
-            "score_final": round(score_final, 1),
-            "timeframes": {
-                "semanal": {
-                    "peso": peso_semanal,
-                    "score_consolidado": semanal_scores["score_consolidado"],
-                    "alinhamento": semanal_scores["alinhamento"],
-                    "detalhes": semanal_scores["detalhes"]
-                },
-                "diario": {
-                    "peso": peso_diario,
-                    "score_consolidado": diario_scores["score_consolidado"], 
-                    "alinhamento": diario_scores["alinhamento"],
-                    "detalhes": diario_scores["detalhes"]
+                "status": "success",
+                "score_consolidado": round(score_final, 1),
+                "classificacao_consolidada": _interpretar_score_final(score_final) ,
+                "score_consolidado_1w": semanal_scores["score_consolidado"],
+                "score_consolidado_1d": diario_scores["score_consolidado"]
                 }
-            },
-            "interpretacao": _interpretar_score_final(score_final),
-            "versao": "v3.0",
-            "status": "success"
-        }
-        
+    
     except Exception as e:
         logger.error(f"❌ Erro compositor v3.0: {str(e)}")
         return {
             "score_final": 0.0,
-            "timeframes": {},
-            "componentes": {},
             "interpretacao": "erro",
-            "versao": "v3.0",
             "status": "error",
             "erro": str(e)
         }
@@ -77,7 +61,7 @@ def _calcular_score_timeframe(emas: Dict, timeframe: str) -> Dict:
             raise Exception(f"Erro alinhamento {timeframe}")
         
         score_alinhamento = alinhamento_result["score"]
-        score_consolidado = score_alinhamento * 0.5
+        score_consolidado = score_alinhamento 
         
         logger.info(f"✅ Score {timeframe}: {score_consolidado:.1f} (Alin:{score_alinhamento}")
         

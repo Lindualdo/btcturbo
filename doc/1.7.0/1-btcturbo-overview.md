@@ -1,7 +1,7 @@
 #  BTC TURBO - Hold Alavancado - Visão Geral Executiva 1.7.0
 
 ## Objetivo Principal do Sitema BtcTurbo
-Sistema quantitativo para gestão de posição alavancada em Bitcoin, focado em preservação de capital e captura de tendências de médio/longo prazo.
+O sistema BTC TURBO é um framework quantitativo projetado para gerenciar posições alavancadas em Bitcoin. Seu objetivo principal é preservar o capital enquanto captura tendências de médio e longo prazo. O sistema é estruturado em quatro camadas de análise: Mercado, Risco, Alavancagem e Execução. Essa abordagem multicamadas permite uma gestão robusta e adaptativa das posições.
 
 ## Principais melhorias desta versão:
 
@@ -131,3 +131,14 @@ TÉCNICO (30%)
 **Pergunta Central:** "O que devo fazer agora?"
 - validações de proteção (gate sistem) 
 - usar manual operacional
+
+## todo: 
+- incluir gatilhos de Price action nos ajustes score
+- rever nivel de alavancagem - proximo a topos
+- avaliar peso do RSI semanal no bloco momentum (Reduzir para 30% e adicionar ATR )
+- avaliar utilização de EMAs mais flexíveis para ajustes de alavancagem (ema 9 ou Hull Moving Average)
+- incluir gatilhos de volume onchain (Incorporar Whale Transaction ao bloco Momentum, peso de 10-15%)
+- incluir outros indicadores de risco sistemicos (BVOL, juros mercado, WBTC paridade, plataforma AAVE)
+- rever ranges do MVRV e NUPL - ajustar para realidade atual do mercado (menor volatilidade)
+- rever dependência da AAVE,  WBTC e Arbitrum
+

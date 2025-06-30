@@ -51,11 +51,7 @@ def get_dados_tecnico() -> Optional[Dict]:
                 ema_17_1w, ema_34_1w, ema_144_1w, ema_305_1w, ema_610_1w,
                 ema_17_1d, ema_34_1d, ema_144_1d, ema_305_1d, ema_610_1d,
                 btc_price_current,
-                score_consolidado_1w, score_consolidado_1d, score_final_ponderado,
-                score_alinhamento_v3_1w, score_expansao_v3_1w,
-                score_alinhamento_v3_1d, score_expansao_v3_1d,
-                score_tecnico_v3_final, score_alinhamento_consolidado, score_expansao_consolidado,
-                scores_validation_json, timestamp, fonte
+                score_consolidado_1w, score_consolidado_1d, score_final_ponderado
             FROM indicadores_tecnico 
             ORDER BY timestamp DESC 
             LIMIT 1

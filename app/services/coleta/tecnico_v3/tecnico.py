@@ -53,9 +53,10 @@ def coletar(forcar_coleta: bool):
             "btc_price_current": weekly["current_price"],
             
             # Scores Alinhamento
-            "score_consolidado_1w": resultado_v3["timeframes"]["semanal"]["score_consolidado"],
-            "score_consolidado_1d": resultado_v3["timeframes"]["diario"]["score_consolidado"],
-            "score_final_ponderado": resultado_v3["score_final"],
+            "score_consolidado_1w": resultado_v3["score_consolidado_1w"],
+            "score_consolidado_1d": resultado_v3["score_consolidado_1d"],
+            "score_consolidado": resultado_v3["score_consolidado"],
+            "classificacao_consolidada": resultado_v3["classificacao_consolidada"],
             "timestamp": datetime.utcnow()
         }
         
@@ -72,7 +73,7 @@ def coletar(forcar_coleta: bool):
             "status": "success",
             "bloco": "tecnico",
             "versao": "v3.0",
-            "score_final": resultado_v3["score_final"],
+            "score_final": resultado_v3["score_consolidado"],
             "timestamp": dados_para_db["timestamp"],
             "fonte": "tradingview_v3"
         }
@@ -85,28 +86,3 @@ def coletar(forcar_coleta: bool):
             "erro": str(e),
             "timestamp": datetime.utcnow()
         }
-
-def _extrair_expansao_total(expansao_data: dict, emas: dict) -> float:
-    """Extrai percentual expansão total: (EMA17/EMA610 - 1) × 100"""
-    try:
-        if emas[610] == 0:
-            return 0.0
-        return round(((emas[17] / emas[610]) - 1) * 100, 2)
-    except:
-        return 0.0
-
-def _extrair_expansao_critica(expansao_data: dict, emas: dict) -> float:
-    """Extrai percentual expansão crítica: (EMA17/EMA144 - 1) × 100"""
-    try:
-        if emas[144] == 0:
-            return 0.0
-        return round(((emas[17] / emas[144]) - 1) * 100, 2)
-    except:
-        return 0.0
-
-def _extrair_adjacente_penalidade(expansao_data: dict) -> int:
-    """Extrai penalidade total adjacente"""
-    try:
-        return expansao_data.get("componentes", {}).get("expansao_adjacente", {}).get("penalidade", 0)
-    except:
-        return 0
