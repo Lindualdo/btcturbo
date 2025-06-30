@@ -1,4 +1,4 @@
-# BTC Turbo v1.7.0
+# BTC Turbo v1.7.2
 
 Sistema de análise de indicadores Bitcoin para trading alavancado, construído com FastAPI + PostgreSQL.
 
@@ -8,12 +8,22 @@ Sistema de análise de indicadores Bitcoin para trading alavancado, construído 
 ## 1.7.1 - Rebalancemaneto de Scores indicadores cilco - feito
 - Gatilho pode ser ativado ou não na hora de gerar os dados para o dash mercado via paramentro
 
-## 1.7.1 - Ajustes analise tecnica EMAs sem expansão
+## 1.7.2 - Ajustes analise tecnica EMAs sem expansão - feito
 - sistema agora prioriza tendencia (ignorar qualquer outro fator que não seja as EMAs)
 
-## 1.7.2 - Criar a camada 4 - ações estratégicas com base na nova matriz
+## 1.7.3 - Alterações na cada no dash-man - nova matriz de ciclos
+- alterar a matriz de ciclo
+- recalcular alavancagem, posição e ações
 
-## 1.7.3 - Refatorar ema calculator (simplificar - não deve calcular score)
+## 1.7.4 - ajustes na camda de alavancagem
+
+## 1.7.5 - ajustes na camda de ações estratégicas
+
+## 1.7.6 - Refatorar ema calculator trandview (simplificar - não deve calcular score)
+
+## 1.7.7 - Refatorar funções tradingview - deixar apenas o que está sendo utilizado
+
+
 
 
 ## 🏗️ Arquitetura
