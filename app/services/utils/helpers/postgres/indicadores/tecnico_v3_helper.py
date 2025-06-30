@@ -16,15 +16,13 @@ def insert_dados_tecnico(dados: Dict) -> bool:
         distancias_json_str = json.dumps(dados.get("distancias_emas_json", {}))
         
         query = """
-            INSERT INTO indicadores_tecnico (
-                ema_17_1w, ema_34_1w, ema_144_1w, ema_305_1w, ema_610_1w,
+            INSERT INTO indicadores_tecnico (ema_17_1w, ema_34_1w, ema_144_1w, ema_305_1w, ema_610_1w,
                 ema_17_1d, ema_34_1d, ema_144_1d, ema_305_1d, ema_610_1d,
-                btc_price_current, score_consolidado_1w, score_consolidado_1d, score_final_ponderado, timestamp
-            ) VALUES (
+                btc_price_current, score_consolidado_1w, score_consolidado_1d, score_final_ponderado, timestamp) 
+            VALUES 
+                (%s, %s, %s, %s, %s,
                 %s, %s, %s, %s, %s,
-                %s, %s, %s, %s, %s,
-                %s, %s, %s, %s, %s, 
-            )
+                %s, %s, %s, %s, %s)
         """
         
         params = (
