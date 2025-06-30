@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 def save_scores_to_db(dados_scores: dict) -> dict:
     """
-    Salva scores + JSON completo formatado no banco
+    Salva scores + JSON completo formatado no banco COM GATILHOS
     """
     try:
         
@@ -20,7 +20,15 @@ def save_scores_to_db(dados_scores: dict) -> dict:
 
         timestamp_lisboa = (datetime.utcnow() + timedelta(hours=1)).strftime('%Y-%m-%d %H:%M:%S')
         
-        # SQL para inserir scores + JSON
+        # Extrair dados de gatilhos
+        pesos_utilizados = dados_scores.get("pesos_utilizados", {"ciclo": 0.50, "momentum": 0.20, "tecnico": 0.30})
+        gatilhos_acionados = dados_scores.get("gatilhos_acionados", "NENHUM")
+        
+        # Converter pesos para JSON string
+        import json
+        pesos_json = json.dumps(pesos_utilizados)
+        
+        # SQL para inserir scores + JSON + GATILHOS
         query = """
             INSERT INTO dash_mercado (
                 score_ciclo, classificacao_ciclo,
@@ -28,8 +36,9 @@ def save_scores_to_db(dados_scores: dict) -> dict:
                 score_tecnico, classificacao_tecnico,
                 score_consolidado, classificacao_consolidada,
                 indicadores_json,
+                pesos_utilizados, gatilhos_acionados,
                 indicador_ciclo_id, indicador_momentum_id, indicador_tecnico_id, timestamp
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             RETURNING id
         """
         params = (
@@ -42,6 +51,8 @@ def save_scores_to_db(dados_scores: dict) -> dict:
             dados_scores["score_consolidado"],
             dados_scores["classificacao_consolidada"],
             json_indicadores,  # JSON pronto
+            pesos_json,        # ← NOVO: Pesos utilizados
+            gatilhos_acionados, # ← NOVO: Gatilhos acionados
             ids_indicadores.get("ciclo_id"),
             ids_indicadores.get("momentum_id"),
             ids_indicadores.get("tecnico_id"),
@@ -51,7 +62,9 @@ def save_scores_to_db(dados_scores: dict) -> dict:
         resultado = execute_query(query, params, fetch_one=True)
         
         if resultado:
-            logger.info(f"✅ Scores + JSON salvos - ID: {resultado['id']}")
+            logger.info(f"✅ Scores + Gatilhos salvos - ID: {resultado['id']}")
+            logger.info(f"📊 Pesos: {pesos_utilizados}")
+            logger.info(f"🎯 Gatilho: {gatilhos_acionados}")
             return {
                 "status": "success",
                 "id": resultado["id"]
@@ -104,11 +117,9 @@ def _build_indicators_json(dados_scores: dict) -> str:
 
 def get_latest_scores_from_db() -> dict:
     """
-    Obtém último registro com JSON já formatado
+    Obtém último registro com JSON já formatado + GATILHOS
     """
     try:
-        
-        
         query = """
             SELECT 
                 id, timestamp,
@@ -116,7 +127,8 @@ def get_latest_scores_from_db() -> dict:
                 score_momentum, classificacao_momentum,
                 score_tecnico, classificacao_tecnico, 
                 score_consolidado, classificacao_consolidada,
-                indicadores_json
+                indicadores_json,
+                pesos_utilizados, gatilhos_acionados
             FROM dash_mercado
             WHERE indicadores_json IS NOT NULL
             ORDER BY timestamp DESC
@@ -127,6 +139,7 @@ def get_latest_scores_from_db() -> dict:
         
         if resultado:
             logger.info(f"✅ Último registro obtido - ID: {resultado['id']}")
+            logger.info(f"🎯 Gatilho: {resultado.get('gatilhos_acionados', 'NENHUM')}")
             return resultado
         else:
             logger.info("ℹ️ Nenhum registro encontrado")
@@ -135,18 +148,6 @@ def get_latest_scores_from_db() -> dict:
     except Exception as e:
         logger.error(f"❌ Erro get_latest_scores_from_db: {str(e)}")
         return None
-
-    """Constrói JSON completo dos indicadores com scores"""
-    try:
-        return "{}"
-
-        
-        
-        return json.dumps(json_completo)
-        
-    except Exception as e:
-        logger.error(f"❌ Erro _build_indicators_json: {str(e)}")
-        return "{}"
 
 def _get_latest_indicators_ids() -> dict:
     """Busca IDs dos últimos registros de indicadores"""
@@ -165,7 +166,6 @@ def _get_latest_indicators_ids() -> dict:
             resultado = execute_query(query, fetch_one=True)
             ids[key] = resultado["id"] if resultado else None
             
-       
         return ids
         
     except Exception as e:
