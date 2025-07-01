@@ -11,19 +11,9 @@ Sistema de análise de indicadores Bitcoin para trading alavancado, construído 
 ## 1.7.2 - Ajustes analise tecnica EMAs sem expansão - feito
 - sistema agora prioriza tendencia (ignorar qualquer outro fator que não seja as EMAs)
 
-## 1.7.3 - Alterações na cada no dash-man - nova matriz de ciclos
-- alterar a matriz de ciclo
-- recalcular alavancagem, posição e ações
-
-## 1.7.4 - ajustes na camda de alavancagem
-
-## 1.7.5 - ajustes na camda de ações estratégicas
-
-## 1.7.6 - Refatorar ema calculator trandview (simplificar - não deve calcular score)
-
-## 1.7.7 - Refatorar funções tradingview - deixar apenas o que está sendo utilizado
-
-
+## 1.7.3 - Alterações na camada no dash-man - nova matriz de ciclos - Não será feito
+- será descontinuado essa versão e criado a v1.8.0 
+- adicionado uma camada de tendecia macro e definição de nova matriz operacional
 
 
 ## 🏗️ Arquitetura
@@ -189,12 +179,6 @@ def buscar_tradingview():
 - **AAVE**: Health Factor via Web3
 - **Railway**: PostgreSQL database
 - **N8N**: Automação de coletas
-
-## 📝 Próximas Fases
-
-- **1.7.0**: gatilhos score + score emas sem expansão + controle de operações (stop, RP, compras)
-- **1.8.0**: alertas
-- **1.9.0**: Backtest + métricas de performance
 
 ---
 
