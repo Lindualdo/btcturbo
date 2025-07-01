@@ -28,7 +28,7 @@ async def post_dash_mercado():
     return obter_dash_mercado()
 
 @router.post("/dash-mercado")
-async def post_dash_mercado(aplicar_gatilho: bool = True):
+async def post_dash_mercado(aplicar_gatilho: bool = False):
     return processar_dash_mercado(aplicar_gatilho)
 
 @router.get("/dash-mercado/debug")

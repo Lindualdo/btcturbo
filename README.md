@@ -56,7 +56,7 @@ app/
 | GET | `/api/v1/coletar-indicadores/{bloco}` | Coleta dados externos |
 | GET | `/api/v1/obter-indicadores/{bloco}` | Obter dados brutos |
 | GET | `/api/v1/calcular-score/{bloco}` | Calcular scores (0-10) |
-| POST/GET | `/api/v1/dash-mercado` | Dashboard mercado | aplicar_gatilho: bool = True (gatilhos para ajuste de score)
+| POST/GET | `/api/v1/dash-mercado` | Dashboard mercado | aplicar_gatilho: bool = False (gatilhos para ajuste de score)
 | POST/GET | `/api/v1/dash-main` | Dashboard principal (4 camadas) |
 |GET | `/api/v1/dash-finance` | /health-factor, /alavancagem, /patrimonio , /capital-investido (fazer) |
 
