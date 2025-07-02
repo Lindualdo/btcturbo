@@ -40,21 +40,21 @@ def coletar(forcar_coleta: bool):
         # 4. Preparar dados para gravação
         dados_para_db = {
             # EMAs
-            "ema_17_1w": emas_semanal[17],
-            "ema_34_1w": emas_semanal[34], 
-            "ema_144_1w": emas_semanal[144],
-            "ema_305_1w": emas_semanal[305],
-            "ema_610_1w": emas_semanal[610],
-            "ema_17_1d": emas_diario[17],
-            "ema_34_1d": emas_diario[34],
-            "ema_144_1d": emas_diario[144], 
-            "ema_305_1d": emas_diario[305],
-            "ema_610_1d": emas_diario[610],
+            "ema_17_1w": emas_semanal[10],
+            "ema_34_1w": emas_semanal[20], 
+            "ema_144_1w": emas_semanal[50],
+            "ema_305_1w": emas_semanal[100],
+            "ema_610_1w": emas_semanal[200],
+            "ema_17_1d": emas_diario[10],
+            "ema_34_1d": emas_diario[20],
+            "ema_144_1d": emas_diario[50], 
+            "ema_305_1d": emas_diario[100],
+            "ema_610_1d": emas_diario[200],
             "btc_price_current": weekly["current_price"],
             
             # Scores Alinhamento
-            "score_consolidado_1w": resultado_v3["score_consolidado_1w"],
-            "score_consolidado_1d": resultado_v3["score_consolidado_1d"],
+            "score_consolidado_1w":0,
+            "score_consolidado_1d": 0,
             "score_final_ponderado": resultado_v3["score_consolidado"],
             "classificacao_consolidada": resultado_v3["classificacao_consolidada"],
             "timestamp": datetime.utcnow()

@@ -15,7 +15,7 @@ class EMACalculator:
         """Inicializa calculadora EMAs com configurações"""
         self.settings = get_settings()
         self.tv = None
-        self.ema_periods = [17, 34, 144, 305, 610]
+        self.ema_periods = [10, 20, 50, 100, 200]
         
     def get_tv_session(self) -> TvDatafeed:
         """Obtém sessão TradingView reutilizável"""
@@ -63,8 +63,8 @@ class EMACalculator:
         """Calcula EMAs para todos os períodos"""
         try:
             if df is None or df.empty:
-                raise Exception("DataFrame inválido")
-            
+                df = Interval.in_daily
+
             emas = {}
             current_price = float(df['close'].iloc[-1])
             
