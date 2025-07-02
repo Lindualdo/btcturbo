@@ -49,7 +49,7 @@ def calcular_score_alinhamento(emas: Dict[str, float], current_price) -> Dict:
 
         # EMA 10 > EMA 20: 15 pontos
         if emas[10] > emas[20]:
-            score += 10
+            score += 15
             detalhes["10_vs_20"] = {"status": "bullish", "pontos": 15}
         else:
             detalhes["10_vs_20"] = {"status": "bearish", "pontos": 0}
@@ -70,7 +70,7 @@ def calcular_score_alinhamento(emas: Dict[str, float], current_price) -> Dict:
             
         # EMA 100 > EMA 200: 30 pontos
         if emas[100] > emas[200]:
-            score += 40
+            score += 30
             detalhes["100_vs_200"] = {"status": "bullish", "pontos": 30}
         else:
             detalhes["100_vs_200"] = {"status": "bearish", "pontos": 0}
