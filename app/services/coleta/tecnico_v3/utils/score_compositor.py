@@ -7,13 +7,13 @@ from .ema_expansao_calculator import calcular_score_expansao
 
 logger = logging.getLogger(__name__)
 
-def calcular_score_tecnico_v3(emas_semanal: Dict, emas_diario: Dict) -> Dict:
+def calcular_score_tecnico_v3(emas_semanal: Dict, emas_diario: Dict, current_price) -> Dict:
     """Compõe score técnico final v3.0"""
     try:
         logger.info("🔄 Compondo Score Técnico v3.0...")
         
         # Calcular scores diário  
-        diario_scores = _calcular_score_timeframe(emas_diario, "1D")
+        diario_scores = _calcular_score_timeframe(emas_diario, "1D", current_price)
         if diario_scores["status"] != "success":
             raise Exception(f"Erro score diário: {diario_scores.get('erro')}")
             
@@ -33,13 +33,13 @@ def calcular_score_tecnico_v3(emas_semanal: Dict, emas_diario: Dict) -> Dict:
             "erro": str(e)
         }
 
-def _calcular_score_timeframe(emas: Dict, timeframe: str) -> Dict:
+def _calcular_score_timeframe(emas: Dict, timeframe: str, current_price) -> Dict:
     """Calcula score para um timeframe específico"""
     try:
         logger.info(f"📊 Calculando score {timeframe}...")
         
         # Score Alinhamento
-        alinhamento_result = calcular_score_alinhamento(emas)
+        alinhamento_result = calcular_score_alinhamento(emas, current_price)
         if alinhamento_result["status"] != "success":
             raise Exception(f"Erro alinhamento {timeframe}")
         

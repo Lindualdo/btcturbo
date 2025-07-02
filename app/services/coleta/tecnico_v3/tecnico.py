@@ -32,7 +32,7 @@ def coletar(forcar_coleta: bool):
         
         # 3. Calcular scores v3.0
         logger.info("🔄 Calculando scores v3.0...")
-        resultado_v3 = calcular_score_tecnico_v3(emas_semanal, emas_diario)
+        resultado_v3 = calcular_score_tecnico_v3(emas_semanal, emas_diario, weekly["current_price"] )
         
         if resultado_v3["status"] != "success":
             raise Exception(f"Cálculo v3.0 falhou: {resultado_v3.get('erro')}")

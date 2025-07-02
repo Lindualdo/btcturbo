@@ -5,7 +5,7 @@ from typing import Dict, Optional
 
 logger = logging.getLogger(__name__)
 
-def calcular_score_alinhamento(emas: Dict[str, float]) -> Dict:
+def calcular_score_alinhamento(emas: Dict[str, float], current_price) -> Dict:
     """
     Calcula Score Alinhamento baseado na v1.8
     
@@ -39,8 +39,8 @@ def calcular_score_alinhamento(emas: Dict[str, float]) -> Dict:
         score = 0
         detalhes = {}
         
-        # EMA Preço acima da EMA10: 10 pontos
-        if emas["current_price"] > emas[10]:
+        # Preço acima da EMA10: 10 pontos
+        if float(current_price) > emas[10]:
             score += 10
             detalhes["Price>EMA_10"] = {"status": "bullish", "pontos": 10}
         else:
