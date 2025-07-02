@@ -14,7 +14,7 @@ Sistema de análise de indicadores Bitcoin para trading alavancado, construído 
         (puell_score * 0.20))     
 ```
 
-
+## 1.8.2 - Desativar os gatilhos de ajustes de score
 
 ## 🏗️ Arquitetura
 

@@ -1,8 +1,5 @@
 #source:  app/services/utils/helpers/postgres/mercado/database_helper.py
 
-# Busca o ciclo usando a Matriz de Ciclos de Mercado V2
-# busca os indicadores e escores de Mercado no banco de dados
-
 import logging
 from datetime import datetime
 from typing import Optional, Dict
@@ -23,16 +20,12 @@ def get_ciclo_mercado() -> dict:
         # 2. Extrair indicadores e scores
         score_mercado = float(dados_mercado["score_consolidado"])
        
-        indicadores = dados_mercado["indicadores_json"]  # Já é dict
-        mvrv = indicadores["ciclo"]["indicadores"]["MVRV_Z"]["valor"]
-        nupl = indicadores["ciclo"]["indicadores"]["NUPL"]["valor"]
-        
-        # 3. Determinar ciclo via banco usando a tabela matriz_ciclos_mercado V2
-        ciclo_definido = _buscar_ciclo_matriz(score_mercado, mvrv, nupl)
+        # Descontinuado na v1.8 / será usado matriz da camada de tendencia
+        ciclo_definido = _buscar_dados_estrategicos(score_mercado) 
         
         # 4. Fallback se não encontrar ciclo
         if not ciclo_definido:
-            alert = f"⚠️ Ciclo não encontrado para Score:{score_mercado} MVRV:{mvrv} NUPL:{nupl}"
+            alert = f"⚠️ Ciclo não encontrado para Score:{score_mercado}"
             logger.warning(alert)
             ciclo_definido = {
                 "nome_ciclo": "CICLO INDEFINIDO",
@@ -51,8 +44,7 @@ def get_ciclo_mercado() -> dict:
             "ciclo_detail": ciclo_definido["caracteristicas"],
             "ciclo_detalhes": ciclo_definido,
             "indicadores": {
-                "mvrv": mvrv,
-                "nupl": nupl,
+
                 "score_ciclo": float(dados_mercado["score_ciclo"]),
                 "score_momentum": float(dados_mercado["score_momentum"]),
                 "score_tecnico": float(dados_mercado["score_tecnico"])
@@ -100,36 +92,24 @@ def _get_scores_indicadores_mercado() -> dict:
         return None
 
    
-def _buscar_ciclo_matriz(score: float, mvrv: float, nupl: float) -> Optional[Dict]:
+def _buscar_dados_estrategicos(score: float) -> Optional[Dict]:
     
     try:
-        logger.info(f"🔍 Buscando ciclo para Score:{score} MVRV:{mvrv} NUPL:{nupl}")
+        logger.info(f"🔍 Buscando dados estrategicos conforme fase da tendêcia")
         
         query = """
-            SELECT nome_ciclo, percentual_capital, alavancagem, caracteristicas, prioridade
-            FROM matriz_ciclos_mercado 
-            WHERE ativo = true
-              AND %s BETWEEN score_min AND score_max
-              AND (%s BETWEEN mvrv_min AND mvrv_max OR (mvrv_min IS NULL AND mvrv_max IS NULL))
-              AND (%s BETWEEN nupl_min AND nupl_max OR (nupl_min IS NULL AND nupl_max IS NULL))
-            ORDER BY prioridade DESC, id
-            LIMIT 1
+           Será criado a  query para a nova matriz da camada de Tendencia (estratégica)
         """
         
-        resultado = execute_query(query, params=(score, mvrv, nupl), fetch_one=True)
-        
-        if resultado:
-            logger.info(f"✅ Ciclo encontrado: {resultado['nome_ciclo']}")
-            return {
-                "nome_ciclo": resultado["nome_ciclo"],
-                "percentual_capital": resultado["percentual_capital"],
-                "alavancagem": float(resultado["alavancagem"]),
-                "caracteristicas": resultado["caracteristicas"],
-                "prioridade": resultado["prioridade"]
-            }
-        
-        logger.warning(f"⚠️ Nenhum ciclo encontrado na matriz")
-        return None
+        #resultado = execute_query(query, params=(score, mvrv, nupl), fetch_one=True)
+    
+        return {
+            "nome_ciclo": "BULL FINAL - HARD CODE",
+            "percentual_capital": 10,
+            "alavancagem": float(1.5),
+            "caracteristicas": "HOLD",
+            "prioridade": "Média"
+        }
         
     except Exception as e:
         logger.error(f"❌ Erro buscar ciclo matriz: {str(e)}")
