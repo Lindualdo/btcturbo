@@ -39,6 +39,14 @@ def calcular_score_alinhamento(emas: Dict[str, float]) -> Dict:
         score = 0
         detalhes = {}
         
+        # EMA Preço acima da EMA10: 10 pontos
+        if emas["current_price"] > emas[10]:
+            score += 10
+            detalhes["Price>EMA_10"] = {"status": "bullish", "pontos": 10}
+        else:
+            detalhes["10_vs_20"] = {"status": "bearish", "pontos": 0}
+
+
         # EMA 10 > EMA 20: 15 pontos
         if emas[10] > emas[20]:
             score += 10
