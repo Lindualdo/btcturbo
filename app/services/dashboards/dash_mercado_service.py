@@ -10,7 +10,7 @@ from app.services.scores.tecnico  import calcular_score as calcular_score_tecnic
 
 logger = logging.getLogger(__name__)
 
-def processar_dash_mercado(aplicar_gatilho: bool = True) -> dict:
+def processar_dash_mercado() -> dict:
     try:
         # 1 - Busca os scores calculados (todos os blocos)
         scores = _get_scores_data()
@@ -26,28 +26,7 @@ def processar_dash_mercado(aplicar_gatilho: bool = True) -> dict:
             "classificacao_consolidada": score_consolidado["classificacao"]
         }
         
-        # 4. ← APLICAR GATILHOS CONDICIONALMENTE
-        if aplicar_gatilho:
-            logger.info("🎯 Aplicando gatilhos de modificação de pesos...")
-            dados_completos = aplicar_gatilhos_score(dados_completos)
-            
-            # Verificar se gatilhos funcionaram corretamente
-            if "pesos_utilizados" not in dados_completos or "gatilhos_acionados" not in dados_completos:
-                logger.error("❌ Falha nos gatilhos - campos obrigatórios ausentes")
-                return {
-                    "status": "error",
-                    "erro": "Sistema de gatilhos falhou - dados incompletos",
-                    "timestamp": datetime.utcnow().isoformat()
-                }
-        else:
-            logger.info("⚪ Gatilhos desabilitados - usando pesos padrão")
-            dados_completos["pesos_utilizados"] = {"ciclo": 0.50, "momentum": 0.20, "tecnico": 0.30}
-            dados_completos["gatilhos_acionados"] = "DESABILITADO"
-            
-        logger.info(f"📊 Pesos finais: {dados_completos['pesos_utilizados']}")
-        logger.info(f"🎯 Gatilho: {dados_completos['gatilhos_acionados']}")
-        
-        # 5. Gravar no banco (com score já ajustado pelos gatilhos)
+        logger.info("⚪ Gatilhos desabilitados - usando pesos padrão")
         resultado_db = save_dashboard_scores(dados_completos)
         
         if resultado_db.get("status") == "success":

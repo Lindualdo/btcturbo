@@ -15,14 +15,14 @@ Sistema de análise de indicadores Bitcoin para trading alavancado, construído 
         (puell_score * 0.20))     
 ```
 
-## 1.8.2 - Rebalancear Score de mercado nas rotinas do dash-mercado
+## 1.8.2 - Rebalancear Score de mercado nas rotinas do dash-mercado e dash main - feito
 - todos os blocos terão mesmo peso
 
-## 1.8.2 - Desativar os gatilhos de ajustes de score
+## 1.8.2 - Desativar os gatilhos de ajustes de score - feito
 - deixar o código por enquanto desativar apenas no Router
 
-## 1.8.3 - Ajustes no score técnico: EMAS
-- deixar o código por enquanto desativar apenas no Router
+## 1.8.3 - Ajustes no score técnico: EMAS  -feito
+- retirar os scores semanl e diário e manter apenas o consolidado
 
 ## 🏗️ Arquitetura
 
