@@ -48,14 +48,12 @@ def _calcular_score_timeframe(emas: Dict, timeframe: str) -> Dict:
         score_alinhamento = alinhamento_result["score"]
         score_consolidado = score_alinhamento 
         
-        logger.info(f"✅ Score {timeframe}: {score_consolidado:.1f} (Alin:{score_alinhamento}")
-        
         return {
             "score_consolidado": round(score_consolidado, 1),
             "alinhamento": {
-                "score": score_alinhamento,
-                "detalhes": alinhamento_result.get("detalhes", {}),
-                "interpretacao": alinhamento_result.get("interpretacao", {})
+                "score": 0,
+                "detalhes": "",
+                "interpretacao": ""
             },
             "status": "success"
         }
