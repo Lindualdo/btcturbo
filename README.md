@@ -21,7 +21,7 @@ Sistema de análise de indicadores Bitcoin para trading alavancado, construído 
 ## 1.8.2 - Desativar os gatilhos de ajustes de score - feito
 - deixar o código por enquanto desativar apenas no Router
 
-## 1.8.3 - Ajustes no score técnico: EMAS  -feito
+## 1.8.3 - Ajustes no score técnico: EMAS -feito
 - retirar os scores semanl e diário e manter apenas o consolidado
 
 ## 🏗️ Arquitetura
