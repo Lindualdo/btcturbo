@@ -2,7 +2,7 @@
 
 Sistema de análise de indicadores Bitcoin para trading alavancado, construído com FastAPI + PostgreSQL.
 
-## 1.8.1 - retirar MVRV do blco ciclo e rebalancear
+## 1.8.1 - retirar MVRV do bloco ciclo e rebalancear
 - Ajustes dos score ciclo: retirado do MVRV (irá para camada de Tendencia)
 - Rebalanceamento dos demais indicadores
 
@@ -15,6 +15,10 @@ Sistema de análise de indicadores Bitcoin para trading alavancado, construído 
 ```
 
 ## 1.8.2 - Desativar os gatilhos de ajustes de score
+- deixar o código por enquanto desativar apenas no Router
+
+## 1.8.3 - Ajustes no score técnico: EMAS
+- deixar o código por enquanto desativar apenas no Router
 
 ## 🏗️ Arquitetura
 

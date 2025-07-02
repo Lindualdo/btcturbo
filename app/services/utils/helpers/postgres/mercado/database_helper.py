@@ -44,7 +44,6 @@ def get_ciclo_mercado() -> dict:
             "ciclo_detail": ciclo_definido["caracteristicas"],
             "ciclo_detalhes": ciclo_definido,
             "indicadores": {
-
                 "score_ciclo": float(dados_mercado["score_ciclo"]),
                 "score_momentum": float(dados_mercado["score_momentum"]),
                 "score_tecnico": float(dados_mercado["score_tecnico"])
@@ -104,11 +103,11 @@ def _buscar_dados_estrategicos(score: float) -> Optional[Dict]:
         #resultado = execute_query(query, params=(score, mvrv, nupl), fetch_one=True)
     
         return {
-            "nome_ciclo": "BULL FINAL - HARD CODE",
-            "percentual_capital": 10,
-            "alavancagem": float(1.5),
+            "nome_ciclo": "BULL - HARD CODE",
+            "percentual_capital": 0,
+            "alavancagem": 1.5,
             "caracteristicas": "HOLD",
-            "prioridade": "Média"
+            "prioridade": 0
         }
         
     except Exception as e:

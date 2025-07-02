@@ -8,6 +8,7 @@
 - Pesos iguais 33.3% em todos os blocos da camada 2 - Tático 
 - pesos iguais 33.3% nos indicadores da camada 1 - Estratégico
 - Nova matriz completa de decisão baseado na Estratégia + Tático
+- Sistema de Stop eficiente de acordo com tamanho da alavancagem
 
 ## 🎯 OBJETIVOS FUNDAMENTAIS DO SISTEMA
 
@@ -46,3 +47,13 @@
 **Pergunta**: Está funcionando? Mede e ajusta
 
 ---
+
+## todo: 
+- incluir indicador de price action no score tecnico
+- rever nivel de alavancagem - proximo a topos (validar nos cenários da camada 1)
+- avaliar peso do RSI semanal no bloco momentum (Reduzir para 30% e adicionar ATR avaliar migrar para blco técnico)
+- avaliar utilização de EMAs mais flexíveis para ajustes de alavancagem (já previsto na v1.8)
+- incluir gatilhos de volume onchain (Incorporar Whale Transaction ao bloco Momentum, peso de 10-15%)
+- incluir outros indicadores de risco sistemicos (BVOL, juros mercado, WBTC paridade, plataforma AAVE)
+- rever ranges do MVRV e NUPL - ajustar para realidade atual do mercado (menor volatilidade)
+- rever dependência da AAVE,  WBTC e Arbitrum

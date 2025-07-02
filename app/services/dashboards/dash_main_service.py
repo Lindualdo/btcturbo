@@ -20,24 +20,24 @@ def processar_dash_main() -> dict:
     try:
         logger.info("🚀 Processando Dash-main - POST")
         
-        # CAMADA TENDENCIA: Análise de tendência macro
+        # 1 - CAMADA ESTRATÉGICA - Score da Tendencia macro
         dados_tendencia = obter_tendencia()
 
-        # CAMADA 1: Análise Mercado
+        # 2: CAMADA TÁTICA - Score consolidado do mercado (cilco, momentum e técnico)
         dados_mercado =  get_ciclo_mercado()
-        logger.info(f"✅ Camada 1: Score {dados_mercado['score_mercado']} - {dados_mercado['classificacao_mercado']}")
+        logger.info(f"✅ Camada 2: Score {dados_mercado['score_mercado']} - {dados_mercado['classificacao_mercado']}")
         
-        # CAMADA 2: Análise Risco
+        # Análise Risco
         dados_risco = _executar_camada_risco()
-        logger.info(f"✅ Camada 2: Score {dados_risco['score']} - {dados_risco['classificacao']}")
+        logger.info(f"✅ Camada Risco: Score {dados_risco['score']} - {dados_risco['classificacao']}")
         
-        # CAMADA 3: Análise Alavancagem
+        # Análise Alavancagem
         alavancagem_permitida = dados_mercado["ciclo_detalhes"]["alavancagem"]
         dados_alavancagem = executar_analise_alavancagem(alavancagem_permitida)
-        logger.info(f"✅ Camada 3: Alavancagem {dados_alavancagem.get('alavancagem_permitida', 0)}x")
+        logger.info(f"✅ Camada Alavancagem: Alavancagem {dados_alavancagem.get('alavancagem_permitida', 0)}x")
         
-        # CAMADA 4: Execução Tática (analise tecnica e setups)
-        logger.info("🎯 Executando Camada 4: Analise Tática...")
+        # Ações Táticas
+        logger.info("🎯 Executando Analise Tática...")
         
         dados_tatica = executar_analise(dados_mercado, dados_risco, dados_alavancagem)
         
