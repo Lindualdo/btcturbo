@@ -18,11 +18,9 @@ def calcular_score_tecnico_v3(emas_semanal: Dict, emas_diario: Dict) -> Dict:
             raise Exception(f"Erro score diário: {diario_scores.get('erro')}")
             
         
-        logger.info(f"✅ Score Final v1.8 {diario_scores["score_consolidado"]:.1f}")
-        
         return {
                 "status": "success",
-                "score_consolidado": round(diario_scores["score_consolidado"] , 1),
+                "score_consolidado": diario_scores["score_consolidado"],
                 "classificacao_consolidada": ""
                 }
     
