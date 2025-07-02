@@ -1,19 +1,19 @@
-# BTC Turbo v1.7.2
+# BTC Turbo v1.8
 
 Sistema de análise de indicadores Bitcoin para trading alavancado, construído com FastAPI + PostgreSQL.
 
-## 1.7.0 - Aplicação de gatilhos de ajuste score -feito
-- Gatilho pode ser ativado ou não na hora de gerar os dados para o dash mercado via paramentro
+## 1.8.1 - retirar MVRV do blco ciclo e rebalancear
+- Ajustes dos score ciclo: retirado do MVRV (irá para camada de Tendencia)
+- Rebalanceamento dos demais indicadores
 
-## 1.7.1 - Rebalancemaneto de Scores indicadores cilco - feito
-- Gatilho pode ser ativado ou não na hora de gerar os dados para o dash mercado via paramentro
+```
+  score_ciclo_consolidado = ( 
+        (nupl_score * 0.35) +   
+        (realized_score * 0.25) +  
+        (reserve_risk * 0.20) +   
+        (puell_score * 0.20))     
+```
 
-## 1.7.2 - Ajustes analise tecnica EMAs sem expansão - feito
-- sistema agora prioriza tendencia (ignorar qualquer outro fator que não seja as EMAs)
-
-## 1.7.3 - Alterações na camada no dash-man - nova matriz de ciclos - Não será feito
-- será descontinuado essa versão e criado a v1.8.0 
-- adicionado uma camada de tendecia macro e definição de nova matriz operacional
 
 
 ## 🏗️ Arquitetura

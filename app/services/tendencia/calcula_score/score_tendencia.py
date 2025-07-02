@@ -1,16 +1,6 @@
-# CAMADA 1: TENDÊNCIA MACRO
-**Pergunta**: Qual ciclo estamos? Define modelo operacional
+# CALCULO DO SCORE:
 
-## CAMADA 1: TENDÊNCIA MACRO
-
-| Indicador | Categoria | Peso | Descrição |
-|-----------|-----------|------|-----------|
-| **200 Week MA Multiple** | PREÇO | 33% | Preço ÷ MA200 semanal |
-| **MVRV Z-Score** | VALOR ON-CHAIN | 33% | Bitcoin caro ou barato |
-| **Puell Multiple** | MINERADORES | 33% | Saúde da mineração |
-
-### CALCULO DO SCORE:
-
+"""
 **200 Week MA Multiple:**
 - **>2.5**: Score 100 (BULL)
 - **2.0-2.5**: Score 80
@@ -25,23 +15,29 @@
 - **0-1.0**: Score 40
 - **<0**: Score 0 (BEAR)
 
-**Puell Multiple:**
-- **>2.0**: Score 100 (BULL)
-- **1.5-2.0**: Score 80
-- **1.0-1.5**: Score 60
-- **0.5-1.0**: Score 40
-- **<0.5**: Score 0 (BEAR)
+**RSI Mensal**:
+>70: Score 100 (BULL) 
+65-70: Score 70
+50-65: Score 50
+35-50: Score 30
+<35: Score 0 (BEAR)
 
-### CÁLCULO DA TENDENCIA MACRO
+### CÁLCULO SCORE FINAL DA TENDENCIA MACRO
 ```
-Score_Tendência = (200MA + MVRV + Puell) / 3
+Score_Tendência = (200MA + MVRV + RSI) / 3
 
 70-100 = BULL
 30-69 = NEUTRO  
 0-29 = BEAR
 ```
 
-## MATRIZ DE MODELOS OPERACIONAIS
+"""
+
+# CALCULO DO SCORE - SUBFASE E ALAVANCAGEM:
+
+"""
+
+## MATRIZ ESTRATEGICA - MODELOS OPERACIONAIS
 
 | Ciclo | Direção | Satélite | Alavancagem Máx | Stop Loss | Filosofia |
 |-------|---------|----------|-----------------|-----------|-----------|
@@ -52,9 +48,9 @@ Score_Tendência = (200MA + MVRV + Puell) / 3
 ### SUBFASES OPERACIONAIS
 
 #### BULL (Score 70-100)
-- **70-79**: Bull Inicial → Alav 2.0x
+- **70-79**: Bull Inicial → Alav 3.0x
 - **80-89**: Bull Maduro → Alav 2.5x
-- **90-100**: Bull Final → Alav 3.0x (cuidado RP)
+- **90-100**: Bull Final → Alav 1.5x (cuidado RP)
 
 #### NEUTRO (Score 30-69)
 - **60-69**: Neutro→Bull → Alav 1.5x
@@ -65,5 +61,7 @@ Score_Tendência = (200MA + MVRV + Puell) / 3
 - **20-29**: Bear Inicial → Alav 0x, Satélite 40%
 - **10-19**: Bear Maduro → Alav 0x, Satélite 30%
 - **0-9**: Bear Final → Alav 0x, Satélite 20%
+
+"""
 
 

@@ -1,4 +1,4 @@
-# app/services/scores/ciclos.py - v1.6.0 COM reserve_risk E PESOS REBALANCEADOS
+# app/services/scores/ciclos.py 
 
 from app.services.indicadores import ciclos as indicadores_ciclos
 
@@ -132,14 +132,13 @@ def calcular_score():
     reserve_risk, nupl_classificacao = calcular_reserve_risk(reserve_risk_valor)  
     puell_score, nupl_classificacao = calcular_puell_score(puell_valor)  
     
-    # 4.PESOS REBALANCEADOS v1.7.1
+    # 4.PESOS REBALANCEADOS v1.8
     
-    score_consolidado = (
-        (mvrv_score * 0.25) +     
-        (nupl_score * 0.25) +   
-        (realized_score * 0.20) +  
-        (reserve_risk * 0.15) +   
-        (puell_score * 0.15))      
+    score_consolidado = ( 
+        (nupl_score * 0.35) +   
+        (realized_score * 0.25) +  
+        (reserve_risk * 0.20) +   
+        (puell_score * 0.20))      
     
     # 6. Retornar JSON formatado
 
@@ -151,18 +150,13 @@ def calcular_score():
     return {
         "bloco": "ciclo",
         "status": "success",
-        "peso_bloco": "50%",  # Peso ajustado na v1.6.0 (era 40%)
+        "peso_bloco": "50%",  
         "score_consolidado": round(score_consolidado * 10, 1),
         "classificacao_consolidada": interpretar_classificacao_consolidada(score_consolidado),
         "timestamp": dados_indicadores["timestamp"],
         
-        # INDICADORES COM PESOS REBALANCEADOS v1.6.0
+        # INDICADORES COM PESOS REBALANCEADOS 
         "indicadores": {
-            "MVRV_Z": {
-                "valor": mvrv_valor,
-                "score": round(mvrv_score * 10, 1),
-            },
-            
             "NUPL": {
                 "valor": nupl_valor,
                 "score": round(nupl_score *10, 1),
