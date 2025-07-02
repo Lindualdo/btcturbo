@@ -2,9 +2,10 @@
 
 Sistema de análise de indicadores Bitcoin para trading alavancado, construído com FastAPI + PostgreSQL.
 
-## 1.8.1 - retirar MVRV do bloco ciclo e rebalancear
+## 1.8.1 - retirar MVRV do bloco ciclo e rebalancear - feito
 - Ajustes dos score ciclo: retirado do MVRV (irá para camada de Tendencia)
 - Rebalanceamento dos demais indicadores
+- Alterar rotinas do dash main que calcula o cilco com base no escore mercado + MRV + NUPL
 
 ```
   score_ciclo_consolidado = ( 
@@ -13,6 +14,9 @@ Sistema de análise de indicadores Bitcoin para trading alavancado, construído 
         (reserve_risk * 0.20) +   
         (puell_score * 0.20))     
 ```
+
+## 1.8.2 - Rebalancear Score de mercado nas rotinas do dash-mercado
+- todos os blocos terão mesmo peso
 
 ## 1.8.2 - Desativar os gatilhos de ajustes de score
 - deixar o código por enquanto desativar apenas no Router

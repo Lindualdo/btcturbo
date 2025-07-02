@@ -151,10 +151,12 @@ def _calcular_score_consolidado(scores: dict) -> dict:
         logger.info(f"🔍 DEBUG valores: ciclo={score_ciclo}, momentum={score_momentum}, tecnico={score_tecnico}")
         
         score_consolidado = (
-            (score_ciclo * 0.50) +
-            (score_momentum * 0.20) +
-            (score_tecnico * 0.30)
+            (score_ciclo ) +
+            (score_momentum ) +
+            (score_tecnico )
         )
+
+        score_consolidado = score_consolidado / 3
 
         if score_consolidado >= 80.0:
             classificacao = "ótimo"
