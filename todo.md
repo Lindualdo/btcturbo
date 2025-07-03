@@ -40,3 +40,14 @@ FASE4 - BACKTEST
 - decompor o helper trandiview em arquivos menores cada um para uma finalidade
 
 
+---
+
+## todo: 
+- incluir indicador de price action no score tecnico
+- rever nivel de alavancagem - proximo a topos (validar nos cenários da camada 1)
+- avaliar peso do RSI semanal no bloco momentum (Reduzir para 30% e adicionar ATR avaliar migrar para blco técnico)
+- avaliar utilização de EMAs mais flexíveis para ajustes de alavancagem (já previsto na v1.8)
+- incluir gatilhos de volume onchain (Incorporar Whale Transaction ao bloco Momentum, peso de 10-15%)
+- incluir outros indicadores de risco sistemicos (BVOL, juros mercado, WBTC paridade, plataforma AAVE)
+- rever ranges do MVRV e NUPL - ajustar para realidade atual do mercado (menor volatilidade)
+- rever dependência da AAVE,  WBTC e Arbitrum

@@ -1,39 +1,17 @@
-# BTC Turbo v1.8
+# BTC Turbo v1.9
 
 Sistema de análise de indicadores Bitcoin para trading alavancado, construído com FastAPI + PostgreSQL.
 
-## 📌 PRINCIPAIS MUDANÇAS DESTA VERSÃO
-- Criação da camada 1 - Estratégico
-- Removido MVRV e Puel Multiple do bloco ciclo (transferido para camada 1)
-- Adicionada coluna "Categoria" em todos indicadores (visibilidade de cobertura em várias dimensões)
-- EMAs clássicas na camada tática (10/20/30/50/100/200) para timing
-- Pesos iguais 33.3% em todos os blocos da camada 2 - Tático 
-- pesos iguais 33.3% nos indicadores da camada 1 - Estratégico
-- Nova matriz completa de decisão baseado na Estratégia + Tático
-- Sistema de Stop eficiente de acordo com tamanho da alavancagem
+# Alterações nesta versão
 
-
-## 1.8.1 - retirar MVRV do bloco ciclo e rebalancear - feito
-- Ajustes dos score ciclo: retirado do MVRV (irá para camada de Tendencia)
-- Rebalanceamento dos demais indicadores
-- Alterar rotinas do dash main que calcula o cilco com base no escore mercado + MRV + NUPL
-
-```
-  score_ciclo_consolidado = ( 
-        (nupl_score * 0.35) +   
-        (realized_score * 0.25) +  
-        (reserve_risk * 0.20) +   
-        (puell_score * 0.20))     
-```
-
-## 1.8.2 - Rebalancear Score de mercado nas rotinas do dash-mercado e dash main - feito
-- todos os blocos terão mesmo peso
-
-## 1.8.2 - Desativar os gatilhos de ajustes de score - feito
-- deixar o código por enquanto desativar apenas no Router
-
-## 1.8.3 - Ajustes no score técnico: EMAS -feito
-- retirar os scores semanl e diário e manter apenas o consolidado
+    - Camada Mercado será a nva camda Estratégico: que terá Tendencia + Ciclo
+    - A camada mercado não terá um score final, usará uma matriz que cruza o score Tendencia com Score ciclo
+    - Desse cruzamento entre os scores responderá as seguintes perguntas: Qual a tendência do mercado (BULL , BEAR ou NEUTRO), qual a fase (bull inicial, bull final acumulação..), Alavancagem, Tamanho da posição satélite, Ação primária
+    - Os blocs Técnico e Momentum, vão sair da camda mercado
+    - será criado uma nova camada chamada tática com indicadores para tomada de decisão (comprar, vender..)
+    - o score dessa camada já indicará se está no momento de agir, apenas nos extremos, correspondendo com a estratégia de Hold..
+    - Score de 0 a 100:  0 venda 100 compra meio neutro Hold
+    - Novos indicadores da camada tática:  RSI diário, suporte/resistencia, Delta OI, Funding Rates, Volume Spot
 
 ## 🏗️ Arquitetura
 
