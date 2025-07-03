@@ -1,15 +1,5 @@
 # BTC TURBO -  v1.8
 
-## 📌 PRINCIPAIS MUDANÇAS DESTA VERSÃO
-- Criação da camada 1 - Estratégico
-- Removido MVRV e Puel Multiple do bloco ciclo (transferido para camada 1)
-- Adicionada coluna "Categoria" em todos indicadores (visibilidade de cobertura em várias dimensões)
-- EMAs clássicas na camada tática (10/20/30/50/100/200) para timing
-- Pesos iguais 33.3% em todos os blocos da camada 2 - Tático 
-- pesos iguais 33.3% nos indicadores da camada 1 - Estratégico
-- Nova matriz completa de decisão baseado na Estratégia + Tático
-- Sistema de Stop eficiente de acordo com tamanho da alavancagem
-
 ## 🎯 OBJETIVOS FUNDAMENTAIS DO SISTEMA
 
 1. **PRESERVAÇÃO**: Core (50%) INTOCÁVEL em cold wallet  - patrimônio protegido
@@ -26,7 +16,7 @@
 - **Otimizar Hold**: 90% do Satélite + Alavancagem (max 3x)
 - **Base Operacional**: 10% do satélite (flex: swing trade ou position trade) 
 
-⚠️ **FILOSOFIA CENTRAL: HOLD ALAVANCADO**
+⚠️ **FILOSOFIA CENTRAL: HOLD ALAVANCADO - NÂO É TRADER**
 - Em BULL: 80% do tempo fazendo NADA (hold)
 - Ações apenas em extremos comprovados
 - Satélite NUNCA vende em BULL

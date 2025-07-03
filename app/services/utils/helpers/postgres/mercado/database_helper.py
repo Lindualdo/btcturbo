@@ -105,7 +105,7 @@ def _buscar_dados_estrategicos(score: float) -> Optional[Dict]:
         return {
             "nome_ciclo": "BULL - HARD CODE",
             "percentual_capital": 0,
-            "alavancagem": 1.5,
+            "alavancagem": 1.8,
             "caracteristicas": "HOLD",
             "prioridade": 0
         }
