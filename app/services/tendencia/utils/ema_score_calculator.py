@@ -75,7 +75,6 @@ def calculate_ema_score(current_price, emas):
 
     return ema_score
 
-
 def _interpretar_alinhamento(score: int) -> Dict:
     """Interpreta score de alinhamento"""
     if score == 100:
