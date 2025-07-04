@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import (coleta, indicadores, score, dashboards)
+from app.routers import (coleta, indicadores, score, dashboards, tendencia)
 
 app = FastAPI(
     title="BTC Turbo API",
@@ -22,3 +22,4 @@ app.include_router(coleta.router, prefix="/api/v1", tags=["📥 Coleta"]) # cole
 app.include_router(indicadores.router, prefix="/api/v1", tags=["📊 Indicadores"])  # obtem os indicadores (ciclos, riscos, momentum e tecnico)
 app.include_router(score.router, prefix="/api/v1", tags=["🎯 Scores"]) # calcula scores e retona indicadores  (ciclos, riscos, momentum e tecnico)
 app.include_router(dashboards.router, prefix="/api/v1", tags=["📊 dashboards"]) 
+app.include_router(tendencia.router, prefix="/api/v1", tags=["📊 tendencia"]) # coleta dados e calcula score da tendencia
