@@ -8,7 +8,7 @@ from .dash_main.helpers.data_builder import build_dashboard_data, build_response
 from .dash_main.analise_alavancagem import executar_analise_alavancagem
 from .dash_main.analise_tecnica.analise_tecnica_service import executar_analise
 from  app.services.utils.helpers.postgres.mercado.database_helper import get_ciclo_mercado
-from app.services.tendencia.tendencia_service import obter_tendencia 
+
 
 
 logger = logging.getLogger(__name__)
@@ -19,9 +19,6 @@ def processar_dash_main() -> dict:
     """
     try:
         logger.info("🚀 Processando Dash-main - POST")
-        
-        # 1 - CAMADA ESTRATÉGICA - Score da Tendencia macro
-        dados_tendencia = obter_tendencia()
 
         # 2: CAMADA TÁTICA - Score consolidado do mercado (cilco, momentum e técnico)
         dados_mercado =  get_ciclo_mercado()
