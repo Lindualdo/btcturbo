@@ -54,7 +54,7 @@ def calcular_score():
             # Ema score
             "score_emas": resultado["score"],
             "classificacao_emas": resultado["classificacao"],
-            "timestamp": datetime.utcnow()
+            "timestamp": datetime.utcnow().isoformat() 
         }
         
         # 5. Gravar no banco
@@ -64,7 +64,7 @@ def calcular_score():
         if not sucesso:
             raise Exception("Falha ao gravar score emas no banco")
         
-        logger.info(f"✅ Score tendencia gravado: score={resultado['score_emas']}")
+        logger.info(f"✅ Score tendencia gravado: score={resultado['score']}")
         
         return {
             "status": "success",
