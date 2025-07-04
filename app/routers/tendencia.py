@@ -1,5 +1,13 @@
-#router da camada 1 - Estratégico -Tendecia Macro
 
-# 1 - coletar indicadores (busca os indicadores e grava na base os dados brutos) indicadores_tendencia
-# 2 - calcular score (busca dados brutos na base + calcula score Tendencia + grava na base) score_tendencia
-# 3 - obter score tendencia
+from fastapi import APIRouter
+from app.services.tendencia.tendecia_service import calcular_score
+
+from fastapi import APIRouter
+from app.services.coleta import ciclos, riscos, momentum
+
+router = APIRouter()
+
+@router.get("/calcular_score_tendecia")
+async def coletar_indicadores():
+        return calcular_score()
+  

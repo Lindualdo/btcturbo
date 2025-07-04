@@ -4,7 +4,7 @@ Sistema de análise de indicadores Bitcoin para trading alavancado, construído 
 
 # Alterações nesta versão
 
-    - Camada Mercado será a nva camda Estratégico: que terá Tendencia + Ciclo
+    - Camada Mercado será a nova camda Estratégico: que terá Tendencia + Ciclo
     - A camada mercado não terá um score final, usará uma matriz que cruza o score Tendencia com Score ciclo
     - Desse cruzamento entre os scores responderá as seguintes perguntas: Qual a tendência do mercado (BULL , BEAR ou NEUTRO), qual a fase (bull inicial, bull final acumulação..), Alavancagem, Tamanho da posição satélite, Ação primária
     - Os blocs Técnico e Momentum, vão sair da camda mercado
