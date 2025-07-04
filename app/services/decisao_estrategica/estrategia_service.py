@@ -25,15 +25,18 @@ def processar_decisao_estrategica() -> Dict:
     try:
         logger.info("🚀 Processando Decisão Estratégica...")
         
-        # 1. BUSCAR SCORES
-        scores_data = _buscar_scores()
+        # 1. BUSCAR SCORES + DADOS COMPLETOS
+        scores_data = _buscar_scores_completos()
         if not scores_data:
             raise Exception("Falha ao obter scores necessários")
         
         score_tendencia = scores_data["score_tendencia"]
         score_ciclo = scores_data["score_ciclo"]
+        json_emas = scores_data["json_emas"]
+        json_ciclo = scores_data["json_ciclo"]
         
         logger.info(f"📊 Scores obtidos: Tendência={score_tendencia}, Ciclo={score_ciclo}")
+        logger.info(f"📊 JSONs auditoria capturados: EMAs={len(json_emas)} campos, Ciclo={len(json_ciclo)} campos")
         
         # 2. CONSULTAR MATRIZ ESTRATÉGICA
         estrategia = obter_estrategia(score_tendencia, score_ciclo)
@@ -42,7 +45,7 @@ def processar_decisao_estrategica() -> Dict:
         
         logger.info(f"🎯 Estratégia identificada: {estrategia['fase_operacional']}")
         
-        # 3. PREPARAR DECISÃO COMPLETA
+        # 3. PREPARAR DECISÃO COMPLETA + AUDITORIA
         decisao_completa = {
             "score_tendencia": score_tendencia,
             "score_ciclo": score_ciclo,
@@ -52,6 +55,8 @@ def processar_decisao_estrategica() -> Dict:
             "satelite": float(estrategia["satelite"]),
             "acao": estrategia["acao"],
             "tendencia": estrategia["tendencia"],
+            "json_emas": json_emas,
+            "json_ciclo": json_ciclo,
             "timestamp": datetime.utcnow().isoformat()
         }
         
@@ -106,7 +111,8 @@ def obter_ultima_estrategia() -> Dict:
         ultima_decisao = get_ultima_decisao()
         
         if ultima_decisao:
-            return {
+            # Preparar resposta com dados JSON se disponíveis
+            resposta = {
                 "status": "success",
                 "timestamp": ultima_decisao["timestamp"].isoformat(),
                 "decisao": {
@@ -121,6 +127,15 @@ def obter_ultima_estrategia() -> Dict:
                     "ciclo": ultima_decisao["score_ciclo"]
                 }
             }
+            
+            # Adicionar dados auditoria se disponíveis
+            if ultima_decisao.get("json_emas"):
+                resposta["auditoria"] = {
+                    "json_emas": ultima_decisao["json_emas"],
+                    "json_ciclo": ultima_decisao["json_ciclo"]
+                }
+            
+            return resposta
         else:
             return {
                 "status": "not_found",
@@ -162,15 +177,15 @@ def debug_matriz_estrategica() -> Dict:
             "erro": str(e)
         }
 
-def _buscar_scores() -> Optional[Dict]:
+def _buscar_scores_completos() -> Optional[Dict]:
     """
-    Busca scores de tendência e ciclo
+    Busca scores de tendência e ciclo + dados completos para auditoria
     
     Returns:
-        Dict com scores ou None se falhar
+        Dict com scores + JSONs completos ou None se falhar
     """
     try:
-        # 1. SCORE TENDÊNCIA (via helper)
+        # 1. SCORE TENDÊNCIA + DADOS COMPLETOS (via helper)
         dados_tendencia = obter_score_tendencia()
         if not dados_tendencia:
             raise Exception("Score tendência não disponível")
@@ -179,12 +194,32 @@ def _buscar_scores() -> Optional[Dict]:
         if score_tendencia is None:
             raise Exception("Score tendência inválido")
         
-        # 2. SCORE CICLO (via service)
+        # JSON completo EMAs para auditoria
+        json_emas = {
+            "score_emas": dados_tendencia.get("score_emas"),
+            "classificacao_emas": dados_tendencia.get("classificacao_emas"),
+            "emas_json": dados_tendencia.get("emas_json", {}),
+            "timestamp": dados_tendencia.get("timestamp"),
+            "fonte": "ema_tendencia_helper"
+        }
+        
+        # 2. SCORE CICLO + DADOS COMPLETOS (via service)
         resultado_ciclo = calcular_score_ciclo()
         if resultado_ciclo.get("status") != "success":
             raise Exception("Falha ao calcular score ciclo")
         
         score_ciclo = float(resultado_ciclo["score_consolidado"])
+        
+        # JSON completo Ciclo para auditoria
+        json_ciclo = {
+            "score_consolidado": resultado_ciclo.get("score_consolidado"),
+            "classificacao_consolidada": resultado_ciclo.get("classificacao_consolidada"),
+            "indicadores": resultado_ciclo.get("indicadores", {}),
+            "timestamp": resultado_ciclo.get("timestamp"),
+            "fonte": "ciclos.calcular_score",
+            "peso_bloco": resultado_ciclo.get("peso_bloco"),
+            "status": resultado_ciclo.get("status")
+        }
         
         # 3. VALIDAR RANGES
         if not (0 <= score_tendencia <= 100):
@@ -193,11 +228,15 @@ def _buscar_scores() -> Optional[Dict]:
         if not (0 <= score_ciclo <= 100):
             raise Exception(f"Score ciclo fora do range: {score_ciclo}")
         
+        logger.info(f"✅ Dados completos capturados para auditoria")
+        
         return {
             "score_tendencia": int(score_tendencia),
-            "score_ciclo": int(score_ciclo)
+            "score_ciclo": int(score_ciclo),
+            "json_emas": json_emas,
+            "json_ciclo": json_ciclo
         }
         
     except Exception as e:
-        logger.error(f"❌ Erro ao buscar scores: {str(e)}")
+        logger.error(f"❌ Erro ao buscar scores completos: {str(e)}")
         return None

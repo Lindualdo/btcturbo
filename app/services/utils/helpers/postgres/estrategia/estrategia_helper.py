@@ -56,7 +56,7 @@ def inserir_decisao(dados: Dict) -> bool:
     Insere nova decisão estratégica no histórico
     
     Args:
-        dados: Dict com dados da decisão
+        dados: Dict com dados da decisão + JSONs auditoria
         
     Returns:
         bool: Sucesso da operação
@@ -64,12 +64,17 @@ def inserir_decisao(dados: Dict) -> bool:
     try:
         logger.info(f"💾 Inserindo decisão estratégica: {dados.get('fase_operacional')}")
         
+        # Converter JSONs para string se necessário
+        import json
+        json_emas_str = json.dumps(dados.get("json_emas", {}))
+        json_ciclo_str = json.dumps(dados.get("json_ciclo", {}))
+        
         query = """
             INSERT INTO decisao_estrategica (
                 score_tendencia, score_ciclo, matriz_id,
                 fase_operacional, alavancagem, satelite, acao, tendencia,
-                timestamp
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                json_emas, json_ciclo, timestamp
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
         
         params = (
@@ -81,11 +86,13 @@ def inserir_decisao(dados: Dict) -> bool:
             dados.get("satelite"),
             dados.get("acao"),
             dados.get("tendencia"),
+            json_emas_str,
+            json_ciclo_str,
             datetime.utcnow()
         )
         
         execute_query(query, params)
-        logger.info("✅ Decisão estratégica inserida com sucesso")
+        logger.info("✅ Decisão estratégica + JSONs auditoria inseridos com sucesso")
         return True
         
     except Exception as e:
@@ -94,7 +101,7 @@ def inserir_decisao(dados: Dict) -> bool:
 
 def get_ultima_decisao() -> Optional[Dict]:
     """
-    Busca última decisão estratégica tomada
+    Busca última decisão estratégica tomada (incluindo JSONs auditoria)
     
     Returns:
         Dict com última decisão ou None
@@ -105,7 +112,8 @@ def get_ultima_decisao() -> Optional[Dict]:
         query = """
             SELECT 
                 score_tendencia, score_ciclo, fase_operacional,
-                alavancagem, satelite, acao, tendencia, timestamp
+                alavancagem, satelite, acao, tendencia, timestamp,
+                json_emas, json_ciclo
             FROM decisao_estrategica 
             ORDER BY timestamp DESC 
             LIMIT 1
@@ -126,7 +134,7 @@ def get_ultima_decisao() -> Optional[Dict]:
 
 def get_historico_decisoes(limit: int = 10) -> list:
     """
-    Busca histórico de decisões estratégicas
+    Busca histórico de decisões estratégicas (incluindo JSONs auditoria)
     
     Args:
         limit: Número máximo de registros
@@ -140,7 +148,8 @@ def get_historico_decisoes(limit: int = 10) -> list:
         query = """
             SELECT 
                 id, score_tendencia, score_ciclo, fase_operacional,
-                alavancagem, satelite, acao, tendencia, timestamp
+                alavancagem, satelite, acao, tendencia, timestamp,
+                json_emas, json_ciclo
             FROM decisao_estrategica 
             ORDER BY timestamp DESC 
             LIMIT %s
