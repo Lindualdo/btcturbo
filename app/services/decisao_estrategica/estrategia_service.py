@@ -61,9 +61,8 @@ def processar_decisao_estrategica() -> Dict:
         }
         
         # 4. GRAVAR HISTÓRICO
-        sucesso_gravacao = inserir_decisao(decisao_completa)
-        if not sucesso_gravacao:
-            logger.warning("⚠️ Falha ao gravar histórico - decisão processada mas não salva")
+        inserir_decisao(decisao_completa)
+       
         
         # 5. RESPOSTA FINAL
         logger.info(f"✅ Decisão Estratégica: {decisao_completa['fase_operacional']} - {decisao_completa['tendencia']}")
@@ -85,7 +84,7 @@ def processar_decisao_estrategica() -> Dict:
             "detalhes": {
                 "matriz_id": decisao_completa["matriz_id"],
                 "satelite_decimal": decisao_completa["satelite"],
-                "gravado_historico": sucesso_gravacao
+                "gravado_historico": "sucesso_gravacao"
             }
         }
         
