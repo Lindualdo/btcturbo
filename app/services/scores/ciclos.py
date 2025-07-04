@@ -127,7 +127,7 @@ def calcular_score():
     
     # 3. Calcular scores individuais
     mvrv_score, mvrv_classificacao = calcular_mvrv_score(mvrv_valor)
-    realized_score, realized_classificacao = calcular_realized_score(realized_valor)
+    #realized_score, realized_classificacao = calcular_realized_score(realized_valor)
     nupl_score, nupl_classificacao = calcular_nupl_score(nupl_valor)  
     reserve_risk, nupl_classificacao = calcular_reserve_risk(reserve_risk_valor)  
     puell_score, nupl_classificacao = calcular_puell_score(puell_valor)  
@@ -135,10 +135,10 @@ def calcular_score():
     # 4.PESOS REBALANCEADOS v1.8
     
     score_consolidado = ( 
-        (nupl_score * 0.35) +   
-        (realized_score * 0.25) +  
-        (reserve_risk * 0.20) +   
-        (puell_score * 0.20))      
+         (mvrv_score * 0.38) + 
+        (nupl_score * 0.27) +   
+        (reserve_risk * 0.22) +   
+        (puell_score * 0.23))      
     
     # 6. Retornar JSON formatado
 
@@ -150,7 +150,6 @@ def calcular_score():
     return {
         "bloco": "ciclo",
         "status": "success",
-        "peso_bloco": "50%",  
         "score_consolidado": round(score_consolidado * 10, 1),
         "classificacao_consolidada": interpretar_classificacao_consolidada(score_consolidado),
         "timestamp": dados_indicadores["timestamp"],
