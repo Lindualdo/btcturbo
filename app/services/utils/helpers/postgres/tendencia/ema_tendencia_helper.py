@@ -1,4 +1,4 @@
-# app/services/utils/helpers/postgres/indicadores/emas_tendencia_helper.py
+# app/services/utils/helpers/postgres/tendencia/ema_tendencia_helper.py
 
 import json
 import logging
@@ -13,13 +13,19 @@ def inserir(dados: Dict) -> bool:
     try:
         logger.info("💾 Inserindo emas tendencia...")
         
+        # ✅ CORRIGIDO: Converter dict para JSON string
+        emas_json_str = json.dumps(dados.get("emas_json", {}))
+        
         query = """
             INSERT INTO score_tendencia (emas_json, score_emas, classificacao_emas, timestamp) 
             VALUES (%s, %s, %s, %s)
         """
         
         params = (
-            dados.get("emas_json"), dados.get("score_emas"), dados.get("classificacao_emas"), datetime.utcnow()
+            emas_json_str,  # ✅ JSON string em vez de dict
+            dados.get("score_emas"), 
+            dados.get("classificacao_emas"), 
+            datetime.utcnow()
         )
         
         execute_query(query, params)
@@ -46,6 +52,15 @@ def obter() -> Optional[Dict]:
         result = execute_query(query, fetch_one=True)
         
         if result:
+            # ✅ ADICIONADO: Converter JSON string de volta para dict quando necessário
+            emas_json = result.get("emas_json")
+            if isinstance(emas_json, str):
+                try:
+                    result["emas_json"] = json.loads(emas_json)
+                except json.JSONDecodeError:
+                    logger.warning("⚠️ Erro ao decodificar emas_json")
+                    result["emas_json"] = {}
+            
             logger.info(f"✅ Dados encontrados: score={result.get('score_emas')}")
             return result
         else:
