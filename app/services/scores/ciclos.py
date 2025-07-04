@@ -135,7 +135,7 @@ def calcular_score():
     # 4.PESOS REBALANCEADOS v1.8
     
     score_consolidado = ( 
-         (mvrv_score * 0.38) + 
+        (mvrv_score * 0.38) + 
         (nupl_score * 0.27) +   
         (reserve_risk * 0.22) +   
         (puell_score * 0.23))      

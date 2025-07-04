@@ -17,8 +17,16 @@ Sistema de análise de indicadores Bitcoin para trading alavancado, construído 
 - implementar a api score tendencia - emas
 - | GET | `/api/v1/calcular-score-tendecia` 
 
-## 1.9.2 - criar API decisão Estratégica
+## 1.9.2 - criar API decisão Estratégica - feito
 - definir a decisão estratégica com base no score tendencia + score ciclo
+
+## 1.9.3 - Alterar pesos do bloco ciclo
+    score_consolidado = ( 
+         (mvrv_score * 0.38) + 
+        (nupl_score * 0.27) +   
+        (reserve_risk * 0.22) +   
+        (puell_score * 0.23))    
+
 
 ## 🏗️ Arquitetura
 
