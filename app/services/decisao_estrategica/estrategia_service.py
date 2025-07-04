@@ -86,7 +86,7 @@ def processar_decisao_estrategica() -> Dict:
             "detalhes": {
                 "matriz_id": decisao_completa["matriz_id"],
                 "satelite_decimal": decisao_completa["satelite"],
-                "statu_gravação": sucesso_gravacao
+                "status_gravação": sucesso_gravacao
             }
         }
         

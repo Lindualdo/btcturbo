@@ -64,10 +64,18 @@ def inserir_decisao(dados: Dict) -> bool:
     try:
         logger.info(f"💾 Inserindo decisão estratégica: {dados.get('fase_operacional')}")
         
-        # Converter JSONs para string se necessário
+        # Converter JSONs para string com serialização segura de datetime
         import json
-        json_emas_str = json.dumps(dados.get("json_emas", {}))
-        json_ciclo_str = json.dumps(dados.get("json_ciclo", {}))
+        from datetime import datetime
+        
+        def json_serializer(obj):
+            """Serializa datetime para JSON"""
+            if isinstance(obj, datetime):
+                return obj.isoformat()
+            raise TypeError(f"Object of type {type(obj)} is not JSON serializable")
+        
+        json_emas_str = json.dumps(dados.get("json_emas", {}), default=json_serializer)
+        json_ciclo_str = json.dumps(dados.get("json_ciclo", {}), default=json_serializer)
         
         query = """
             INSERT INTO decisao_estrategica (
