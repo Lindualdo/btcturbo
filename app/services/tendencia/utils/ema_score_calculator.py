@@ -69,7 +69,7 @@ def calculate_ema_score(current_price, emas):
 
     ema_score = {
         "score": score_normalizado,
-        "classificacao": _interpretar_alinhamento,
+        "classificacao": _interpretar_alinhamento(),
         "detalhes": detalhes
     }
 

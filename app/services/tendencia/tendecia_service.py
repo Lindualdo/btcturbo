@@ -1,6 +1,7 @@
 # app/services/coleta/tecnico.py - ATUALIZADO para v3.0
 
 from datetime import datetime
+from typing import Dict
 import logging
 from app.services.utils.helpers.tradingview.ema_calculator import get_complete_ema_analysis
 from .utils.ema_score_calculator import calculate_ema_score
@@ -9,8 +10,10 @@ from app.services.utils.helpers.postgres.tendencia import ema_tendencia_helper
 logger = logging.getLogger(__name__)
 
 def calcular_score():
-    """Coleta dados técnicos EMAs via TradingView e calcula score """
+    
     try:
+        """Coleta dados técnicos EMAs via TradingView e calcula score """
+
         logger.info("🚀 Iniciando coleta tendencias...")
         
         # 1. Buscar EMAs do TradingView (mesmo helper atual)
