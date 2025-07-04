@@ -2,7 +2,7 @@
 
 Sistema de análise de indicadores Bitcoin para trading alavancado, construído com FastAPI + PostgreSQL.
 
-# Alterações nesta versão
+## Alterações s serem implementadas nesta versão
 
     - Camada Mercado será a nova camda Estratégico: que terá Tendencia + Ciclo
     - A camada mercado não terá um score final, usará uma matriz que cruza o score Tendencia com Score ciclo
@@ -12,6 +12,13 @@ Sistema de análise de indicadores Bitcoin para trading alavancado, construído 
     - o score dessa camada já indicará se está no momento de agir, apenas nos extremos, correspondendo com a estratégia de Hold..
     - Score de 0 a 100:  0 venda 100 compra meio neutro Hold
     - Novos indicadores da camada tática:  RSI diário, suporte/resistencia, Delta OI, Funding Rates, Volume Spot
+
+## 1.9.1 - criação de API Score Tendencia - EMAs - Feito
+- implementar a api score tendencia - emas
+- | GET | `/api/v1/calcular-score-tendecia` 
+
+## 1.9.2 - criar API decisão Estratégica
+- definir a decisão estratégica com base no score tendencia + score ciclo
 
 ## 🏗️ Arquitetura
 
@@ -46,6 +53,7 @@ app/
 | POST/GET | `/api/v1/dash-mercado` | Dashboard mercado | aplicar_gatilho: bool = False (gatilhos para ajuste de score)
 | POST/GET | `/api/v1/dash-main` | Dashboard principal (4 camadas) |
 |GET | `/api/v1/dash-finance` | /health-factor, /alavancagem, /patrimonio , /capital-investido (fazer) |
+| GET | `/api/v1/calcular-score-tendecia` | Calcular score tendencia|
 
 **Blocos disponíveis**: `ciclos`, `riscos`, `momentum`, `tecnico`
 
