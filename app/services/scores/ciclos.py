@@ -127,7 +127,7 @@ def calcular_score():
     
     # 3. Calcular scores individuais
     mvrv_score, mvrv_classificacao = calcular_mvrv_score(mvrv_valor)
-    #realized_score, realized_classificacao = calcular_realized_score(realized_valor)
+    realized_score, realized_classificacao = calcular_realized_score(realized_valor)
     nupl_score, nupl_classificacao = calcular_nupl_score(nupl_valor)  
     reserve_risk, nupl_classificacao = calcular_reserve_risk(reserve_risk_valor)  
     puell_score, nupl_classificacao = calcular_puell_score(puell_valor)  
@@ -161,9 +161,9 @@ def calcular_score():
                 "score": round(nupl_score *10, 1),
             },
             
-            "Realized_Ratio": {
-                "valor": realized_valor,
-                "score": round(realized_score * 10, 1),
+            "mvrv_score": {
+                "valor": mvrv_valor,
+                "score": round(mvrv_score * 10, 1),
             },
                         
             "Reserve_Risk": {
