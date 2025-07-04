@@ -7,13 +7,13 @@ from app.services.utils.helpers.postgres.base import execute_query
 
 logger = logging.getLogger(__name__)
 
-def obter_estrategia(score_tendencia: int, score_ciclo: int) -> Optional[Dict]:
+def obter_estrategia(score_tendencia: float, score_ciclo: float) -> Optional[Dict]:
     """
     Busca estratégia correspondente na matriz baseada nos scores
     
     Args:
-        score_tendencia: Score tendência (0-100)
-        score_ciclo: Score ciclo (0-100)
+        score_tendencia: Score tendência (0.0-100.0)
+        score_ciclo: Score ciclo (0.0-100.0)
         
     Returns:
         Dict com estratégia encontrada ou None

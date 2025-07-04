@@ -39,7 +39,7 @@ def processar_decisao_estrategica() -> Dict:
         logger.info(f"📊 JSONs auditoria capturados: EMAs={len(json_emas)} campos, Ciclo={len(json_ciclo)} campos")
         
         # 2. CONSULTAR MATRIZ ESTRATÉGICA
-        estrategia = obter_estrategia(score_tendencia, score_ciclo)
+        estrategia = obter_estrategia(score_tendencia, score_ciclo)  # ✅ Passando float
         if not estrategia:
             raise Exception(f"Nenhuma estratégia encontrada para scores T:{score_tendencia}, C:{score_ciclo}")
         
@@ -61,7 +61,6 @@ def processar_decisao_estrategica() -> Dict:
         }
         
         # 4. GRAVAR HISTÓRICO
-       
         sucesso_gravacao = inserir_decisao(decisao_completa)
         if not sucesso_gravacao:
             logger.warning("⚠️ Falha ao gravar histórico - decisão processada mas não salva")
@@ -86,7 +85,7 @@ def processar_decisao_estrategica() -> Dict:
             "detalhes": {
                 "matriz_id": decisao_completa["matriz_id"],
                 "satelite_decimal": decisao_completa["satelite"],
-                "status_gravação": sucesso_gravacao
+                "gravado_historico": sucesso_gravacao
             }
         }
         
@@ -232,8 +231,8 @@ def _buscar_scores_completos() -> Optional[Dict]:
         logger.info(f"✅ Dados completos capturados para auditoria")
         
         return {
-            "score_tendencia": int(score_tendencia),
-            "score_ciclo": int(score_ciclo),
+            "score_tendencia": round(score_tendencia, 1),  # ✅ Manter decimal
+            "score_ciclo": round(score_ciclo, 1),          # ✅ Manter decimal
             "json_emas": json_emas,
             "json_ciclo": json_ciclo
         }
