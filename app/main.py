@@ -1,11 +1,11 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import (coleta, indicadores, score, dashboards, tendencia)
+from app.routers import (coleta, indicadores, score, dashboards, tendencia, decisao_estrategica)  # ← NOVO IMPORT
 
 app = FastAPI(
     title="BTC Turbo API",
     description="Sistema de análise de indicadores BTC",
-    version="1.5.0"
+    version="1.9.0"  # ← ATUALIZADO
 )
 
 app.add_middleware(
@@ -18,8 +18,9 @@ app.add_middleware(
 # ==========================================
 # APIs QUE ESTÃO SENDO USADOS
 # ==========================================
-app.include_router(coleta.router, prefix="/api/v1", tags=["📥 Coleta"]) # coleta indicadores (ciclos, riscos, momentum e tecnico)
-app.include_router(indicadores.router, prefix="/api/v1", tags=["📊 Indicadores"])  # obtem os indicadores (ciclos, riscos, momentum e tecnico)
-app.include_router(score.router, prefix="/api/v1", tags=["🎯 Scores"]) # calcula scores e retona indicadores  (ciclos, riscos, momentum e tecnico)
+app.include_router(coleta.router, prefix="/api/v1", tags=["📥 Coleta"]) 
+app.include_router(indicadores.router, prefix="/api/v1", tags=["📊 Indicadores"])  
+app.include_router(score.router, prefix="/api/v1", tags=["🎯 Scores"]) 
 app.include_router(dashboards.router, prefix="/api/v1", tags=["📊 dashboards"]) 
-app.include_router(tendencia.router, prefix="/api/v1", tags=["📊 tendencia"]) # coleta dados e calcula score da tendencia
+app.include_router(tendencia.router, prefix="/api/v1", tags=["📊 tendencia"]) 
+app.include_router(decisao_estrategica.router, prefix="/api/v1", tags=["🎯 Decisão Estratégica"])  # ← NOVO
