@@ -5,105 +5,85 @@ from typing import Dict, Optional
 
 logger = logging.getLogger(__name__)
 
+
 def calculate_ema_score(current_price, emas):
-    """
-    Calcula o Bull Score baseado na posição das EMAs
-    Retorna score e detalhes das condições avaliadas
-    """
-    BULL_SCORE = 0
-    detalhes = {}
+ 
+    try:
+        logger.info("📊 Calculando Bull Score EMAs...")
+        
+        # 1. Validar inputs obrigatórios
+        required_emas = [10, 20, 50, 100, 200]
+        for ema in required_emas:
+            if ema not in emas or emas[ema] is None:
+                raise ValueError(f"EMA {ema} não encontrada")
+        
+        if current_price is None or current_price <= 0:
+            raise ValueError("Preço atual inválido")
+        
+        # 2. Calcular Bull Score
+        bull_score = 0
+        
+        # Preço vs EMA10: ±10 pontos
+        if current_price > emas[10]:
+            bull_score += 10
+        elif current_price < emas[10]:
+            bull_score -= 10
 
-    # Preço vs EMA10: +/-10 pontos
-    if current_price > emas[10]: 
-        BULL_SCORE += 10
-        detalhes["Price_vs_EMA10"] = {"status": "bullish", "pontos": 10}
-    elif current_price < emas[10]: 
-        BULL_SCORE -= 10
-        detalhes["Price_vs_EMA10"] = {"status": "bearish", "pontos": -10}
-    else:
-        detalhes["Price_vs_EMA10"] = {"status": "neutral", "pontos": 0}
+        # EMA10 vs EMA20: ±15 pontos
+        if emas[10] > emas[20]:
+            bull_score += 15
+        elif emas[10] < emas[20]:
+            bull_score -= 15
 
-    # EMA10 vs EMA20: +/-15 pontos
-    if emas[10] > emas[20]: 
-        BULL_SCORE += 15
-        detalhes["10_vs_20"] = {"status": "bullish", "pontos": 15}
-    elif emas[10] < emas[20]: 
-        BULL_SCORE -= 15
-        detalhes["10_vs_20"] = {"status": "bearish", "pontos": -15}
-    else:
-        detalhes["10_vs_20"] = {"status": "neutral", "pontos": 0}
+        # EMA20 vs EMA50: ±20 pontos
+        if emas[20] > emas[50]:
+            bull_score += 20
+        elif emas[20] < emas[50]:
+            bull_score -= 20
 
-    # EMA20 vs EMA50: +/-20 pontos
-    if emas[20] > emas[50]: 
-        BULL_SCORE += 20
-        detalhes["20_vs_50"] = {"status": "bullish", "pontos": 20}
-    elif emas[20] < emas[50]: 
-        BULL_SCORE -= 20
-        detalhes["20_vs_50"] = {"status": "bearish", "pontos": -20}
-    else:
-        detalhes["20_vs_50"] = {"status": "neutral", "pontos": 0}
+        # EMA50 vs EMA100: ±25 pontos
+        if emas[50] > emas[100]:
+            bull_score += 25
+        elif emas[50] < emas[100]:
+            bull_score -= 25
 
-    # EMA50 vs EMA100: +/-25 pontos
-    if emas[50] > emas[100]: 
-        BULL_SCORE += 25
-        detalhes["50_vs_100"] = {"status": "bullish", "pontos": 25}
-    elif emas[50] < emas[100]: 
-        BULL_SCORE -= 25
-        detalhes["50_vs_100"] = {"status": "bearish", "pontos": -25}
-    else:
-        detalhes["50_vs_100"] = {"status": "neutral", "pontos": 0}
+        # EMA100 vs EMA200: ±30 pontos
+        if emas[100] > emas[200]:
+            bull_score += 30
+        elif emas[100] < emas[200]:
+            bull_score -= 30
 
-    # EMA100 vs EMA200: +/-30 pontos
-    if emas[100] > emas[200]: 
-        BULL_SCORE += 30
-        detalhes["100_vs_200"] = {"status": "bullish", "pontos": 30}
-    elif emas[100] < emas[200]: 
-        BULL_SCORE -= 30
-        detalhes["100_vs_200"] = {"status": "bearish", "pontos": -30}
-    else:
-        detalhes["100_vs_200"] = {"status": "neutral", "pontos": 0}
-    
-
-    # Normalização para escala 0-100
-    score_normalizado = max(0, min(100, (BULL_SCORE + 100) // 2))
-
-    ema_score = {
-        "score": score_normalizado,
-        "classificacao": _interpretar_alinhamento(score_normalizado),
-        "detalhes": detalhes
-    }
-
-    return ema_score
-
-def _interpretar_alinhamento(score: int) -> Dict:
-    """Interpreta score de alinhamento"""
-    if score == 100:
+        # 3. Normalizar para escala 0-100
+        score_normalizado = max(0, min(100, int((bull_score + 100) / 2)))
+        
+        # 4. Log resultado
+        logger.info(f"✅ Bull Score: {score_normalizado}/100")
+        
+        # 5. Retornar resultado
         return {
-            "classificacao": "Alinhamento Bullish Perfeito",
-            "descricao": "Todas as EMAs em formação bullish",
-            "nivel": "forte"
+            "score": score_normalizado,
+            "classificacao": _interpretar_alinhamento(score_normalizado),
+            "status": "success"
         }
-    elif score >= 70:
+        
+    except Exception as e:
+        logger.error(f"❌ Erro Bull Score: {str(e)}")
         return {
-            "classificacao": "Estrutura Bullish Dominante", 
-            "descricao": "Maioria das EMAs alinhadas bullish",
-            "nivel": "bom"
+            "score": 0,
+            "classificacao": "erro",
+            "status": "error",
+            "erro": str(e)
         }
-    elif score >= 40:
-        return {
-            "classificacao": "Mercado em Transição",
-            "descricao": "EMAs parcialmente alinhadas",
-            "nivel": "neutro"
-        }
-    elif score >= 10:
-        return {
-            "classificacao": "Estrutura Bearish Formando",
-            "descricao": "Poucas EMAs em alinhamento bullish",
-            "nivel": "fraco"
-        }
+
+def _interpretar_alinhamento(score: int) -> str:
+    """Interpreta score 0-100 em classificação textual"""
+    if score >= 88:
+        return "Bull Aceleração"
+    elif score >= 66:
+        return "Bull Consolidação"
+    elif score >= 35:
+        return "Neutro/Transição"
+    elif score >= 13:
+        return "Bear Distribuição"
     else:
-        return {
-            "classificacao": "Bear Market Confirmado",
-            "descricao": "Nenhuma EMA em alinhamento bullish",
-            "nivel": "critico"
-        }
+        return "Bear Capitulação"

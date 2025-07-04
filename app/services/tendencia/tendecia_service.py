@@ -1,7 +1,6 @@
 # app/services/coleta/tecnico.py - ATUALIZADO para v3.0
 
 from datetime import datetime
-from typing import Dict
 import logging
 from app.services.utils.helpers.tradingview.ema_calculator import get_complete_ema_analysis
 from .utils.ema_score_calculator import calculate_ema_score
@@ -73,7 +72,7 @@ def calcular_score():
         }
         
     except Exception as e:
-        logger.error(f"❌ Erro coleta v3.0: {str(e)}")
+        logger.error(f"❌ Erro score tendencia: {str(e)}")
         return {
             "status": "error",
             "score": "emas_score", 
