@@ -129,7 +129,6 @@ def get_ultima_decisao() -> Optional[Dict]:
         result = execute_query(query, fetch_one=True)
         
         if result:
-            logger.info(f"✅ Última decisão: {result['decisão estrategica']} ({result['timestamp']})")
             return dict(result)
         else:
             logger.warning("⚠️ Nenhuma decisão encontrada no histórico")
@@ -170,7 +169,6 @@ def get_detalhe_estrategia() -> Optional[Dict]:
     except Exception as e:
         logger.error(f"❌ Erro ao buscar última decisão: {str(e)}")
         return None
-
 
 def get_historico_decisoes(limit: int = 10) -> list:
     """
