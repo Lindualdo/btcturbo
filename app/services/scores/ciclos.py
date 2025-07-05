@@ -96,15 +96,15 @@ def interpretar_classificacao_consolidada(score):
    
     
     if score >= 90:
-        return "Oportunidade Extrema | Extremamente barato"
+        return "Oportunidade | Extremamente barato" #"Oportunidade Extrema | Extremamente barato"
     elif score >= 70:
-        return "Valorização | abaixo do preço justo"
+        return "Valorização | abaixo do preço justo" #"Valorização | abaixo do preço justo"
     elif score >= 40:
-        return "Equilíbrio | Valorização neutra"
+        return "Equilíbrio | Valorização neutra" 
     elif score >= 20:
         return "Risco Elevado | Acima do preço justo"
     else:  # score <= 19
-        return "Bolha | Extremamente fora da realidade"
+        return "Bolha | Euforia extrema"
     
 def calcular_score():
 
