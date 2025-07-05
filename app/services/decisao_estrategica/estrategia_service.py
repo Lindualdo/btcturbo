@@ -7,10 +7,6 @@ from app.services.tendencia.utils.data_helper import obter as obter_score_tenden
 from app.services.scores.ciclos import calcular_score as calcular_score_ciclo
 from .utils  import data_helper
 
-(
-    obter_estrategia, inserir_decisao, get_ultima_decisao, validar_matriz_completa, get_detalhe_estrategia
-)
-
 logger = logging.getLogger(__name__)
 
 def processar_decisao_estrategica() -> Dict:

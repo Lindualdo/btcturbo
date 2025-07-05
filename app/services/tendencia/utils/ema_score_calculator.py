@@ -1,7 +1,6 @@
 # services/coleta/tendencia/utils/ema_score_calculator.py
 
 import logging
-from typing import Dict, Optional
 
 logger = logging.getLogger(__name__)
 
