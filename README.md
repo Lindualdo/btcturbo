@@ -61,7 +61,12 @@ app/
 | POST/GET | `/api/v1/dash-mercado` | Dashboard mercado | aplicar_gatilho: bool = False (gatilhos para ajuste de score)
 | POST/GET | `/api/v1/dash-main` | Dashboard principal (4 camadas) |
 |GET | `/api/v1/dash-finance` | /health-factor, /alavancagem, /patrimonio , /capital-investido (fazer) |
-| GET | `/api/v1/calcular-score-tendecia` | Calcular score tendencia|
+| GET | `/api/v1/calcular-score-tendecia` | Calcular score, grava na base e retorna o score tendencia|
+| POST | `/api/v1/decisao-estrategica` | processa e grava a ultima decisão estratégica - Score tendencia + score ciclo + decisões|
+| GET | `/api/v1/decisao-estrategica` | Obter ultima decisão estratégica - Score tendencia + score ciclo + decisões|
+| GET | `/api/v1/decisao-estrategica-detalhe` | Obter detalhes da ultima decisão estratégica - score consolidado + indicadores detalhado|
+
+decisao-estrategica-detalhe
 
 **Blocos disponíveis**: `ciclos`, `riscos`, `momentum`, `tecnico`
 

@@ -1,6 +1,11 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import (coleta, indicadores, score, dashboards, tendencia, decisao_estrategica)  # ← NOVO IMPORT
+from app.routers import coleta
+from app.routers import indicadores
+from app.routers import score
+from app.routers import dashboards
+from app.routers import tendencia
+from app.routers import decisao_estrategica
 
 app = FastAPI(
     title="BTC Turbo API",
