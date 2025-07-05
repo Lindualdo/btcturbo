@@ -94,7 +94,6 @@ def calcular_nupl_score(valor):
 def interpretar_classificacao_consolidada(score):
     """Converte score consolidado em classificação estratégica"""
    
-    score = score * 100
     
     if score >= 90:
         return "Oportunidade Extrema | Extremamente barato"
@@ -129,17 +128,17 @@ def calcular_score():
     puell_valor = indicadores["Puell_Multiple"]
     
     # 3. Calcular scores individuais
+    #realized_score, realized_classificacao = calcular_realized_score(realized_valor)
     mvrv_score, mvrv_classificacao = calcular_mvrv_score(mvrv_valor)
-    realized_score, realized_classificacao = calcular_realized_score(realized_valor)
     nupl_score, nupl_classificacao = calcular_nupl_score(nupl_valor)  
-    reserve_risk, nupl_classificacao = calcular_reserve_risk(reserve_risk_valor)  
+    reserve_risk_score, nupl_classificacao = calcular_reserve_risk(reserve_risk_valor)  
     puell_score, nupl_classificacao = calcular_puell_score(puell_valor)  
     
     # 4.PESOS REBALANCEADOS v1.9
     score_consolidado = ( 
     (mvrv_score * 0.35) + 
     (nupl_score * 0.25) +   
-    (reserve_risk * 0.20) +   
+    (reserve_risk_score * 0.20) +   
     (puell_score * 0.20))    
     
     # 6. Retornar JSON formatado
@@ -153,29 +152,30 @@ def calcular_score():
         "bloco": "ciclo",
         "status": "success",
         "score_consolidado": round(score_consolidado * 10, 1),
-        "classificacao_consolidada": interpretar_classificacao_consolidada(score_consolidado),
+        "classificacao_consolidada": interpretar_classificacao_consolidada(score_consolidado * 10),
         "timestamp": dados_indicadores["timestamp"],
         
         # INDICADORES COM PESOS REBALANCEADOS 
         "indicadores": {
+
+            "mvrv_score": {
+                "valor": mvrv_valor,
+                "score": round(mvrv_score * 10, 1),
+            },
+
             "NUPL": {
                 "valor": nupl_valor,
                 "score": round(nupl_score *10, 1),
             },
             
-            "mvrv_score": {
-                "valor": mvrv_valor,
-                "score": round(mvrv_score * 10, 1),
-            },
-                        
             "Reserve_Risk": {
                 "valor": reserve_risk_valor,
-                "score": round(reserve_risk * 10, 1),
+                "score": round(reserve_risk_score * 10, 1),
             },
 
              "puell_multiple": {
                 "valor": puell_valor,
-                "score": round(puell_score * 10, 1),
+                "score": round(puell_score * 10, 1)
             }
         }
     }

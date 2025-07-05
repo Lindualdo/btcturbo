@@ -196,7 +196,6 @@ def obter_detalhe_estrategia() -> Dict:
             "erro": str(e)
         }
 
-
 def debug_matriz_estrategica() -> Dict:
     """
     Debug da matriz estratégica - validação e status
