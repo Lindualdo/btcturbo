@@ -92,18 +92,21 @@ def calcular_nupl_score(valor):
         return 5.5, "neutro"  # Fallback para valores inválidos
 
 def interpretar_classificacao_consolidada(score):
-    """Converte score consolidado em classificação"""
-    if score >= 8.0:
-        return "ótimo"
-    elif score >= 6.0:
-        return "bom"
-    elif score >= 4.0:
-        return "neutro"
-    elif score >= 2.0:
-        return "ruim"
-    else:
-        return "crítico"
-
+    """Converte score consolidado em classificação estratégica"""
+   
+    score = score * 100
+    
+    if score >= 90:
+        return "Oportunidade Extrema | Extremamente barato"
+    elif score >= 70:
+        return "Valorização | abaixo do preço justo"
+    elif score >= 40:
+        return "Equilíbrio | Valorização neutra"
+    elif score >= 20:
+        return "Risco Elevado | Acima do preço justo"
+    else:  # score <= 19
+        return "Bolha | Extremamente fora da realidade"
+    
 def calcular_score():
 
     # 1. Obter dados brutos da API
