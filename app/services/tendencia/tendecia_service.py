@@ -1,10 +1,10 @@
-# app/services/coleta/tecnico.py - ATUALIZADO para v3.0
+# app/services/coleta/tecnico.py 
 
 from datetime import datetime
 import logging
 from app.services.utils.helpers.tradingview.ema_calculator import get_complete_ema_analysis
 from .utils.ema_score_calculator import calculate_ema_score
-from app.services.utils.helpers.postgres.tendencia import ema_tendencia_helper
+from .utils import data_helper
 
 logger = logging.getLogger(__name__)
 
@@ -58,7 +58,7 @@ def calcular_score():
         
         # 5. Gravar no banco
         logger.info("💾 Gravando dados score emas - tendencias...")
-        sucesso = ema_tendencia_helper.inserir(dados_para_db)
+        sucesso = data_helper.inserir(dados_para_db)
         
         if not sucesso:
             raise Exception("Falha ao gravar score emas no banco")

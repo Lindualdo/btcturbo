@@ -1,4 +1,4 @@
-# app/services/utils/helpers/postgres/estrategia/estrategia_helper.py
+# app/services/decisao_estrategica/utils/data_helper.py
 
 import logging
 from datetime import datetime
@@ -109,8 +109,39 @@ def inserir_decisao(dados: Dict) -> bool:
 
 def get_ultima_decisao() -> Optional[Dict]:
     """
-    Busca última decisão estratégica tomada (incluindo JSONs auditoria)
+    Busca última decisão estratégica
     
+    Returns:
+        Dict com última decisão ou None
+    """
+    try:
+        logger.info("🔍 Buscando última decisão estratégica...")
+        
+        query = """
+            SELECT 
+                score_tendencia, score_ciclo, fase_operacional,
+                alavancagem, satelite, acao, tendencia, timestamp
+            FROM decisao_estrategica 
+            ORDER BY timestamp DESC 
+            LIMIT 1
+        """
+        
+        result = execute_query(query, fetch_one=True)
+        
+        if result:
+            logger.info(f"✅ Última decisão: {result['decisão estrategica']} ({result['timestamp']})")
+            return dict(result)
+        else:
+            logger.warning("⚠️ Nenhuma decisão encontrada no histórico")
+            return None
+            
+    except Exception as e:
+        logger.error(f"❌ Erro ao buscar última decisão: {str(e)}")
+        return None
+
+def get_detalhe_estrategia() -> Optional[Dict]:
+    """
+    Busca os Jsons com detahe da ultima estrategia
     Returns:
         Dict com última decisão ou None
     """
@@ -139,6 +170,7 @@ def get_ultima_decisao() -> Optional[Dict]:
     except Exception as e:
         logger.error(f"❌ Erro ao buscar última decisão: {str(e)}")
         return None
+
 
 def get_historico_decisoes(limit: int = 10) -> list:
     """

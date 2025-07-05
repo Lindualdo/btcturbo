@@ -2,11 +2,12 @@
 
 from fastapi import APIRouter, Query
 from app.services.decisao_estrategica.estrategia_service import (
-    processar_decisao_estrategica,
-    obter_ultima_estrategia, 
-    debug_matriz_estrategica
+    processar_decisao_estrategica, 
+    debug_matriz_estrategica,
+    obter_decisao_estrategica,
+    obter_decisao_estrategica_detalhe
 )
-from app.services.utils.helpers.postgres.estrategia.estrategia_helper import get_historico_decisoes
+from app.services.decisao_estrategica.utils.data_helper import get_historico_decisoes
 
 router = APIRouter()
 
@@ -28,12 +29,23 @@ async def post_decisao_estrategica():
 async def get_decisao_estrategica():
     """
     Obtém última decisão estratégica do histórico
-    (inclui dados auditoria se disponíveis)
+    (sem dados detalhados dos indicadores)
     
     Returns:
         Última decisão aplicada + JSONs auditoria
     """
-    return obter_ultima_estrategia()
+    return obter_decisao_estrategica()
+
+@router.get("/decisao-estrategica-detalhe")
+async def get_decisao_estrategica_detalhe():
+    """
+    Obtém última decisão estratégica do histórico
+    (sem dados detalhados dos indicadores)
+    
+    Returns:
+        Última decisão aplicada + JSONs auditoria
+    """
+    return obter_decisao_estrategica_detalhe()
 
 @router.get("/decisao-estrategica/historico")
 async def get_historico_decisoes_endpoint(limit: int = Query(default=10, description="Número de registros")):

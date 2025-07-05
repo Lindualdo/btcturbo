@@ -3,10 +3,12 @@
 import logging
 from datetime import datetime
 from typing import Dict, Optional
-from app.services.utils.helpers.postgres.tendencia.ema_tendencia_helper import obter as obter_score_tendencia
+from app.services.tendencia.utils.data_helper import obter as obter_score_tendencia
 from app.services.scores.ciclos import calcular_score as calcular_score_ciclo
-from app.services.utils.helpers.postgres.estrategia.estrategia_helper import (
-    obter_estrategia, inserir_decisao, get_ultima_decisao, validar_matriz_completa
+from .utils  import data_helper
+
+(
+    obter_estrategia, inserir_decisao, get_ultima_decisao, validar_matriz_completa, get_detalhe_estrategia
 )
 
 logger = logging.getLogger(__name__)
@@ -39,7 +41,7 @@ def processar_decisao_estrategica() -> Dict:
         logger.info(f"📊 JSONs auditoria capturados: EMAs={len(json_emas)} campos, Ciclo={len(json_ciclo)} campos")
         
         # 2. CONSULTAR MATRIZ ESTRATÉGICA
-        estrategia = obter_estrategia(score_tendencia, score_ciclo)
+        estrategia = data_helper.obter_estrategia(score_tendencia, score_ciclo)
         if not estrategia:
             raise Exception(f"Nenhuma estratégia encontrada para scores T:{score_tendencia}, C:{score_ciclo}")
         
@@ -62,7 +64,7 @@ def processar_decisao_estrategica() -> Dict:
         
         # 4. GRAVAR HISTÓRICO
        
-        sucesso_gravacao = inserir_decisao(decisao_completa)
+        sucesso_gravacao = data_helper.inserir_decisao(decisao_completa)
         if not sucesso_gravacao:
             logger.warning("⚠️ Falha ao gravar histórico - decisão processada mas não salva")
         
@@ -99,7 +101,7 @@ def processar_decisao_estrategica() -> Dict:
             "decisao": None
         }
 
-def obter_ultima_estrategia() -> Dict:
+def obter_decisao_estrategica() -> Dict:
     """
     Obtém última decisão estratégica do histórico
     
@@ -109,7 +111,53 @@ def obter_ultima_estrategia() -> Dict:
     try:
         logger.info("🔍 Obtendo última estratégia...")
         
-        ultima_decisao = get_ultima_decisao()
+        ultima_decisao = data_helper.get_ultima_decisao()
+        
+        if ultima_decisao:
+            # Preparar resposta com dados JSON se disponíveis
+            resposta = {
+                "status": "success",
+                "timestamp": ultima_decisao["timestamp"].isoformat(),
+                "decisao": {
+                    "fase_operacional": ultima_decisao["fase_operacional"],
+                    "tendencia": ultima_decisao["tendencia"],
+                    "alavancagem": float(ultima_decisao["alavancagem"]),
+                    "satelite_percentual": f"{float(ultima_decisao['satelite'])*100:.0f}%",
+                    "acao_primaria": ultima_decisao["acao"]
+                },
+                "scores": {
+                    "tendencia": ultima_decisao["score_tendencia"],
+                    "ciclo": ultima_decisao["score_ciclo"]
+                }
+            }
+            return resposta
+        else:
+            return {
+                "status": "not_found",
+                "timestamp": datetime.utcnow().isoformat(),
+                "message": "Nenhuma decisão estratégica encontrada no histórico"
+            }
+            
+    except Exception as e:
+        logger.error(f"❌ Erro ao obter última estratégia: {str(e)}")
+        return {
+            "status": "error",
+            "timestamp": datetime.utcnow().isoformat(),
+            "erro": str(e)
+        }
+
+def obter_detalhe_estrategia() -> Dict:
+    """
+    Obtém os detalhes da ultima decisão estratégica
+    Indicadores onchain e valores das EMAs
+    
+    Returns:
+        Dict com última decisão ou erro
+    """
+    try:
+        logger.info("🔍 Obtendo detalhe da estratégia...")
+        
+        ultima_decisao = data_helper.get_detalhe_estrategia()
         
         if ultima_decisao:
             # Preparar resposta com dados JSON se disponíveis
@@ -152,6 +200,7 @@ def obter_ultima_estrategia() -> Dict:
             "erro": str(e)
         }
 
+
 def debug_matriz_estrategica() -> Dict:
     """
     Debug da matriz estratégica - validação e status
@@ -162,7 +211,7 @@ def debug_matriz_estrategica() -> Dict:
     try:
         logger.info("🔍 Debug da matriz estratégica...")
         
-        validacao = validar_matriz_completa()
+        validacao = data_helper.validar_matriz_completa()
         
         return {
             "status": "success",
