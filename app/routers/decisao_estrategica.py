@@ -5,7 +5,7 @@ from app.services.decisao_estrategica.estrategia_service import (
     processar_decisao_estrategica, 
     debug_matriz_estrategica,
     obter_decisao_estrategica,
-    obter_decisao_estrategica_detalhe
+    obter_detalhe_estrategia
 )
 from app.services.decisao_estrategica.utils.data_helper import get_historico_decisoes
 
@@ -45,7 +45,7 @@ async def get_decisao_estrategica_detalhe():
     Returns:
         Última decisão aplicada + JSONs auditoria
     """
-    return obter_decisao_estrategica_detalhe()
+    return obter_detalhe_estrategia()
 
 @router.get("/decisao-estrategica/historico")
 async def get_historico_decisoes_endpoint(limit: int = Query(default=10, description="Número de registros")):
