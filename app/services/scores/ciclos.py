@@ -132,13 +132,12 @@ def calcular_score():
     reserve_risk, nupl_classificacao = calcular_reserve_risk(reserve_risk_valor)  
     puell_score, nupl_classificacao = calcular_puell_score(puell_valor)  
     
-    # 4.PESOS REBALANCEADOS v1.8
-    
+    # 4.PESOS REBALANCEADOS v1.9
     score_consolidado = ( 
-        (mvrv_score * 0.38) + 
-        (nupl_score * 0.27) +   
-        (reserve_risk * 0.22) +   
-        (puell_score * 0.23))      
+    (mvrv_score * 0.35) + 
+    (nupl_score * 0.25) +   
+    (reserve_risk * 0.20) +   
+    (puell_score * 0.20))    
     
     # 6. Retornar JSON formatado
 

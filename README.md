@@ -22,10 +22,10 @@ Sistema de análise de indicadores Bitcoin para trading alavancado, construído 
 
 ## 1.9.3 - Alterar pesos do bloco ciclo
     score_consolidado = ( 
-         (mvrv_score * 0.38) + 
-        (nupl_score * 0.27) +   
-        (reserve_risk * 0.22) +   
-        (puell_score * 0.23))    
+         (mvrv_score * 0.35) + 
+        (nupl_score * 0.25) +   
+        (reserve_risk * 0.20) +   
+        (puell_score * 0.20))    
 
 
 ## 🏗️ Arquitetura
