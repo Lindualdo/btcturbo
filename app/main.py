@@ -6,6 +6,7 @@ from app.routers import score
 from app.routers import dashboards
 from app.routers import tendencia
 from app.routers import decisao_estrategica
+from app.routers import alavancagem
 
 app = FastAPI(
     title="BTC Turbo API",
@@ -29,3 +30,4 @@ app.include_router(score.router, prefix="/api/v1", tags=["🎯 Scores"])
 app.include_router(dashboards.router, prefix="/api/v1", tags=["📊 dashboards"]) 
 app.include_router(tendencia.router, prefix="/api/v1", tags=["📊 tendencia"]) 
 app.include_router(decisao_estrategica.router, prefix="/api/v1", tags=["🎯 Decisão Estratégica"])  # ← NOVO
+app.include_router(alavancagem.router, prefix="/api/v1", tags=["📊 alavancagem"]) 
