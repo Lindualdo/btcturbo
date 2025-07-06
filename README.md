@@ -9,10 +9,11 @@ Sistema de análise de indicadores Bitcoin para trading alavancado, construído 
     - Score de 0 a 100:  0 venda 100 compra meio neutro Hold
     - Novos indicadores da camada tática:  RSI diário, suporte/resistencia, Delta OI, Funding Rates, Volume Spot
 
-## 1.9.6 - Alavancagem
+## 1.9.6 - Alavancagem - feito
 - Bloco Alavancagem independente (retirar do bloco dash-main, será descontinuado)
 
 ## 1.9.7 - Riscos
+
 
 # 1.9.8 - Stop
 
