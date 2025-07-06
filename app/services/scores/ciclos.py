@@ -60,6 +60,19 @@ def calcular_puell_score(valor):
     else:  # valor >= 4
         return 0
 
+def calcular_realized_score(valor):
+    """Calcula score Realized Price Ratio"""
+    if valor < 0.7:
+        return 9.5, "ótimo"
+    elif valor < 1.0:
+        return 7.5, "bom"
+    elif valor < 1.5:
+        return 5.5, "neutro"
+    elif valor < 2.5:
+        return 3.5, "ruim"
+    else:
+        return 1.5, "crítico"
+
 def calcular_nupl_score(valor):
     """Calcula score NUPL baseado nos novos ranges"""
     valor_float = float(valor)
