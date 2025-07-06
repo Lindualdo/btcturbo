@@ -30,18 +30,37 @@ Sistema de análise de indicadores Bitcoin para trading alavancado, construído 
 ## 1.9.4 - Bloco alavancagem do dash já buscando da matriz v2 - feito
 - Alterado seguindo mesma formula anteior mais buscando o limite na matriz v2
 
-## 1.9.5 - revisões na matriz v2 para incluir campo tendencia e fase operacional
+## 1.9.5 - revisões na matriz v2 para incluir campo tendencia e fase operacional - feito
 - Ajustes aplicados
 
-## Prox. releases - Após Concluir as novas camadas + sistema de STOP
+# URGENTES:
+
+## 1.9.6 - Alavancagem
+- Bloco Alavancagem independente (retirar do bloco dash-main, será descontinuado)
+
+## 1.9.7 - Riscos
+
+# 1.9.8 - Stop
+
+# Importantes
+
+# 1.9.9 - Alertas criticos
+- GATILHOS DE AÇÃO
+- REGRAS DE DECISÃO PRIORITÁRIAS
+- SISTEMA DE PROTEÇÃO SIMPLIFICADO
+
+# 1.9.10 - Decisão Tática
+
+# 1.9.11 - Camada operacional (controle de operações)
+
+
+# Não prioritárias
+
+## Após Concluir as novas camadas + sistema de STOP
 
 - INDICADOR ADICIONAL: DISTÂNCIA EMA 200
-- SISTEMA DE PROTEÇÃO SIMPLIFICADO
 - INDICADORES COMPLEMENTARES (Confirmação)
-- REGRAS DE DECISÃO PRIORITÁRIAS
 - USAR IFR Mensal / EMA 200, para definir a fase do mercado Bull Inicial, Bull Final...
-- GATILHOS DE AÇÃO
-- Bloco Alavancagem independente (retirar do bloco dash-main, será descontinuado)
 
 
 # Após concluir essas implementações - Iniciar a Camada Tática
