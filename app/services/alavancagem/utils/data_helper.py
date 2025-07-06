@@ -37,98 +37,73 @@ def get_alavancagem_permitida() -> Optional[float]:
         logger.error(f"❌ Erro ao buscar alavancagem permitida: {str(e)}")
         return None
 
-def get_dados_posicao_financeira() -> Optional[Dict]:
-    """
-    Busca dados financeiros atuais da posição
-    
-    Returns:
-        Dict com dados da posição ou None
-    """
+def obter_dados_posicao() -> dict:
+    """CÓPIA EXATA da função _obter_dados_posicao do dash-main"""
     try:
-        logger.info("💰 Obtendo dados posição financeira...")
-        
-        # Buscar dados do bloco riscos (health factor, dívida, etc)
         from app.services.indicadores import riscos
-        dados_riscos = riscos.obter_indicadores()
+        dados_pos = riscos.obter_indicadores()
         
-        if not dados_riscos or 'aave' not in dados_riscos:
-            logger.warning("⚠️ Dados AAVE não encontrados")
-            return None
-            
-        aave_data = dados_riscos['aave']
+        if dados_pos.get("status") != "success":
+            logger.warning("⚠️ Dados posição indisponíveis")
+            return {}
         
-        # Extrair dados financeiros
-        divida_total = aave_data.get('totalBorrowsUSD', 0)
-        collateral_total = aave_data.get('totalCollateralUSD', 0)
-        capital_liquido = collateral_total - divida_total
+        posicao = dados_pos.get("posicao_atual", {})
         
-        # Calcular alavancagem atual
-        alavancagem_atual = divida_total / capital_liquido if capital_liquido > 0 else 0
+        # Extrair valores numéricos - mapeamento correto V2
+        alavancagem_atual = posicao.get("alavancagem_atual", {}).get("valor_numerico", 0)
+        divida_total = posicao.get("divida_total", {}).get("valor_numerico", 0)  # total_borrowed
+        capital_liquido = posicao.get("capital_liquido", {}).get("valor_numerico", 0)  # net_asset_value
+        posicao_total = posicao.get("posicao_total", {}).get("valor_numerico", 0)  # supplied_asset_value
         
-        dados_posicao = {
-            "divida_total": divida_total,
-            "collateral_total": collateral_total,
-            "capital_liquido": capital_liquido,
-            "alavancagem_atual": alavancagem_atual,
-            "health_factor": aave_data.get('healthFactor', 0),
-            "valor_disponivel": aave_data.get('availableBorrowsUSD', 0)
+        return {
+            "alavancagem_atual": float(alavancagem_atual) if alavancagem_atual else 0,
+            "divida_total": float(divida_total) if divida_total else 0,
+            "capital_liquido": float(capital_liquido) if capital_liquido else 0,
+            "posicao_total": float(posicao_total) if posicao_total else 0
         }
         
-        logger.info(f"✅ Posição: Capital ${capital_liquido:,.0f} | Alavancagem {alavancagem_atual:.2f}x")
-        return dados_posicao
-        
     except Exception as e:
-        logger.error(f"❌ Erro ao obter dados posição: {str(e)}")
-        return None
+        logger.error(f"❌ Erro dados posição: {str(e)}")
+        return {}
 
-def calcular_simulacao_alavancagem(dados_posicao: Dict, alavancagem_permitida: float) -> Dict:
-    """
-    Calcula simulação financeira para alavancagem permitida
-    
-    Args:
-        dados_posicao: Dados financeiros atuais
-        alavancagem_permitida: Nível de alavancagem permitido
-        
-    Returns:
-        Dict com resultado da simulação
-    """
+def calcular_simulacao_financeira(dados_posicao: dict, alavancagem_permitida: float) -> dict:
+    """CÓPIA EXATA da função _calcular_simulacao_financeira do dash-main"""
     try:
         capital_liquido = dados_posicao.get("capital_liquido", 0)
-        alavancagem_atual = dados_posicao.get("alavancagem_atual", 0)
-        valor_disponivel = dados_posicao.get("valor_disponivel", 0)
+        posicao_atual_total = dados_posicao.get("posicao_total", 0)
         
-        # Calcular valores para alavancagem permitida
-        divida_maxima = capital_liquido * alavancagem_permitida
-        divida_atual = dados_posicao.get("divida_total", 0)
+        if capital_liquido <= 0:
+            logger.warning("⚠️ Capital líquido inválido")
+            return {"status": "erro", "valor_disponivel": 0, "valor_a_reduzir": 0}
         
-        # Determinar se pode aumentar ou deve reduzir
-        diferenca = divida_maxima - divida_atual
+        # FÓRMULA V2 EXATA
+        posicao_alvo = alavancagem_permitida * capital_liquido
+        diferenca = posicao_alvo - posicao_atual_total
+        
+        logger.info(f"📊 V2 Formula: Alvo=${posicao_alvo:,.0f} - Atual=${posicao_atual_total:,.0f} = ${diferenca:,.0f}")
         
         if diferenca > 0:
             # Pode aumentar alavancagem
             status = "pode_aumentar"
-            valor_disponivel_real = min(diferenca, valor_disponivel)
+            valor_disponivel = diferenca
             valor_a_reduzir = 0
-        else:
+        elif diferenca < 0:
             # Deve reduzir alavancagem
             status = "deve_reduzir"
-            valor_disponivel_real = 0
+            valor_disponivel = 0
             valor_a_reduzir = abs(diferenca)
-        
+        else:
+            # Exatamente no limite
+            status = "adequada"
+            valor_disponivel = 0
+            valor_a_reduzir = 0
+            
         return {
             "status": status,
-            "valor_disponivel": valor_disponivel_real,
-            "valor_a_reduzir": valor_a_reduzir,
-            "divida_maxima": divida_maxima,
-            "diferenca": diferenca
+            "valor_disponivel": valor_disponivel,
+            "valor_a_reduzir": valor_a_reduzir
         }
-        
+            
     except Exception as e:
-        logger.error(f"❌ Erro na simulação: {str(e)}")
-        return {
-            "status": "erro",
-            "valor_disponivel": 0,
-            "valor_a_reduzir": 0,
-            "divida_maxima": 0,
-            "diferenca": 0
-        }
+        logger.error(f"❌ Erro simulação financeira: {str(e)}")
+        return {"status": "erro", "valor_disponivel": 0, "valor_a_reduzir": 0}
