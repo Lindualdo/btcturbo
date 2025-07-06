@@ -28,7 +28,7 @@ def obter_estrategia(score_tendencia: int, score_ciclo: int) -> Optional[Dict]:
         query = """
             SELECT 
                 id, tendencia, alavancagem, satelite_percent, acao, protecao,
-                score_tendencia_min, score_tendencia_max, 
+                score_tendencia_min, score_tendencia_max, fase_operacional,
                 score_onchain_min, score_onchain_max
             FROM matriz_estrategica_v2 
             WHERE %s BETWEEN score_tendencia_min AND score_tendencia_max
