@@ -4,8 +4,8 @@ Sistema de análise de indicadores Bitcoin para trading alavancado, construído 
 
 ## Alterações s serem implementadas nesta versão
 
-    - Camada Mercado será a nova camda Estratégico: que terá Tendencia + Ciclo
-    - A camada mercado não terá um score final, usará uma matriz que cruza o score Tendencia com Score ciclo
+    - Camada Mercado será a nova camda Estratégico: que terá Tendencia + indicadores on-chain
+    - A camada mercado não terá um score final, usará uma matriz que cruza o score Tendencia com Score om-chain
     - Desse cruzamento entre os scores responderá as seguintes perguntas: Qual a tendência do mercado (BULL , BEAR ou NEUTRO), qual a fase (bull inicial, bull final acumulação..), Alavancagem, Tamanho da posição satélite, Ação primária
     - Os blocs Técnico e Momentum, vão sair da camda mercado
     - será criado uma nova camada chamada tática com indicadores para tomada de decisão (comprar, vender..)
@@ -20,13 +20,20 @@ Sistema de análise de indicadores Bitcoin para trading alavancado, construído 
 ## 1.9.2 - criar API decisão Estratégica - feito
 - definir a decisão estratégica com base no score tendencia + score ciclo
 
-## 1.9.3 - Alterar pesos do bloco ciclo
-    score_consolidado = ( 
-         (mvrv_score * 0.35) + 
-        (nupl_score * 0.25) +   
-        (reserve_risk * 0.20) +   
-        (puell_score * 0.20))    
+## 1.9.3 - Alterar pesos do bloco ciclo e aplicar nova matriz de decisão v2
+- ajustado pesos score on-chain
+- ajustados score individual dos indicadores
 
+## Prox. releases - CAMADA DECISÃO ESTRATÉGICA
+
+- INDICADOR ADICIONAL: DISTÂNCIA EMA 200
+- SISTEMA DE PROTEÇÃO SIMPLIFICADO
+- INDICADORES COMPLEMENTARES (Confirmação)
+- REGRAS DE DECISÃO PRIORITÁRIAS
+- USAR IFR Mensal / EMA 200, para definir a fase do mercado Bull Inicial, Bull Final...
+- GATILHOS DE AÇÃO
+
+# Após concluir essas implementações - Iniciar a Camada Tática
 
 ## 🏗️ Arquitetura
 

@@ -90,26 +90,41 @@ def _get_scores_indicadores_mercado() -> dict:
         logger.error(f"❌ Erro get_latest_scores_from_db: {str(e)}")
         return None
 
-   
 def _buscar_dados_estrategicos(score: float) -> Optional[Dict]:
     
     try:
-        logger.info(f"🔍 Buscando dados estrategicos conforme fase da tendêcia")
+        logger.info(f"🔍 Buscando dados estratégicos para score: {score}")
+       
+        score_tendencia = int(score)
+        score_onchain = 50  # Valor neutro como fallback
         
         query = """
-           Será criado a  query para a nova matriz da camada de Tendencia (estratégica)
+            SELECT 
+                id, cenario, alavancagem, satelite_percent, acao, protecao,
+                score_tendencia_min, score_tendencia_max,
+                score_onchain_min, score_onchain_max
+            FROM matriz_estrategica_v2 ORDER BY id desc
+            LIMIT 1
         """
         
-        #resultado = execute_query(query, params=(score, mvrv, nupl), fetch_one=True)
-    
-        return {
-            "nome_ciclo": "BULL - HARD CODE",
-            "percentual_capital": 0,
-            "alavancagem": 1.8,
-            "caracteristicas": "HOLD",
-            "prioridade": 0
-        }
+        resultado = execute_query(query, params=(score_tendencia, score_onchain), fetch_one=True)
+        
+        if resultado:
+            # Mapear para formato esperado mantendo compatibilidade
+            dados_estrategicos = {
+                "nome_ciclo": resultado["cenario"],
+                "percentual_capital": resultado["satelite_percent"],
+                "alavancagem": float(resultado["alavancagem"]),
+                "caracteristicas": resultado["acao"],
+                "prioridade": resultado["id"]  # Usar ID como prioridade
+            }
+            
+            logger.info(f"✅ Estratégia encontrada: {dados_estrategicos['nome_ciclo']} - Alavancagem {dados_estrategicos['alavancagem']}x")
+            return dados_estrategicos
+        else:
+            logger.warning(f"⚠️ Nenhuma estratégia encontrada para score: {score}")
+            return None
         
     except Exception as e:
-        logger.error(f"❌ Erro buscar ciclo matriz: {str(e)}")
+        logger.error(f"❌ Erro buscar dados estratégicos: {str(e)}")
         return None
