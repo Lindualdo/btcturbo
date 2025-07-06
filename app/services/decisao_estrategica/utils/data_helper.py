@@ -9,11 +9,11 @@ logger = logging.getLogger(__name__)
 
 def obter_estrategia(score_tendencia: int, score_ciclo: int) -> Optional[Dict]:
     """
-    Busca estratégia correspondente na matriz baseada nos scores
+    Busca estratégia correspondente na matriz v2 baseada nos scores
     
     Args:
         score_tendencia: Score tendência (0-100)
-        score_ciclo: Score ciclo (0-100)
+        score_ciclo: Score ciclo (0-100) - chamado score_onchain na matriz v2
         
     Returns:
         Dict com estratégia encontrada ou None
@@ -27,13 +27,12 @@ def obter_estrategia(score_tendencia: int, score_ciclo: int) -> Optional[Dict]:
         
         query = """
             SELECT 
-                id, fase_operacional, alavancagem, satelite, acao, tendencia,
+                id, tendencia, fase_operacional, alavancagem, satelite_percent, acao, protecao,
                 score_tendencia_min, score_tendencia_max, 
-                score_ciclo_min, score_ciclo_max
-            FROM matriz_estrategica 
+                score_onchain_min, score_onchain_max
+            FROM matriz_estrategica_v2 
             WHERE %s BETWEEN score_tendencia_min AND score_tendencia_max
-              AND %s BETWEEN score_ciclo_min AND score_ciclo_max
-              AND ativo = true
+              AND %s BETWEEN score_onchain_min AND score_onchain_max
             ORDER BY id
             LIMIT 1
         """
@@ -41,8 +40,22 @@ def obter_estrategia(score_tendencia: int, score_ciclo: int) -> Optional[Dict]:
         result = execute_query(query, params=(score_tendencia, score_ciclo), fetch_one=True)
         
         if result:
-            logger.info(f"✅ Estratégia encontrada: {result['fase_operacional']} - {result['tendencia']}")
-            return dict(result)
+            # Mapear campos para manter compatibilidade
+            estrategia = {
+                "id": result["id"],
+                "fase_operacional": result["fase_operacional"],
+                "alavancagem": result["alavancagem"],
+                "satelite": result["satelite_percent"] / 100.0,  # converter % para decimal
+                "acao": result["acao"],
+                "tendencia": result["tendencia"],
+                "score_tendencia_min": result["score_tendencia_min"],
+                "score_tendencia_max": result["score_tendencia_max"],
+                "score_ciclo_min": result["score_onchain_min"],
+                "score_ciclo_max": result["score_onchain_max"]
+            }
+            
+            logger.info(f"✅ Estratégia encontrada: {estrategia['fase_operacional']} - {estrategia['tendencia']}")
+            return estrategia
         else:
             logger.warning(f"⚠️ Nenhuma estratégia encontrada para scores T:{score_tendencia}, C:{score_ciclo}")
             return None
@@ -140,7 +153,7 @@ def get_ultima_decisao() -> Optional[Dict]:
 
 def get_detalhe_estrategia() -> Optional[Dict]:
     """
-    Busca os Jsons com detahe da ultima estrategia
+    Busca os JSONs com detalhe da última estratégia
     Returns:
         Dict com última decisão ou None
     """
@@ -208,41 +221,40 @@ def get_historico_decisoes(limit: int = 10) -> list:
 
 def validar_matriz_completa() -> Dict:
     """
-    Valida se a matriz estratégica está completa (15 cenários)
+    Valida se a matriz estratégica v2 está completa (25 cenários)
     
     Returns:
         Dict com status da validação
     """
     try:
-        logger.info("🔍 Validando completude da matriz estratégica...")
+        logger.info("🔍 Validando completude da matriz estratégica v2...")
         
         query = """
             SELECT 
                 COUNT(*) as total_cenarios,
-                COUNT(CASE WHEN tendencia = 'BULL' THEN 1 END) as bull_cenarios,
-                COUNT(CASE WHEN tendencia = 'BEAR' THEN 1 END) as bear_cenarios,
-                COUNT(CASE WHEN tendencia = 'NEUTRO' THEN 1 END) as neutro_cenarios
-            FROM matriz_estrategica 
-            WHERE ativo = true
+                COUNT(CASE WHEN tendencia = 'Bull' THEN 1 END) as bull_cenarios,
+                COUNT(CASE WHEN tendencia = 'Bear' THEN 1 END) as bear_cenarios,
+                COUNT(CASE WHEN tendencia = 'Neutro' THEN 1 END) as neutro_cenarios
+            FROM matriz_estrategica_v2
         """
         
         result = execute_query(query, fetch_one=True)
         
         if result:
             total = result["total_cenarios"]
-            status = "✅ COMPLETA" if total == 15 else f"⚠️ INCOMPLETA ({total}/15)"
+            status = "✅ COMPLETA" if total == 25 else f"⚠️ INCOMPLETA ({total}/25)"
             
-            logger.info(f"📊 Matriz: {status}")
+            logger.info(f"📊 Matriz v2: {status}")
             
             return {
-                "status": "completa" if total == 15 else "incompleta",
+                "status": "completa" if total == 25 else "incompleta",
                 "total_cenarios": total,
                 "distribuicao": {
                     "bull": result["bull_cenarios"],
                     "bear": result["bear_cenarios"],
                     "neutro": result["neutro_cenarios"]
                 },
-                "esperado": 15
+                "esperado": 25
             }
         else:
             return {"status": "erro", "total_cenarios": 0}

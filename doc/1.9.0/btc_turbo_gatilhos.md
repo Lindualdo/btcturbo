@@ -170,3 +170,53 @@
 - **Diário**: RSI, distância EMA, volume
 - **Semanal**: Hash ribbons, SOAB, tendências
 - **Mensal**: Macro scores, ciclo geral
+
+
+## SISTEMA DE PROTEÇÃO SIMPLIFICADO
+
+### Zona Crítica (Score On-chain 45-59)
+- **Ativação**: Quando score entra na zona 45-59
+- **Stop Loss**: -10% da posição alavancada
+- **Exemplo**: Com 1.5x alavancagem, stop em -15% do capital
+- **Exit**: Stop atingido OU score > 60 OU score < 45
+
+### Percentuais por Alavancagem
+| Alavancagem | Stop Loss |
+|-------------|-----------|
+| 3x | -15% do capital |
+| 2x | -12% do capital |
+| 1.5x | -10% do capital |
+| 1x | -8% do capital |
+| 0.5x | -5% do capital |
+
+## INDICADORES COMPLEMENTARES (Confirmação)
+
+### RSI Mensal
+- < 30: Oversold extremo (confirma compra)
+- 30-50: Bear/Neutro
+- 50-70: Bull Normal
+- 70-80: Bull Forte (cautela se on-chain < 60)
+- > 80: Overbought (reduzir se on-chain < 45)
+
+### MACD Semanal
+- Cruzamento alta + on-chain > 60 = Aumentar exposição
+- Divergência baixista + on-chain < 60 = Reduzir alavancagem
+
+### Volume On-Balance (OBV)
+- Divergência com preço = Alerta adicional
+- Confirma movimentos quando alinhado
+
+## REGRAS DE DECISÃO PRIORITÁRIAS
+
+1. **Distância EMA 200 > 250%**: Reduzir alavancagem em 1 nível
+2. **Score on-chain 45-59**: Ativar proteção ATR imediatamente
+3. **RSI mensal > 80 + Score < 60**: Máximo 1x alavancagem
+4. **Reserve Risk < 0.001**: Pode aumentar 0.5x na alavancagem
+5. **Divergência MACD + Score < 50**: Zerar alavancagem
+
+## GATILHOS DE AÇÃO
+
+- **Mudança de Zona On-chain**: Revisar em 24h
+- **Entrada zona 45-59**: Ativar ATR stop em 1h
+- **Divergência 2+ indicadores**: Reduzir 50% posição
+- **Tendência muda faixa**: Rebalancear em 48h
