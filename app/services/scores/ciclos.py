@@ -3,30 +3,34 @@
 from app.services.indicadores import ciclos as indicadores_ciclos
 
 def calcular_mvrv_score(valor):
-    """Calcula score MVRV Z-Score baseado na tabela da documentação"""
+    """Calcula score MVRV Z-Score baseado nos novos ranges"""
     if valor < 0:
-        return 9.5, "ótimo"
+        return 10
+    elif valor < 1:
+        return 8
     elif valor < 2:
-        return 7.5, "bom"
+        return 6
+    elif valor < 3:
+        return 4
     elif valor < 4:
-        return 5.5, "neutro"
-    elif valor < 6:
-        return 3.5, "ruim"
-    else:
-        return 1.5, "crítico"
-
+        return 2
+    else:  # valor >= 4
+        return 0
+    
 def calcular_reserve_risk(valor):
-    """Calcula score Reserve Risk baseado em faixas atualizadas - v1.6.0"""
-    if valor < 0.002:
-        return 9.5, "ótimo"
+    """Calcula score Reserve Risk baseado nos novos ranges"""
+    if valor < 0.001:
+        return 10
+    elif valor < 0.0025:
+        return 8
     elif valor < 0.005:
-        return 7.5, "bom"
+        return 6
     elif valor < 0.01:
-        return 5.5, "neutro"
+        return 4
     elif valor < 0.02:
-        return 3.5, "ruim"
-    else:
-        return 1.0, "crítico"
+        return 2
+    else:  # valor >= 0.02
+        return 0
 
 def calcular_realized_score(valor):
     """Calcula score Realized Price Ratio"""
@@ -42,54 +46,36 @@ def calcular_realized_score(valor):
         return 1.5, "crítico"
 
 def calcular_puell_score(valor):
-    """Calcula score Puell Multiple"""
+    """Calcula score Puell Multiple baseado nos novos ranges"""
     if valor < 0.5:
-        return 9.5, "ótimo"
-    elif valor < 1.0:
-        return 7.5, "bom"
-    elif valor < 2.0:
-        return 5.5, "neutro"
-    elif valor < 4.0:
-        return 3.5, "ruim"
-    else:
-        return 1.5, "crítico"
+        return 10
+    elif valor < 1:
+        return 8
+    elif valor < 1.5:
+        return 6
+    elif valor < 2.5:
+        return 4
+    elif valor < 4:
+        return 2
+    else:  # valor >= 4
+        return 0
 
 def calcular_nupl_score(valor):
-    """
-    NOVA FUNÇÃO v5.1.2: Calcula score NUPL (Net Unrealized Profit/Loss)
+    """Calcula score NUPL baseado nos novos ranges"""
+    valor_float = float(valor)
     
-    Regras NUPL conforme especificação v5.1.2:
-    - < 0: Score 9-10 (Capitulação/Oversold extremo)
-    - 0-0.25: Score 7-8 (Acumulação) 
-    - 0.25-0.5: Score 5-6 (Neutro)
-    - 0.5-0.75: Score 3-4 (Sobrecomprado/Otimismo)
-    - > 0.75: Score 0-2 (Euforia/Topo)
-    
-    Args:
-        valor: Valor NUPL (float)
-        
-    Returns:
-        tuple: (score, classificacao)
-    """
-    if valor is None:
-        return 5.5, "neutro"  # Score neutro quando NUPL não disponível
-    
-    try:
-        valor_float = float(valor)
-        
-        if valor_float < 0:
-            return 9.5, "ótimo"  # Capitulação - oportunidade máxima
-        elif valor_float < 0.25:
-            return 7.5, "bom"    # Acumulação - boa oportunidade
-        elif valor_float < 0.5:
-            return 5.5, "neutro" # Neutro - mercado equilibrado
-        elif valor_float < 0.75:
-            return 3.5, "ruim"   # Sobrecomprado - cautela
-        else:
-            return 1.5, "crítico" # Euforia - perigo extremo
-            
-    except (ValueError, TypeError):
-        return 5.5, "neutro"  # Fallback para valores inválidos
+    if valor_float < 0:
+        return 10
+    elif valor_float < 0.25:
+        return 8
+    elif valor_float < 0.5:
+        return 6
+    elif valor_float < 0.65:
+        return 4
+    elif valor_float < 0.75:
+        return 2
+    else:  # valor >= 0.75
+        return 0
 
 def interpretar_classificacao_consolidada(score):
     """Converte score consolidado em classificação estratégica"""
@@ -136,10 +122,10 @@ def calcular_score():
     
     # 4.PESOS REBALANCEADOS v1.9
     score_consolidado = ( 
-    (mvrv_score * 0.35) + 
+    (mvrv_score * 0.30) + 
     (nupl_score * 0.25) +   
-    (reserve_risk_score * 0.20) +   
-    (puell_score * 0.20))    
+    (reserve_risk_score * 0.35) +   
+    (puell_score * 0.10))    
     
     # 6. Retornar JSON formatado
 

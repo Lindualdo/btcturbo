@@ -7,7 +7,6 @@
 3. **RENDA**: Gerar fluxo via realização parcial de lucros (RPs) 
 4. **ANTECIPAÇÃO:** Identificar topos e fundos para otimizar ganhos 
 5. **CRESCIMENTO**: Aumentar patrimônio via reinvestimento
-6. **PSICOLÓGICO**: Permitir operações (via 10% flex) para controlar ansiedade
 7. **SUSTENTABILIDADE**: Sem aportes externos - sistema autossuficiente
 
 ## ESTRUTURA DE CAPITAL
@@ -20,13 +19,12 @@
 - Ações apenas em extremos comprovados
 - Satélite NUNCA vende em BULL
 
-
 ## ESTRUTURA DE DECISÂO EM 4 CAMADAS
 
-### CAMADA 1 - Estrategico (tendência macro + ciclo de mercado)
+### CAMADA 1 - Decisão Estrategica (tendência macro (EMAs semanais) + dados on-chain)
 **Pergunta**: Qual ciclo estamos? Define modelo operacional
 
-### CAMADA 2 - TÁTICO (Planeja ações de médio e curto prazo)
+### CAMADA 2 - Decisão Tática (Planeja ações de médio e curto prazo)
 **Pergunta**: Quando agir? Define as codições táticas de compra/venda
 
 ### CAMADA 3 - OPERACIONAL (Operacionaliza)
