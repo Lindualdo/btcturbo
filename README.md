@@ -12,8 +12,8 @@ Sistema de análise de indicadores Bitcoin para trading alavancado, construído 
 ## 1.9.6 - Alavancagem - feito
 - Bloco Alavancagem independente (retirar do bloco dash-main, será descontinuado)
 
-## 1.9.7 - Riscos
-
+## 1.9.7 - Riscos - feito
+- criado nova API financeiro com alavancagem e riscos
 
 # 1.9.8 - Stop
 
