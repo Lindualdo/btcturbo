@@ -89,40 +89,38 @@ def _get_scores_indicadores_mercado() -> dict:
     except Exception as e:
         logger.error(f"❌ Erro get_latest_scores_from_db: {str(e)}")
         return None
-
-def _buscar_dados_estrategicos(score: float) -> Optional[Dict]:
     
+def _buscar_dados_estrategicos(score: float) -> Optional[Dict]:
+    """
+    Busca dados estratégicos usando a última decisão estratégica processada
+    
+    Args:
+        score: Score consolidado de mercado (0-100) - não usado, mantido para compatibilidade
+        
+    Returns:
+        Dict com dados estratégicos ou None
+    """
     try:
-        logger.info(f"🔍 Buscando dados estratégicos para score: {score}")
-       
-        score_tendencia = int(score)
-        score_onchain = 50  # Valor neutro como fallback
+        logger.info(f"🔍 Buscando dados estratégicos da última decisão")
         
-        query = """
-            SELECT 
-                id, cenario, alavancagem, satelite_percent, acao, protecao,
-                score_tendencia_min, score_tendencia_max,
-                score_onchain_min, score_onchain_max
-            FROM matriz_estrategica_v2 ORDER BY id desc
-            LIMIT 1
-        """
+        from app.services.decisao_estrategica.utils.data_helper import get_detalhe_estrategia
         
-        resultado = execute_query(query, params=(score_tendencia, score_onchain), fetch_one=True)
+        ultima_decisao = get_detalhe_estrategia()
         
-        if resultado:
+        if ultima_decisao:
             # Mapear para formato esperado mantendo compatibilidade
             dados_estrategicos = {
-                "nome_ciclo": resultado["cenario"],
-                "percentual_capital": resultado["satelite_percent"],
-                "alavancagem": float(resultado["alavancagem"]),
-                "caracteristicas": resultado["acao"],
-                "prioridade": resultado["id"]  # Usar ID como prioridade
+                "nome_ciclo": ultima_decisao["fase_operacional"],
+                "percentual_capital": int(ultima_decisao["satelite"] * 100),  # converter decimal para %
+                "alavancagem": float(ultima_decisao["alavancagem"]),
+                "caracteristicas": ultima_decisao["acao"],
+                "prioridade": 1  # Prioridade fixa para última decisão
             }
             
             logger.info(f"✅ Estratégia encontrada: {dados_estrategicos['nome_ciclo']} - Alavancagem {dados_estrategicos['alavancagem']}x")
             return dados_estrategicos
         else:
-            logger.warning(f"⚠️ Nenhuma estratégia encontrada para score: {score}")
+            logger.warning("⚠️ Nenhuma decisão estratégica encontrada")
             return None
         
     except Exception as e:
