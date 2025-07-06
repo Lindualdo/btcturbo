@@ -27,7 +27,7 @@ def obter_estrategia(score_tendencia: int, score_ciclo: int) -> Optional[Dict]:
         
         query = """
             SELECT 
-                id, cenario, alavancagem, satelite_percent, acao, protecao,
+                id, tendencia, alavancagem, satelite_percent, acao, protecao,
                 score_tendencia_min, score_tendencia_max, 
                 score_onchain_min, score_onchain_max
             FROM matriz_estrategica_v2 
@@ -43,11 +43,11 @@ def obter_estrategia(score_tendencia: int, score_ciclo: int) -> Optional[Dict]:
             # Mapear campos para manter compatibilidade
             estrategia = {
                 "id": result["id"],
-                "fase_operacional": result["cenario"],  # cenario -> fase_operacional
+                "fase_operacional": result["fase_operacional"], 
                 "alavancagem": result["alavancagem"],
                 "satelite": result["satelite_percent"] / 100.0,  # converter % para decimal
                 "acao": result["acao"],
-                "tendencia": _mapear_tendencia(result["cenario"]),  # derivar tendencia do cenario
+                "tendencia": _mapear_tendencia(result["tendencia"]),  
                 "score_tendencia_min": result["score_tendencia_min"],
                 "score_tendencia_max": result["score_tendencia_max"],
                 "score_ciclo_min": result["score_onchain_min"],
