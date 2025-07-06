@@ -28,15 +28,15 @@ def calcular_health_factor_score(valor):
         return 5.5, "neutro"  # Fallback em caso de erro
     
     if valor > 2.0:
-        return 9.5, "ótimo"
+        return 10, "ótimo"
     elif valor > 1.5:
-        return 7.5, "bom"
+        return 8, "bom"
     elif valor > 1.3:
-        return 5.5, "neutro"
-    elif valor > 1.1:
-        return 3.5, "ruim"
+        return 6, "neutro"
+    elif valor > 1.2:
+        return 4, "ruim"
     else:
-        return 1.5, "crítico"
+        return 2, "crítico"
 
 def interpretar_classificacao_consolidada(score):
     """Converte score consolidado em classificação"""
@@ -109,4 +109,49 @@ def calcular_score():
             }
         },
         "status": "success"
+    }
+
+def calcular_score_compacto():
+    """Calcula score consolidado do bloco RISCO"""
+    # 1. Obter dados brutos da API
+    dados_indicadores = indicadores_riscos.obter_indicadores()
+    
+    if dados_indicadores.get("status") != "success":
+        return {
+            "bloco": "riscos",
+            "status": "error",
+            "erro": "Dados não disponíveis"
+        }
+    
+    indicadores = dados_indicadores["indicadores"]
+    posicao_total = dados_indicadores["posicao_atual"]["posicao_total"]["valor_numerico"]
+    btc_price = dados_indicadores["posicao_atual"]["btc_price"]["valor_numerico"]
+    divida_total = dados_indicadores["posicao_atual"]["divida_total"]["valor_numerico"]
+    
+    # 2. Calcular scores individuais
+    dist_valor = indicadores["Dist_Liquidacao"]["valor"]
+    hf_valor = indicadores["Health_Factor"]["valor"]
+    
+    dist_score, dist_classificacao = calcular_dist_liquidacao_score(dist_valor)
+    hf_score, hf_classificacao = calcular_health_factor_score(hf_valor)
+    
+    # 3. Aplicar pesos (Dist: 5%, HF: 5% do total 10%)
+    # Normalizando para o bloco: Dist: 50%, HF: 50%
+    score_consolidado = (
+        (dist_score * 0.50) +
+        (hf_score * 0.50)
+    )
+    
+
+    # 4. Retornar JSON formatado
+    return {
+        "timestamp": dados_indicadores["timestamp"],
+        "status": "success",
+        "score":round(score_consolidado * 10, 2),
+        "classificacao": interpretar_classificacao_consolidada(score_consolidado),
+        "Dist_Liquidacao": dist_valor,
+        "Health_Factor": hf_valor,
+        "posicao_total": posicao_total,
+        "btc_price": btc_price,
+        "divida_total":divida_total
     }
