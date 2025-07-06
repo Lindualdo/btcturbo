@@ -4,10 +4,13 @@ Sistema de análise de indicadores Bitcoin para trading alavancado, construído 
 
 ## Alterações s serem implementadas nesta versão
 
-    - Camada Mercado será a nova camda Estratégico: que terá Tendencia + indicadores on-chain
-    - A camada mercado não terá um score final, usará uma matriz que cruza o score Tendencia com Score om-chain
-    - Desse cruzamento entre os scores responderá as seguintes perguntas: Qual a tendência do mercado (BULL , BEAR ou NEUTRO), qual a fase (bull inicial, bull final acumulação..), Alavancagem, Tamanho da posição satélite, Ação primária
-    - Os blocs Técnico e Momentum, vão sair da camda mercado
+    Feito
+    - Camada Mercado será a nova camda Estratégico: que terá Tendencia + indicadores on-chain - feito
+    - A camada mercado não terá um score final, usará uma matriz que cruza o score Tendencia com Score om-chain -feito
+    - Desse cruzamento entre os scores responderá as seguintes perguntas: Qual a tendência do mercado (BULL , BEAR ou NEUTRO), qual a fase (bull inicial, bull final acumulação..), Alavancagem, Tamanho da posição satélite, Ação primária -feito
+    - Os blocs Técnico e Momentum, vão sair da camda mercado - feito
+
+    Fazer
     - será criado uma nova camada chamada tática com indicadores para tomada de decisão (comprar, vender..)
     - o score dessa camada já indicará se está no momento de agir, apenas nos extremos, correspondendo com a estratégia de Hold..
     - Score de 0 a 100:  0 venda 100 compra meio neutro Hold
@@ -27,7 +30,10 @@ Sistema de análise de indicadores Bitcoin para trading alavancado, construído 
 ## 1.9.4 - Bloco alavancagem do dash já buscando da matriz v2 - feito
 - Alterado seguindo mesma formula anteior mais buscando o limite na matriz v2
 
-## Prox. releases - CAMADA DECISÃO ESTRATÉGICA
+## 1.9.5 - revisões na matriz v2 para incluir campo tendencia e fase operacional
+- Ajustes aplicados
+
+## Prox. releases - Após Concluir as novas camadas + sistema de STOP
 
 - INDICADOR ADICIONAL: DISTÂNCIA EMA 200
 - SISTEMA DE PROTEÇÃO SIMPLIFICADO
