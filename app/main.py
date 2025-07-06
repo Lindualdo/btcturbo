@@ -30,4 +30,4 @@ app.include_router(score.router, prefix="/api/v1", tags=["🎯 Scores"])
 app.include_router(dashboards.router, prefix="/api/v1", tags=["📊 dashboards"]) 
 app.include_router(tendencia.router, prefix="/api/v1", tags=["📊 tendencia"]) 
 app.include_router(decisao_estrategica.router, prefix="/api/v1", tags=["🎯 Decisão Estratégica"])  # ← NOVO
-app.include_router(financeiro.router, prefix="/api/v1", tags=["📊 financeiro"]) 
+app.include_router(financeiro.router, prefix="/api/v1/financeiro", tags=["📊 financeiro"]) 
