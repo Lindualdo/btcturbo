@@ -128,10 +128,10 @@ def calcular_score():
     
     # 3. Calcular scores individuais
     #realized_score, realized_classificacao = calcular_realized_score(realized_valor)
-    mvrv_score, mvrv_classificacao = calcular_mvrv_score(mvrv_valor)
-    nupl_score, nupl_classificacao = calcular_nupl_score(nupl_valor)  
-    reserve_risk_score, nupl_classificacao = calcular_reserve_risk(reserve_risk_valor)  
-    puell_score, nupl_classificacao = calcular_puell_score(puell_valor)  
+    mvrv_score = calcular_mvrv_score(mvrv_valor)
+    nupl_score = calcular_nupl_score(nupl_valor)  
+    reserve_risk_score = calcular_reserve_risk(reserve_risk_valor)  
+    puell_score = calcular_puell_score(puell_valor)  
     
     # 4.PESOS REBALANCEADOS v1.9
     score_consolidado = ( 
