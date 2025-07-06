@@ -1,6 +1,8 @@
 # app/services/scores/riscos.py
-
+import logging
 from app.services.indicadores import riscos as indicadores_riscos
+
+logger = logging.getLogger(__name__)
 
 def calcular_dist_liquidacao_score(valor_percentual):
     """Calcula score Distância Liquidação - valor já vem formatado como string"""
@@ -122,12 +124,15 @@ def calcular_score_compacto():
             "status": "error",
             "erro": "Dados não disponíveis"
         }
-    
+    logger.info("🚀 buscou indicadores")
+
     indicadores = dados_indicadores["indicadores"]
     posicao_total = dados_indicadores["posicao_atual"]["posicao_total"]["valor_numerico"]
     btc_price = dados_indicadores["posicao_atual"]["btc_price"]["valor_numerico"]
     divida_total = dados_indicadores["posicao_atual"]["divida_total"]["valor_numerico"]
     
+    logger.info("🚀 carregou variáveis")
+
     # 2. Calcular scores individuais
     dist_valor = indicadores["Dist_Liquidacao"]["valor"]
     hf_valor = indicadores["Health_Factor"]["valor"]
@@ -135,13 +140,16 @@ def calcular_score_compacto():
     dist_score, dist_classificacao = calcular_dist_liquidacao_score(dist_valor)
     hf_score, hf_classificacao = calcular_health_factor_score(hf_valor)
     
+ 
+
     # 3. Aplicar pesos (Dist: 5%, HF: 5% do total 10%)
     # Normalizando para o bloco: Dist: 50%, HF: 50%
     score_consolidado = (
         (dist_score * 0.50) +
         (hf_score * 0.50)
     )
-    
+
+    logger.info("🚀 score calculado")
 
     # 4. Retornar JSON formatado
     return {
