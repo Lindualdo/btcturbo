@@ -6,7 +6,7 @@ router = APIRouter()
 
 @router.get("/score-risco")
 async def calcular_score():
-   return riscos.calcular_score_compacto
+   return riscos.calcular_score_compacto()
 
 
 @router.get("/alavancagem")
