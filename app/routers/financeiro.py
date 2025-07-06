@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from app.services.scores import riscos
-from app.services.alavancagem.alavancagem_service import calcular_alavancagem
+from app.services.alavancagem import alavancagem_service
 
 router = APIRouter()
 
@@ -11,4 +11,4 @@ async def calcular_score():
 
 @router.get("/alavancagem")
 async def get_alavancagem():
-    return calcular_alavancagem()
+    return alavancagem_service.calcular_alavancagem()

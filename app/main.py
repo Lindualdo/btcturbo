@@ -6,7 +6,6 @@ from app.routers import score
 from app.routers import dashboards
 from app.routers import tendencia
 from app.routers import decisao_estrategica
-from app.routers import alavancagem
 from app.routers import financeiro
 
 app = FastAPI(
