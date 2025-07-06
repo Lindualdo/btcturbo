@@ -5,7 +5,7 @@ from datetime import datetime
 from typing import Dict, Optional
 from app.services.tendencia.utils.data_helper import obter as obter_score_tendencia
 from app.services.scores.ciclos import calcular_score as calcular_score_ciclo
-from .utils  import data_helper
+from .utils  import  dat_helper_matriz_v2 as data_helper
 
 logger = logging.getLogger(__name__)
 
