@@ -157,7 +157,7 @@ def calcular_score():
         score_consolidado = resultado["score_combinado"]
         logger.info(f"Score combinado: {score_consolidado}")
         tipo_score = "score_combinado"
-
+        logger.info(f"🚀 score combinado encontradoo...{score_consolidado}")
 
     return {
         "bloco": "ciclo",
@@ -202,62 +202,65 @@ def calcular_score_combinado(indicadores):
     puell_valor = float(indicadores["Puell_Multiple"])
     
     # Condições em ordem decrescente de score (10 a 100)
+
+    logger.info("🚀 iniciando o score combinado...")
     
     # Score 10: Condições extremas de alta
     if (mvrv_valor > 4.5 and 
         reserve_risk_valor > 0.012 and 
         nupl_valor > 0.65):
-        return {"score_combinado": 10}
+        return {"score_combinado": 1}
     
     # Score 20
     if (mvrv_valor > 3.8 and 
         puell_valor > 3 and 
         reserve_risk_valor > 0.01):
-        return {"score_combinado": 20}
+        return {"score_combinado": 2}
     
     # Score 30
     if (nupl_valor > 0.6 and 
         reserve_risk_valor > 0.008 and 
         mvrv_valor > 3.2):
-        return {"score_combinado": 30}
+        return {"score_combinado": 3}
     
     # Score 40
     if (mvrv_valor > 2.5 and 
         puell_valor > 2):
-        return {"score_combinado": 40}
+        return {"score_combinado": 4}
     
     # Score 50: Zona neutra
     if (0.3 <= nupl_valor <= 0.45 and 
         0.005 <= reserve_risk_valor <= 0.007):
-        return {"score_combinado": 50}
+        return {"score_combinado": 5}
     
     # Score 60
     if (1.2 <= mvrv_valor <= 2 and 
         0.004 <= reserve_risk_valor <= 0.005):
-        return {"score_combinado": 60}
+        return {"score_combinado": 6}
     
     # Score 70
     if (nupl_valor < 0.2 and 
         reserve_risk_valor < 0.004):
-        return {"score_combinado": 70}
+        return {"score_combinado": 7}
     
     # Score 80
     if (mvrv_valor < 1 and 
         puell_valor < 0.6 and 
         reserve_risk_valor < 0.003):
-        return {"score_combinado": 80}
+        return {"score_combinado": 8}
     
     # Score 90
     if (nupl_valor < 0.1 and 
         reserve_risk_valor < 0.002 and 
         puell_valor < 0.5):
-        return {"score_combinado": 90}
+        return {"score_combinado": 9}
     
     # Score 100: Condições extremas de baixa
     if (mvrv_valor < 0 and 
         nupl_valor < -0.15 and 
         reserve_risk_valor < 0.0015):
-        return {"score_combinado": 100}
+        return {"score_combinado": 10}
     
+    logger.info("🚀 nenhum score combinado encontrado...")
     # Nenhuma condição atendida
     return {}
