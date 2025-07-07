@@ -14,6 +14,7 @@ Sistema de análise de indicadores Bitcoin para trading alavancado, construído 
 
 ## 1.9.7 - Riscos - feito
 - criado nova API financeiro com alavancagem e riscos
+- tudo funcionando inclusive no dash - front-end
 
 # 1.9.8 - Stop
 

@@ -3,34 +3,34 @@
 from app.services.indicadores import ciclos as indicadores_ciclos
 
 def calcular_mvrv_score(valor):
-    """Calcula score MVRV Z-Score baseado nos novos ranges"""
-    if valor < 0:
-        return 10
-    elif valor < 1:
-        return 8
-    elif valor < 2:
-        return 6
-    elif valor < 3:
-        return 4
-    elif valor < 4:
-        return 2
-    else:  # valor >= 4
-        return 0
-    
+    """Calibrado para realidade pós-Out/21 (máximo ~4)"""
+    if valor < 0:      return 10  # Crash/oportunidade extrema
+    elif valor < 0.5:  return 9   # Muito subvalorizado
+    elif valor < 1:    return 8   # Subvalorizado  
+    elif valor < 1.5:  return 7   # Levemente subvalorizado
+    elif valor < 2:    return 6   # Neutro baixo
+    elif valor < 2.5:  return 5   # Neutro
+    elif valor < 3:    return 4   # Neutro alto
+    elif valor < 3.5:  return 2   # Sobrevalorizado
+    elif valor < 4:    return 1   # Muito sobrevalorizado
+    else:              return 0   # Extremo (raramente atingido)
+
 def calcular_reserve_risk(valor):
-    """Calcula score Reserve Risk baseado nos novos ranges"""
-    if valor < 0.001:
-        return 10
-    elif valor < 0.0025:
-        return 8
-    elif valor < 0.005:
-        return 6
-    elif valor < 0.01:
-        return 4
-    elif valor < 0.02:
-        return 2
-    else:  # valor >= 0.02
-        return 0
+    """
+    Score Reserve Risk calibrado para mercado atual
+    Range operacional: 0.001-0.01 (vs. 0.001-1.0 histórico)
+    Score 10 = máxima oportunidade | Score 1 = máximo risco
+    """
+    if valor < 0.001:    return 10  # Oportunidade extrema (crash)
+    elif valor < 0.0015: return 9   # Muito subvalorizado
+    elif valor < 0.002:  return 8   # Subvalorizado forte  
+    elif valor < 0.0025: return 7   # Subvalorizado
+    elif valor < 0.003:  return 6   # Levemente subvalorizado
+    elif valor < 0.004:  return 5   # Neutro baixo
+    elif valor < 0.005:  return 4   # Neutro
+    elif valor < 0.007:  return 3   # Neutro alto
+    elif valor < 0.01:   return 2   # Sobrevalorizado (teto atual)
+    else:                return 1   # Extremamente sobrevalorizado (>0.01)
 
 def calcular_realized_score(valor):
     """Calcula score Realized Price Ratio"""
@@ -135,8 +135,8 @@ def calcular_score():
     
     # 4.PESOS REBALANCEADOS v1.9
     score_consolidado = ( 
-    (mvrv_score * 0.30) + 
-    (nupl_score * 0.25) +   
+    (mvrv_score * 0.40) + 
+    (nupl_score * 0.15) +   
     (reserve_risk_score * 0.35) +   
     (puell_score * 0.10))    
     
@@ -146,6 +146,8 @@ def calcular_score():
         NUNCA ALTERAR ESSA ESTRUTURA NEM NOME DOS CAMPOS
         SE PRECISAR ALTERAR, ANALISAR GRAVÇÃO DOS DADOS (DASH-MERCADO E DASH-MAIN)
     """
+
+
 
     return {
         "bloco": "ciclo",
