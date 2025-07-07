@@ -43,6 +43,7 @@ FASE4 - BACKTEST
 ---
 
 ## todo: 
+- validação secundário para confirmar topos e fundos no score price
 - incluir indicador de price action no score tecnico
 - rever nivel de alavancagem - proximo a topos (validar nos cenários da camada 1)
 - avaliar peso do RSI semanal no bloco momentum (Reduzir para 30% e adicionar ATR avaliar migrar para blco técnico)

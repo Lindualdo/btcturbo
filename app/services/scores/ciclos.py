@@ -5,62 +5,30 @@ from app.services.indicadores import ciclos as indicadores_ciclos
 logger = logging.getLogger(__name__)
 
 def calcular_mvrv_score(valor):
-    """Calibrado para realidade pós-Out/21 (máximo ~4)"""
-    if valor < 0:      return 10  # Crash/oportunidade extrema
-    elif valor < 0.5:  return 9   # Muito subvalorizado
-    elif valor < 1:    return 8   # Subvalorizado  
-    elif valor < 1.5:  return 7   # Levemente subvalorizado
-    elif valor < 2:    return 6   # Neutro baixo
-    elif valor < 2.5:  return 5   # Neutro
-    elif valor < 3:    return 4   # Neutro alto
-    elif valor < 3.5:  return 2   # Sobrevalorizado
-    elif valor < 4:    return 1   # Muito sobrevalorizado
-    else:              return 0   # Extremo (raramente atingido)
+    """MVRV Z-Score calibrado conforme tabela (0=caro, 10=barato)"""
+    if valor > 5:               return 1   # Extremamente caro
+    elif 4 <= valor <= 5:       return 2   
+    elif 3.2 <= valor < 4:      return 3
+    elif 2.5 <= valor < 3.2:    return 4
+    elif 1.8 <= valor < 2.5:    return 5   # Neutro
+    elif 1.2 <= valor < 1.8:    return 6
+    elif 0.8 <= valor < 1.2:    return 7
+    elif 0.4 <= valor < 0.8:    return 8
+    elif 0 <= valor < 0.4:      return 9
+    else:                       return 10  # Extremamente barato
 
 def calcular_reserve_risk(valor):
-    """
-    Score Reserve Risk calibrado para mercado atual
-    Range operacional: 0.001-0.01 (vs. 0.001-1.0 histórico)
-    Score 10 = máxima oportunidade | Score 1 = máximo risco
-    """
-    if valor < 0.001:    return 10  # Oportunidade extrema (crash)
-    elif valor < 0.0015: return 9   # Muito subvalorizado
-    elif valor < 0.002:  return 8   # Subvalorizado forte  
-    elif valor < 0.0025: return 7   # Subvalorizado
-    elif valor < 0.003:  return 6   # Levemente subvalorizado
-    elif valor < 0.004:  return 5   # Neutro baixo
-    elif valor < 0.005:  return 4   # Neutro
-    elif valor < 0.007:  return 3   # Neutro alto
-    elif valor < 0.01:   return 2   # Sobrevalorizado (teto atual)
-    else:                return 1   # Extremamente sobrevalorizado (>0.01)
-
-def calcular_realized_score(valor):
-    """Calcula score Realized Price Ratio"""
-    if valor < 0.7:
-        return 9.5, "ótimo"
-    elif valor < 1.0:
-        return 7.5, "bom"
-    elif valor < 1.5:
-        return 5.5, "neutro"
-    elif valor < 2.5:
-        return 3.5, "ruim"
-    else:
-        return 1.5, "crítico"
-
-def calcular_puell_score(valor):
-    """Calcula score Puell Multiple baseado nos novos ranges"""
-    if valor < 0.5:
-        return 10
-    elif valor < 1:
-        return 8
-    elif valor < 1.5:
-        return 6
-    elif valor < 2.5:
-        return 4
-    elif valor < 4:
-        return 2
-    else:  # valor >= 4
-        return 0
+    """Reserve Risk calibrado conforme tabela (0=caro, 10=barato)"""
+    if valor > 0.015:                    return 1   # Extremamente caro
+    elif 0.012 <= valor <= 0.015:       return 2
+    elif 0.01 <= valor < 0.012:         return 3
+    elif 0.008 <= valor < 0.01:         return 4
+    elif 0.006 <= valor < 0.008:        return 5   # Neutro
+    elif 0.004 <= valor < 0.006:        return 6
+    elif 0.003 <= valor < 0.004:        return 7
+    elif 0.002 <= valor < 0.003:        return 8
+    elif 0.0015 <= valor < 0.002:       return 9
+    else:                               return 10  # Extremamente barato
 
 def calcular_realized_score(valor):
     """Calcula score Realized Price Ratio"""
@@ -76,26 +44,56 @@ def calcular_realized_score(valor):
         return 1.5, "crítico"
 
 def calcular_nupl_score(valor):
-    """Calcula score NUPL baseado nos novos ranges"""
+    """NUPL calibrado conforme tabela (0=caro, 10=barato)"""
     valor_float = float(valor)
     
-    if valor_float < 0:
-        return 10
-    elif valor_float < 0.25:
-        return 8
-    elif valor_float < 0.5:
-        return 6
-    elif valor_float < 0.65:
-        return 4
-    elif valor_float < 0.75:
-        return 2
-    else:  # valor >= 0.75
-        return 0
+    if valor_float > 0.7:                        return 1   # Extremamente caro
+    elif 0.65 <= valor_float <= 0.7:            return 2
+    elif 0.6 <= valor_float < 0.65:             return 3
+    elif 0.5 <= valor_float < 0.6:              return 4
+    elif 0.35 <= valor_float < 0.5:             return 5   # Neutro
+    elif 0.2 <= valor_float < 0.35:             return 6
+    elif 0.05 <= valor_float < 0.2:             return 7
+    elif -0.05 <= valor_float < 0.05:           return 8
+    elif -0.15 <= valor_float < -0.05:          return 9
+    else:                                       return 10  # Extremamente barato
+
+def calcular_realized_score(valor):
+    """Calcula score Realized Price Ratio"""
+    if valor < 0.7:
+        return 9.5, "ótimo"
+    elif valor < 1.0:
+        return 7.5, "bom"
+    elif valor < 1.5:
+        return 5.5, "neutro"
+    elif valor < 2.5:
+        return 3.5, "ruim"
+    else:
+        return 1.5, "crítico"
+
+def calcular_puell_score(valor):
+    """Puell Multiple calibrado conforme tabela (0=caro, 10=barato)"""
+    if valor > 3.5:               return 1   # Extremamente caro
+    elif 3 <= valor <= 3.5:       return 2
+    elif 2.5 <= valor < 3:        return 3
+    elif 2 <= valor < 2.5:        return 4
+    elif 1.3 <= valor < 2:        return 5   # Neutro
+    elif 0.9 <= valor < 1.3:      return 6
+    elif 0.6 <= valor < 0.9:      return 7
+    elif 0.45 <= valor < 0.6:     return 8
+    elif 0.35 <= valor < 0.45:    return 9
+    else:                         return 10  # Extremamente barato
 
 def interpretar_classificacao_consolidada(score):
-    """Converte score consolidado em classificação estratégica"""
+    """Converte score consolidado em classificação estratégica
    
-    
+    - 0-20: Mercado muito caro (zona de distribuição)
+    - 20-40: Mercado caro (cautela)
+    - 40-60: Mercado neutro
+    - 60-80: Mercado barato (acumulação)
+    - 80-100: Mercado muito barato (forte acumulação)"""
+
+
     if score >= 90:
         return "Oportunidade | Extremamente barato" #"Oportunidade Extrema | Extremamente barato"
     elif score >= 70:
