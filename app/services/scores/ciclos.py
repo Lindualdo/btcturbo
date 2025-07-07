@@ -1,6 +1,8 @@
 # app/services/scores/ciclos.py 
-
+import logging
 from app.services.indicadores import ciclos as indicadores_ciclos
+
+logger = logging.getLogger(__name__)
 
 def calcular_mvrv_score(valor):
     """Calibrado para realidade pós-Out/21 (máximo ~4)"""
@@ -125,7 +127,10 @@ def calcular_score():
     nupl_valor = indicadores["NUPL"]
     reserve_risk_valor = indicadores["Reserve_Risk"]
     puell_valor = indicadores["Puell_Multiple"]
-    
+
+    # 1 - Busca primeiro  o score combinando 
+    resultado = calcular_score_combinado(indicadores)
+
     # 3. Calcular scores individuais
     #realized_score, realized_classificacao = calcular_realized_score(realized_valor)
     mvrv_score = calcular_mvrv_score(mvrv_valor)
@@ -140,6 +145,7 @@ def calcular_score():
     (reserve_risk_score * 0.35) +   
     (puell_score * 0.10))    
     
+    tipo_score = "score_ponderado"
     # 6. Retornar JSON formatado
 
     """
@@ -148,6 +154,12 @@ def calcular_score():
     """
 
 
+  # Validar se retornou score combinado
+    if resultado:
+        score_consolidado = resultado["score_combinado"]
+        logger.info(f"Score combinado: {score_consolidado}")
+        tipo_score = "score_combinado"
+
 
     return {
         "bloco": "ciclo",
@@ -155,6 +167,7 @@ def calcular_score():
         "score_consolidado": round(score_consolidado * 10, 1),
         "classificacao_consolidada": interpretar_classificacao_consolidada(score_consolidado * 10),
         "timestamp": dados_indicadores["timestamp"],
+        "tipo_score":  tipo_score,
         
         # INDICADORES COM PESOS REBALANCEADOS 
         "indicadores": {
@@ -180,3 +193,73 @@ def calcular_score():
             }
         }
     }
+
+def calcular_score_combinado(indicadores):
+    
+    
+    # Extração dos valores
+    mvrv_valor = float(indicadores["MVRV_Z"])
+    nupl_valor = float(indicadores["NUPL"])
+    reserve_risk_valor = float(indicadores["Reserve_Risk"])
+    puell_valor = float(indicadores["Puell_Multiple"])
+    
+    # Condições em ordem decrescente de score (10 a 100)
+    
+    # Score 10: Condições extremas de alta
+    if (mvrv_valor > 4.5 and 
+        reserve_risk_valor > 0.012 and 
+        nupl_valor > 0.65):
+        return {"score_combinado": 10}
+    
+    # Score 20
+    if (mvrv_valor > 3.8 and 
+        puell_valor > 3 and 
+        reserve_risk_valor > 0.01):
+        return {"score_combinado": 20}
+    
+    # Score 30
+    if (nupl_valor > 0.6 and 
+        reserve_risk_valor > 0.008 and 
+        mvrv_valor > 3.2):
+        return {"score_combinado": 30}
+    
+    # Score 40
+    if (mvrv_valor > 2.5 and 
+        puell_valor > 2):
+        return {"score_combinado": 40}
+    
+    # Score 50: Zona neutra
+    if (0.3 <= nupl_valor <= 0.45 and 
+        0.005 <= reserve_risk_valor <= 0.007):
+        return {"score_combinado": 50}
+    
+    # Score 60
+    if (1.2 <= mvrv_valor <= 2 and 
+        0.004 <= reserve_risk_valor <= 0.005):
+        return {"score_combinado": 60}
+    
+    # Score 70
+    if (nupl_valor < 0.2 and 
+        reserve_risk_valor < 0.004):
+        return {"score_combinado": 70}
+    
+    # Score 80
+    if (mvrv_valor < 1 and 
+        puell_valor < 0.6 and 
+        reserve_risk_valor < 0.003):
+        return {"score_combinado": 80}
+    
+    # Score 90
+    if (nupl_valor < 0.1 and 
+        reserve_risk_valor < 0.002 and 
+        puell_valor < 0.5):
+        return {"score_combinado": 90}
+    
+    # Score 100: Condições extremas de baixa
+    if (mvrv_valor < 0 and 
+        nupl_valor < -0.15 and 
+        reserve_risk_valor < 0.0015):
+        return {"score_combinado": 100}
+    
+    # Nenhuma condição atendida
+    return {}
