@@ -5,15 +5,17 @@ from app.services.indicadores import ciclos as indicadores_ciclos
 logger = logging.getLogger(__name__)
 
 def calcular_mvrv_score(valor):
+
     """MVRV calibrado (1=caro, 10=barato)"""
-    if valor > 3.2:                return 1  # Extremamente caro
-    elif 3.2 >= valor > 2.8:       return 2
-    elif 2.8>= valor > 2.4:       return 3
-    elif 2.4 >= valor > 2.0:       return 5
-    elif 2.0 >= valor > 1.5:       return 6
-    elif 1.5 >= valor > 1.0:       return 7     # Neutro
-    elif 1.0 >= valor > 0.8:       return 9
-    else:                          return 10  # Extremamente barato
+    if valor > 3.2:
+        return 1.0
+    elif valor <= 0.8:
+        return 10.0
+    else:
+        # Cálculo linear (explicação abaixo)
+        proporcao = (valor - 0.8) / (3.2 - 0.8)
+        pontuacao = 10 - proporcao * 9
+        return round(pontuacao, 1)  # Arredonda para 1 casa decimal
 
 def calcular_reserve_risk(rr_valor):
     #Reserve Risk ajustado - `Reserve Risk / SMA(Reserve Risk, 300)`
