@@ -5,17 +5,15 @@ from app.services.indicadores import ciclos as indicadores_ciclos
 logger = logging.getLogger(__name__)
 
 def calcular_mvrv_score(valor):
-    """MVRV Z-Score calibrado conforme tabela (0=caro, 10=barato)"""
-    if valor > 5:               return 1   # Extremamente caro
-    elif 4 <= valor <= 5:       return 2   
-    elif 3.2 <= valor < 4:      return 3
-    elif 2.5 <= valor < 3.2:    return 4
-    elif 1.8 <= valor < 2.5:    return 5   # Neutro
-    elif 1.2 <= valor < 1.8:    return 6
-    elif 0.8 <= valor < 1.2:    return 7
-    elif 0.4 <= valor < 0.8:    return 8
-    elif 0 <= valor < 0.4:      return 9
-    else:                       return 10  # Extremamente barato
+    """MVRV Z-Score calibrado (1=caro, 10=barato)"""
+    if valor > 3.2:                return 1  # Extremamente caro
+    elif 3.2 >= valor > 2.5:       return 2
+    elif 2.5 >= valor > 2.0:       return 4
+    elif 2.0 >= valor > 1.5:       return 6
+    elif 1.5 >= valor > 1.0:       return 7
+    elif 1.0 >= valor > 0.8:       return 9
+    else:                          return 10  # Extremamente barato
+
 
 def calcular_reserve_risk(rr_valor):
     #Reserve Risk ajustado - `Reserve Risk / SMA(Reserve Risk, 300)`
@@ -94,17 +92,16 @@ def interpretar_classificacao_consolidada(score):
     - 60-80: Mercado barato (acumulação)
     - 80-100: Mercado muito barato (forte acumulação)"""
 
-
     if score >= 90:
-        return "Oportunidade | Extremamente barato" #"Oportunidade Extrema | Extremamente barato"
+        return "Extremamente barato" #"Oportunidade Extrema | Extremamente barato"
     elif score >= 70:
-        return "Valorização | abaixo do preço justo" #"Valorização | abaixo do preço justo"
+        return "Abaixo do preço justo" #"Valorização | abaixo do preço justo"
     elif score >= 40:
-        return "Equilíbrio | Valorização neutra" 
+        return "Valorização neutra" 
     elif score >= 20:
-        return "Risco Elevado | Acima do preço justo"
+        return "Acima do preço justo"
     else:  # score <= 19
-        return "Bolha | Euforia extrema"
+        return "Euforia extrema"
     
 def calcular_score():
 
