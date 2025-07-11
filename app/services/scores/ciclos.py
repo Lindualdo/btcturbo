@@ -14,7 +14,6 @@ def calcular_mvrv_score(valor):
     elif 1.0 >= valor > 0.8:       return 9
     else:                          return 10  # Extremamente barato
 
-
 def calcular_reserve_risk(rr_valor):
     #Reserve Risk ajustado - `Reserve Risk / SMA(Reserve Risk, 300)`
 
@@ -137,9 +136,9 @@ def calcular_score():
     
     # 4.PESOS REBALANCEADOS v1.9
     score_consolidado = ( 
-    (mvrv_score * 0.40) + 
+    (mvrv_score * 0.50) + 
     (nupl_score * 0.15) +   
-    (reserve_risk_score * 0.35) +   
+    (reserve_risk_score * 0.25) +   
     (puell_score * 0.10))    
     
     tipo_score = "score_ponderado"
