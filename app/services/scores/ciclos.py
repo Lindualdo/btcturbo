@@ -20,16 +20,14 @@ def calcular_mvrv_score(valor):
 def calcular_reserve_risk(rr_valor):
     #Reserve Risk ajustado - `Reserve Risk / SMA(Reserve Risk, 300)`
 
-    if rr_valor >= 1.80: return 1       # Extremamente caro
-    elif rr_valor >= 1.66: return 2
-    elif rr_valor >= 1.51: return 3
-    elif rr_valor >= 1.37: return 4
-    elif rr_valor >= 1.22: return 5     # Neutro
-    elif rr_valor >= 1.08: return 6
-    elif rr_valor >= 0.93: return 7
-    elif rr_valor >= 0.79: return 8
-    elif rr_valor >= 0.60: return 9
-    elif rr_valor <= 0.50: return 10   # Extremamente barato
+    if rr_valor >= 2:
+        return 1.0   # Extremamente caro
+    elif rr_valor <= 0.50:
+        return 10.0  # Extremamente barato
+    else:
+        # Mapeamento linear inverso: 0.50 → 10, 1.80 → 1
+        proporcao = (rr_valor - 0.50) / (2 - 0.50)
+        return round(10 - proporcao * 9, 1)  # Escala 10 → 1
 
 def calcular_realized_score(valor):
     """Calcula score Realized Price Ratio"""
@@ -139,9 +137,9 @@ def calcular_score():
     
     # 4.PESOS REBALANCEADOS v1.9
     score_consolidado = ( 
-    (mvrv_score * 0.65) + 
-    (nupl_score * 0.10) +   
-    (reserve_risk_score * 0.15) +   
+    (mvrv_score * 0.77) + 
+    (nupl_score * 0) +   
+    (reserve_risk_score * 0.13) +   
     (puell_score * 0.10))    
     
     tipo_score = "score_ponderado"
