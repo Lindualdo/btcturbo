@@ -7,8 +7,9 @@ logger = logging.getLogger(__name__)
 def calcular_mvrv_score(valor):
     """MVRV calibrado (1=caro, 10=barato)"""
     if valor > 3.2:                return 1  # Extremamente caro
-    elif 3.2 >= valor > 2.4:       return 2
-    elif 2.4 >= valor > 2.0:       return 4
+    elif 3.2 >= valor > 2.8:       return 2
+    elif 2.8>= valor > 2.4:       return 3
+    elif 2.4 >= valor > 2.0:       return 5
     elif 2.0 >= valor > 1.5:       return 6
     elif 1.5 >= valor > 1.0:       return 7     # Neutro
     elif 1.0 >= valor > 0.8:       return 9
