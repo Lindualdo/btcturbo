@@ -137,10 +137,10 @@ def calcular_score():
     
     # 4.PESOS REBALANCEADOS v1.9
     score_consolidado = ( 
-    (mvrv_score * 0.77) + 
+    (mvrv_score * 0.100) + 
     (nupl_score * 0) +   
-    (reserve_risk_score * 0.13) +   
-    (puell_score * 0.10))    
+    (reserve_risk_score * 0) +   
+    (puell_score * 0))    
     
     tipo_score = "score_ponderado"
     # 6. Retornar JSON formatado
