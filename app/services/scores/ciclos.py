@@ -17,18 +17,19 @@ def calcular_mvrv_score(valor):
     elif 0 <= valor < 0.4:      return 9
     else:                       return 10  # Extremamente barato
 
-def calcular_reserve_risk(valor):
-    """Reserve Risk calibrado conforme tabela (0=caro, 10=barato)"""
-    if valor > 0.015:                    return 1   # Extremamente caro
-    elif 0.012 <= valor <= 0.015:       return 2
-    elif 0.01 <= valor < 0.012:         return 3
-    elif 0.008 <= valor < 0.01:         return 4
-    elif 0.006 <= valor < 0.008:        return 5   # Neutro
-    elif 0.004 <= valor < 0.006:        return 6
-    elif 0.003 <= valor < 0.004:        return 7
-    elif 0.002 <= valor < 0.003:        return 8
-    elif 0.0015 <= valor < 0.002:       return 9
-    else:                               return 10  # Extremamente barato
+def calcular_reserve_risk(rr_valor):
+    #Reserve Risk ajustado - `Reserve Risk / SMA(Reserve Risk, 300)`
+
+    if rr_valor >= 1.80: return 1       # Extremamente caro
+    elif rr_valor >= 1.66: return 2
+    elif rr_valor >= 1.51: return 3
+    elif rr_valor >= 1.37: return 4
+    elif rr_valor >= 1.22: return 5     # Neutro
+    elif rr_valor >= 1.08: return 6
+    elif rr_valor >= 0.93: return 7
+    elif rr_valor >= 0.79: return 8
+    elif rr_valor >= 0.60: return 9
+    elif rr_valor <= 0.50: return 10   # Extremamente barato
 
 def calcular_realized_score(valor):
     """Calcula score Realized Price Ratio"""
@@ -127,7 +128,8 @@ def calcular_score():
     puell_valor = indicadores["Puell_Multiple"]
 
     # 1 - Busca primeiro  o score combinando 
-    resultado = calcular_score_combinado(indicadores)
+    #resultado = calcular_score_combinado_v2(indicadores)
+    resultado = {}
 
     # 3. Calcular scores individuais
     #realized_score, realized_classificacao = calcular_realized_score(realized_valor)
@@ -192,6 +194,79 @@ def calcular_score():
         }
     }
 
+def calcular_score_combinado_v2(indicadores):
+    """Score combinado usando apenas MVRV, NUPL e Reserve Risk
+    Retorna score quando os 3 indicadores confirmam o mesmo nível"""
+    
+    mvrv_valor = float(indicadores["MVRV_Z"])
+    nupl_valor = float(indicadores["NUPL"])
+    reserve_risk_valor = float(indicadores["Reserve_Risk"])
+    
+    logger.info("🚀 iniciando score combinado v2...")
+    
+    # Score 1 (10): Extremamente caro - todos indicadores confirmam topo
+    if (mvrv_valor >= 3.5 or 
+        nupl_valor >= 0.65 or 
+        reserve_risk_valor >= 1.70):
+        return {"score_combinado": 1}
+    
+    # Score 2 (20): Muito caro
+    if (mvrv_valor >= 3.2 or 
+        nupl_valor >= 0.6 or 
+        reserve_risk_valor >= 1.55):
+        return {"score_combinado": 2}
+    
+    # Score 3 (30): Caro
+    if (mvrv_valor >= 2.5 and 
+        nupl_valor >= 0.5 and 
+        reserve_risk_valor >= 1.40):
+        return {"score_combinado": 3}
+    
+    # Score 4 (40): Levemente caro
+    if (mvrv_valor >= 1.8 and 
+        nupl_valor >= 0.35 and 
+        reserve_risk_valor >= 1.25):
+        return {"score_combinado": 4}
+    
+    # Score 5 (50): Neutro - zona de equilíbrio
+    if (1.2 <= mvrv_valor <= 1.8 and 
+        0.2 <= nupl_valor <= 0.35 and 
+        1.10 <= reserve_risk_valor <= 1.25):
+        return {"score_combinado": 5}
+    
+    # Score 6 (60): Levemente barato
+    if (mvrv_valor <= 1.2 and 
+        nupl_valor <= 0.2 and 
+        reserve_risk_valor <= 1.10):
+        return {"score_combinado": 6}
+    
+    # Score 7 (70): Barato
+    if (mvrv_valor <= 0.8 and 
+        nupl_valor <= 0.05 and 
+        reserve_risk_valor <= 0.95):
+        return {"score_combinado": 7}
+    
+    # Score 8 (80): Muito barato
+    if (mvrv_valor <= 0.4 and 
+        nupl_valor <= -0.05 and 
+        reserve_risk_valor <= 0.80):
+        return {"score_combinado": 8}
+    
+    # Score 9 (90): Extremamente barato
+    if (mvrv_valor <= 0.0 and 
+        nupl_valor <= -0.15 and 
+        reserve_risk_valor <= 0.65):
+        return {"score_combinado": 9}
+    
+    # Score 10 (100): Oportunidade máxima
+    if (mvrv_valor <= -0.5 and 
+        nupl_valor <= -0.20 and 
+        reserve_risk_valor <= 0.50):
+        return {"score_combinado": 10}
+    
+    logger.info("🚀 nenhum score combinado v2 encontrado...")
+    return {}
+
 def calcular_score_combinado(indicadores):
     
     
@@ -206,21 +281,20 @@ def calcular_score_combinado(indicadores):
     logger.info("🚀 iniciando o score combinado...")
     
     # Score 10: Condições extremas de alta
-    if (mvrv_valor > 4.5 and 
-        reserve_risk_valor > 0.012 and 
-        nupl_valor > 0.65):
+    if (mvrv_valor > 4 and 
+        reserve_risk_valor > 2 and 
+        nupl_valor > 0.6):
         return {"score_combinado": 1}
     
     # Score 20
-    if (mvrv_valor > 3.8 and 
-        puell_valor > 3 and 
-        reserve_risk_valor > 0.01):
+    if (mvrv_valor > 3 and 
+        reserve_risk_valor > 1.7):
         return {"score_combinado": 2}
     
     # Score 30
-    if (nupl_valor > 0.6 and 
-        reserve_risk_valor > 0.008 and 
-        mvrv_valor > 3.2):
+    if (nupl_valor >= 5 and 
+        reserve_risk_valor >= 1.6 and 
+        mvrv_valor >= 2.7):
         return {"score_combinado": 3}
     
     # Score 40
