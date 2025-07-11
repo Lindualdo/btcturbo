@@ -5,12 +5,12 @@ from app.services.indicadores import ciclos as indicadores_ciclos
 logger = logging.getLogger(__name__)
 
 def calcular_mvrv_score(valor):
-    """MVRV Z-Score calibrado (1=caro, 10=barato)"""
+    """MVRV calibrado (1=caro, 10=barato)"""
     if valor > 3.2:                return 1  # Extremamente caro
-    elif 3.2 >= valor > 2.5:       return 2
-    elif 2.5 >= valor > 2.0:       return 4
+    elif 3.2 >= valor > 2.4:       return 2
+    elif 2.4 >= valor > 2.0:       return 4
     elif 2.0 >= valor > 1.5:       return 6
-    elif 1.5 >= valor > 1.0:       return 7
+    elif 1.5 >= valor > 1.0:       return 7     # Neutro
     elif 1.0 >= valor > 0.8:       return 9
     else:                          return 10  # Extremamente barato
 
@@ -136,9 +136,9 @@ def calcular_score():
     
     # 4.PESOS REBALANCEADOS v1.9
     score_consolidado = ( 
-    (mvrv_score * 0.50) + 
-    (nupl_score * 0.15) +   
-    (reserve_risk_score * 0.25) +   
+    (mvrv_score * 0.65) + 
+    (nupl_score * 0.10) +   
+    (reserve_risk_score * 0.15) +   
     (puell_score * 0.10))    
     
     tipo_score = "score_ponderado"
