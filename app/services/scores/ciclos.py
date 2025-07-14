@@ -7,13 +7,13 @@ logger = logging.getLogger(__name__)
 def calcular_mvrv_score(valor):
 
     """MVRV calibrado (1=caro, 10=barato)"""
-    if valor > 3.2:
+    if valor > 2.75:
         return 1.0
     elif valor <= 0.8:
         return 10.0
     else:
         # Cálculo linear (explicação abaixo)
-        proporcao = (valor - 0.8) / (3.2 - 0.8)
+        proporcao = (valor - 0.8) / (2.75 - 0.8)
         pontuacao = 10 - proporcao * 9
         return round(pontuacao, 1)  # Arredonda para 1 casa decimal
 
