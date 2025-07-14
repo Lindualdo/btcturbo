@@ -92,16 +92,12 @@ def interpretar_classificacao_consolidada(score):
     - 60-80: Mercado barato (acumulação)
     - 80-100: Mercado muito barato (forte acumulação)"""
 
-    if score >= 90:
-        return "Extremamente barato" #"Oportunidade Extrema | Extremamente barato"
-    elif score >= 70:
-        return "Abaixo do preço justo" #"Valorização | abaixo do preço justo"
-    elif score >= 40:
-        return "Valorização neutra" 
-    elif score >= 20:
-        return "Acima do preço justo"
-    else:  # score <= 19
-        return "Euforia extrema"
+    if score >= 90:     return "Extremamente barato" 
+    elif score >= 70:   return "Abaixo do preço justo" 
+    elif score >= 40:   return "Valorização neutra" 
+    elif score >= 20:   return "Acima do preço justo"
+    elif score >= 10:   return "Euforia extrema"
+    else: return "Euforia extrema"
     
 def calcular_score():
 
