@@ -98,7 +98,7 @@ def obter_patrimonio(periodo: str = "30d") -> dict:
         return {
             "status": "success",
             "indicador": "patrimonio",
-            "saldo_btc_core":0.765223,
+            "saldo_btc_core":0.665223,
             "btc_price":btc_price,
             "periodo": periodo, 
             "dados": dados,
