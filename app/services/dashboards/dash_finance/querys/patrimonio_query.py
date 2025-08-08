@@ -37,7 +37,8 @@ def get_patrimonio_data(data_inicio) -> list:
                 {
                     "timestamp": row["timestamp"].isoformat(),
                     "valor": float(row["valor"]) if row["valor"] else 0.0,
-                    "btc_price": float(row["btc_price"]) if row["btc_price"] else 0.0
+                    "btc_price": float(row["btc_price"]) if row["btc_price"] else 0.0,
+                    "saldo_btc_core": float(row["saldo_btc_core"]) if row["saldo_btc_core"] else 0.0
                 }
                 for row in resultados
             ]
