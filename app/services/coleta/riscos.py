@@ -36,7 +36,9 @@ def coletar(forcar_coleta: bool):
             net_asset_value=aave_data["net_asset_value"],
             alavancagem=aave_data["alavancagem"],
             fonte="aave/web3",
-            liquidation_price=aave_data["liquidation_price"]
+            liquidation_price=aave_data["liquidation_price"],
+            saldo_btc_core=0.665223  # Mock value, replace with actual if needed
+
         )
         
         if success:
