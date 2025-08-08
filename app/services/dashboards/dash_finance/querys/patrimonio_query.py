@@ -15,7 +15,8 @@ def get_patrimonio_data(data_inicio) -> list:
                 DATE(timestamp) as data,
                 timestamp,
                 net_asset_value as valor,
-                btc_price
+                btc_price,
+                saldo_btc_core
             FROM indicadores_risco r1
             WHERE timestamp >= %s
               AND net_asset_value IS NOT NULL
