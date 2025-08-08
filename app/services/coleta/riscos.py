@@ -52,7 +52,8 @@ def coletar(forcar_coleta: bool):
                     "dist_liquidacao": f"{aave_data['dist_liquidacao']:.1f}%",
                     "alavancagem": f"{aave_data['alavancagem']:.2f}x",
                     "btc_price": f"${aave_data['btc_price']:,.2f}",
-                    "net_asset_value": f"${aave_data['net_asset_value']:,.2f}"
+                    "net_asset_value": f"${aave_data['net_asset_value']:,.2f}",
+                    "saldo_btc_core_mockado":0.665223  # Mock value, replace with actual if needed
                 },
                 "fonte": "aave/web3"
             }
