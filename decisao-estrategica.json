@@ -1,0 +1,57 @@
+{
+    "status": "success",
+    "timestamp": "2025-08-11T10:37:42.706014",
+    "decisao": {
+        "fase_operacional": "Bull Exaustão",
+        "tendencia": "NEUTRO",
+        "alavancagem": 1.0,
+        "satelite_percentual": "90%",
+        "acao_primaria": "Reduzir Risco"
+    },
+    "scores": {
+        "tendencia": 100,
+        "ciclo": 30
+    },
+    "auditoria": {
+        "json_emas": {
+            "fonte": "ema_tendencia_helper",
+            "emas_json": {
+                "ema_10_1w": 114117.09,
+                "ema_20_1w": 107736.75,
+                "ema_50_1w": 94064.55,
+                "ema_100_1w": 77929.67,
+                "ema_200_1w": 59803.54,
+                "btc_price_current": 121183.0
+            },
+            "timestamp": "2025-08-11T10:35:49.073850",
+            "score_emas": 100,
+            "classificacao_emas": "Bull Aceleração"
+        },
+        "json_ciclo": {
+            "fonte": "ciclos.calcular_score",
+            "status": "success",
+            "timestamp": "2025-08-11T11:35:18.875000",
+            "peso_bloco": null,
+            "indicadores": {
+                "NUPL": {
+                    "score": 40,
+                    "valor": 0.5669
+                },
+                "mvrv_score": {
+                    "score": 30.0,
+                    "valor": 2.3091
+                },
+                "Reserve_Risk_ajustado": {
+                    "score": 66.0,
+                    "valor": 1.0688
+                },
+                "puell_multiple": {
+                    "score": 60,
+                    "valor": 1.2702
+                }
+            },
+            "score_consolidado": 30.0,
+            "classificacao_consolidada": "Acima do preço justo"
+        }
+    }
+}
