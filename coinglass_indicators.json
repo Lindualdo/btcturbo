@@ -1,0 +1,33 @@
+{
+  "pull_multiple": {
+    "indicator": "Pull Multiple",
+    "current_value": 0.96,
+    "threshold": ">= 4",
+    "percentage": "20.50%",
+    "status": "Normal - Dentro do range",
+    "timestamp": 1756561624.5414631
+  },
+  "mvrv": {
+    "indicator": "MVRV Z-Score",
+    "current_value": 2.08,
+    "threshold": ">= 5",
+    "percentage": "30.17%",
+    "status": "Normal - Abaixo do threshold de alerta (2.08 < 5)",
+    "timestamp": 1756561624.644664,
+    "context": [
+      "251194",
+      "30.17%",
+      "8",
+      "MVRV Z-Score",
+      "2.08",
+      ">= 5",
+      "2.92",
+      "41.6%"
+    ]
+  },
+  "page_info": {
+    "url": "https://www.coinglass.com/bull-market-peak-signals",
+    "title": "Bull Market Peak Signal Checklist, Bull Market Indicators, and Peak Selling Strategies | CoinGlass",
+    "timestamp": 1756561624.754667
+  }
+}
