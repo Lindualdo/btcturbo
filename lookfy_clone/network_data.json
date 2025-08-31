@@ -1,0 +1,788 @@
+{
+  "navigation": {
+    "domContentLoaded": null,
+    "loadComplete": null
+  },
+  "resources": [
+    {
+      "duration": 554.7000000029802,
+      "name": "https://app.lookfy.com.br/_next/static/media/e4af272ccee01ff0-s.p.woff2",
+      "size": 48732,
+      "type": "link"
+    },
+    {
+      "duration": 918.4000000059605,
+      "name": "https://app.lookfy.com.br/_next/static/css/50db4c7249638c05.css?dpl=dpl_3LwU133wy88N8k676jjqygMrUQxK",
+      "size": 14598,
+      "type": "link"
+    },
+    {
+      "duration": 765,
+      "name": "https://app.lookfy.com.br/_next/static/chunks/fd9d1056-fd80cff6c8aa5fcb.js?dpl=dpl_3LwU133wy88N8k676jjqygMrUQxK",
+      "size": 55414,
+      "type": "script"
+    },
+    {
+      "duration": 772.3000000119209,
+      "name": "https://app.lookfy.com.br/_next/static/css/275ed64cc4367444.css?dpl=dpl_3LwU133wy88N8k676jjqygMrUQxK",
+      "size": 968,
+      "type": "link"
+    },
+    {
+      "duration": 798.6000000089407,
+      "name": "https://app.lookfy.com.br/_next/static/chunks/webpack-33f91a0ca828b766.js?dpl=dpl_3LwU133wy88N8k676jjqygMrUQxK",
+      "size": 2605,
+      "type": "link"
+    },
+    {
+      "duration": 880.3000000119209,
+      "name": "https://app.lookfy.com.br/_next/static/chunks/3579-e66674d3fc27bf61.js?dpl=dpl_3LwU133wy88N8k676jjqygMrUQxK",
+      "size": 7029,
+      "type": "script"
+    },
+    {
+      "duration": 994.9000000059605,
+      "name": "https://app.lookfy.com.br/_next/static/chunks/2117-7cdea61811725660.js?dpl=dpl_3LwU133wy88N8k676jjqygMrUQxK",
+      "size": 33400,
+      "type": "script"
+    },
+    {
+      "duration": 1002.3000000119209,
+      "name": "https://app.lookfy.com.br/_next/static/css/431944509084d071.css?dpl=dpl_3LwU133wy88N8k676jjqygMrUQxK",
+      "size": 2609,
+      "type": "link"
+    },
+    {
+      "duration": 1006.6000000089407,
+      "name": "https://app.lookfy.com.br/_next/static/chunks/3949-e108e7216481952c.js?dpl=dpl_3LwU133wy88N8k676jjqygMrUQxK",
+      "size": 2536,
+      "type": "script"
+    },
+    {
+      "duration": 1007.1000000089407,
+      "name": "https://app.lookfy.com.br/_next/static/chunks/main-app-be3d940aef6bd3eb.js?dpl=dpl_3LwU133wy88N8k676jjqygMrUQxK",
+      "size": 771,
+      "type": "script"
+    },
+    {
+      "duration": 1020.8000000119209,
+      "name": "https://app.lookfy.com.br/_next/static/chunks/8206-5f77213c6c571b2e.js?dpl=dpl_3LwU133wy88N8k676jjqygMrUQxK",
+      "size": 6929,
+      "type": "script"
+    },
+    {
+      "duration": 818.5,
+      "name": "https://app.lookfy.com.br/_next/static/chunks/4879-30845dd9ddfe8f6f.js?dpl=dpl_3LwU133wy88N8k676jjqygMrUQxK",
+      "size": 9099,
+      "type": "script"
+    },
+    {
+      "duration": 935.3999999910593,
+      "name": "https://app.lookfy.com.br/_next/static/chunks/4009-de2923489cccfcdc.js?dpl=dpl_3LwU133wy88N8k676jjqygMrUQxK",
+      "size": 8958,
+      "type": "script"
+    },
+    {
+      "duration": 1013.5,
+      "name": "https://app.lookfy.com.br/_next/static/chunks/1686-d06ef9b834c125f3.js?dpl=dpl_3LwU133wy88N8k676jjqygMrUQxK",
+      "size": 3335,
+      "type": "script"
+    },
+    {
+      "duration": 1034.3999999910593,
+      "name": "https://app.lookfy.com.br/_next/static/chunks/605-a8f521d72b2343f4.js?dpl=dpl_3LwU133wy88N8k676jjqygMrUQxK",
+      "size": 10410,
+      "type": "script"
+    },
+    {
+      "duration": 791.9000000059605,
+      "name": "https://app.lookfy.com.br/_next/static/chunks/app/layout-335ac120f85410b3.js?dpl=dpl_3LwU133wy88N8k676jjqygMrUQxK",
+      "size": 8843,
+      "type": "script"
+    },
+    {
+      "duration": 868.2000000029802,
+      "name": "https://app.lookfy.com.br/_next/static/chunks/8766-eac10d6785b5a35d.js?dpl=dpl_3LwU133wy88N8k676jjqygMrUQxK",
+      "size": 20023,
+      "type": "script"
+    },
+    {
+      "duration": 1002.2999999970198,
+      "name": "https://app.lookfy.com.br/_next/static/chunks/app/page-31185dd9959f68de.js?dpl=dpl_3LwU133wy88N8k676jjqygMrUQxK",
+      "size": 6986,
+      "type": "script"
+    },
+    {
+      "duration": 1665.7999999970198,
+      "name": "https://www.googletagmanager.com/gtm.js?id=GTM-PHBPN4WC",
+      "size": 0,
+      "type": "script"
+    },
+    {
+      "duration": 1564.4000000059605,
+      "name": "https://connect.facebook.net/en_US/fbevents.js",
+      "size": 82115,
+      "type": "script"
+    },
+    {
+      "duration": 390.70000000298023,
+      "name": "https://app.lookfy.com.br/api/auth/session",
+      "size": 308,
+      "type": "fetch"
+    },
+    {
+      "duration": 1015,
+      "name": "https://app.lookfy.com.br/api/auth/session",
+      "size": 308,
+      "type": "fetch"
+    },
+    {
+      "duration": 277.20000000298023,
+      "name": "https://app.lookfy.com.br/logo-ic.png",
+      "size": 8978,
+      "type": "img"
+    },
+    {
+      "duration": 277.70000000298023,
+      "name": "https://app.lookfy.com.br/logo-lookfy-white.webp",
+      "size": 13448,
+      "type": "img"
+    },
+    {
+      "duration": 297.40000000596046,
+      "name": "https://app.lookfy.com.br/logo-black.png",
+      "size": 36052,
+      "type": "img"
+    },
+    {
+      "duration": 1214,
+      "name": "https://app.lookfy.com.br/manifest.json",
+      "size": 898,
+      "type": "link"
+    },
+    {
+      "duration": 272.5,
+      "name": "https://app.lookfy.com.br/favicon.ico",
+      "size": 35355,
+      "type": "other"
+    },
+    {
+      "duration": 507.8999999910593,
+      "name": "https://app.lookfy.com.br/favicon.ico",
+      "size": 300,
+      "type": "other"
+    },
+    {
+      "duration": 272.1000000089407,
+      "name": "https://app.lookfy.com.br/fav-white.png",
+      "size": 54125,
+      "type": "other"
+    },
+    {
+      "duration": 1017.6000000089407,
+      "name": "https://client.crisp.chat/l.js",
+      "size": 0,
+      "type": "script"
+    },
+    {
+      "duration": 830.2000000029802,
+      "name": "https://client.crisp.chat/static/javascripts/client.js?71d3864",
+      "size": 0,
+      "type": "script"
+    },
+    {
+      "duration": 331,
+      "name": "https://client.crisp.chat/static/stylesheets/client_default.css?71d3864",
+      "size": 0,
+      "type": "link"
+    },
+    {
+      "duration": 730.0999999940395,
+      "name": "https://client.crisp.chat/settings/website/5e8e693c-c435-4c28-aac9-509be180f176/prelude/?callback=window.%24__CRISP_INSTANCE.__spool.website_prelude_handler&2025-7-31-13-45",
+      "size": 0,
+      "type": "script"
+    },
+    {
+      "duration": 248.6000000089407,
+      "name": "https://client.crisp.chat/settings/website/5e8e693c-c435-4c28-aac9-509be180f176/?callback=window.%24__CRISP_INSTANCE.__spool.website_settings_handler&1756473967061",
+      "size": 0,
+      "type": "script"
+    },
+    {
+      "duration": 244.59999999403954,
+      "name": "https://client.crisp.chat/static/javascripts/locales/pt-br.js?71d3864",
+      "size": 0,
+      "type": "script"
+    },
+    {
+      "duration": 376.20000000298023,
+      "name": "https://app.lookfy.com.br/api/auth/providers",
+      "size": 449,
+      "type": "fetch"
+    },
+    {
+      "duration": 377.5,
+      "name": "https://app.lookfy.com.br/api/auth/csrf",
+      "size": 373,
+      "type": "fetch"
+    },
+    {
+      "duration": 833.5,
+      "name": "https://app.lookfy.com.br/api/auth/callback/credentials",
+      "size": 342,
+      "type": "fetch"
+    },
+    {
+      "duration": 364.40000000596046,
+      "name": "https://app.lookfy.com.br/api/auth/session",
+      "size": 421,
+      "type": "fetch"
+    },
+    {
+      "duration": 1095.6000000089407,
+      "name": "https://app.lookfy.com.br/dashboard?_rsc=1iwkq",
+      "size": 2622,
+      "type": "fetch"
+    },
+    {
+      "duration": 956.9000000059605,
+      "name": "https://app.lookfy.com.br/api/favorites/folders",
+      "size": 421,
+      "type": "fetch"
+    },
+    {
+      "duration": 280.19999998807907,
+      "name": "https://app.lookfy.com.br/_next/static/chunks/7648-6a44804f153e1f50.js?dpl=dpl_3LwU133wy88N8k676jjqygMrUQxK",
+      "size": 9457,
+      "type": "script"
+    },
+    {
+      "duration": 279,
+      "name": "https://app.lookfy.com.br/_next/static/chunks/755-74f5bd40561f6763.js?dpl=dpl_3LwU133wy88N8k676jjqygMrUQxK",
+      "size": 17283,
+      "type": "script"
+    },
+    {
+      "duration": 542.3999999910593,
+      "name": "https://app.lookfy.com.br/_next/static/chunks/4615-6b1538babdebdd93.js?dpl=dpl_3LwU133wy88N8k676jjqygMrUQxK",
+      "size": 31360,
+      "type": "script"
+    },
+    {
+      "duration": 521.8000000119209,
+      "name": "https://app.lookfy.com.br/_next/static/chunks/5681-55d6f39ae2e3638b.js?dpl=dpl_3LwU133wy88N8k676jjqygMrUQxK",
+      "size": 6847,
+      "type": "script"
+    },
+    {
+      "duration": 760.2999999970198,
+      "name": "https://app.lookfy.com.br/_next/static/chunks/app/dashboard/page-f7d715be2974a4b0.js?dpl=dpl_3LwU133wy88N8k676jjqygMrUQxK",
+      "size": 2673,
+      "type": "script"
+    },
+    {
+      "duration": 238.70000000298023,
+      "name": "https://app.lookfy.com.br/_next/static/chunks/4438-fa84e928acae3d4e.js?dpl=dpl_3LwU133wy88N8k676jjqygMrUQxK",
+      "size": 4978,
+      "type": "script"
+    },
+    {
+      "duration": 252.80000001192093,
+      "name": "https://app.lookfy.com.br/_next/static/chunks/6205-2053dab4211cba29.js?dpl=dpl_3LwU133wy88N8k676jjqygMrUQxK",
+      "size": 9131,
+      "type": "script"
+    },
+    {
+      "duration": 245.20000000298023,
+      "name": "https://app.lookfy.com.br/_next/static/chunks/1281-0d8fd6accb20f36a.js?dpl=dpl_3LwU133wy88N8k676jjqygMrUQxK",
+      "size": 5528,
+      "type": "script"
+    },
+    {
+      "duration": 255,
+      "name": "https://app.lookfy.com.br/_next/static/chunks/3655-7e4d0369d3c69384.js?dpl=dpl_3LwU133wy88N8k676jjqygMrUQxK",
+      "size": 3806,
+      "type": "script"
+    },
+    {
+      "duration": 244.3999999910593,
+      "name": "https://app.lookfy.com.br/_next/static/chunks/2962-c9f4a2b87df7bef1.js?dpl=dpl_3LwU133wy88N8k676jjqygMrUQxK",
+      "size": 5782,
+      "type": "script"
+    },
+    {
+      "duration": 258.19999998807907,
+      "name": "https://app.lookfy.com.br/_next/static/chunks/app/dashboard/layout-028d43d5b55184ea.js?dpl=dpl_3LwU133wy88N8k676jjqygMrUQxK",
+      "size": 4395,
+      "type": "script"
+    },
+    {
+      "duration": 259.40000000596046,
+      "name": "https://app.lookfy.com.br/_next/static/css/46d2f1b70d0e73f2.css?dpl=dpl_3LwU133wy88N8k676jjqygMrUQxK",
+      "size": 3205,
+      "type": "link"
+    },
+    {
+      "duration": 259.90000000596046,
+      "name": "https://app.lookfy.com.br/_next/static/css/2e85c571399b9690.css?dpl=dpl_3LwU133wy88N8k676jjqygMrUQxK",
+      "size": 827,
+      "type": "link"
+    },
+    {
+      "duration": 989.7999999970198,
+      "name": "https://placehold.co/400x600/gray/white?text=Folder",
+      "size": 0,
+      "type": "css"
+    },
+    {
+      "duration": 1370.2000000029802,
+      "name": "https://seal-app-x4iwq.ondigitalocean.app/api/slide",
+      "size": 0,
+      "type": "fetch"
+    },
+    {
+      "duration": 3329.7999999970198,
+      "name": "https://seal-app-x4iwq.ondigitalocean.app/api/looks",
+      "size": 0,
+      "type": "fetch"
+    },
+    {
+      "duration": 374,
+      "name": "https://app.lookfy.com.br/dashboard/looks?_rsc=799fb",
+      "size": 409,
+      "type": "fetch"
+    },
+    {
+      "duration": 382.8999999910593,
+      "name": "https://app.lookfy.com.br/dashboard/feed?_rsc=799fb",
+      "size": 407,
+      "type": "fetch"
+    },
+    {
+      "duration": 377.79999999701977,
+      "name": "https://app.lookfy.com.br/ia?_rsc=799fb",
+      "size": 412,
+      "type": "fetch"
+    },
+    {
+      "duration": 378.70000000298023,
+      "name": "https://app.lookfy.com.br/dashboard/try?_rsc=799fb",
+      "size": 408,
+      "type": "fetch"
+    },
+    {
+      "duration": 379.8999999910593,
+      "name": "https://app.lookfy.com.br/dashboard/profile?_rsc=799fb",
+      "size": 411,
+      "type": "fetch"
+    },
+    {
+      "duration": 376,
+      "name": "https://app.lookfy.com.br/dashboard/favorites?_rsc=799fb",
+      "size": 0,
+      "type": "fetch"
+    },
+    {
+      "duration": 372,
+      "name": "https://app.lookfy.com.br/dashboard/favorites?folder=cmeydjmm10045k004vf73crri&_rsc=799fb",
+      "size": 0,
+      "type": "fetch"
+    },
+    {
+      "duration": 2110,
+      "name": "https://tiagoleite.b-cdn.net/slides/c84209f1b42fdec9ec13ab5cc272db92.jpg",
+      "size": 0,
+      "type": "css"
+    },
+    {
+      "duration": 2416.5,
+      "name": "https://tiagoleite.b-cdn.net/slides/601bed002da5adc7cf2cc0219e33f452.png",
+      "size": 0,
+      "type": "css"
+    },
+    {
+      "duration": 2517.2999999970198,
+      "name": "https://tiagoleite.b-cdn.net/slides/7d828d85d081b1c6aa97d0862d7670b0.png",
+      "size": 0,
+      "type": "css"
+    },
+    {
+      "duration": 2252.5,
+      "name": "https://tiagoleite.b-cdn.net/slides/eed63bc9ae9eac4140bcbc5a84fed438.png",
+      "size": 0,
+      "type": "css"
+    },
+    {
+      "duration": 2304.5,
+      "name": "https://tiagoleite.b-cdn.net/slides/cdcd44a3585c6c0884824f67f389179a.png",
+      "size": 0,
+      "type": "css"
+    },
+    {
+      "duration": 2109.2999999970198,
+      "name": "https://tiagoleite.b-cdn.net/slides/c5e886af8408f1c9c496119411dad139.png",
+      "size": 0,
+      "type": "css"
+    },
+    {
+      "duration": 2669.199999988079,
+      "name": "https://tiagoleite.b-cdn.net/slides/d23f00934dcc3b7ade7493797f42d9b8.png",
+      "size": 0,
+      "type": "css"
+    },
+    {
+      "duration": 2618.5,
+      "name": "https://tiagoleite.b-cdn.net/slides/bb97863b4fb787d6e8a72ec04c671c2c.png",
+      "size": 0,
+      "type": "css"
+    },
+    {
+      "duration": 2698.9000000059605,
+      "name": "https://tiagoleite.b-cdn.net/slides/6be480fa4484e683d905d0294d7fc54c.png",
+      "size": 0,
+      "type": "css"
+    },
+    {
+      "duration": 2756.9000000059605,
+      "name": "https://tiagoleite.b-cdn.net/slides/f3726935c98e56bd953a55fef4f73511.png",
+      "size": 0,
+      "type": "css"
+    },
+    {
+      "duration": 2780.5,
+      "name": "https://tiagoleite.b-cdn.net/slides/18c8fbd65961abcba0e647830ad39947.png",
+      "size": 0,
+      "type": "css"
+    },
+    {
+      "duration": 2800.2999999970198,
+      "name": "https://tiagoleite.b-cdn.net/slides/cb0467b2b04ee9b4c0a63863311e3e47.png",
+      "size": 0,
+      "type": "css"
+    },
+    {
+      "duration": 2832.4000000059605,
+      "name": "https://tiagoleite.b-cdn.net/slides/77e745da4a0c81db6c0831341a79d905.png",
+      "size": 0,
+      "type": "css"
+    },
+    {
+      "duration": 2849.199999988079,
+      "name": "https://tiagoleite.b-cdn.net/slides/5990b44e271d1a0293fea5e74c2db182.png",
+      "size": 0,
+      "type": "css"
+    },
+    {
+      "duration": 2870.3999999910593,
+      "name": "https://tiagoleite.b-cdn.net/slides/a5736616616205f8ef7606c1906e94ae.png",
+      "size": 0,
+      "type": "css"
+    },
+    {
+      "duration": 2926.7999999970198,
+      "name": "https://tiagoleite.b-cdn.net/slides/9d4f84a526c6bbffec2921c562908067.png",
+      "size": 0,
+      "type": "css"
+    },
+    {
+      "duration": 2943.5,
+      "name": "https://tiagoleite.b-cdn.net/slides/95685c8342d07cc2d2519325e1dcf630.png",
+      "size": 0,
+      "type": "css"
+    },
+    {
+      "duration": 3005.0999999940395,
+      "name": "https://tiagoleite.b-cdn.net/slides/50151885aea7c92b33155f48e5c89a51.png",
+      "size": 0,
+      "type": "css"
+    },
+    {
+      "duration": 574,
+      "name": "https://tiagoleite.b-cdn.net/look/2bb31d1f08299140cd107e6f0623bfd9.jpg",
+      "size": 0,
+      "type": "css"
+    },
+    {
+      "duration": 587.4000000059605,
+      "name": "https://tiagoleite.b-cdn.net/look/a9a9cd704e26e3aca99f3b5011ece9b9.jpg",
+      "size": 0,
+      "type": "css"
+    },
+    {
+      "duration": 1059.9000000059605,
+      "name": "https://tiagoleite.b-cdn.net/look/fe62b954b3dc2ee4e4d15beac42106d1.jpg",
+      "size": 0,
+      "type": "css"
+    },
+    {
+      "duration": 1077.6000000089407,
+      "name": "https://tiagoleite.b-cdn.net/look/8af14f8087978275a336f7bf3195e324.jpg",
+      "size": 0,
+      "type": "css"
+    },
+    {
+      "duration": 1109.7999999970198,
+      "name": "https://tiagoleite.b-cdn.net/look/fd97c93013626f3522e8d53a64ac5ccc.jpg",
+      "size": 0,
+      "type": "css"
+    },
+    {
+      "duration": 1126.9000000059605,
+      "name": "https://tiagoleite.b-cdn.net/look/f8b667783ff20a58ac47df39a76d40be.jpg",
+      "size": 0,
+      "type": "css"
+    },
+    {
+      "duration": 1147.7999999970198,
+      "name": "https://tiagoleite.b-cdn.net/look/4760d15fc393ab959bcb3fde5c07994c.jpg",
+      "size": 0,
+      "type": "css"
+    },
+    {
+      "duration": 1200.4000000059605,
+      "name": "https://tiagoleite.b-cdn.net/look/c0d677705b9e0295de7d550070b6c20c.jpg",
+      "size": 0,
+      "type": "css"
+    },
+    {
+      "duration": 372.19999998807907,
+      "name": "https://app.lookfy.com.br/dashboard/looks?_rsc=1grlj",
+      "size": 0,
+      "type": "fetch"
+    },
+    {
+      "duration": 239.09999999403954,
+      "name": "https://app.lookfy.com.br/_next/static/chunks/app/dashboard/looks/page-a14a416b397e1cae.js?dpl=dpl_3LwU133wy88N8k676jjqygMrUQxK",
+      "size": 0,
+      "type": "script"
+    },
+    {
+      "duration": 282.79999999701977,
+      "name": "https://app.lookfy.com.br/logo-black.png",
+      "size": 0,
+      "type": "img"
+    },
+    {
+      "duration": 2093.699999988079,
+      "name": "https://seal-app-x4iwq.ondigitalocean.app/api/looks?page=1",
+      "size": 0,
+      "type": "fetch"
+    },
+    {
+      "duration": 240.69999998807907,
+      "name": "https://tiagoleite.b-cdn.net/look/e095f333ede5d4dba1856e1392aea497.jpg",
+      "size": 0,
+      "type": "img"
+    },
+    {
+      "duration": 244.09999999403954,
+      "name": "https://tiagoleite.b-cdn.net/look/a71a8151c7feb8b6bfc33e256f33c8e3.jpg",
+      "size": 0,
+      "type": "img"
+    },
+    {
+      "duration": 1066.4000000059605,
+      "name": "https://seal-app-x4iwq.ondigitalocean.app/api/category",
+      "size": 0,
+      "type": "fetch"
+    },
+    {
+      "duration": 2671.5,
+      "name": "https://seal-app-x4iwq.ondigitalocean.app/api/looks?page=2",
+      "size": 0,
+      "type": "fetch"
+    },
+    {
+      "duration": 242.90000000596046,
+      "name": "https://tiagoleite.b-cdn.net/look/bec23dc556324ba496ba0f36c66222d3.jpg",
+      "size": 0,
+      "type": "img"
+    },
+    {
+      "duration": 249.80000001192093,
+      "name": "https://tiagoleite.b-cdn.net/look/54997ad83230c5cddddcad6b14bd6030.jpg",
+      "size": 0,
+      "type": "img"
+    },
+    {
+      "duration": 247.3999999910593,
+      "name": "https://tiagoleite.b-cdn.net/look/4c36715beaeda10b303935b176b01b9c.jpg",
+      "size": 0,
+      "type": "img"
+    },
+    {
+      "duration": 253.8999999910593,
+      "name": "https://tiagoleite.b-cdn.net/look/feede12a81e5d3df5bb6ff59b2941343.jpg",
+      "size": 0,
+      "type": "img"
+    },
+    {
+      "duration": 257.1000000089407,
+      "name": "https://tiagoleite.b-cdn.net/look/8c44985b50fae2959e3a0ea965facc3e.jpg",
+      "size": 0,
+      "type": "img"
+    },
+    {
+      "duration": 270.79999999701977,
+      "name": "https://tiagoleite.b-cdn.net/look/6054cdcaa6502100558918fb9301065f.jpg",
+      "size": 0,
+      "type": "img"
+    },
+    {
+      "duration": 261.8999999910593,
+      "name": "https://tiagoleite.b-cdn.net/look/8f7e17bd44d198581c60ae22cf83a957.jpg",
+      "size": 0,
+      "type": "img"
+    },
+    {
+      "duration": 268,
+      "name": "https://tiagoleite.b-cdn.net/look/03fe8dc5f3846f8863b14731699ae95a.jpg",
+      "size": 0,
+      "type": "img"
+    },
+    {
+      "duration": 482,
+      "name": "https://tiagoleite.b-cdn.net/look/51621eb65d64776b07de5bf1e93fd0c3.jpg",
+      "size": 0,
+      "type": "img"
+    },
+    {
+      "duration": 486.20000000298023,
+      "name": "https://tiagoleite.b-cdn.net/look/249a9348ca0b4560068e05aefb43cfb8.jpg",
+      "size": 0,
+      "type": "img"
+    },
+    {
+      "duration": 1939.0999999940395,
+      "name": "https://seal-app-x4iwq.ondigitalocean.app/api/looks?page=3",
+      "size": 0,
+      "type": "fetch"
+    },
+    {
+      "duration": 270.29999999701977,
+      "name": "https://tiagoleite.b-cdn.net/look/0834b655b331e5eb7ae4a53b55fa17b7.jpg",
+      "size": 0,
+      "type": "img"
+    },
+    {
+      "duration": 238.90000000596046,
+      "name": "https://tiagoleite.b-cdn.net/look/7a2cfabc219aeb4eb688ceee2fce8a43.jpg",
+      "size": 0,
+      "type": "img"
+    },
+    {
+      "duration": 244.90000000596046,
+      "name": "https://tiagoleite.b-cdn.net/look/18ecd0a7f5188686bc6281a92e481f0c.jpg",
+      "size": 0,
+      "type": "img"
+    },
+    {
+      "duration": 248,
+      "name": "https://tiagoleite.b-cdn.net/look/f427d5f5de0e996ac1ff799d44a2b41b.jpg",
+      "size": 0,
+      "type": "img"
+    },
+    {
+      "duration": 254.30000001192093,
+      "name": "https://tiagoleite.b-cdn.net/look/948b73fae64094b61f387f16cba5091d.jpg",
+      "size": 0,
+      "type": "img"
+    },
+    {
+      "duration": 256,
+      "name": "https://tiagoleite.b-cdn.net/look/308e184765f55cac80d89e755118d241.jpg",
+      "size": 0,
+      "type": "img"
+    },
+    {
+      "duration": 260.70000000298023,
+      "name": "https://tiagoleite.b-cdn.net/look/991a91ebb3f2403c80f771967b0bf6f3.jpg",
+      "size": 0,
+      "type": "img"
+    },
+    {
+      "duration": 265.5,
+      "name": "https://tiagoleite.b-cdn.net/look/747de8d55b78ead7b1ec13292e17ac45.jpg",
+      "size": 0,
+      "type": "img"
+    },
+    {
+      "duration": 734.8000000119209,
+      "name": "https://tiagoleite.b-cdn.net/look/aaca4d5c08451e6cbfbf076d4da6aade.jpg",
+      "size": 0,
+      "type": "img"
+    },
+    {
+      "duration": 738,
+      "name": "https://tiagoleite.b-cdn.net/look/e1b99817d76c97fde47658827b06f370.jpg",
+      "size": 0,
+      "type": "img"
+    },
+    {
+      "duration": 2369.7000000029802,
+      "name": "https://seal-app-x4iwq.ondigitalocean.app/api/looks?page=4",
+      "size": 0,
+      "type": "fetch"
+    },
+    {
+      "duration": 241.5,
+      "name": "https://tiagoleite.b-cdn.net/look/cecf43f054441153320201cfe327da5f.jpg",
+      "size": 0,
+      "type": "img"
+    },
+    {
+      "duration": 272.79999999701977,
+      "name": "https://tiagoleite.b-cdn.net/look/95f19ceebc43078ee6296fca6c2dc45a.jpg",
+      "size": 0,
+      "type": "img"
+    },
+    {
+      "duration": 249.1000000089407,
+      "name": "https://tiagoleite.b-cdn.net/look/27869c4810f1ab46243371e3b347890b.jpg",
+      "size": 0,
+      "type": "img"
+    },
+    {
+      "duration": 253.6000000089407,
+      "name": "https://tiagoleite.b-cdn.net/look/0fe6a83ea30dd4ebe94c8d3a7d72d58f.jpg",
+      "size": 0,
+      "type": "img"
+    },
+    {
+      "duration": 256.29999999701977,
+      "name": "https://tiagoleite.b-cdn.net/look/173c001bb5524d5546c29aadee7529e1.jpg",
+      "size": 0,
+      "type": "img"
+    },
+    {
+      "duration": 257.79999999701977,
+      "name": "https://tiagoleite.b-cdn.net/look/e7d99f4fede73d7e534e0be7ec16d8f9.jpg",
+      "size": 0,
+      "type": "img"
+    },
+    {
+      "duration": 260.90000000596046,
+      "name": "https://tiagoleite.b-cdn.net/look/8f69ba43e392fc1a498fd456cac9c71b.jpg",
+      "size": 0,
+      "type": "img"
+    },
+    {
+      "duration": 265.90000000596046,
+      "name": "https://tiagoleite.b-cdn.net/look/7e26c4953a0bb6d114a2b584634d9af3.jpg",
+      "size": 0,
+      "type": "img"
+    },
+    {
+      "duration": 735.6000000089407,
+      "name": "https://tiagoleite.b-cdn.net/look/8a7606610e2bb2f2d1458941dc95a4f7.jpg",
+      "size": 0,
+      "type": "img"
+    },
+    {
+      "duration": 739.5,
+      "name": "https://tiagoleite.b-cdn.net/look/79677d038da8384f136a2d90b8e11090.jpg",
+      "size": 0,
+      "type": "img"
+    }
+  ]
+}
